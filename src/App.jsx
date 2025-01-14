@@ -1,5 +1,5 @@
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import Start from "./pages/Start.jsx";
+import Start from "./component/page/Start.jsx";
 
 function App() {
 

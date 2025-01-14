@@ -12,7 +12,7 @@ const GlobalStyle = createGlobalStyle`
 
     body {
         margin: 0;
-        font-family: Pretendard, Pretendard-Bold, Pretendard-ExtraBold, Pretendard-Light, Pretendard-Medium, Pretendard-SemiBold, Pretendard-Thin, sans-serif;
+        /* font-family: Pretendard, Pretendard-Bold, Pretendard-ExtraBold, Pretendard-Light, Pretendard-Medium, Pretendard-SemiBold, Pretendard-Thin, sans-serif; */
         background-color: #F6F7F9;
     }
 `
