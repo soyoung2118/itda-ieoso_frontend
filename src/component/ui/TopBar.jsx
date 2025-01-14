@@ -20,5 +20,5 @@ const Wrapper = styled.div`
 `
 
 const MainTitle = styled.div`
-  color: var(--red-color);
+  color: var(--main-color);
 `
