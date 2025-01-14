@@ -4,14 +4,11 @@ export default function Start() {
 
     return (
         <Container>
-            흠
+            아 되긴 한다
+            ㅠㅇ후
         </Container>
   );
 }
 
 const Container = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 100px;
 `;
