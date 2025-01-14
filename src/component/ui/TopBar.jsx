@@ -6,7 +6,6 @@ export default function TopBar(){
         <Wrapper>
             <img src={Logo} style={{width: "126px", height: "33px"}}/>
             <UserContainer>
-              ㅇ
             </UserContainer>
         </Wrapper>
     )
