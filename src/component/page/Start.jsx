@@ -6,6 +6,7 @@ export default function Start() {
     return (
         <>
             <TopBar />
+            
             <Container>
                 
             </Container>

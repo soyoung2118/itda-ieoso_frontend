@@ -1,24 +1,25 @@
 import styled from "styled-components";
+import Logo from '../img/itda_logo.svg';
 
 export default function TopBar(){
     return(
         <Wrapper>
-            <MainTitle>
-                Itda
-            </MainTitle>
-
+            <img src={Logo} style={{width: "126px", height: "33px"}}/>
+            <UserContainer>
+            </UserContainer>
         </Wrapper>
     )
 }
 
 const Wrapper = styled.div`
   display: flex;
-  justify-content: space-between;
+  height: 59px;
   align-items: center;
-  padding: 15px 30px;
+  justify-content: space-between;
+  padding: 0px 36px;
   background-color: #FFFFFF;
 `
 
-const MainTitle = styled.div`
-  color: var(--main-color);
+const UserContainer = styled.div`
+  
 `
