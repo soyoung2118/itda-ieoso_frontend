@@ -18,6 +18,10 @@ export default function ClassRoom() {
         });
     };
 
+    const truncate = (str, n) => { //25글자 제한
+        return str?.length > n ? str.substr(0, n - 1) + "..." : str;
+    };
+
     const TimelineItems = [
         { time: '00:00', title: '오늘의 학습목표' },
         { time: '03:21', title: '게임적 사회생활이란?' },
@@ -35,19 +39,47 @@ export default function ClassRoom() {
             id: 1, 
             title: '1. 기초를 준비해요', 
             subItems: [
-                { title: '1. 무리고 싶은 타입을 정해서 다이어리...', time: '2:17', isPlaying: true }
+                { title: '1. 꾸미고 싶은 타입을 정해서 다이어리를 꾸며봅시다', time: '21:30', status: 'completed' },
+                { title: '2. 필기구 소개', time: '21:30', status: 'playing' },
+                { title: '3. 나만의 색연필 차트', time: '21:30', status: 'pending' }
             ]
         },
         { 
             id: 2, 
-            title: '2. 꿈키우는 소재', 
+            title: '2. 한 달을 기록해요', 
             subItems: [
-                { title: '2. 활기차 수업자료', time: '4:33', isPlaying: false }
+                { title: '1. 효과적인 기록 법', time: '21:30', status: 'pending' }
             ]
         },
-        { id: 3, title: '3. 나만의 색깔된 커트', subItems: [] },
-        { id: 4, title: '4. 하루를 끝마요', subItems: [] }
+        { 
+            id: 3, 
+            title: '3. 한 주를 기록해요', 
+            subItems: []
+        },
+        { 
+            id: 4,
+            title: '4. 하루를 꾸며요',
+            subItems: []
+        },
     ];
+
+    const getStatusIcon = (status) => {
+        switch (status) {
+            case 'completed':
+                return <span className="material-icons" style={{ color: '#474747', fontSize: '22px' }}>check_circle</span>;
+            case 'playing':
+                return (
+                    <div style={{ display: 'flex', gap: '4px' }}>
+                        <span className="material-icons" style={{ color: '#C3C3C3', fontSize: '22px' }}>check_circle</span>
+                        <span className="material-icons" style={{ color: '#474747', fontSize: '22px' }}>play_circle</span>
+                    </div>
+                );
+            case 'pending':
+                return <span className="material-icons" style={{ color: '#C3C3C3', fontSize: '22px' }}>check_circle</span>;
+            default:
+                return null;
+        }
+    };
 
     return (
         <>
@@ -82,8 +114,9 @@ export default function ClassRoom() {
                             타임라인
                         </MenuButton>
                     </MenuSelect>
+                    
                     <RightContainer>
-                        {selectedMenu === 'curriculum' && (
+                    {selectedMenu === 'curriculum' && (
                             <CurriculumList>
                                 {curriculumItems.map((item) => (
                                     <div key={item.id}>
@@ -98,14 +131,15 @@ export default function ClassRoom() {
                                             )}
                                         </CurriculumItem>
                                         {expandedItems.has(item.id) && item.subItems.map((subItem, subIndex) => (
-                                            <SubItem key={subIndex} isPlaying={subItem.isPlaying}>
+                                            <SubItem key={subIndex} status={subItem.status}>
                                                 <SubItemLeft>
-                                                    <SubItemTitle>{subItem.title}</SubItemTitle>
-                                                    <SubItemTime>{subItem.time}</SubItemTime>
+                                                    <SubItemTitle><span>{truncate(subItem.title, 25)}</span></SubItemTitle>
+                                                    <SubItemTime>
+                                                        <span className="material-icons" style={{ color: '#909090', fontSize: '13.33px',  marginRight: '3px' }}>play_circle_outline</span>
+                                                        {subItem.time}
+                                                    </SubItemTime>
                                                 </SubItemLeft>
-                                                <span className="material-icons">
-                                                    {subItem.isPlaying ? 'play_circle' : 'play_circle_outline'}
-                                                </span>
+                                                {getStatusIcon(subItem.status)}
                                             </SubItem>
                                         ))}
                                     </div>
@@ -152,15 +186,15 @@ const TitleContainer = styled.div`
     padding: 20px 0;
 `;
 
-const MainTitle = styled.h1`
+const MainTitle = styled.div`
     font-size: 24px;
-    font-weight: 600;
-    margin-bottom: 8px;
+    font-weight: 700;
+    margin-bottom: 28px;
 `;
 
-const SubTitle = styled.p`
+const SubTitle = styled.div`
     font-size: 16px;
-    color: #666;
+    font-weight: 400;
 `;
 
 const RightSide = styled.div`
@@ -237,14 +271,15 @@ const SubItemLeft = styled.div`
 `;
 
 const SubItemTitle = styled.div`
-    font-size: 14px;
-    color: #666;
+    font-size: 15px;
     margin-bottom: 4px;
 `;
 
 const SubItemTime = styled.div`
     font-size: 12px;
     color: #999;
+    display: flex;
+    align-items: center;
 `;
 
 const TimelineList = styled.div`
