@@ -66,16 +66,16 @@ export default function ClassRoom() {
     const getStatusIcon = (status) => {
         switch (status) {
             case 'completed':
-                return <span className="material-icons" style={{ color: '#474747', fontSize: '22px' }}>check_circle</span>;
+                return <span className="material-icons" style={{ color: '#474747', fontSize: '20px' }}>check_circle</span>;
             case 'playing':
                 return (
                     <div style={{ display: 'flex', gap: '4px' }}>
-                        <span className="material-icons" style={{ color: '#C3C3C3', fontSize: '22px' }}>check_circle</span>
-                        <span className="material-icons" style={{ color: '#474747', fontSize: '22px' }}>play_circle</span>
+                        <span className="material-icons" style={{ color: '#C3C3C3', fontSize: '20px' }}>check_circle</span>
+                        <span className="material-icons" style={{ color: '#474747', fontSize: '20px' }}>play_circle</span>
                     </div>
                 );
             case 'pending':
-                return <span className="material-icons" style={{ color: '#C3C3C3', fontSize: '22px' }}>check_circle</span>;
+                return <span className="material-icons" style={{ color: '#C3C3C3', fontSize: '20px' }}>check_circle</span>;
             default:
                 return null;
         }
@@ -146,12 +146,20 @@ export default function ClassRoom() {
                                 ))}
                             </CurriculumList>
                         )}
+
                         {selectedMenu === 'timeline' && (
                             <TimelineList>
                                 {TimelineItems.map((item, index) => (
-                                    <TimelineItem key={index}>
-                                        <TimeText>{item.time}</TimeText>
-                                        <TitleText>{item.title}</TitleText>
+                                    <TimelineItem key={index} isFirst={index === 0}>
+                                        <TimeText isFirst={index === 0}>{item.time}</TimeText>
+                                        <TitleText>
+                                            {item.title}
+                                            {index === 0 && (
+                                                <span className="material-icons" style={{ color: '#474747', marginLeft: "5px", fontSize: '20px' }}>
+                                                    play_circle
+                                                </span>
+                                            )}
+                                        </TitleText>
                                     </TimelineItem>
                                 ))}
                             </TimelineList>
@@ -170,26 +178,25 @@ const Container = styled.div`
 `;
 
 const LeftSide = styled.div`
-    width: 75vw;
+    width: 80%;
     padding-left: 57px;
-    padding-top: 46px;
+    padding-top: 36px;
 `;
 
 const ThumbnailContainer = styled.div`
     width: 85%;
     aspect-ratio: 16 / 9;
     background-color: black;
-    margin-bottom: 20px;
 `;
 
 const TitleContainer = styled.div`
-    padding: 20px 0;
+    padding-top: 20px;
 `;
 
 const MainTitle = styled.div`
     font-size: 24px;
     font-weight: 700;
-    margin-bottom: 28px;
+    margin-bottom: 18px;
 `;
 
 const SubTitle = styled.div`
@@ -198,8 +205,8 @@ const SubTitle = styled.div`
 `;
 
 const RightSide = styled.div`
-    width: 40vw;
-    padding-top: 46px;
+    width: 35vw;
+    padding-top: 36px;
     padding-right: 57px;
 `;
 
@@ -212,7 +219,7 @@ const MenuSelect = styled.div`
 
 const MenuButton = styled.button`
     flex: 1;
-    padding: 16px;
+    padding: 0px 16px 16px 16px;
     font-size: 16px;
     font-weight: ${props => props.isSelected ? '600' : '400'};
     background: none;
@@ -223,7 +230,25 @@ const MenuButton = styled.button`
 `;
 
 const RightContainer = styled.div`
+    height: 70vh;
     overflow-y: auto;
+    padding-right: 12px;
+    margin-right: -12px;
+
+    scrollbar-width: thin;
+
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+        background-color: #D9D9D9;
+        border-radius: 4px;
+    }
 `;
 
 const CurriculumList = styled.div`
@@ -255,15 +280,14 @@ const IconWrapper = styled.div`
 const ItemTitle = styled.span`
     font-size: 15px;
     font-weight: 700;
-    color: #333;
 `;
 
 const SubItem = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px;
-    background-color: ${props => props.isPlaying ? '#F8F8F8' : 'transparent'};
+    padding: 15px 14px;
+    background-color: ${props => props.status === 'playing' ? '#F8F8F8' : 'transparent'};
 `;
 
 const SubItemLeft = styled.div`
@@ -277,7 +301,7 @@ const SubItemTitle = styled.div`
 
 const SubItemTime = styled.div`
     font-size: 12px;
-    color: #999;
+    color: #909090;
     display: flex;
     align-items: center;
 `;
@@ -298,12 +322,15 @@ const TimeText = styled.div`
     width: 30%;
     font-size: 15px;
     font-weight: 500;
-    color: #333;
+    ${props => props.isFirst && `
+        color: var(--main-color);
+    `}
 `;
 
 const TitleText = styled.div`
+    display: flex;
+    align-items: center;
     width: 70%;
     font-size: 15px;
     font-weight: 500;
-    color: #333;
 `;
