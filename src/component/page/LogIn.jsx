@@ -24,6 +24,7 @@ export default function LogIn() {
             <Container>
                 <LogoImage src={logoImage} alt="logo" />
                 <LogoText>로그인</LogoText>
+                <div style={{ width: '40%', margin: '0 auto' }}>
                 <Form>
                     <Label>아이디</Label>
                     <LoginInput type="text" placeholder="아이디를 입력해주세요." />
@@ -44,11 +45,12 @@ export default function LogIn() {
                             label="자동 로그인"
                         />
                     </CheckboxContainer>
-                    <LoginButton>로그인</LoginButton>
+                    <LoginButton style={{ fontSize: '1rem' }}>로그인</LoginButton>
                     <SignUpLink>
                         계정이 없으신가요? <a href="/signup">회원가입하기</a>
                     </SignUpLink>
                 </Form>
+                </div>
             </Container>
         </>
     );
