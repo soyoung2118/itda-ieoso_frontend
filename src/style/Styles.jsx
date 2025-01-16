@@ -1,14 +1,4 @@
-import styled, { keyframes, css } from "styled-components";
-
-// 막대기 애니메이션 정의
-const lineGradientAnimation = keyframes`
-  from {
-    background-image: linear-gradient(to right, #C3C3C3, #C3C3C3);
-  }
-  to {
-    background-image: linear-gradient(to right, #474747, #C3C3C3);
-  }
-`;
+import styled from "styled-components";
 
 export const Container = styled.div`
     display: flex;
@@ -16,9 +6,9 @@ export const Container = styled.div`
     align-items: center;
     justify-content: flex-start;
     background-color: #FFFFFF;
+    height: calc(100vh - 7vh);
     width: 100%;
-    height: calc(100vh - 59px);
-    padding-top: 8rem;
+    padding-top: 6rem;
 `;
 
 export const Logo = styled.div`
@@ -34,11 +24,12 @@ export const LogoImage = styled.img`
 
 export const LogoText = styled.div`
     font-size: 2rem;
+    font-weight: bold;
     margin-bottom: 2rem;
 `;
 
 export const Form = styled.div`
-    width: 500px;
+    width: 100%;
     display: flex;
     flex-direction: column;
 `;
@@ -128,13 +119,16 @@ export const CustomCheckboxTransparent = (checked) => {
       check
     </span>
   );
-};
+};  
 
-export const Checkbox = styled.input`
-    accent-color: #CDCDCD;
-    width: 20px;
-    height: 20px;
-    margin-right: 0.5rem;
+export const SignUpContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
 `;
 
 export const SignUpInput = styled.input`
@@ -149,17 +143,8 @@ export const SignUpInput = styled.input`
     }
 `;
 
-export const LoginButton = styled.button`
-    padding: 0.8rem;
-    background-color: #FF4747;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    margin-bottom: 1rem;
-`;
-
 export const SignUpLink = styled.div`
+    margin-top: 1rem;
     font-size: 0.9rem;
     color: #CDCDCD;
     text-align: center;
@@ -171,12 +156,14 @@ export const SignUpLink = styled.div`
     }
 `;
 
-export const SignUpContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
+export const LoginButton = styled.button`
+    padding: 0.8rem;
+    background-color: #FF4747;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-bottom: 1rem;
 `;
 
 export const Progress = styled.div`
@@ -210,8 +197,6 @@ export const Step = styled.div`
     font-size: 0.8rem;
     color: ${props => (props.active || props.completed ? '#474747' : '#C3C3C3')};
     width: max-content;
-    left: 50%;
-    transform: translateX(-50%);
   }
 
   &:not(:last-child):before {
@@ -220,59 +205,37 @@ export const Step = styled.div`
     top: 15px;
     left: 32px;
     width: 100px;
-    height: 2px;
+    height: 0px;
     background-color: #C3C3C3;
     z-index: 1;
-    ${props => props.completed && css`
-      animation: ${lineGradientAnimation} 0.5s ease-in-out forwards;
-    `}
   }
 `;
 
-export const Terms = styled.div`  text-align: left;
+export const Terms = styled.div`
+  text-align: left;
   margin: 20px auto;
-  width: 35%;
-  padding: 20px;
+  width: 100%;
+  max-width: 600px;
   border: 1px solid #CDCDCD;
   border-radius: 10px;
   background-color: #FFFFFF;
+  padding: 20px;
+  box-sizing: border-box;
 `;
 
 export const Term = styled.div`
   display: flex;
   align-items: center;
   font-size: 1rem;
-  border-radius: 50px;
   &:last-child {
     border-bottom: none;
   }
-`;
-
-export const NextButton = styled.button`
-  width: 36%;
-  display: block;
-  background-color: #FF4747;
-  color: white;
-  border: none;
-  padding: 0.75rem;
-  font-size: 1rem;
-  cursor: pointer;
-  border-radius: 10px;
 `;
 
 export const InputContainer = styled.div`
   display: flex;
   align-items: center;
   margin: 10px 0;
-`;
-
-export const CheckButton = styled.button`
-  background-color: transparent;
-  color: black;
-  border: none;
-  padding: 10px;
-  margin-left: 10px;
-  cursor: pointer;
 `;
 
 export const ErrorMessage = styled.div`
@@ -283,10 +246,28 @@ export const ErrorMessage = styled.div`
 
 export const WelcomeMessage = styled.div`
   width: 100%;
-  margin: 20px auto;
-  padding: 50px 70px;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 60px auto;
+  padding: 45px 0;
   border: 1px solid #ddd;
   border-radius: 30px;
-  max-width: 300px;
   background-color: #FFFFFF;
+`;
+
+export const NextButton = styled.button`
+  width: 100%;
+  max-width: 600px;
+  display: block;
+  background-color: #FF4747;
+  color: white;
+  border: none;
+  padding: 0.75rem;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 10px;
+  margin: 20px auto;
 `;
