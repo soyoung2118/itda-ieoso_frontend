@@ -3,7 +3,7 @@ import LogIn from "./component/page/LogIn.jsx";
 import SignUp from "./component/page/SignUp.jsx";
 import ClassRoom from "./component/page/ClassRoom.jsx";
 import MainPage from "./component/page/MainPage.jsx";
-
+import Class from "./component/page/Class.jsx";
 function App() {
 
   return (
@@ -13,7 +13,8 @@ function App() {
           <Route path="/" element={<MainPage />} />
           <Route path="/login" element={<LogIn />} />
           <Route path="/signup" element={<SignUp />} />
-          <Route path="/classroom" element={<ClassRoom/>}/>
+          <Route path="/class" element={<Class />} />
+          <Route path="/classroom" element={<ClassRoom />} />
         </Routes>
       </BrowserRouter>
     </>

@@ -1,0 +1,212 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
+import TopBar from "../ui/TopBar";
+import userIcon from "../img/mainpage/usericon.png";
+import ClassData from "../img/class/ClassData.png";
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+
+export default function Class() {
+    const navigate = useNavigate();
+    const [selectedMenu, setSelectedMenu] = useState("전체 강의실");
+    const [showPopup, setShowPopup] = useState(false);
+
+    const lectures = {
+        "전체 강의실": [
+            { title: "2025년도 통합사회 1-1", date: "2024.12.22", description: "김인덕의 폭발적 통합사회 강의를 잇다에서 만나보세요. 2019년부터 재편된 전국 고등학생의 문의, 강사 김인덕의 통합 사회 정복기!" },
+            { title: "2025년도 통합사회 1-2", date: "2025.01.02", description: "김인덕의 폭발적 통합사회 강의를 잇다에서 만나보세요. 2019년부터 재편된 전국 고등학생의 문의, 강사 김인덕의 통합 사회 정복기!" },
+            { title: "2025년도 생활과 윤리", date: "2024.12.24", description: "박윤리 선생님과 함께하는 생활과 윤리 강의! 윤리적 감수성을 키우고 도덕적 판단력을 향상시키는 강의입니다." },
+            { title: "2025년도 한국지리", date: "2024.12.28", description: "대한민국 구석구석을 탐험하는 한국지리 강의! 이지리 선생님과 함께 우리나라의 지리를 재미있게 배워보세요." }
+        ],
+        "내 강의실": [
+            { title: "2025년도 통합사회 1-1", date: "2024.12.22", description: "김인덕의 폭발적 통합사회 강의를 잇다에서 만나보세요. 2019년부터 재편된 전국 고등학생의 문의, 강사 김인덕의 통합 사회 정복기!" },
+            { title: "2025년도 생활과 윤리", date: "2024.12.24", description: "박윤리 선생님과 함께하는 생활과 윤리 강의! 윤리적 감수성을 키우고 도덕적 판단력을 향상시키는 강의입니다." }
+        ],
+    };
+
+    return (
+      <>
+        <Header>
+          <TopBar />
+          <div className="header-right">
+            {/* 대시보드로 가기 버튼으로 수정 해야함*/}
+              <button className="godashboard" onClick={() => navigate('/login')}>대시보드로 가기</button>
+              <UserIcon src={userIcon} alt="user icon" />
+            </div>
+        </Header>
+            <Container>
+                <Sidebar>
+                    <MenuItem active={selectedMenu === "전체 강의실"} onClick={() => setSelectedMenu("전체 강의실")}>
+                        전체 강의실
+                    </MenuItem>
+                    <MenuItem active={selectedMenu === "내 강의실"} onClick={() => setSelectedMenu("내 강의실")}>
+                        내 강의실
+                    </MenuItem>
+                </Sidebar>
+          <Content>
+            <h2>{selectedMenu}</h2>
+                    {lectures[selectedMenu].map((lecture, index) => (
+                        <LectureCard key={index}>
+                            <LectureImage src={ClassData} alt="Lecture" />
+                            <LectureInfo>
+                                <LectureTitle>{lecture.title}</LectureTitle>
+                                <LectureDate>등록 일시 {lecture.date}</LectureDate>
+                                <LectureDescription>{lecture.description}</LectureDescription>
+                            </LectureInfo>
+                        </LectureCard>
+                    ))}
+                </Content>
+                <AddButton onClick={() => setShowPopup(!showPopup)} data-showpopup={showPopup}>
+                    {showPopup ? '×' : '+'}
+                </AddButton>
+                {showPopup && (
+                    <PopupMenu>
+                        <PopupItem>
+                            <OpenInNewIcon style={{ marginRight: '15px' }} />
+                            강의실 만들기
+                        </PopupItem>
+                        <PopupItem>
+                            <ExitToAppIcon style={{ marginRight: '15px' }} />
+                            강의실 들어가기
+                        </PopupItem>
+                    </PopupMenu>
+                )}
+            </Container>
+        </>
+    );
+}
+
+const Header = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .godashboard{
+      background-color: transparent;
+      color: #000;
+      border: 1px solid #000;
+      padding: 10px 20px;
+      cursor: pointer;
+      border-radius: 60px;
+    }
+`;
+
+const UserIcon = styled.img`
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+`;
+
+const Container = styled.div`
+    display: flex;
+    height: 100%;
+    width: 100%;
+    margin-bottom: 100px;
+`;
+
+const Sidebar = styled.div`
+    width: 15%;
+    height: 70vh;
+    margin: 30px 20px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 20px;
+`;
+
+const MenuItem = styled.div`
+    padding: 15px 15px;
+    margin-bottom: 10px;
+    color: #000;
+    font-weight: ${props => props.active ? 'bold' : 'bold'};
+    background-color: ${props => props.active ? '#FFD1D1' : '#FFFFFF'};  
+    border-radius: 10px;
+    cursor: pointer;
+`;
+
+const Content = styled.div`
+    flex: 1;
+    padding: 10px;
+`;
+
+const LectureCard = styled.div`
+    display: flex;
+    background-color: #fff;
+    margin-bottom: 20px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const LectureImage = styled.img`
+    width: 200px;
+    height: 200px;
+    margin-right: 20px;
+`;
+
+const LectureInfo = styled.div`
+    flex: 1;
+`;
+
+const LectureTitle = styled.h3`
+    margin: 0;
+    font-size: 24px;
+`;
+
+const LectureDate = styled.p`
+    margin: 10px 0 60px 0;
+    color: #888;
+`;
+
+const LectureDescription = styled.p`
+    margin: 0;
+    color: #767676;
+    font-size: 14px;
+    background-color: #F6F7F9;
+    padding: 20px 80px 20px 10px;
+    border-radius: 10px;
+`;
+
+const AddButton = styled.button`
+    position: fixed;
+    bottom: 45px;
+    right: 45px;
+    width: 60px;
+    height: 60px;
+    background-color: ${props => (props['data-showpopup'] ? '#000' : '#ff5a5f')};
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    font-size: 44px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+`;
+
+const PopupMenu = styled.div`
+    position: fixed;
+    bottom: 105px;
+    right: 95px;
+    background-color: #fff;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+`;
+
+const PopupItem = styled.div`
+    display: flex;
+    align-items: center;
+    padding: 10px 50px 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    &:hover {
+        background-color: #f0f0f0;
+        border-radius: 10px;
+    }
+`;
