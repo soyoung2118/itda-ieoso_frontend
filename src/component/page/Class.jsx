@@ -14,15 +14,18 @@ export default function Class() {
 
     const lectures = {
         "전체 강의실": [
-            { title: "2025년도 통합사회 1-1", date: "2024.12.22", description: "김인덕의 폭발적 통합사회 강의를 잇다에서 만나보세요. 2019년부터 재편된 전국 고등학생의 문의, 강사 김인덕의 통합 사회 정복기!" },
-            { title: "2025년도 통합사회 1-2", date: "2025.01.02", description: "김인덕의 폭발적 통합사회 강의를 잇다에서 만나보세요. 2019년부터 재편된 전국 고등학생의 문의, 강사 김인덕의 통합 사회 정복기!" },
-            { title: "2025년도 생활과 윤리", date: "2024.12.24", description: "박윤리 선생님과 함께하는 생활과 윤리 강의! 윤리적 감수성을 키우고 도덕적 판단력을 향상시키는 강의입니다." },
-            { title: "2025년도 한국지리", date: "2024.12.28", description: "대한민국 구석구석을 탐험하는 한국지리 강의! 이지리 선생님과 함께 우리나라의 지리를 재미있게 배워보세요." }
+            { id:1, title: "2025년도 통합사회 1-1", date: "2024.12.22", description: "김인덕의 폭발적 통합사회 강의를 잇다에서 만나보세요. 2019년부터 재편된 전국 고등학생의 문의, 강사 김인덕의 통합 사회 정복기!" },
+            { id:2, title: "2025년도 통합사회 1-2", date: "2025.01.02", description: "김인덕의 폭발적 통합사회 강의를 잇다에서 만나보세요. 2019년부터 재편된 전국 고등학생의 문의, 강사 김인덕의 통합 사회 정복기!" },
+            { id:3, title: "2025년도 생활과 윤리", date: "2024.12.24", description: "박윤리 선생님과 함께하는 생활과 윤리 강의! 윤리적 감수성을 키우고 도덕적 판단력을 향상시키는 강의입니다." },
+            { id:4, title: "2025년도 한국지리", date: "2024.12.28", description: "대한민국 구석구석을 탐험하는 한국지리 강의! 이지리 선생님과 함께 우리나라의 지리를 재미있게 배워보세요." }
         ],
         "내 강의실": [
-            { title: "2025년도 통합사회 1-1", date: "2024.12.22", description: "김인덕의 폭발적 통합사회 강의를 잇다에서 만나보세요. 2019년부터 재편된 전국 고등학생의 문의, 강사 김인덕의 통합 사회 정복기!" },
-            { title: "2025년도 생활과 윤리", date: "2024.12.24", description: "박윤리 선생님과 함께하는 생활과 윤리 강의! 윤리적 감수성을 키우고 도덕적 판단력을 향상시키는 강의입니다." }
-        ],
+            { id: 5, title: "2025년도 통합사회 1-1", date: "2024.12.22", description: "김인덕의 폭발적 통합사회 강의를 잇다에서 만나보세요. 2019년부터 재편된 전국 고등학생의 문의, 강사 김인덕의 통합 사회 정복기!" }
+        ]
+    };
+
+    const handleLectureClick = (id) => {
+        navigate(`/class/${id}`);
     };
 
     return (
@@ -30,8 +33,8 @@ export default function Class() {
         <Header>
           <TopBar />
           <div className="header-right">
-            {/* 대시보드로 가기 버튼으로 수정 해야함*/}
-              <button className="godashboard" onClick={() => navigate('/login')}>대시보드로 가기</button>
+            {/* 대시보드로 가기 버튼 파일 존재x*/}
+              <button className="godashboard" onClick={() => navigate('/dashboard')}>대시보드로 가기</button>
               <UserIcon src={userIcon} alt="user icon" />
             </div>
         </Header>
@@ -44,10 +47,10 @@ export default function Class() {
                         내 강의실
                     </MenuItem>
                 </Sidebar>
-          <Content>
-            <h2>{selectedMenu}</h2>
-                    {lectures[selectedMenu].map((lecture, index) => (
-                        <LectureCard key={index}>
+                <Content>
+                   <h2>{selectedMenu}</h2>
+                    {lectures[selectedMenu].map((lecture) => (
+                        <LectureCard key={lecture.id} onClick={() => handleLectureClick(lecture.id)}>
                             <LectureImage src={ClassData} alt="Lecture" />
                             <LectureInfo>
                                 <LectureTitle>{lecture.title}</LectureTitle>
@@ -114,7 +117,9 @@ const Container = styled.div`
 
 const Sidebar = styled.div`
     width: 15%;
+    max-width: 200px;
     height: 70vh;
+
     margin: 30px 20px;
     background-color: #fff;
     padding: 20px;
@@ -143,6 +148,7 @@ const LectureCard = styled.div`
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
 `;
 
 const LectureImage = styled.img`
