@@ -91,12 +91,17 @@ const StartButton = styled.button`
     cursor: pointer;
 `;
 
-const FeaturesContainer = styled.section`
+const Features = styled.section`
     display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    margin: 60px;
-    padding: 0 12vw;
+    justify-content: space-around;
+    margin-top: 40px;
+    gap: 20px;
+    padding: 0 10vw;
+    @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: center;
+        padding: 0 15vw;
+    }
 `;
 
 const FeatureCard = styled.div`
@@ -105,48 +110,57 @@ const FeatureCard = styled.div`
     width: 250px;
     height: 300px;
     background-color: #FFFFFF;
-    padding: 20px;
+    padding: 15px 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: left;
     position: relative;
-`;
-
-const FeatureImage = styled.img`
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
+    margin-bottom: 25px;
+    @media (max-width: 768px) {
+        width: 70%;
+    }
 `;
 
 const FeatureTitle = styled.h2`
-    font-size: 1.5rem;
+    font-size: 1.3em;
     font-weight: bold;
     margin-bottom: 5px;
+    white-space: pre-line;
 `;
 
 const FeatureDescription = styled.p`
-    color: #666;
+    color: #AAAAAA;
     font-size: 1rem;
     margin-top: 5px;
     margin-bottom: 20px;
+    white-space: pre-line;
+`;
+
+const FeatureImage = styled.img`
+    width: 120px;
+    height: 120px;
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    object-fit: contain;
 `;
 
 export default function MainPage() {
     const navigate = useNavigate();
     const explain = {
         question: {
-            title: "퀘스트를 통한 재미있는 교육과 학습",
-            description: "퀘스트를 수행하고, 경험치와 포인트 보상을 받아보세요.",
+            title: "퀘스트를 통한\n재미있는 교육과 학습",
+            description: "퀘스트를 수행하고, 경험치와 포인트\n보상을 받아보세요.",
             img: questImage,
         },
         ai: {
-            title: "목표 달성을 위한 AI 비서",
-            description: "목표 달성을 위한 로드맵을 제시하고, 퀘스트를 생성해줍니다.",
+            title: "목표 달성을 위한\nAI 비서",
+            description: "목표 달성을 위한 로드맵을 제시하고,\n퀘스트를 생성해줍니다.",
             img: aiAssistantImage,
         },
         curriculum: {
-            title: "레벨업 커리큘럼",
-            description: "전문가가 만든 커리큘럼을 통해 목표와 완성을 가속화하세요.",
+            title: "레벨업\n커리큘럼",
+            description: "전문가가 만든 커리큘럼을 통해\n목표와 완성을 가속화하세요.",
             img: curriculumImage,
         },
     };
@@ -177,7 +191,7 @@ export default function MainPage() {
               </h2>
               <StartButton onClick={() => navigate('/login')}>시작하기</StartButton>
           </ExplainContainer>
-          <FeaturesContainer>
+          <Features>
             {Object.values(explain).map((feature, index) => (
               <FeatureCard key={index}>
                 <FeatureTitle>{feature.title}</FeatureTitle>
@@ -185,7 +199,7 @@ export default function MainPage() {
                 <FeatureImage src={feature.img} alt={feature.title} />
               </FeatureCard>
             ))}
-          </FeaturesContainer>
+          </Features>
         </MainContainer>
       </>
     );
