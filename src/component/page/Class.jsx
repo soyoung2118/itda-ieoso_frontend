@@ -69,8 +69,8 @@ export default function Class() {
                             <OpenInNewIcon style={{ marginRight: '15px' }} />
                             강의실 만들기
                         </PopupItem>
-                        <PopupItem>
-                            <ExitToAppIcon style={{ marginRight: '15px' }} />
+                        <PopupItem onClick={() => navigate('/participate')}>
+                            <ExitToAppIcon style={{ marginRight: '15px' }}/>
                             강의실 들어가기
                         </PopupItem>
                     </PopupMenu>
