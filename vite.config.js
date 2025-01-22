@@ -1,11 +1,13 @@
 import {defineConfig} from 'vite'
 import react from '@vitejs/plugin-react'
+import svgr from 'vite-plugin-svgr'
 import svgrPlugin from 'vite-plugin-svgr'
 
 // Vite 설정
 export default defineConfig({
   plugins: [
     react(),
+    svgr(),
     svgrPlugin({
       // 옵션 설정 (필수는 아님)
       svgrOptions: {
