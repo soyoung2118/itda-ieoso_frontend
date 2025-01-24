@@ -6,11 +6,11 @@ import MainPage from "./component/page/MainPage.jsx";
 import Class from "./component/page/Class.jsx";
 import Participate from "./component/page/Participate.jsx";
 
-import Start from "./component/page/Start.jsx";
 import ClassCurriculum from "./component/page/class/ClassCurriculum.jsx";
 import ClassOverview from "./component/page/class/ClassOverview.jsx";
 import ClassNotice from "./component/page/class/ClassNotice.jsx";
 import ClassStat from "./component/page/class/ClassStat.jsx";
+import Dashboard from "./component/page/Dashboard.jsx";
 import EditClass from "./component/ui/class/EditClass.jsx";
 
 function App() {
@@ -19,15 +19,13 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Start/>}/>
-
+          <Route path="/" element={<MainPage />} />
           <Route path="/overview/info" element={<ClassOverview />} />
           <Route path="/overview/info/edit" element={<EditClass />} />
           <Route path="/overview/notice" element={<ClassNotice />} />
           <Route path="/curriculum" element={<ClassCurriculum />} />
           <Route path="/stat" element={<ClassStat/>} />
-            
-          <Route path="/" element={<MainPage />} />
+          <Route path="/dashboard" element={<Dashboard/>} />
           <Route path="/login" element={<LogIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/participate" element={<Participate />} />
