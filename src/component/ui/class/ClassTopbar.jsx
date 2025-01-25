@@ -188,8 +188,8 @@ const ClassTopbar = ({ activeTab }) => {
           커리큘럼
         </TabLink>
         <TabLink
-          to="/statistics"
-          className={activeTab === "statistics" ? "active" : ""}
+          to="/stat"
+          className={activeTab === "stat" ? "active" : ""}
         >
           통계
         </TabLink>

@@ -92,7 +92,7 @@ const Curriculum = () => {
       title: "1. 기초를 준비해요",
       subSections: [
         {
-          title: "1. 꾸미고 싶은 타입을 정해서 다이어리를 골라봅시다",
+          title: "꾸미고 싶은 타입을 정해서 다이어리를 골라봅시다",
           thumbnail: null, // 썸네일 기본값
           author: "김잇다",
           period: "2025-01-06 10:00 ~ 2025-01-12 23:59",
@@ -108,7 +108,7 @@ const Curriculum = () => {
           },
         },
         {
-          title: "2. 필기구 소개",
+          title: "필기구 소개",
           thumbnail: null,
           author: "김잇다",
           period: "2025-01-06 10:00 ~ 2025-01-12 23:59",
