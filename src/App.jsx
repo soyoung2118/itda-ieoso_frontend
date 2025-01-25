@@ -12,6 +12,8 @@ import ClassNotice from "./component/page/class/ClassNotice.jsx";
 import ClassStat from "./component/page/class/ClassStat.jsx";
 import Dashboard from "./component/page/Dashboard.jsx";
 
+import ClassRoomCreate from "./component/page/class/ClassRoomCreate.jsx";
+
 function App() {
 
   return (
@@ -29,6 +31,7 @@ function App() {
           <Route path="/participate" element={<Participate />} />
           <Route path="/class" element={<Class />} />
           <Route path="/classroom" element={<ClassRoom />} />
+          <Route path="/class/create" element={<ClassRoomCreate />} />
         </Routes>
       </BrowserRouter>
     </>
