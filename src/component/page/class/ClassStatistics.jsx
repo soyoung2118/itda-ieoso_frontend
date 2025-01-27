@@ -38,7 +38,6 @@ const CalendarWrapper = styled.div`
 
   .react-calendar {
     border: none;
-    font-family: inherit;
     background-color: transparent;
   }
 
@@ -47,7 +46,6 @@ const CalendarWrapper = styled.div`
   }
 
   .react-calendar__month-view__weekdays {
-    font-family: inherit;
     font-size: 1.2rem;
     text-decoration: none;
     color: var(--black-color);
@@ -62,7 +60,7 @@ const CalendarWrapper = styled.div`
     background: transparent;
     text-align: center;
     padding: 1.5rem;
-    font-size: 1.1rem; /* 날짜 크기 확대 */
+    font-size: 1.2rem; /* 날짜 크기 확대 */
     border-radius: 50%; /* 동그란 셀 */
     transition: background-color 0.3s ease, width 0.3s, height 0.3s;
     width: 40px; /* 날짜 셀 크기 */
@@ -103,9 +101,9 @@ const ClassStatistics = () => {
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      const formattedTime = `${now.getFullYear()}. ${
+      const formattedTime = `${now.getFullYear()}.${
         now.getMonth() + 1
-      }. ${now.getDate()} ${now.getHours()}:${String(now.getMinutes()).padStart(
+      }.${now.getDate()} ${now.getHours()}:${String(now.getMinutes()).padStart(
         2,
         "0"
       )}`;
@@ -149,14 +147,14 @@ const ClassStatistics = () => {
                 color: "var(--darkgrey-color)",
                 fontSize: "1.1rem",
                 marginLeft: "1.3rem",
-                fontWeight: "540",
+                fontWeight: "550",
                 marginBottom: "0",
               }}
             >
               {currentTime} 기준
             </p>
           </div>
-          <Section style={{ padding: "0.5rem 3rem" }}>
+          <Section style={{ padding: "2rem 3rem", paddingBottom:"3rem" }}>
             <div style={{ display: "flex", gap: "2rem", marginBottom: "4rem" }}>
               <CalendarWrapper>
                 <h2>{currentMonth}</h2>

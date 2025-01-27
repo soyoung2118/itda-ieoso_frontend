@@ -11,7 +11,7 @@ import ClassOverview from "./component/page/class/ClassOverview.jsx";
 import ClassNotice from "./component/page/class/ClassNotice.jsx";
 import Dashboard from "./component/page/Dashboard.jsx";
 import ClassStatistics from "./component/page/class/ClassStatistics.jsx";
-
+import ClassCurriculumEdit from "./component/page/class/ClassCurriculumEdit.jsx";
 
 function App() {
 
@@ -23,6 +23,7 @@ function App() {
           <Route path="/overview/info" element={<ClassOverview />} />
           <Route path="/overview/notice" element={<ClassNotice />} />
           <Route path="/curriculum" element={<ClassCurriculum />} />
+          <Route path="/curriculum/edit" element={<ClassCurriculumEdit />} />
           <Route path="/dashboard" element={<Dashboard/>} />
           <Route path="/login" element={<LogIn />} />
           <Route path="/signup" element={<SignUp />} />

@@ -1,9 +1,12 @@
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import { FaRegFilePdf } from "react-icons/fa";
-import { FiFileText } from "react-icons/fi";
-import { FaCirclePlay } from "react-icons/fa6";
-
+import Assignment from "../../img/docs.svg";
+import Material from "../../img/pdf.svg";
+import Class from "../../img/class/class.svg";
+import SelectedSection from "../../img/class/check/sel_sec.svg";
+import UnselectedSection from "../../img/class/check/unsel_sec.svg";
+import DoneSection from "../../img/class/check/done_sec.svg";
+import Check from "../../img/class/check/check.svg";
 
 const SidebarContainer = styled.aside`
   width: 15rem;
@@ -13,7 +16,7 @@ const SidebarContainer = styled.aside`
 `;
 
 const ListSection = styled.div`
-  margin-bottom: 1rem;
+  margin-bottom: -1.5rem;
   padding: 0.7rem 0rem;
   transition: background-color 0.3s ease;
 `;
@@ -27,33 +30,26 @@ const SectionHeader = styled.div`
   display: flex;
   align-items: center;
   background-color: ${(props) =>
-    props.active ? "white" : "var(--pink-color)"};
-  margin-bottom: 1rem;
+    props.selected ? "var(--pink-color)" : "#ffffff"};
+  margin-bottom: 0rem;
   border-radius: 0.5rem;
 `;
 
 const ListItem = styled.li`
   display: flex;
   align-items: center;
+  gap: 0.5rem;
   padding-left: 1rem;
   border-radius: 0.5rem;
   cursor: pointer;
-  background-color: ${(props) =>
-    props.active ? "var(--main-color)" : "white"};
-  color: ${(props) => (props.active ? "white" : "black")};
-  font-size: 1rem;
-  font-weight: 550;
+  font-size: 0.95rem;
+  font-weight: semi-bold;
   position: relative;
-
-  & > img {
-    position: absolute;
-    right: 1rem;
-  }
 `;
 
 const SubsectionContainer = styled.div`
-  padding-left: 1rem;
-  margin-top: 0.5rem;
+  padding-left: 1.4rem;
+  margin-top: 0.3rem;
 `;
 
 const SubsectionItem = styled.div`
@@ -61,15 +57,14 @@ const SubsectionItem = styled.div`
   align-items: center;
   padding: 0.5rem 0;
   position: relative;
-  font-size: 1rem;
-  font-weight: 550;
+  font-size: 0.95rem;
+  font-weight: semi-bold;
 
   & > img {
     position: absolute;
     right: 0;
   }
 `;
-
 
 const TruncatedText = styled.span`
   display: inline-block;
@@ -80,7 +75,15 @@ const TruncatedText = styled.span`
   vertical-align: middle;
 `;
 
-const CurriculumSidebar = ({ sections, activeItem, setActiveItem }) => {
+const SectionIcon = styled.img`
+  margin-left: auto;
+`;
+
+const Icon = styled.img`
+  width: 1.23rem;
+`;
+
+const CurriculumSidebar = ({ sections, activeItem, setActiveItem, edit }) => {
   const handleItemClick = (item) => {
     setActiveItem(item);
   };
@@ -89,63 +92,83 @@ const CurriculumSidebar = ({ sections, activeItem, setActiveItem }) => {
     <SidebarContainer>
       {sections.map((section, sectionIndex) => (
         <ListSection key={sectionIndex}>
-          <SectionHeader>{section.title}</SectionHeader>
+          <SectionHeader selected={section.selected}>
+            {section.title}
+            {!edit && (
+              <SectionIcon
+                src={
+                  !section.selected
+                    ? UnselectedSection
+                    : section.done
+                    ? DoneSection
+                    : SelectedSection
+                }
+                style={{
+                  width: "1.5rem",
+                }}
+              />
+            )}
+          </SectionHeader>
           <ul style={{ listStyle: "none", padding: 0 }}>
             {section.subSections.map((subSection, subIndex) => (
-              <div key={subIndex}>
+              <div
+                key={subIndex}
+                style={{
+                  marginLeft: "0",
+                }}
+              >
                 <ListItem
                   active={activeItem === subSection.title}
                   onClick={() => handleItemClick(subSection.title)}
                 >
-                  <FaCirclePlay style={{width:"1.4rem", height: "1.4rem", color:"var(--main-color)", marginRight: "0.5rem"}} />
+                  <Icon src={Class} style={{ width: "1.4rem" }} />
                   <TruncatedText width="10rem">
                     {subSection.title}
                   </TruncatedText>
-                  <span
-                    className="material-symbols-outlined"
-                    style={{ marginLeft: "auto", color: "var(--grey-color)" }}
-                  >
-                    {"check"}
-                  </span>
+                  {!edit && (
+                    <img src={Check} style={{marginLeft:"auto", marginRight:"1.3rem"}}/>
+                  )}
                 </ListItem>
 
                 <SubsectionContainer>
                   <SubsectionItem>
                     <div style={{ display: "flex", alignItems: "center" }}>
-                      <FaRegFilePdf style={{width:"1.7rem", height: "1.7rem", color:"var(--main-color)"}}/>
+                      <Icon
+                        src={Material}
+                        style={{
+                          marginLeft: "0",
+                        }}
+                      />
                       <TruncatedText
                         width="10rem"
-                        style={{ marginLeft: "0.5rem" }}
+                        style={{ marginLeft: "0.7rem" }}
                       >
                         {subSection.material.name}
                       </TruncatedText>
                     </div>
-                    <span
-                      className="material-symbols-outlined"
-                      style={{ marginLeft: "auto", color: "var(--grey-color)" }}
-                    >
-                      {"check"}
-                    </span>
+                    {!edit && (
+                      <img src={Check} style={{marginLeft:"auto", marginRight:"1.3rem"}}/>
+                    )}
                   </SubsectionItem>
 
                   <SubsectionItem
                     style={{ marginTop: "-0.3rem", marginBottom: "1rem" }}
                   >
                     <div style={{ display: "flex", alignItems: "center" }}>
-                      <FiFileText style={{width:"1.7rem", height: "1.7rem", color:"var(--main-color)"}}/>
+                      <Icon src={Assignment} style={{
+                          marginLeft:"0",
+                        }}
+                        />
                       <TruncatedText
                         width="11rem"
-                        style={{ marginLeft: "0.5rem" }}
+                        style={{ marginLeft: "0.7rem" }}
                       >
                         {subSection.assignment.name}
                       </TruncatedText>
                     </div>
-                    <span
-                      className="material-symbols-outlined"
-                      style={{ marginLeft: "auto", color: "var(--grey-color)" }}
-                    >
-                      {"check"}
-                    </span>
+                    {!edit && (
+                      <img src={Check} style={{marginLeft:"auto", marginRight:"1.3rem"}}/>
+                    )}
                   </SubsectionItem>
                 </SubsectionContainer>
               </div>

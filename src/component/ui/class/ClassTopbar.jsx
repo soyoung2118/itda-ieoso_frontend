@@ -3,7 +3,7 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 import { useState } from "react";
 import Container from "../Container";
-import StarIcon from "@mui/icons-material/Star"; // Material-UI의 별 아이콘
+import StarIcon from "@mui/icons-material/Star";
 
 const Navbar = styled.div`
   background-color: var(--white-color);
@@ -105,7 +105,6 @@ const TabLink = styled(NavLink)`
     border-bottom: 3px solid var(--black-color);
     margin-bottom: -0.7rem;
   }
-
 `;
 
 const ClassTopbar = ({ activeTab }) => {
@@ -128,7 +127,7 @@ const ClassTopbar = ({ activeTab }) => {
   ];
 
   const handleDropdownToggle = () => {
-    setIsDropdownOpen(!isDropdownOpen); 
+    setIsDropdownOpen(!isDropdownOpen);
   };
 
   return (
@@ -166,9 +165,7 @@ const ClassTopbar = ({ activeTab }) => {
                     {option.participants}
                   </div>
                 </div>
-                {option.isManageable && (
-                  <StarIcon className="star-icon" />
-                )}
+                {option.isManageable && <StarIcon className="star-icon" />}
               </MenuItem>
             ))}
           </DropdownMenu>
@@ -188,8 +185,8 @@ const ClassTopbar = ({ activeTab }) => {
           커리큘럼
         </TabLink>
         <TabLink
-          to="/stat"
-          className={activeTab === "stat" ? "active" : ""}
+          to="/statistics"
+          className={activeTab === "statistics" ? "active" : ""}
         >
           통계
         </TabLink>

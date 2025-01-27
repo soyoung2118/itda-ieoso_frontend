@@ -38,6 +38,7 @@ const ProgressFill = styled.div`
   height: 100%;
   background-color: var(--main-color);
   transition: width 0.3s ease;
+  border-radius: 21px;
 `;
 
 const PercentBar = ({ percent }) => {
@@ -54,7 +55,7 @@ const PercentBar = ({ percent }) => {
 };
 
 PercentBar.propTypes = {
-  percent: PropTypes.number.isRequired, // percent는 필수 값이며 숫자 타입이어야 합니다.
+  percent: PropTypes.number.isRequired,
 };
 
 export default PercentBar;
