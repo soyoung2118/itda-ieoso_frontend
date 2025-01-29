@@ -6,8 +6,8 @@ import userIcon from "../../img/mainpage/usericon.png";
 import TopBar from "../../ui/TopBar";
 import styled from "styled-components";
 import { PageLayout, Section } from "../../ui/class/ClassLayout";
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import ReactQuill from 'react-quill-new';  // 'react-quill' -> 'react-quill-new'
+import 'react-quill-new/dist/quill.snow.css';  // 'react-quill' -> 'react-quill-new'
 import { useNavigate } from 'react-router-dom';
 
 const Header = styled.div`
@@ -61,7 +61,7 @@ const Content = styled.div`
   background-color: #FFFFFF;
   gap: 1.5rem;
   box-sizing: border-box;
-  padding: ${({ isEditing }) => isEditing ? "0px" : "45px"};
+  padding: ${({ isEditing }) => isEditing ? "0px" : "33px 0px"};
   box-shadow: ${({ isEditing }) => isEditing ? "-4px 0 0 #FF4747" : "none"};
 `;
 
@@ -77,6 +77,7 @@ const EditableText = ({ value, onChange, isEditing, style }) => {
         border: "none",
         borderBottom: "2px solid #FF4747",
         outline: "none",
+        fontFamily: 'Pretendard',
         ...style,
       }}
     />
@@ -87,20 +88,54 @@ const EditableText = ({ value, onChange, isEditing, style }) => {
 
 const StyledQuill = styled(ReactQuill)`
   width: 100%;
+  max-width: 1200px;
+  
   .ql-toolbar {
     order: 2;
   }
+
   .ql-container {
     order: 1;
     border: none;
     font-size: 1rem;
     box-sizing: border-box;
+    line-height: 2.2 !important; 
   }
+
   .ql-editor {
-    font-size: 1rem; /* ReactQuill과 동일한 크기 */
-    line-height: 2.2; /* ReactQuill 기본 줄 간격 */
-    padding: 12px 40px; /* ReactQuill 내부 여백 */
-    white-space: pre-wrap; /* 줄바꿈 처리 */
+    font-size: 1rem;
+    font-family: 'Pretendard', sans-serif !important;
+    padding: 10px 33px !important;
+    line-height: 2.2 !important; 
+  }
+
+  .ql-editor ol, .ql-editor ul {
+    line-height: 1.5 !important;
+    margin: 0;
+    padding-left: 1.5em !important; 
+  }
+
+  .ql-editor ol li, .ql-editor ul li {
+    line-height: 1.5 !important; 
+    margin: 0 !important;
+  }
+  
+  .ql-editor p {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .ql-editor br {
+    display: block;
+    line-height: 1.5 !important;
+  }
+
+  .ql-editor ul {
+    list-style-type: disc !important;
+  }
+
+  .ql-editor ol {
+    list-style-type: decimal !important;
   }
 `;
 
@@ -112,6 +147,7 @@ const EditableSectionContent = ({ content, onChange, isEditing }) => {
       [{ 'list': 'ordered'}, { 'list': 'bullet' }], // 리스트
       ['link'],                               // 링크
       [{ 'indent': '-1'}, { 'indent': '+1' }], // 들여쓰기
+      ['image'],                             // 이미지 삽입 버튼 추가
     ],
   };
 
@@ -121,9 +157,10 @@ const EditableSectionContent = ({ content, onChange, isEditing }) => {
       onChange={onChange}
       modules={modules}
       bounds=".quill-editor"
+      theme="snow"  // 테마 설정
     />
   ) : (
-    <div className="quill-editor" dangerouslySetInnerHTML={{ __html: content }} />
+    <div className="quill-editor" style={{ padding: '10px 33px' }} dangerouslySetInnerHTML={{ __html: content }} />
   );
 };
 
@@ -134,12 +171,7 @@ const ClassOverview = () => {
   const routes = ["/overview/info/edit", "/overview/notice"];
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState("bod 다이어리 1000% 활용하기");
-  const [sectionContent, setSectionContent] = useState(`
-    <h2>저와 함께 인생의 센스를 길러보아요</h2>
-    <p>다이어리를 잘 활용한다면 우리의 일상을 알차고 의미있게 보낼 수 있어요.</p>
-    <p>스티커를 붙이고, 적절하게 그날의 제목을 표시하고, 납비를 기록하기도 하고, 해야할 일을 정리하기도 하는 소중한 다이어리!</p>
-    <p>저와 함께 나만의 다이어리 한 권 꼭 채우기에 도전해보아요.</p>
-  `);
+  const [sectionContent, setSectionContent] = useState('');
 
   const [thumbnailSrc, setThumbnailSrc] = useState(ClassThumbnail);
   
