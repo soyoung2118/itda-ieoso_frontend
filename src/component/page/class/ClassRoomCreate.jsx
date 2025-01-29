@@ -4,7 +4,7 @@ import TopBar from '../../ui/TopBar';
 import Calendar from "../../img/classroom/calendar.png";
 import Clock from "../../img/classroom/clock.png";
 import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import "../../../style/react-datepicker.css";
 
 export default function ClassRoomCreate() {
   const timeSlots = ['월', '화', '수', '목', '금', '토', '일'];
@@ -80,7 +80,7 @@ const handleDaySelect = (type, day) => {
         readOnly
       />
       <CalendarIcon>
-        <img src={Calendar} alt="캘린더 아이콘" />
+        <img src={Calendar} style={{width: 16}}alt="캘린더 아이콘" />
       </CalendarIcon>
     </InputGroup>
   ));
@@ -179,7 +179,7 @@ const handleDaySelect = (type, day) => {
                 <TimeGroup>
                   <InputGroup>
                     <ShortInput
-                      type="text"
+                      type="time"
                       placeholder="강의 시간을 설정해주세요."
                       style={{width: '65%'}}
                     />
@@ -212,7 +212,7 @@ const handleDaySelect = (type, day) => {
                 <TimeGroup>
                   <InputGroup>
                     <ShortInput
-                      type="text"
+                      type="time"
                       placeholder="과제 시간을 설정해주세요."
                       style={{width: '65%'}}
                     />
@@ -230,7 +230,7 @@ const handleDaySelect = (type, day) => {
         <Section>
           <Title>STEP 3. 수강생에게 강좌를 어떻게 공개하실 건가요?</Title>
           <FormGroup>
-            <FormItem>
+            {/* <FormItem>
               <Label>강좌 공개 여부</Label>
               <ButtonGroup>
                 <RadioButton 
@@ -246,7 +246,7 @@ const handleDaySelect = (type, day) => {
                   비공개
                 </RadioButton>
               </ButtonGroup>
-            </FormItem>
+            </FormItem> */}
 
             <FormItem>
               <Label>수업 난이도</Label>
