@@ -1,6 +1,6 @@
 import ClassTopbar from "../../ui/class/ClassTopbar";
 import ClassSidebar from "../../ui/class/ClassSidebar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ClassThumbnail from "../../img/class/class_thumbnail.svg";
 import userIcon from "../../img/mainpage/usericon.png";
 import TopBar from "../../ui/TopBar";
@@ -131,7 +131,7 @@ const ClassOverview = () => {
   const navigate = useNavigate();
   const items = ["강의 개요", "강의 공지"];
   const [activeItem, setActiveItem] = useState("강의 개요");
-  const routes = ["/overview/info", "/overview/notice"];
+  const routes = ["/overview/info/edit", "/overview/notice"];
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState("bod 다이어리 1000% 활용하기");
   const [sectionContent, setSectionContent] = useState(`
@@ -140,7 +140,27 @@ const ClassOverview = () => {
     <p>스티커를 붙이고, 적절하게 그날의 제목을 표시하고, 납비를 기록하기도 하고, 해야할 일을 정리하기도 하는 소중한 다이어리!</p>
     <p>저와 함께 나만의 다이어리 한 권 꼭 채우기에 도전해보아요.</p>
   `);
+
   const [thumbnailSrc, setThumbnailSrc] = useState(ClassThumbnail);
+  
+  // 썸네일 이미지 로드 api
+  useEffect(() => {
+    const fetchThumbnail = async () => {
+      try {
+        const response = await fetch('https://api.example.com/thumbnail'); // API 엔드포인트
+        const data = await response.json();
+        if (response.ok) {
+          setThumbnailSrc(data.imageUrl); // API에서 반환된 이미지 URL로 업데이트
+        } else {
+          console.error('이미지 로드 실패:', data.message);
+        }
+      } catch (error) {
+        console.error('API 호출 중 오류 발생:', error);
+      }
+    };
+
+    fetchThumbnail();
+  }, []);
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -149,17 +169,6 @@ const ClassOverview = () => {
   const handleSaveClick = () => {
     setIsEditing(false);
     console.log("저장된 내용:", sectionContent);
-  };
-
-  const handleImageChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setThumbnailSrc(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
   };
 
   return (
@@ -192,9 +201,8 @@ const ClassOverview = () => {
             <div style={{ position: "relative", textAlign: "center", marginBottom: "0rem" }}>
               <img
                 src={thumbnailSrc}
-                style={{ width: "100%", height: "100%", maxWidth: "950px", maxHeight: "600px", borderRadius: "8px", cursor: isEditing ? "pointer" : "default" }}
+                style={{ width: "100%", height: "auto", borderRadius: "8px" }}
                 alt="Class Thumbnail"
-                onClick={isEditing ? () => document.getElementById('fileInput').click() : undefined}
               />
               {isEditing && (
                 <span className="material-icons" style={{
@@ -209,13 +217,6 @@ const ClassOverview = () => {
                   camera_alt
                 </span>
               )}
-              <input
-                id="fileInput"
-                type="file"
-                accept="image/*"
-                style={{ display: "none" }}
-                onChange={handleImageChange}
-              />
             </div>
             <Section
               style={{
@@ -295,7 +296,6 @@ const ClassOverview = () => {
             >
               강의 소개
             </h1>
-
             <Content isEditing={isEditing}>
               <EditableSectionContent
                 content={sectionContent}
