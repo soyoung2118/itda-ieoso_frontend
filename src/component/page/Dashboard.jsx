@@ -5,8 +5,8 @@ import userIcon from "../img/mainpage/usericon.png";
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import Video from "../img/dashboard/video.png";
-import Docs from "../img/dashboard/docs.png";
-import Pdf from "../img/dashboard/pdf.png";
+import Docs from "../img/docs.svg";
+import Pdf from "../img/pdf.svg";
 import PropTypes from 'prop-types';
 
 export default function DashBoard() {

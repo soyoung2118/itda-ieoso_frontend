@@ -5,6 +5,7 @@ import ClassThumbnail from "../../img/class/class_thumbnail.svg";
 import TopBar from "../../ui/TopBar";
 import styled from "styled-components";
 import { PageLayout, Section } from "../../ui/class/ClassLayout";
+import EditButton from "../../ui/class/EditButton";
 
 
 
@@ -44,12 +45,12 @@ const IconRow = styled.div`
   color: var(--darkgrey-color);
 
   .material-symbols-outlined {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     vertical-align: middle;
   }
 
   span {
-    font-size: 0.95rem;
+    font-size: 1.18rem;
     font-weight: 500;
   }
 `;
@@ -97,8 +98,8 @@ const ClassOverview = () => {
             <Section style={{marginTop: "2rem"}}>
               <span
                 style={{
-                  fontSize: "1.7rem",
-                  fontWeight: "bolder",
+                  fontSize: "2.2rem",
+                  fontWeight: "900",
                 }}
               >
                 bod 다이어리 1000% 활용하기
@@ -119,7 +120,7 @@ const ClassOverview = () => {
 
             <h1
               style={{
-                fontSize: "1.7rem",
+                fontSize: "1.85rem",
                 fontWeight: "bold",
                 margin: "3rem 2rem",
                 textAlign: "left",
@@ -187,6 +188,7 @@ const ClassOverview = () => {
           </main>
         </div>
       </PageLayout>
+      <EditButton to="/overview/notice/create" edit={true} />   {/* 강의실 개요 수정창 링크로 수정 필요요 */}
     </div>
   );
 };
