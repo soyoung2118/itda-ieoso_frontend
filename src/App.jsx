@@ -5,7 +5,6 @@ import ClassRoom from "./component/page/ClassRoom.jsx";
 import MainPage from "./component/page/MainPage.jsx";
 import Class from "./component/page/Class.jsx";
 import Participate from "./component/page/Participate.jsx";
-import FirstParticipate from "./component/page/FirstParticipate.jsx";
 import ClassCurriculum from "./component/page/class/ClassCurriculum.jsx";
 import ClassOverview from "./component/page/class/ClassOverview.jsx";
 import ClassNotice from "./component/page/class/ClassNotice.jsx";
@@ -27,7 +26,6 @@ function App() {
           <Route path="/login" element={<LogIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/participate" element={<Participate />} />
-          <Route path="/participate/first" element={<FirstParticipate />} />
           <Route path="/class" element={<Class />} />
           <Route path="/classroom" element={<ClassRoom />} />
         </Routes>
