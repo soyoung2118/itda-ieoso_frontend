@@ -10,6 +10,7 @@ const GlobalStyle = createGlobalStyle`
         --midgrey-color: #AAAAAA;
         --lightgrey-color: #F6F7F9;
         --grey-color: #E6E6E6;
+        --neutralgrey-color: #CDCDCD;
     }
 
     body {

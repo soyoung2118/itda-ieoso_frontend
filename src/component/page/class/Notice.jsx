@@ -4,6 +4,8 @@ import { useState } from "react";
 import TopBar from "../../ui/TopBar";
 import styled from "styled-components";
 import { PageLayout, Section } from "../../ui/class/ClassLayout";
+import EditButton from "../../ui/class/EditButton";
+
 
 const Title = styled.h1`
   font-size: 2.6rem;
@@ -120,7 +122,7 @@ const PageButton = styled.button`
   justify-content: center;
   width: 2.5rem;
   height: 2.5rem;
-  border-radius: 50%;
+  border-radius: 8px;
   background-color: ${(props) =>
     props.active ? "var(--pink-color)" : "transparent"};
   border: none;
@@ -209,7 +211,7 @@ const ClassNotice = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <SearchIcon className="material-symbols-outlined">
+                <SearchIcon className="material-symbols-outlined" style={{color:"var(--black-color)", fontSize:"2.7rem"}}>
                   search
                 </SearchIcon>
               </SearchContainer>
@@ -258,6 +260,7 @@ const ClassNotice = () => {
           </main>
         </div>
       </PageLayout>
+      <EditButton to="/overview/notice/create" edit={true} />
     </div>
   );
 };

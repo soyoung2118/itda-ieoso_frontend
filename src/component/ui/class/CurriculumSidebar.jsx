@@ -10,9 +10,12 @@ import Check from "../../img/class/check/check.svg";
 
 const SidebarContainer = styled.aside`
   width: 15rem;
+  height: 45rem;
   background-color: white;
-  border-radius: 0.5rem;
+  border-radius: 12px;
   padding: 1rem;
+  margin-top:2rem;
+  letter-spacing: -0.5px;
 `;
 
 const ListSection = styled.div`
@@ -32,7 +35,7 @@ const SectionHeader = styled.div`
   background-color: ${(props) =>
     props.selected ? "var(--pink-color)" : "#ffffff"};
   margin-bottom: 0rem;
-  border-radius: 0.5rem;
+  border-radius: 9px;
 `;
 
 const ListItem = styled.li`
@@ -82,6 +85,8 @@ const SectionIcon = styled.img`
 const Icon = styled.img`
   width: 1.23rem;
 `;
+
+
 
 const CurriculumSidebar = ({ sections, activeItem, setActiveItem, edit }) => {
   const handleItemClick = (item) => {
