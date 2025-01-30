@@ -7,17 +7,17 @@ import StarIcon from "@mui/icons-material/Star";
 
 const Navbar = styled.div`
   background-color: var(--white-color);
-  padding: 1rem 2rem;
+  padding: 0.6rem 1.3rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-radius: 8px;
-  font-size: 1.25rem;
+  border-radius: 15px;
+  font-size: 1.4rem;
 `;
 
 const VerticalLine = styled.div`
-  width: 1.5px;
-  height: 1.9rem;
+  width: 1px;
+  height: 3.4rem;
   background-color: #cdcdcd;
   margin: 0rem;
 `;
@@ -36,16 +36,12 @@ const DropdownButton = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0rem;
   cursor: pointer;
   background-color: var(--white-color);
   border-radius: 8px;
   font-weight: bold;
   color: var(--black-color);
-
-  &:hover {
-    background-color: var(--lightgrey-color);
-  }
 `;
 
 const DropdownMenu = styled.div`
@@ -56,7 +52,7 @@ const DropdownMenu = styled.div`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   z-index: 10;
-  width: 22rem; /* 메뉴의 너비 */
+  width: 23rem; /* 메뉴의 너비 */
   padding: 1rem 0;
   display: ${(props) => (props.isOpen ? "block" : "none")};
 
@@ -93,17 +89,18 @@ const MenuItem = styled.div`
 `;
 
 const TabLink = styled(NavLink)`
-  width: 8rem;
+  width: 10rem;
   text-align: center;
   padding: 0.5rem 1rem;
   text-decoration: none;
   color: var(--darkgrey-color);
   font-weight: bold;
+  font-size: 1.45rem;
 
   &.active {
     color: var(--black-color);
     border-bottom: 3px solid var(--black-color);
-    margin-bottom: -0.7rem;
+    margin-bottom: -1rem;
   }
 `;
 

@@ -8,8 +8,9 @@ import ClassThumbnail from "../../img/class/class_thumbnail.svg";
 import Assignment from "../../img/docs.svg";
 import Material from "../../img/pdf.svg";
 import PlayIcon from "../../img/class/play_icon.svg";
-import EditingSection from "../../img/class/edit_sec.svg";
 import EditContainer from "../../ui/class/EditContainer";
+import EditButton from "../../ui/class/EditButton";
+
 
 const Section = styled.div`
   display: flex;
@@ -52,6 +53,7 @@ const Icon = styled.img`
   width: 1.4rem;
   height: 1.4rem;
 `;
+
 
 const Curriculum = () => {
   const curriculumData = [
@@ -335,6 +337,7 @@ const Curriculum = () => {
           </main>
         </div>
       </PageLayout>
+      <EditButton to="/curriculum" edit={false} />
     </div>
   );
 };

@@ -6,12 +6,13 @@ import MainPage from "./component/page/MainPage.jsx";
 import Class from "./component/page/Class.jsx";
 import Participate from "./component/page/Participate.jsx";
 
-import ClassCurriculum from "./component/page/class/ClassCurriculum.jsx";
-import ClassOverview from "./component/page/class/ClassOverview.jsx";
-import ClassNotice from "./component/page/class/ClassNotice.jsx";
+import ClassCurriculum from "./component/page/class/Curriculum.jsx";
+import ClassOverview from "./component/page/class/Overview.jsx";
+import ClassNotice from "./component/page/class/Notice.jsx";
 import Dashboard from "./component/page/Dashboard.jsx";
-import ClassStatistics from "./component/page/class/ClassStatistics.jsx";
-import ClassCurriculumEdit from "./component/page/class/ClassCurriculumEdit.jsx";
+import ClassStatistics from "./component/page/class/Statistics.jsx";
+import ClassCurriculumEdit from "./component/page/class/CurriculumEdit.jsx";
+import NoticeCreate from "./component/page/class/NoticeCreate.jsx";
 
 function App() {
 
@@ -22,6 +23,7 @@ function App() {
           <Route path="/" element={<MainPage />} />
           <Route path="/overview/info" element={<ClassOverview />} />
           <Route path="/overview/notice" element={<ClassNotice />} />
+          <Route path="/overview/notice/create" element={<NoticeCreate />} />
           <Route path="/curriculum" element={<ClassCurriculum />} />
           <Route path="/curriculum/edit" element={<ClassCurriculumEdit />} />
           <Route path="/dashboard" element={<Dashboard/>} />

@@ -5,25 +5,26 @@ import CurriculumSidebar from "../../ui/class/CurriculumSidebar";
 import ClassTopbar from "../../ui/class/ClassTopbar";
 import { PageLayout } from "../../ui/class/ClassLayout";
 import ClassThumbnail from "../../img/class/class_thumbnail.svg";
-import DoneIcon from "../../img/class/check/done_icon.svg"; // 완료 아이콘
-import UndoneIcon from "../../img/class/check/undone_icon.svg"; // 미완료 아이콘
+import DoneIcon from "../../img/class/check/done_icon.svg";
+import UndoneIcon from "../../img/class/check/undone_icon.svg";
 import Assignment from "../../img/docs.svg";
 import Material from "../../img/pdf.svg";
 import PlayIcon from "../../img/class/play_icon.svg";
 import SelectedSection from "../../img/class/check/sel_sec.svg";
 import UnselectedSection from "../../img/class/check/sel_sec.svg";
 import DoneSection from "../../img/class/check/done_sec.svg";
+import EditButton from "../../ui/class/EditButton";
 
 const Section = styled.div`
   display: flex;
   padding: 1.3rem 1.5rem;
-  border-radius: 12px;
-  margin: 1rem 0rem;
+  border-radius: 14px;
+  margin: 1.15rem 0rem;
   background-color: #ffffff;
 `;
 
 const CurriculumTitle = styled.h3`
-  font-size: 1.63rem;
+  font-size: 1.65rem;
   font-weight: 900;
   margin-bottom: -0.3rem;
   margin-top: 0.5rem;
@@ -147,10 +148,11 @@ const Curriculum = () => {
             <div style={{ display: "flex", alignItems: "flex-end" }}>
               <h1
                 style={{
-                  fontSize: "2.1rem",
-                  fontWeight: "900",
+                  fontSize: "2.3rem",
+                  fontWeight: "bold",
                   color: "var(--main-color)",
                   margin: "0",
+                  marginBottom: "-0.2rem",
                 }}
               >
                 1주차 학습
@@ -188,7 +190,7 @@ const Curriculum = () => {
                 }
                 style={{
                   marginLeft: "auto",
-                  marginRight: "1.8rem",
+                  marginRight: "1.35rem",
                   width: "1.8rem",
                 }}
               />
@@ -227,6 +229,7 @@ const Curriculum = () => {
                       <CurriculumTitle>{subSection.title}</CurriculumTitle>
                       <p
                         style={{
+                          fontSize: "1.08rem",
                           color: "#909090",
                           display: "flex",
                           alignItems: "center",
@@ -247,7 +250,7 @@ const Curriculum = () => {
                       src={subSection.done ? DoneIcon : UndoneIcon}
                       style={{
                         marginLeft: "auto",
-                        marginRight: "1.8rem",
+                        marginRight: "1.6rem",
                         width: "1.2rem",
                       }}
                     />
@@ -266,6 +269,7 @@ const Curriculum = () => {
                         width: "2.4rem",
                         height: "50%",
                         marginLeft: "1rem",
+                        marginRight: "1rem",
                       }}
                     />
                     <MaterialSection>
@@ -305,6 +309,7 @@ const Curriculum = () => {
                         width: "2.4rem",
                         height: "50%",
                         marginLeft: "1rem",
+                        marginRight: "1rem",
                       }}
                     />
                     <MaterialSection>
@@ -335,6 +340,7 @@ const Curriculum = () => {
           </main>
         </div>
       </PageLayout>
+      <EditButton to="/curriculum/edit" edit={true} />
     </div>
   );
 };
