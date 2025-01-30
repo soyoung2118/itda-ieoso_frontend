@@ -65,8 +65,8 @@ export default function Class() {
                 </AddButton>
                 {showPopup && (
                     <PopupMenu>
-                        <PopupItem>
-                            <OpenInNewIcon style={{ marginRight: '15px' }} />
+                        <PopupItem onClick={() => navigate('/class/create')}>
+                            <OpenInNewIcon style={{ marginRight: '15px' }}/>
                             강의실 만들기
                         </PopupItem>
                         <PopupItem onClick={() => navigate('/participate')}>

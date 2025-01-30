@@ -14,6 +14,8 @@ import EditClass from "./component/ui/class/EditClass.jsx";
 import ClassStatistics from "./component/page/class/ClassStatistics.jsx";
 import ClassCurriculumEdit from "./component/page/class/ClassCurriculumEdit.jsx";
 
+import ClassRoomCreate from "./component/page/class/ClassRoomCreate.jsx";
+
 function App() {
 
   return (
@@ -32,6 +34,7 @@ function App() {
           <Route path="/participate" element={<Participate />} />
           <Route path="/class" element={<Class />} />
           <Route path="/classroom" element={<ClassRoom />} />
+          <Route path="/class/create" element={<ClassRoomCreate />} />
           <Route path="/statistics" element={<ClassStatistics/>} />
         </Routes>
       </BrowserRouter>
