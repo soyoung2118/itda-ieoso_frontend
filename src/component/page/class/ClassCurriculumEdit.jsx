@@ -5,14 +5,11 @@ import CurriculumSidebar from "../../ui/class/CurriculumSidebar";
 import ClassTopbar from "../../ui/class/ClassTopbar";
 import { PageLayout } from "../../ui/class/ClassLayout";
 import ClassThumbnail from "../../img/class/class_thumbnail.svg";
-import DoneIcon from "../../img/class/check/done_icon.svg"; // 완료 아이콘
-import UndoneIcon from "../../img/class/check/undone_icon.svg"; // 미완료 아이콘
 import Assignment from "../../img/docs.svg";
 import Material from "../../img/pdf.svg";
 import PlayIcon from "../../img/class/play_icon.svg";
-import SelectedSection from "../../img/class/check/sel_sec.svg";
-import UnselectedSection from "../../img/class/check/sel_sec.svg";
-import DoneSection from "../../img/class/check/done_sec.svg";
+import EditingSection from "../../img/class/edit_sec.svg";
+import EditContainer from "../../ui/class/EditContainer";
 
 const Section = styled.div`
   display: flex;
@@ -20,6 +17,8 @@ const Section = styled.div`
   border-radius: 12px;
   margin: 1rem 0rem;
   background-color: #ffffff;
+  cursor: pointer;
+  position: relative;
 `;
 
 const CurriculumTitle = styled.h3`
@@ -27,7 +26,6 @@ const CurriculumTitle = styled.h3`
   font-weight: 900;
   margin-bottom: -0.3rem;
   margin-top: 0.5rem;
-  letter-spacing: -1px;
 `;
 
 const VideoContainer = styled.div`
@@ -55,22 +53,17 @@ const Icon = styled.img`
   height: 1.4rem;
 `;
 
-const SectionIcon = styled.img`
-  margin-left: auto;
-`;
-
 const Curriculum = () => {
   const curriculumData = [
     {
       title: "1. 기초를 준비해요",
-      selected: true, // 선택 여부
-      done: true, // 완료 여부
-
+      selected: true,
+      done: false,
       subSections: [
         {
           title: "1. 꾸미고 싶은 타입을 정해서 다이어리를 골라봅시다",
           done: true,
-          thumbnail: null, // 썸네일 기본값
+          thumbnail: null,
           author: "김잇다",
           period: "2025-01-06 10:00 ~ 2025-01-12 23:59",
           material: {
@@ -121,9 +114,23 @@ const Curriculum = () => {
   ];
 
   const [activeItem, setActiveItem] = useState(curriculumData[0]?.title);
+  const [editTarget, setEditTarget] = useState(null);
+
   const activeSection = curriculumData.find(
     (section) => section.title === activeItem
   );
+
+  const handleSectionClick = (index, type) => {
+    setEditTarget((prev) =>
+      prev && prev.index === index && prev.type === type
+        ? null
+        : { index, type }
+    );
+  };
+
+  const handleIconClick = (action) => {
+    console.log(`Icon clicked: ${action}`);
+  };
 
   return (
     <div>
@@ -135,7 +142,7 @@ const Curriculum = () => {
             sections={curriculumData}
             activeItem={activeItem}
             setActiveItem={setActiveItem}
-            routes={{}}
+            edit={true}
           />
           <main
             style={{
@@ -144,12 +151,19 @@ const Curriculum = () => {
               borderRadius: "8px",
             }}
           >
-            <div style={{ display: "flex", alignItems: "flex-end" }}>
+            <Section
+              style={{
+                display: "flex",
+                alignItems: "flex-end",
+                backgroundColor: "var(--main-color)",
+                padding: "1rem 1.5rem",
+              }}
+            >
               <h1
                 style={{
-                  fontSize: "2.1rem",
+                  fontSize: "2rem",
                   fontWeight: "900",
-                  color: "var(--main-color)",
+                  color: "var(--white-color)",
                   margin: "0",
                 }}
               >
@@ -158,46 +172,42 @@ const Curriculum = () => {
 
               <p
                 style={{
-                  color: "#969696",
+                  color: "var(--white-color)",
                   fontSize: "1.2rem",
                   marginLeft: "1rem",
                   fontWeight: "540",
-                  margin: "0 1rem",
+                  margin: "0.2rem 1rem",
                 }}
               >
-                [1월 6일 ~ 1월 12일]
+                [학습기간 설정하기]
               </p>
-            </div>
+            </Section>
 
             <Section
               style={{
-                backgroundColor: "var(--pink-color)",
+                backgroundColor: "var(--grey-color)",
                 padding: "0.15rem 1.5rem",
               }}
             >
-              <h1 style={{ fontSize: "1.6rem", fontWeight: "bolder" }}>
+              <h1
+                style={{
+                  fontSize: "1.555rem",
+                  fontWeight: "bolder",
+                  letterSpacing: "-1px",
+                }}
+              >
                 {activeSection.title}
               </h1>
-              <SectionIcon
-                src={
-                  !activeSection.selected
-                    ? UnselectedSection
-                    : activeSection.done
-                    ? DoneSection
-                    : SelectedSection
-                }
-                style={{
-                  marginLeft: "auto",
-                  marginRight: "1.8rem",
-                  width: "1.8rem",
-                }}
-              />
             </Section>
 
-            {activeSection.subSections.map((subSection, subIndex) => (
-              <div key={subIndex}>
+            {activeSection.subSections.map((subSection, index) => (
+              <div key={index}>
                 <div>
-                  <Section style={{ display: "flex" }}>
+                  <Section onClick={() => handleSectionClick(index, "title")}>
+                    {editTarget?.index === index &&
+                      editTarget?.type === "title" && (
+                        <EditContainer onIconClick={handleIconClick} />
+                      )}
                     <VideoContainer>
                       <VideoThumbnail
                         src={subSection.thumbnail || ClassThumbnail}
@@ -224,7 +234,9 @@ const Curriculum = () => {
                         justifyContent: "flex-start",
                       }}
                     >
-                      <CurriculumTitle>{subSection.title}</CurriculumTitle>
+                      <CurriculumTitle style={{ letterSpacing: "-1px" }}>
+                        {subSection.title}
+                      </CurriculumTitle>
                       <p
                         style={{
                           color: "#909090",
@@ -243,23 +255,21 @@ const Curriculum = () => {
                         <span>{subSection.period}</span>
                       </p>
                     </div>
-                    <img
-                      src={subSection.done ? DoneIcon : UndoneIcon}
-                      style={{
-                        marginLeft: "auto",
-                        marginRight: "1.8rem",
-                        width: "1.2rem",
-                      }}
-                    />
                   </Section>
 
+                  {/* 자료 */}
                   <Section
+                    onClick={() => handleSectionClick(index, "material")}
                     style={{
                       display: "flex",
                       alignItems: "center",
                       gap: "1rem",
                     }}
                   >
+                    {editTarget?.index === index &&
+                      editTarget?.type === "material" && (
+                        <EditContainer onIconClick={handleIconClick} />
+                      )}
                     <img
                       src={Material}
                       style={{
@@ -280,17 +290,12 @@ const Curriculum = () => {
                       >
                         {subSection.material.size}
                       </span>
-                      <img
-                        src={
-                          subSection.material.downloaded ? DoneIcon : UndoneIcon
-                        }
-                        alt="download status"
-                        style={{ marginLeft: "auto", width: "1.2rem" }}
-                      />
                     </MaterialSection>
                   </Section>
 
+                  {/* 과제 */}
                   <Section
+                    onClick={() => handleSectionClick(index, "assignment")}
                     style={{
                       display: "flex",
                       alignItems: "center",
@@ -298,6 +303,10 @@ const Curriculum = () => {
                       marginBottom: "2rem",
                     }}
                   >
+                    {editTarget?.index === index &&
+                      editTarget?.type === "assignment" && (
+                        <EditContainer onIconClick={handleIconClick} />
+                      )}
                     <img
                       src={Assignment}
                       alt="assignment icon"
@@ -318,15 +327,6 @@ const Curriculum = () => {
                       >
                         {subSection.assignment.deadline}
                       </span>
-                      <img
-                        src={
-                          subSection.assignment.submitted
-                            ? DoneIcon
-                            : UndoneIcon
-                        }
-                        alt="submission status"
-                        style={{ marginLeft: "auto", width: "1.2rem" }}
-                      />
                     </MaterialSection>
                   </Section>
                 </div>
