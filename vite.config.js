@@ -15,4 +15,7 @@ export default defineConfig({
       },
     }),
   ],
+  optimizeDeps: {
+    include: ['react-icons'], // react-icons를 최적화 대상에 추가
+  },
 })

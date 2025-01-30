@@ -9,8 +9,10 @@ import Participate from "./component/page/Participate.jsx";
 import ClassCurriculum from "./component/page/class/ClassCurriculum.jsx";
 import ClassOverview from "./component/page/class/ClassOverview.jsx";
 import ClassNotice from "./component/page/class/ClassNotice.jsx";
-import ClassStat from "./component/page/class/ClassStat.jsx";
 import Dashboard from "./component/page/Dashboard.jsx";
+import EditClass from "./component/ui/class/EditClass.jsx";
+import ClassStatistics from "./component/page/class/ClassStatistics.jsx";
+import ClassCurriculumEdit from "./component/page/class/ClassCurriculumEdit.jsx";
 
 import ClassRoomCreate from "./component/page/class/ClassRoomCreate.jsx";
 
@@ -22,9 +24,10 @@ function App() {
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/overview/info" element={<ClassOverview />} />
+          <Route path="/overview/info/edit" element={<EditClass />} />
           <Route path="/overview/notice" element={<ClassNotice />} />
           <Route path="/curriculum" element={<ClassCurriculum />} />
-          <Route path="/stat" element={<ClassStat/>} />
+          <Route path="/curriculum/edit" element={<ClassCurriculumEdit />} />
           <Route path="/dashboard" element={<Dashboard/>} />
           <Route path="/login" element={<LogIn />} />
           <Route path="/signup" element={<SignUp />} />
@@ -32,6 +35,7 @@ function App() {
           <Route path="/class" element={<Class />} />
           <Route path="/classroom" element={<ClassRoom />} />
           <Route path="/class/create" element={<ClassRoomCreate />} />
+          <Route path="/statistics" element={<ClassStatistics/>} />
         </Routes>
       </BrowserRouter>
     </>
