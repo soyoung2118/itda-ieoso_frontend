@@ -13,6 +13,9 @@ import Dashboard from "./component/page/Dashboard.jsx";
 import ClassStatistics from "./component/page/class/Statistics.jsx";
 import ClassCurriculumEdit from "./component/page/class/CurriculumEdit.jsx";
 import NoticeCreate from "./component/page/class/NoticeCreate.jsx";
+import EditClass from "./component/ui/class/EditClass.jsx";
+
+import ClassRoomCreate from "./component/page/class/ClassRoomCreate.jsx";
 
 function App() {
 
@@ -22,6 +25,7 @@ function App() {
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/overview/info" element={<ClassOverview />} />
+          <Route path="/overview/info/edit" element={<EditClass />} />
           <Route path="/overview/notice" element={<ClassNotice />} />
           <Route path="/overview/notice/create" element={<NoticeCreate />} />
           <Route path="/curriculum" element={<ClassCurriculum />} />
@@ -32,6 +36,7 @@ function App() {
           <Route path="/participate" element={<Participate />} />
           <Route path="/class" element={<Class />} />
           <Route path="/classroom" element={<ClassRoom />} />
+          <Route path="/class/create" element={<ClassRoomCreate />} />
           <Route path="/statistics" element={<ClassStatistics/>} />
         </Routes>
       </BrowserRouter>
