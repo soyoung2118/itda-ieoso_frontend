@@ -10,35 +10,18 @@ export default function ClassRoomCreate() {
   const timeSlots = ['월', '화', '수', '목', '금', '토', '일'];
 
   const [form, setForm] = useState({
-    name: '',
+    coursename: '',
     instructor: '',
-    couponCode: '',
     startDate: null,
-    endDate: null,
-    startTime: '',
-    endTime: '',
-    isPublic: true,
+    culiculumWeek: '',
+    lectureDays: [],
+    lectureTime: '',
+    assignmentDays: [],
+    assignmentTime: '',
     difficulty: 'easy',
-    selectedDays: {
-      lecture: [],
-      assignment: []
-    }
   });
 
-  const [dateRange, setDateRange] = useState([null, null]);
-  const [startDate, endDate] = dateRange;
-   
-  const handleDateChange = (update) => {
-    setDateRange(update);
-    const [start, end] = update;
-    setForm(prev => ({
-      ...prev,
-      startDate: start,
-      endDate: end
-    }));
-  };
-
-  const handleInputChange = (e) => {
+  const handleFormChange = (e) => {
     const { name, value } = e.target;
     setForm(prev => ({
       ...prev,
@@ -46,22 +29,27 @@ export default function ClassRoomCreate() {
     }));
   };
 
+  const [dateRange, setDateRange] = useState([null, null]);
+  const [startDate, endDate] = dateRange;
+   
+  const handleDateChange = (e) => {
+    setDateRange(update);
+    const [start] = e;
+    setForm(prev => ({
+      ...prev,
+      startDate: start,
+    }));
+  };
 
 const handleDaySelect = (type, day) => {
+  const key = type === 'lecture' ? 'lectureDays' : 'assignmentDays';
   setForm(prev => ({
     ...prev,
-    selectedDays: {
-      ...prev.selectedDays,
-      [type]: prev.selectedDays[type].includes(day)
-        ? prev.selectedDays[type].filter(d => d !== day)
-        : [...prev.selectedDays[type], day]
-    }
+    [key]: prev[key].includes(day)
+      ? prev[key].filter(d => d !== day)
+      : [...prev[key], day]
   }));
  };
-
-  const handlePublicToggle = (isPublic) => {
-    setForm(prev => ({ ...prev, isPublic }));
-  };
   
   const handleDifficultySelect = (difficulty) => {
     setForm(prev => ({ ...prev, difficulty }));
@@ -72,15 +60,16 @@ const handleDaySelect = (type, day) => {
    };
 
   const CustomInput = forwardRef(({ value, onClick }, ref) => (
-    <InputGroup onClick={onClick}>
-      <ShortInput
+    <InputGroup onClick={onClick}> 
+      <IconInput
         ref={ref}
         value={value}
-        placeholder="커리큘럼 기간을 설정해주세요."
+        placeholder="커리큘럼 시작을 설정해주세요."
         readOnly
+        style={{width: '539px'}}
       />
       <CalendarIcon>
-        <img src={Calendar} style={{width: 16}}alt="캘린더 아이콘" />
+        <img src={Calendar} style={{width: 16}} alt="캘린더" />
       </CalendarIcon>
     </InputGroup>
   ));
@@ -98,12 +87,13 @@ const handleDaySelect = (type, day) => {
                 강의명
                 <Required>*</Required>
               </Label>
-              <LongInput
+              <FormInput
                 type="text"
-                name="name"
+                name="coursename"
                 placeholder="30자 이내로 설정해주세요."
-                value={form.name}
-                onChange={handleInputChange}
+                value={form.coursename}
+                onChange={handleFormChange}
+                style={{width: '100%'}}
               />
             </FormItem>
 
@@ -112,31 +102,14 @@ const handleDaySelect = (type, day) => {
                 강의자명
                 <Required>*</Required>
               </Label>
-              <LongInput
+              <FormInput
                 type="text"
                 name="instructor"
-                placeholder="ex. 김원디"
+                placeholder="ex. 김잇다"
                 value={form.instructor}
-                onChange={handleInputChange}
+                onChange={handleFormChange}
+                style={{width: '265px'}}
               />
-            </FormItem>
-
-            <FormItem>
-              <Label>
-                수강코드 설정
-                <Required>*</Required>
-              </Label>
-              <InputGroup>
-                <ShortInput
-                  type="text"
-                  name="couponCode"
-                  placeholder="ex. 1TDAG"
-                  value={form.couponCode}
-                  onChange={handleInputChange}
-                />
-                <CheckButton>중복 확인</CheckButton>
-              </InputGroup>
-              <HelpText>대문자 영문 + 숫자 5자리로 설정해주세요.</HelpText>
             </FormItem>
           </FormGroup>
         </Section>
@@ -146,16 +119,46 @@ const handleDaySelect = (type, day) => {
           
           <FormGroup>
             <FormItem>
-              <Label>커리큘럼 기간</Label>
+              <Label>
+                커리큘럼 시작
+                <Required>*</Required>
+              </Label>
               <DatePicker
-                selectsRange={true}
-                startDate={form.startDate}
-                endDate={form.endDate}
-                onChange={handleDateChange}
+                selected={form.startDate}
+                onChange={(date) => {
+                  setForm(prev => ({
+                    ...prev,
+                    startDate: date
+                  }));
+                }}
                 customInput={<CustomInput />}
-                dateFormat="yyyy.MM.dd"
+                dateFormat="yyyy-MM-dd"
               />
-              <HelpText>6주 커리큘럼으로 설정되었어요!</HelpText>
+              {/* <ShortInput
+                type="date"
+                name="startDate"
+                placeholder="ex. 김잇다"
+                value={form.startDate}
+                onChange={handleDateChange}
+              /> */}
+            </FormItem>
+
+            <FormItem>
+              <Label>
+                커리큘럼 주차
+                <Required>*</Required>
+              </Label>
+              <CuliculumGroup>
+                <IconInput
+                  type="number"
+                  name="culiculumWeek"
+                  placeholder="숫자를 입력해주세요"
+                  value={form.culiculumWeek}
+                  onChange={handleFormChange}
+                  style={{width: '249px'}}
+                />
+                <Label>주</Label>
+              </CuliculumGroup>
             </FormItem>
 
             <FormItem>
@@ -166,7 +169,7 @@ const handleDaySelect = (type, day) => {
                   {timeSlots.map((day) => (
                     <DayButton 
                       key={day}
-                      active={form.selectedDays.lecture.includes(day)}
+                      active={form.lectureDays.includes(day)}
                       onClick={() => handleDaySelect('lecture', day)}
                     >
                       {day}
@@ -178,16 +181,18 @@ const handleDaySelect = (type, day) => {
 
                 <TimeGroup>
                   <InputGroup>
-                    <ShortInput
+                    <IconInput
                       type="time"
+                      name='lectureTime'
                       placeholder="강의 시간을 설정해주세요."
-                      style={{width: '65%'}}
+                      style={{width: '30vw'}}
+                      onChange={handleFormChange}
                     />
                     <CalendarIcon>
                       <img src={Clock} alt="시계 아이콘" style={{ width: '13px', height: '13px' }} />
                     </CalendarIcon>
                   </InputGroup>
-                  <HelpText>강의 시간이 설정되었어요!</HelpText>
+                  { form.lectureTime && <HelpText>강의 시간이 설정되었어요!</HelpText> }
                 </TimeGroup>
               </HalfGroup>
             </FormItem>
@@ -200,7 +205,7 @@ const handleDaySelect = (type, day) => {
                   {timeSlots.map((day) => (
                     <DayButton 
                       key={day}
-                      active={form.selectedDays.assignment.includes(day)}
+                      active={form.assignmentDays.includes(day)}
                       onClick={() => handleDaySelect('assignment', day)}
                     >
                       {day}
@@ -211,23 +216,26 @@ const handleDaySelect = (type, day) => {
                 </TimeGroup>
                 <TimeGroup>
                   <InputGroup>
-                    <ShortInput
+                    <IconInput
                       type="time"
+                      name='assignmentTime'
                       placeholder="과제 시간을 설정해주세요."
-                      style={{width: '65%'}}
+                      style={{width: '30vw'}}
+                      onChange={handleFormChange}
                     />
                     <CalendarIcon>
-                      <img src={Clock} alt="시계 아이콘" style={{ width: '13px', height: '13px' }} />
+                      <img src={Clock} alt="시계" style={{ width: '13px', height: '13px' }} />
                     </CalendarIcon>
                   </InputGroup>
-                  <HelpText>강의 시간이 설정되었어요!</HelpText>
+                  
+                  { form.assignmentTime && <HelpText> 과제 시간이 설정되었어요!</HelpText> }
                 </TimeGroup>
               </HalfGroup>
             </FormItem>
           </FormGroup>
         </Section>
 
-        <Section>
+        <Section style={{borderBottom: 'none'}}>
           <Title>STEP 3. 수강생에게 강좌를 어떻게 공개하실 건가요?</Title>
           <FormGroup>
             {/* <FormItem>
@@ -345,20 +353,19 @@ const Required = styled.span`
   font-weight: 800;
 `;
 
-const LongInput = styled.input`
+const FormInput = styled.input`
   width: 100%;
   box-sizing: border-box;
   font-size: 13px;
-  padding: 0.5rem;
+  padding: 8px 12px;
   border: 2px solid #C3C3C3;
   border-radius: 10px;
 `;
 
-const ShortInput = styled.input`
-  width: 40%;
+const IconInput = styled.input`
   box-sizing: border-box;
   font-size: 13px;
-  padding: 8px 35px 8px 12px;
+  padding: 8px 32px 8px 12px;
   border: 2px solid #C3C3C3;
   border-radius: 10px;
 `;
@@ -381,6 +388,7 @@ const CheckButton = styled.button`
 `;
 
 const HelpText = styled.p`
+  height: 13px;
   color: #FF4747;
   font-size: 12px;
   font-weight: 400;
@@ -395,7 +403,7 @@ const DayButtonGroup = styled.div`
 
 const DayButton = styled.button`
   width: 2rem;
-  height: 2rem;
+  height: 2rem; 
   border-radius: 9999px;
   display: flex;
   align-items: center;
@@ -419,6 +427,13 @@ const TimeGroup = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+`;
+
+const CuliculumGroup = styled.div`
+  width: 100%;
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
 `;
 
 const HalfGroup = styled.div`
