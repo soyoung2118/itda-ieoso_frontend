@@ -4,7 +4,7 @@ import styled from "styled-components";
 import TopBar from "../ui/TopBar";
 import userIcon from "../img/mainpage/usericon.png";
 import ClassData from "../img/class/ClassData.png";
-import LogoGray from "../img/itda_logo_gray.svg";
+import LogoGray from "../img/logo/itda_logo_gray.svg";
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 

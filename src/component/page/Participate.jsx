@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import TopBar from "../ui/TopBar";
-import logoImage from "../img/itda_logo_symbol.svg";
+import logoImage from "../img/logo/itda_logo_symbol.svg";
 import userIcon from "../img/mainpage/usericon.png";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
