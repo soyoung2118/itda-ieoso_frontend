@@ -79,7 +79,7 @@ const handleDaySelect = (type, day) => {
       <TopBar />
       <Container>
         <Section>
-          <Title>STEP 1. 강의실을 만들어볼까요?</Title>
+          <Title style={{marginTop: '6px'}}>STEP 1. 강의실을 만들어볼까요?</Title>
           
           <FormGroup>
             <FormItem>
@@ -149,7 +149,7 @@ const handleDaySelect = (type, day) => {
                 <Required>*</Required>
               </Label>
               <CuliculumGroup>
-                <IconInput
+                <FormInput
                   type="number"
                   name="culiculumWeek"
                   placeholder="숫자를 입력해주세요"
@@ -157,7 +157,7 @@ const handleDaySelect = (type, day) => {
                   onChange={handleFormChange}
                   style={{width: '249px'}}
                 />
-                <Label>주</Label>
+                <Label style={{marginTop: '0px', marginLeft: '5px'}}>주</Label>
               </CuliculumGroup>
             </FormItem>
 
@@ -185,7 +185,7 @@ const handleDaySelect = (type, day) => {
                       type="time"
                       name='lectureTime'
                       placeholder="강의 시간을 설정해주세요."
-                      style={{width: '30vw'}}
+                      style={{width: '239px'}}
                       onChange={handleFormChange}
                     />
                     <CalendarIcon>
@@ -194,6 +194,14 @@ const handleDaySelect = (type, day) => {
                   </InputGroup>
                   { form.lectureTime && <HelpText>강의 시간이 설정되었어요!</HelpText> }
                 </TimeGroup>
+
+                <TimeGroup>
+                  <RadioButton 
+                    //active={form.is} 
+                  >
+                    정해지지 않았어요
+                  </RadioButton>
+                </TimeGroup>
               </HalfGroup>
             </FormItem>
 
@@ -201,7 +209,7 @@ const handleDaySelect = (type, day) => {
               <Label>과제 시간</Label>
               <HalfGroup>
                 <TimeGroup>
-                <DayButtonGroup>
+                  <DayButtonGroup>
                   {timeSlots.map((day) => (
                     <DayButton 
                       key={day}
@@ -214,13 +222,14 @@ const handleDaySelect = (type, day) => {
                   </DayButtonGroup>
                   <HelpText>복수 선택이 가능해요!</HelpText>
                 </TimeGroup>
+
                 <TimeGroup>
                   <InputGroup>
                     <IconInput
                       type="time"
                       name='assignmentTime'
                       placeholder="과제 시간을 설정해주세요."
-                      style={{width: '30vw'}}
+                      style={{width: '239px'}}
                       onChange={handleFormChange}
                     />
                     <CalendarIcon>
@@ -229,6 +238,14 @@ const handleDaySelect = (type, day) => {
                   </InputGroup>
                   
                   { form.assignmentTime && <HelpText> 과제 시간이 설정되었어요!</HelpText> }
+                </TimeGroup> 
+
+                <TimeGroup>
+                  <RadioButton 
+                    active={true} 
+                  >
+                    정해지지 않았어요
+                  </RadioButton>
                 </TimeGroup>
               </HalfGroup>
             </FormItem>
@@ -285,9 +302,9 @@ const ButtonGroup = styled.div`
 `;
 
 const RadioButton = styled.button`
-  padding: 6px 32px;
+  padding: 8px 20px;
   border: none;
-  border-radius: 20px;
+  border-radius: 10px;
   font-size: 15px;
   background-color: ${props => props.active ? '#FF4747' : '#F6F6F6'};
   color: ${props => props.active ? '#FFFFFF' : '#909090'};
@@ -307,7 +324,6 @@ const CreateButton = styled.button`
   font-size: 17px;
   font-weight: 500;
   border-radius: 10px;
-  margin-top: 20px;
 `;
 
 const Container = styled.div`
@@ -319,14 +335,14 @@ const Container = styled.div`
 
 const Section = styled.div`
   width: 100%;
-  margin-bottom: 44px;
+  padding-bottom: 30px;
   border-bottom: 2px solid #C3C3C3;
 `;
 
 const Title = styled.div`
   font-size: 21px;
   font-weight: 700;
-  margin-bottom: 30px;
+  margin-top: 30px;
 `;
 
 const FormGroup = styled.div`
@@ -335,7 +351,7 @@ const FormGroup = styled.div`
 `;
 
 const FormItem = styled.div`
-  margin-bottom: 30px;
+  margin-bottom: 15px;
   width: 100%;
 `;
 
@@ -346,6 +362,7 @@ const Label = styled.div`
   color: #000000;
   font-size: 17px;
   font-weight: 500;
+  margin-top: 20px;
 `;
 
 const Required = styled.span`
@@ -372,22 +389,11 @@ const IconInput = styled.input`
 
 const InputGroup = styled.div`
   display: flex;
-  gap: 0.5rem;
   align-items: center;
   position: relative;
 `;
 
-const CheckButton = styled.button`
-  padding: 5px 21px;
-  background-color: #FF4747;
-  color: white;
-  font-size: 17px;
-  font-weight: 500;
-  border-radius: 10px;
-  white-space: nowrap;
-`;
-
-const HelpText = styled.p`
+const HelpText = styled.div`
   height: 13px;
   color: #FF4747;
   font-size: 12px;
@@ -399,6 +405,7 @@ const HelpText = styled.p`
 const DayButtonGroup = styled.div`
   display: flex;
   gap: 5px;
+  margin-right: 10px;
 `;
 
 const DayButton = styled.button`
@@ -423,16 +430,13 @@ const CalendarIcon = styled.span`
 `;
 
 const TimeGroup = styled.div`
-  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
 `;
 
 const CuliculumGroup = styled.div`
   width: 100%;
   display: flex;
-  gap: 0.5rem;
   align-items: flex-end;
 `;
 
