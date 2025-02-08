@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TopBar from "../ui/TopBar";
-import logoImage from "../img/itda_logo_symbol.svg";
+import logoImage from "../img/logo/itda_logo_symbol.svg";
 import { Checkbox, FormControlLabel, IconButton } from '@mui/material';
 import {
     Container,

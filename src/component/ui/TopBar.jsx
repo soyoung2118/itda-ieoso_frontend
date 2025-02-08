@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import Logo from '../img/itda_logo.svg';
+import Logo from '../img/logo/itda_logo.svg';
 
 // 배경 색상 변경 로직 
 // eslint-disable-next-line react/prop-types

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import TopBar from "../ui/TopBar";
-import logoImage from "../img/itda_logo_symbol.svg";
+import logoImage from "../img/logo/itda_logo_symbol.svg";
 import { Checkbox, FormControlLabel } from '@mui/material';
 import {
     Container,
