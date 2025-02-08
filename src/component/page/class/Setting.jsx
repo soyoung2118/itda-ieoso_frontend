@@ -1,4 +1,5 @@
 import { useState, forwardRef } from 'react';
+import { useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import TopBar from '../../ui/TopBar';
 import Calendar from "../../img/classroom/calendar.png";
@@ -6,7 +7,8 @@ import Clock from "../../img/classroom/clock.png";
 import DatePicker from "react-datepicker";
 import "../../../style/react-datepicker.css";
 
-export default function ClassRoomCreate() {
+export default function Setting() {
+  const navigate = useNavigate();
   const timeSlots = ['월', '화', '수', '목', '금', '토', '일'];
   const [isAssignmentPending, setIsAssignmentPending] = useState(false);
   const [isLecturePending, setIsLecturePending] = useState(false);
@@ -58,6 +60,8 @@ const handleDaySelect = (type, day) => {
       assignmentDueTime: form.assignmentTime,
       difficultyLevel: form.difficulty
     });
+
+    navigate('/curriculum', { state: { entrycode: 'ABC123' } });
   };
 
   const CustomInput = forwardRef(({ value, onClick }, ref) => (
