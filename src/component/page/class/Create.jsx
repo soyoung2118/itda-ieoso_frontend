@@ -113,7 +113,7 @@ const handleDaySelect = (type, day) => {
                 placeholder="ex. 김잇다"
                 value={form.instructor}
                 onChange={handleFormChange}
-                style={{width: '265px'}}
+                style={{width: '165px '}}
               />
             </FormItem>
           </FormGroup>
@@ -156,7 +156,7 @@ const handleDaySelect = (type, day) => {
                   placeholder="숫자를 입력해주세요"
                   value={form.durationWeeks}
                   onChange={handleFormChange}
-                  style={{width: '249px'}}
+                  style={{width: '165px'}}
                 />
                 <Label style={{marginTop: '0px', marginLeft: '5px'}}>주</Label>
               </CuliculumGroup>
@@ -292,7 +292,7 @@ const handleDaySelect = (type, day) => {
             </FormItem> */}
 
             <FormItem>
-              <Label>수업 난이도</Label>
+              <Label>수업 난이도<Required>*</Required></Label>
               <ButtonGroup>
                 {['easy', 'medium', 'hard'].map((level) => (
                   <LevelButton

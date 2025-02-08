@@ -1,4 +1,4 @@
-import { useState, forwardRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import TopBar from '../../ui/TopBar';
@@ -13,17 +13,64 @@ export default function Setting() {
   const [isAssignmentPending, setIsAssignmentPending] = useState(false);
   const [isLecturePending, setIsLecturePending] = useState(false);
 
+  const [showDifficultyChange, setShowDifficultyChange] = useState('');
+
+  const [editableFields, setEditableFields] = useState({
+    coursename: true,
+    instructor: true,
+    lectureTime: true,
+    assignmentTime: true,
+    difficulty: true
+  });
+
   const [form, setForm] = useState({
     coursename: '',
     instructor: '',
+    entrycode: '',
     startDate: null,
-    durationWeeks: 1,
+    durationWeeks: 6,
     lectureDays: [],
     lectureTime: '',
     assignmentDays: [],
     assignmentTime: '',
     difficulty: 'easy',
   });
+
+  useEffect(() => {
+    const fetchCourseData = async () => {
+      try {
+        // Simulated API call - replace with actual endpoint
+        // const response = await fetch('/api/course-details');
+        // const data = await response.json();
+        
+        // Temporary mock data
+        const mockData = {
+          coursename: '프로그래밍 기초',
+          instructor: '김강사',
+          entrycode: 'ABC123',
+          startDate: '2025-03-01',
+          durationWeeks: 8,
+          lectureDays: [1, 3], // 월, 수
+          lectureTime: '14:00',
+          assignmentDays: [], // 금
+          assignmentTime: '',
+          difficulty: 'medium'
+        };
+        
+        setForm(mockData);
+        if(form.assignmentDays.length === 0 && form.assignmentTime === '') {
+          setIsAssignmentPending(true);
+        }
+        if(form.lectureDays.length === 0 && form.lectureTime === '') {
+            setIsLecturePending(true);
+          }
+      } catch (error) {
+        console.error('Failed to fetch course data:', error);
+      }
+    };
+
+    fetchCourseData();
+  }, []);
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
@@ -43,10 +90,28 @@ const handleDaySelect = (type, day) => {
       : [...prev[key], dayNumber]
   }));
  };
-  
-  const handleDifficultySelect = (difficulty) => {
-    setForm(prev => ({ ...prev, difficulty }));
+
+  const handleCopy = (text) => {
+    navigator.clipboard.writeText(text)
+    .then(() => {
+      console.log('텍스트가 복사되었습니다!');
+    })
+    .catch(err => {
+      console.error('복사 중 오류가 발생했습니다:', err);
+    });
   };
+
+  const handleDifficultySelect = (newLevel) => {
+    if (form.difficulty !== newLevel) {
+        const difficultyText = {
+            easy: '쉬움',
+            medium: '보통',
+            hard: '어려움'
+        };
+        setShowDifficultyChange(`난이도를 ${difficultyText[newLevel]}으로 변경했어요!`);
+    }
+    setForm(prev => ({ ...prev, difficulty: newLevel }));
+    };
 
   const handleSubmit = () => {
     console.log('Form Data:', {
@@ -61,23 +126,8 @@ const handleDaySelect = (type, day) => {
       difficultyLevel: form.difficulty
     });
 
-    navigate('/curriculum', { state: { entrycode: 'ABC123' } });
+    navigate('/curriculum');
   };
-
-  const CustomInput = forwardRef(({ value, onClick }, ref) => (
-    <InputGroup onClick={onClick}> 
-      <IconInput
-        ref={ref}
-        value={value}
-        placeholder="커리큘럼 시작을 설정해주세요."
-        readOnly
-        style={{width: '439px'}}
-      />
-      <CalendarIcon>
-        <img src={Calendar} style={{width: 16}} alt="캘린더" />
-      </CalendarIcon>
-    </InputGroup>
-  ));
 
   return (
     <>
@@ -95,9 +145,9 @@ const handleDaySelect = (type, day) => {
               <FormInput
                 type="text"
                 name="coursename"
-                placeholder="30자 이내로 설정해주세요."
                 value={form.coursename}
                 onChange={handleFormChange}
+                disabled={!editableFields.coursename}
                 style={{width: '100%'}}
               />
             </FormItem>
@@ -112,9 +162,28 @@ const handleDaySelect = (type, day) => {
                 name="instructor"
                 placeholder="ex. 김잇다"
                 value={form.instructor}
+                disabled={!editableFields.instructor}
                 onChange={handleFormChange}
-                style={{width: '265px'}}
+                style={{width: '165px'}}
               />
+            </FormItem>
+
+            <FormItem>
+              <Label>
+                강의코드
+              </Label>
+              <HalfGroup>
+                <DisableInput
+                    value={form.entrycode}
+                    disabled
+                    style={{width: '165px', marginRight: '10px', color: '#FF4747'}}
+                />
+                <RadioButton 
+                    active={true}
+                    onClick={() => handleCopy(form.entrycode)}>
+                    복사하기
+                </RadioButton>
+                </HalfGroup>
             </FormItem>
           </FormGroup>
         </Section>
@@ -123,94 +192,62 @@ const handleDaySelect = (type, day) => {
           <Title>STEP 2. 수강생이 얼마나 강의를 들어야 하나요?</Title>
           
           <FormGroup>
-            <FormItem>
+            <HalfGroup>
+            <FormHalfItem>
               <Label>
                 커리큘럼 시작
                 <Required>*</Required>
               </Label>
-              <DatePicker
-                selected={form.startDate}
-                onChange={(date) => {
-                  setForm(prev => ({
-                    ...prev,
-                    startDate: date
-                  }));
-                }}
-                customInput={<CustomInput />}
-                dateFormat="yyyy-MM-dd"
-                popperProps={{
-                  placement: 'bottom-start',
-                }}
-              />
-            </FormItem>
+              <DisableInput
+                value={form.startDate}
+                disabled
+                style={{width: '289px'}}
+                />
+            </FormHalfItem>
 
-            <FormItem>
+            <FormHalfItem>
               <Label>
                 커리큘럼 주차
                 <Required>*</Required>
               </Label>
               <CuliculumGroup>
-                <FormInput
-                  type="number"
-                  name="durationWeeks"
-                  placeholder="숫자를 입력해주세요"
-                  value={form.durationWeeks}
-                  onChange={handleFormChange}
-                  style={{width: '249px'}}
+              <DisableInput
+                value={form.durationWeeks}
+                disabled
+                style={{width: '165px'}}
                 />
                 <Label style={{marginTop: '0px', marginLeft: '5px'}}>주</Label>
               </CuliculumGroup>
-              <HelpText>1~12주차까지 입력가능해요.</HelpText>
-            </FormItem>
+            </FormHalfItem>
+            </HalfGroup>
 
             <FormItem>
               <Label>강의 시간</Label>
               <HalfGroup>
                 <TimeGroup>
-                <DayButtonGroup>
-                  {timeSlots.map((day) => (
-                    <DayButton 
-                      key={day}
-                      active={!isLecturePending && form.lectureDays.includes(timeSlots.indexOf(day) + 1)}
-                      onClick={() => !isLecturePending && handleDaySelect('lecture', day)}
-                    >
-                      {day}
-                    </DayButton>
-                  ))}
+                    <DayButtonGroup>
+                        {timeSlots.map((day) => (
+                            <DayButton 
+                            key={day}
+                            active={form.lectureDays.includes(timeSlots.indexOf(day) + 1)}
+                            >
+                            {day}
+                            </DayButton>
+                        ))}
                   </DayButtonGroup>
-                  { !isLecturePending && <HelpText>복수 선택이 가능해요!</HelpText>}
                 </TimeGroup>
 
                 <TimeGroup>
-                  <InputGroup>
-                    <IconInput
-                      type="time"
+                    <DisableInput
                       name='lectureTime'
-                      placeholder="강의 시간을 설정해주세요."
-                      style={{width: '239px'}}
+                      style={{width: '289px'}}
                       value={form.lectureTime}
-                      onChange={handleFormChange}
-                      disabled={isLecturePending}
+                      disabled
                     />
-                    <CalendarIcon>
-                      <img src={Clock} alt="시계 아이콘" style={{ width: '13px', height: '13px' }} />
-                    </CalendarIcon>
-                  </InputGroup>
-                  { form.lectureTime && <HelpText>강의 시간이 설정되었어요!</HelpText> }
                 </TimeGroup>
 
                 <TimeGroup>
-                  <RadioButton 
-                    active={!isLecturePending}
-                    onClick={() => {
-                      setIsLecturePending(!isLecturePending)
-                      if (!isLecturePending) {
-                        setForm(prev => ({ ...prev, lectureDays: [], lectureTime: '' }));
-                      }
-                    }}
-                  >
-                    정해지지 않았어요
-                  </RadioButton>
+                  <PendingButton active={isLecturePending}>정해지지 않았어요</PendingButton>
                 </TimeGroup>
               </HalfGroup>
             </FormItem>
@@ -223,47 +260,25 @@ const handleDaySelect = (type, day) => {
                   {timeSlots.map((day) => (
                     <DayButton 
                       key={day}
-                      active={!isAssignmentPending && form.assignmentDays.includes(timeSlots.indexOf(day) + 1)}
-  onClick={() => !isAssignmentPending && handleDaySelect('assignment', day)}
+                      active={form.assignmentDays.includes(timeSlots.indexOf(day) + 1)}
                     >
                       {day}
                     </DayButton>
                   ))}
                   </DayButtonGroup>
-                  {!isAssignmentPending && <HelpText>복수 선택이 가능해요!</HelpText>}
                 </TimeGroup>
 
                 <TimeGroup>
-                  <InputGroup>
-                    <IconInput
-                      type="time"
+                    <DisableInput
                       name='assignmentTime'
-                      placeholder="과제 시간을 설정해주세요."
-                      style={{width: '239px'}}
+                      style={{width: '289px'}}
                       value={form.assignmentTime}
-                      onChange={handleFormChange}
-                      disabled={isAssignmentPending}
+                      disabled
                     />
-                    <CalendarIcon>
-                      <img src={Clock} alt="시계" style={{ width: '13px', height: '13px' }} />
-                    </CalendarIcon>
-                  </InputGroup>
-                  
-                  { form.assignmentTime && <HelpText>과제 시간이 설정되었어요!</HelpText> }
                 </TimeGroup> 
 
                 <TimeGroup>
-                  <RadioButton 
-                    active={!isAssignmentPending}
-                    onClick={() => {
-                      setIsAssignmentPending(!isAssignmentPending)
-                      if (!isAssignmentPending) {
-                        setForm(prev => ({ ...prev, assignmentDays: [], assignmentTime: '' })); // 시간도 초기화
-                      }
-                    }}
-                  >
-                    정해지지 않았어요
-                  </RadioButton>
+                  <PendingButton active={isAssignmentPending}>정해지지 않았어요</PendingButton>
                 </TimeGroup>
               </HalfGroup>
             </FormItem>
@@ -272,45 +287,37 @@ const handleDaySelect = (type, day) => {
 
         <Section style={{borderBottom: 'none'}}>
           <Title>STEP 3. 수강생에게 강좌를 어떻게 공개하실 건가요?</Title>
-          <FormGroup>
-            {/* <FormItem>
-              <Label>강좌 공개 여부</Label>
-              <ButtonGroup>
-                <RadioButton 
-                  active={form.isPublic} 
-                  onClick={() => handlePublicToggle(true)}
-                >
-                  공개
-                </RadioButton>
-                <RadioButton 
-                  active={!form.isPublic}
-                  onClick={() => handlePublicToggle(false)}
-                >
-                  비공개
-                </RadioButton>
-              </ButtonGroup>
-            </FormItem> */}
-
+          <FormGroup> 
             <FormItem>
-              <Label>수업 난이도</Label>
-              <ButtonGroup>
-                {['easy', 'medium', 'hard'].map((level) => (
-                  <LevelButton
-                    key={level}
-                    active={form.difficulty === level}
-                    onClick={() => handleDifficultySelect(level)}
-                  >
-                    {level === 'easy' ? '쉬움' : level === 'medium' ? '보통' : '어려움'}
-                  </LevelButton>
-                ))}
-              </ButtonGroup>
-              {form.difficulty === 'easy' && <HelpText>입문자를 위한 쉬운 개념 강의!</HelpText> }
-              {form.difficulty === 'medium' && <HelpText>개념을 응용하고 실전 활용 능력을 키우는 강의!</HelpText> }
-              {form.difficulty === 'hard' && <HelpText>실무에 적용할 수 있는 전문 강의!</HelpText> }
+            <RowContainer>
+                <Label style={{marginRight: '50px'}}>수업 난이도<Required>*</Required></Label>
+                    <ButtonGroup>
+                        {['easy', 'medium', 'hard'].map((level) => (
+                        <LevelButton
+                            key={level}
+                            active={form.difficulty === level}
+                            onClick={() => handleDifficultySelect(level)}
+                        >
+                            {level === 'easy' ? '쉬움' : level === 'medium' ? '보통' : '어려움'}
+                        </LevelButton>
+                        ))}
+                    </ButtonGroup>
+                </RowContainer>
+                <LevelText>
+                    {showDifficultyChange ? (
+                        <HelpText>{showDifficultyChange}</HelpText>
+                    ) : (
+                        <>
+                            {form.difficulty === 'easy' && <HelpText>입문자를 위한 쉬운 개념 강의!</HelpText>}
+                            {form.difficulty === 'medium' && <HelpText>개념을 응용하고 실전 활용 능력을 키우는 강의!</HelpText>}
+                            {form.difficulty === 'hard' && <HelpText>실무에 적용할 수 있는 전문 강의!</HelpText>}
+                        </>
+                    )}
+                </LevelText>
             </FormItem>
           </FormGroup>
         </Section>
-        <CreateButton onClick={handleSubmit}>강의실 만들기</CreateButton>
+        <CreateButton onClick={handleSubmit}>강의실 업데이트하기</CreateButton>
       </Container>
     </>
   );
@@ -325,15 +332,30 @@ const RadioButton = styled.button`
   padding: 8px 20px;
   border: none;
   border-radius: 10px;
-  font-size: 15px;
-  background-color: ${props => props.active ? '#FF4747' : '#F6F6F6'};
-  color: ${props => props.active ? '#FFFFFF' : '#909090'};
+  font-size: 13px;
+  background-color: #FF4747;
+  color: #FFFFFF;
 `;
 
-const LevelButton = styled(RadioButton)`
-  padding: 6px 24px;
+const PendingButton = styled.button`
+  padding: 8px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  background-color: ${props => props.active ? '#C3C3C3' : '#F4F4F4'};
+  color: #909090;
+`
+
+const LevelButton = styled.button`
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  background-color: ${props => props.active ? '#FF4747' : '#EEEEEE '};
+  color: ${props => props.active ? '#FFFFFF' : '#909090'};
+  padding: 6px 12px;
   border: none;
   cursor: pointer;
+  margin-bottom: 8px
 `;
 
 const CreateButton = styled.button`
@@ -377,6 +399,20 @@ const FormItem = styled.div`
   width: 100%;
 `;
 
+const RowContainer = styled.div`
+    display: flex;
+    align-items: baseline;
+    height: 50px;
+`;
+
+const LevelText = styled.div`
+    margin-left: 150px;
+`
+
+const FormHalfItem = styled.div`
+    margin-bottom: 15px;
+`;
+
 const Label = styled.div`
   display: flex;
   flex-direction: row;
@@ -388,8 +424,11 @@ const Label = styled.div`
 `;
 
 const Required = styled.span`
+  position: relative;
   color: #FF4747;
   font-weight: 800;
+  top: -5px;
+  left: 0px;
 `;
 
 const FormInput = styled.input`
@@ -408,6 +447,17 @@ const IconInput = styled.input`
   border: 2px solid #C3C3C3;
   border-radius: 10px;
 `;
+
+const DisableInput = styled.input`
+  box-sizing: border-box;
+  font-size: 13px;
+  padding: 8px 12px;
+  color: #000000;
+  background-color: #F4F4F4;
+  border: 2px solid #C3C3C3;
+  border-radius: 10px;
+  margin-right: 10px;
+`
 
 const InputGroup = styled.div`
   display: flex;
@@ -439,17 +489,8 @@ const DayButton = styled.button`
   align-items: center;
   justify-content: center;
   border: none;
-  background-color: ${props => props.active ? '#FF4747' : '#D9D9D9'};
-  color: ${props => props.active ? '#FFFFFF' : '#909090'};
-`;
-
-const CalendarIcon = styled.span`
-  top: 50%;
-  transform: translateY(-50%);
-  transform: translateX(-250%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background-color: ${props => props.active ? '#C3C3C3' : '#F4F4F4'};
+  color: #909090;
 `;
 
 const TimeGroup = styled.div`
