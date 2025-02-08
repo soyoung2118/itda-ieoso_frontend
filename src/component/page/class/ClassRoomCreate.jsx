@@ -8,12 +8,14 @@ import "../../../style/react-datepicker.css";
 
 export default function ClassRoomCreate() {
   const timeSlots = ['월', '화', '수', '목', '금', '토', '일'];
+  const [isAssignmentPending, setIsAssignmentPending] = useState(false);
+  const [isLecturePending, setIsLecturePending] = useState(false);
 
   const [form, setForm] = useState({
     coursename: '',
     instructor: '',
     startDate: null,
-    culiculumWeek: '',
+    durationWeeks: 1,
     lectureDays: [],
     lectureTime: '',
     assignmentDays: [],
@@ -29,25 +31,14 @@ export default function ClassRoomCreate() {
     }));
   };
 
-  const [dateRange, setDateRange] = useState([null, null]);
-  const [startDate, endDate] = dateRange;
-   
-  const handleDateChange = (e) => {
-    setDateRange(update);
-    const [start] = e;
-    setForm(prev => ({
-      ...prev,
-      startDate: start,
-    }));
-  };
-
 const handleDaySelect = (type, day) => {
   const key = type === 'lecture' ? 'lectureDays' : 'assignmentDays';
+  const dayNumber = timeSlots.indexOf(day) + 1;
   setForm(prev => ({
     ...prev,
-    [key]: prev[key].includes(day)
-      ? prev[key].filter(d => d !== day)
-      : [...prev[key], day]
+    [key]: prev[key].includes(dayNumber)
+      ? prev[key].filter(d => d !== dayNumber)
+      : [...prev[key], dayNumber]
   }));
  };
   
@@ -56,8 +47,18 @@ const handleDaySelect = (type, day) => {
   };
 
   const handleSubmit = () => {
-    console.log('Form Data:', form);
-   };
+    console.log('Form Data:', {
+      title: form.coursename,
+      instructorName: form.instructor,
+      startDate: form.startDate?.toISOString().split('T')[0],
+      durationWeeks: form.durationWeeks,
+      lectureDay: form.lectureDays,
+      lectureTime: form.lectureTime,
+      assignmentDueDay: form.assignmentDays,
+      assignmentDueTime: form.assignmentTime,
+      difficultyLevel: form.difficulty
+    });
+  };
 
   const CustomInput = forwardRef(({ value, onClick }, ref) => (
     <InputGroup onClick={onClick}> 
@@ -66,7 +67,7 @@ const handleDaySelect = (type, day) => {
         value={value}
         placeholder="커리큘럼 시작을 설정해주세요."
         readOnly
-        style={{width: '539px'}}
+        style={{width: '439px'}}
       />
       <CalendarIcon>
         <img src={Calendar} style={{width: 16}} alt="캘린더" />
@@ -133,14 +134,10 @@ const handleDaySelect = (type, day) => {
                 }}
                 customInput={<CustomInput />}
                 dateFormat="yyyy-MM-dd"
+                popperProps={{
+                  placement: 'bottom-start',
+                }}
               />
-              {/* <ShortInput
-                type="date"
-                name="startDate"
-                placeholder="ex. 김잇다"
-                value={form.startDate}
-                onChange={handleDateChange}
-              /> */}
             </FormItem>
 
             <FormItem>
@@ -151,14 +148,15 @@ const handleDaySelect = (type, day) => {
               <CuliculumGroup>
                 <FormInput
                   type="number"
-                  name="culiculumWeek"
+                  name="durationWeeks"
                   placeholder="숫자를 입력해주세요"
-                  value={form.culiculumWeek}
+                  value={form.durationWeeks}
                   onChange={handleFormChange}
                   style={{width: '249px'}}
                 />
                 <Label style={{marginTop: '0px', marginLeft: '5px'}}>주</Label>
               </CuliculumGroup>
+              <HelpText>1~12주차까지 입력가능해요.</HelpText>
             </FormItem>
 
             <FormItem>
@@ -169,14 +167,14 @@ const handleDaySelect = (type, day) => {
                   {timeSlots.map((day) => (
                     <DayButton 
                       key={day}
-                      active={form.lectureDays.includes(day)}
-                      onClick={() => handleDaySelect('lecture', day)}
+                      active={!isLecturePending && form.lectureDays.includes(timeSlots.indexOf(day) + 1)}
+                      onClick={() => !isLecturePending && handleDaySelect('lecture', day)}
                     >
                       {day}
                     </DayButton>
                   ))}
                   </DayButtonGroup>
-                  <HelpText>복수 선택이 가능해요!</HelpText>
+                  { !isLecturePending && <HelpText>복수 선택이 가능해요!</HelpText>}
                 </TimeGroup>
 
                 <TimeGroup>
@@ -186,7 +184,9 @@ const handleDaySelect = (type, day) => {
                       name='lectureTime'
                       placeholder="강의 시간을 설정해주세요."
                       style={{width: '239px'}}
+                      value={form.lectureTime}
                       onChange={handleFormChange}
+                      disabled={isLecturePending}
                     />
                     <CalendarIcon>
                       <img src={Clock} alt="시계 아이콘" style={{ width: '13px', height: '13px' }} />
@@ -197,7 +197,13 @@ const handleDaySelect = (type, day) => {
 
                 <TimeGroup>
                   <RadioButton 
-                    //active={form.is} 
+                    active={!isLecturePending}
+                    onClick={() => {
+                      setIsLecturePending(!isLecturePending)
+                      if (!isLecturePending) {
+                        setForm(prev => ({ ...prev, lectureDays: [], lectureTime: '' }));
+                      }
+                    }}
                   >
                     정해지지 않았어요
                   </RadioButton>
@@ -213,14 +219,14 @@ const handleDaySelect = (type, day) => {
                   {timeSlots.map((day) => (
                     <DayButton 
                       key={day}
-                      active={form.assignmentDays.includes(day)}
-                      onClick={() => handleDaySelect('assignment', day)}
+                      active={!isAssignmentPending && form.assignmentDays.includes(timeSlots.indexOf(day) + 1)}
+  onClick={() => !isAssignmentPending && handleDaySelect('assignment', day)}
                     >
                       {day}
                     </DayButton>
                   ))}
                   </DayButtonGroup>
-                  <HelpText>복수 선택이 가능해요!</HelpText>
+                  {!isAssignmentPending && <HelpText>복수 선택이 가능해요!</HelpText>}
                 </TimeGroup>
 
                 <TimeGroup>
@@ -230,19 +236,27 @@ const handleDaySelect = (type, day) => {
                       name='assignmentTime'
                       placeholder="과제 시간을 설정해주세요."
                       style={{width: '239px'}}
+                      value={form.assignmentTime}
                       onChange={handleFormChange}
+                      disabled={isAssignmentPending}
                     />
                     <CalendarIcon>
                       <img src={Clock} alt="시계" style={{ width: '13px', height: '13px' }} />
                     </CalendarIcon>
                   </InputGroup>
                   
-                  { form.assignmentTime && <HelpText> 과제 시간이 설정되었어요!</HelpText> }
+                  { form.assignmentTime && <HelpText>과제 시간이 설정되었어요!</HelpText> }
                 </TimeGroup> 
 
                 <TimeGroup>
                   <RadioButton 
-                    active={true} 
+                    active={!isAssignmentPending}
+                    onClick={() => {
+                      setIsAssignmentPending(!isAssignmentPending)
+                      if (!isAssignmentPending) {
+                        setForm(prev => ({ ...prev, assignmentDays: [], assignmentTime: '' })); // 시간도 초기화
+                      }
+                    }}
                   >
                     정해지지 않았어요
                   </RadioButton>
@@ -286,7 +300,9 @@ const handleDaySelect = (type, day) => {
                   </LevelButton>
                 ))}
               </ButtonGroup>
-              <HelpText>초보자도 강의를 듣고 수업 내용을 따라잡을 수 있어요!</HelpText>
+              {form.difficulty === 'easy' && <HelpText>입문자를 위한 쉬운 개념 강의!</HelpText> }
+              {form.difficulty === 'medium' && <HelpText>개념을 응용하고 실전 활용 능력을 키우는 강의!</HelpText> }
+              {form.difficulty === 'hard' && <HelpText>실무에 적용할 수 있는 전문 강의!</HelpText> }
             </FormItem>
           </FormGroup>
         </Section>
@@ -313,10 +329,12 @@ const RadioButton = styled.button`
 const LevelButton = styled(RadioButton)`
   padding: 6px 24px;
   border: none;
+  cursor: pointer;
 `;
 
 const CreateButton = styled.button`
   border: none;
+  cursor: pointer;
   width: 100%;
   padding: 10px 0;
   background-color: #FF4747;
@@ -395,6 +413,7 @@ const InputGroup = styled.div`
 
 const HelpText = styled.div`
   height: 13px;
+  min-height: 13px;
   color: #FF4747;
   font-size: 12px;
   font-weight: 400;
