@@ -1,16 +1,20 @@
-import { useContext } from "react";
+import { useState, useContext} from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
-import { UsersContext } from "../contexts/usersContext";
 import styled from "styled-components";
 import Logo from '../img/logo/itda_logo.svg';
-import userIcon from "../img/mainpage/usericon.png";
-
+import userIcon from "../img/icon/usericon.svg";
+import { UsersContext } from "../contexts/usersContext";
 
 export default function TopBar() {
     const navigate = useNavigate();
     const location = useLocation();
+    const [showDropdown, setShowDropdown] = useState(false);
 
     const { isUser } = useContext(UsersContext);
+
+    const handleUserIconClick = () => {
+        setShowDropdown(!showDropdown);
+    };
 
     return (
         <Wrapper>
@@ -24,7 +28,16 @@ export default function TopBar() {
                             ) : (
                                 <button className="navigate-button" onClick={() => navigate('/dashboard')}>대시보드로 가기</button>
                             )}
-                            <UserIcon src={userIcon} alt="user icon" />
+                            <UserIcon src={userIcon} alt="user icon" onClick={handleUserIconClick} />
+                            {showDropdown && (
+                                <Dropdown>
+                                    <UserInfo>
+                                        <img src={userIcon} alt="user icon" className="user-info-profile" />
+                                        <p className="user-info-name">itdakim0101</p>
+                                        <button className="user-info-logout" onClick={() => {/* 로그아웃 로직 */}}>로그아웃하기</button>
+                                    </UserInfo>
+                                </Dropdown>
+                            )}
                         </UserContainer>
                     ) : (
                         <>
@@ -89,12 +102,12 @@ const Header = styled.header`
       cursor: pointer;
       border-radius: 60px;
     }
-
 `;
 
 const UserContainer = styled.div`
     display: flex;
     align-items: center;
+    position: relative;
     padding: 10px;
     border-radius: 8px;
 `;
@@ -103,10 +116,57 @@ const UserIcon = styled.img`
     width: 40px;
     height: 40px;
     margin-right: 10px;
+    cursor: pointer;
 `;
 
 const UserText = styled.p`
     color: #AAAAAA;
     font-size: 14px;
     margin: 0;
+`;
+
+// 유저 아이콘 누르면 출력 드롭 다운
+const Dropdown = styled.div`
+    position: absolute;
+    top: 8vh;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 2px 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+`;
+
+const UserInfo = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 10px;
+    width: 100%;
+
+    .user-info-profile {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .user-info-name {
+        font-size: 14px;
+        font-weight: 500;
+        margin-right: 10px;
+    }
+
+    .user-info-logout {
+        font-size: 12px;
+        font-weight: 500;
+        background-color: transparent;
+        border: 1px solid #000;
+        margin-right: 10px;
+        padding: 5px 10px;
+        border-radius: 60px;
+        cursor: pointer;
+        white-space: nowrap;
+    }
 `;
