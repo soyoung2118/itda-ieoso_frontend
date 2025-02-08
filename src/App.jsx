@@ -1,4 +1,5 @@
-import {BrowserRouter, Route, Routes} from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { UsersProvider } from "./component/contexts/usersContext.jsx";
 import LogIn from "./component/page/LogIn.jsx";
 import SignUp from "./component/page/SignUp.jsx";
 import ClassRoom from "./component/page/ClassRoom.jsx";
@@ -22,12 +23,13 @@ function App() {
   return (
     <>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<MainPage />} />
-          <Route path="/overview/info" element={<ClassOverview />} />
-          <Route path="/overview/info/edit" element={<EditClass />} />
-          <Route path="/overview/notice" element={<ClassNotice />} />
-          <Route path="/overview/notice/create" element={<NoticeCreate />} />
+        <UsersProvider>
+          <Routes>
+            <Route path="/" element={<MainPage />} />
+            <Route path="/overview/info" element={<ClassOverview />} />
+            <Route path="/overview/info/edit" element={<EditClass />} />
+            <Route path="/overview/notice" element={<ClassNotice />} />
+            <Route path="/overview/notice/create" element={<NoticeCreate />} />
           <Route path="/curriculum" element={<ClassCurriculum />} />
           <Route path="/curriculum/edit" element={<ClassCurriculumEdit />} />
           <Route path="/dashboard" element={<Dashboard/>} />
@@ -37,8 +39,9 @@ function App() {
           <Route path="/class" element={<Class />} />
           <Route path="/classroom" element={<ClassRoom />} />
           <Route path="/class/create" element={<ClassRoomCreate />} />
-          <Route path="/statistics" element={<ClassStatistics/>} />
-        </Routes>
+            <Route path="/statistics" element={<ClassStatistics />} />
+          </Routes>
+        </UsersProvider>
       </BrowserRouter>
     </>
   )
