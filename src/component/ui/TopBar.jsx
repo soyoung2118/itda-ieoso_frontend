@@ -4,21 +4,36 @@ import styled from "styled-components";
 import Logo from '../img/logo/itda_logo.svg';
 import userIcon from "../img/icon/usericon.svg";
 import { UsersContext } from "../contexts/usersContext";
+import { logout } from "../api/usersApi";
 
 export default function TopBar() {
     const navigate = useNavigate();
     const location = useLocation();
     const [showDropdown, setShowDropdown] = useState(false);
-
-    const { isUser } = useContext(UsersContext);
-
+    const { isUser, setIsUser } = useContext(UsersContext);
+    
     const handleUserIconClick = () => {
         setShowDropdown(!showDropdown);
     };
 
+    const handleLogout = async(e) => {
+        e.preventDefault();
+        try {
+            const response = await logout();
+            if(response.status === 200){
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                setIsUser(false);
+                navigate('/');
+            }
+        } catch (error) {
+            console.error('로그아웃 중 오류 발생:', error);
+        }
+    };
+
     return (
         <Wrapper>
-            <img src={Logo} style={{ width: "126px", height: "33px" }} alt="itda logo" onClick={() => navigate('/class')}/>
+            <img src={Logo} style={{ width: "126px", height: "33px" }} alt="itda logo" onClick={isUser ? () => navigate('/class') : () => navigate('/')}/>
             <Header>
                 <div className="header-right">
                     {isUser ? (
@@ -34,7 +49,7 @@ export default function TopBar() {
                                     <UserInfo>
                                         <img src={userIcon} alt="user icon" className="user-info-profile" />
                                         <p className="user-info-name">itdakim0101</p>
-                                        <button className="user-info-logout" onClick={() => {/* 로그아웃 로직 */}}>로그아웃하기</button>
+                                        <button className="user-info-logout-button" onClick={handleLogout}>로그아웃하기</button>
                                     </UserInfo>
                                 </Dropdown>
                             )}
@@ -158,7 +173,7 @@ const UserInfo = styled.div`
         margin-right: 10px;
     }
 
-    .user-info-logout {
+    .user-info-logout-button {
         font-size: 12px;
         font-weight: 500;
         background-color: transparent;
