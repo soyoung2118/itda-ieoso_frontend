@@ -15,7 +15,8 @@ import ClassCurriculumEdit from "./component/page/class/CurriculumEdit.jsx";
 import NoticeCreate from "./component/page/class/NoticeCreate.jsx";
 import EditClass from "./component/ui/class/EditClass.jsx";
 
-import ClassRoomCreate from "./component/page/class/ClassRoomCreate.jsx";
+import Create from "./component/page/class/Create.jsx";
+import Setting from "./component/page/class/Setting.jsx";
 
 function App() {
 
@@ -36,8 +37,9 @@ function App() {
           <Route path="/participate" element={<Participate />} />
           <Route path="/class" element={<Class />} />
           <Route path="/classroom" element={<ClassRoom />} />
-          <Route path="/class/create" element={<ClassRoomCreate />} />
+          <Route path="/class/create" element={<Create />} />
           <Route path="/statistics" element={<ClassStatistics/>} />
+          <Route path="/setting" element={<Setting/>} />
         </Routes>
       </BrowserRouter>
     </>
