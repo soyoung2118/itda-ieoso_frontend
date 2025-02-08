@@ -1,13 +1,11 @@
 import styled from "styled-components";
 import TopBar from "../ui/TopBar";
 import logoImage from "../img/logo/itda_logo_symbol.svg";
-import userIcon from "../img/mainpage/usericon.png";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 export default function Participate() {
   const navigate = useNavigate();
-  const userName = "홍길동";
   const [code, setCode] = useState("");
 
   function validateLoginInput() {
@@ -20,13 +18,7 @@ export default function Participate() {
 
   return (
     <>
-      <Header>
-        <TopBar backgroundColor="#F6F7F9" />
-        <div className="header-right">
-          <UserIcon src={userIcon} alt="user icon" />
-          <UserName>{userName}님</UserName>
-        </div>
-      </Header>
+      <TopBar />
       <Container marginTop="100px">
         <LogoImage src={logoImage} alt="logo" />
         <LogoText>Start your itda</LogoText>
@@ -52,35 +44,6 @@ export default function Participate() {
     </>
   );
 }
-
-const Header = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .godashboard{
-      background-color: transparent;
-      color: #000;
-      border: 1px solid #000;
-      padding: 10px 20px;
-      cursor: pointer;
-      border-radius: 60px;
-    }
-`;
-
-const UserIcon = styled.img`
-    width: 40px;
-    height: 40px;
-`;
-
-const UserName = styled.div`
-    font-size: 14px;
-    margin-right: 20px;
-`;
 
 const Container = styled.div`
     display: flex;

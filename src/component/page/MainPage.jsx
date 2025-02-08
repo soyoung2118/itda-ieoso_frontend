@@ -5,62 +5,10 @@ import logoName from "../img/logo/itda_logo_name.svg";
 import questImage from "../img/mainpage/question.png";
 import aiAssistantImage from "../img/mainpage/ai.png";
 import curriculumImage from "../img/mainpage/curriculum.png";
-import userIcon from "../img/mainpage/usericon.png";
 import { useNavigate } from 'react-router-dom';
 
 const MainContainer = styled.div`
     text-align: center;
-`;
-
-const Header = styled.header`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-right: 2vw;
-    background-color: #F6F7F9;
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .signup {
-      background-color: transparent;
-      color: #000000;
-      border: none;
-      padding: 10px 20px;
-      cursor: pointer;
-    }
-
-    .login {
-      background-color: #FF4747;
-      color: rgb(255, 255, 255);
-      border: none;
-      padding: 10px 20px;
-      border-radius: 50px;
-      cursor: pointer;
-    }
-`;
-
-const UserInfo = styled.div`
-    display: flex;
-    align-items: center;
-    background-color: #F6F7F9;
-    padding: 10px;
-    border-radius: 8px;
-`;
-
-const UserIcon = styled.img`
-    width: 40px;
-    height: 40px;
-    margin-right: 10px;
-`;
-
-const UserText = styled.p`
-    color: #AAAAAA;
-    font-size: 14px;
-    margin: 0;
 `;
 
 //itda 설명 컨테이너
@@ -71,7 +19,6 @@ const ExplainContainer = styled.header`
 `;
 
 const Logo = styled.img`
-
     width: 125px;
 `;
 
@@ -167,17 +114,7 @@ export default function MainPage() {
 
     return (
       <>
-        <Header>
-          <TopBar backgroundColor="#F6F7F9" />
-          <div className="header-right">
-          <button className="signup" onClick={() => navigate('/signup')}>회원가입</button>
-          <button className="login" onClick={() => navigate('/login')}>로그인</button>
-          <UserInfo>
-              <UserIcon src={userIcon} alt="user icon" />
-              <UserText>로그인하세요</UserText>
-          </UserInfo>
-          </div>
-        </Header>
+        <TopBar />
         <MainContainer>
           <ExplainContainer>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>

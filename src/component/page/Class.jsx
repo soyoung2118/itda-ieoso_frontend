@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import TopBar from "../ui/TopBar";
-import userIcon from "../img/mainpage/usericon.png";
 import ClassData from "../img/class/ClassData.png";
 import LogoGray from "../img/logo/itda_logo_gray.svg";
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
@@ -36,14 +35,7 @@ export default function Class() {
 
     return (
       <>
-        <Header>
-          <TopBar />
-          <div className="header-right">
-            {/* 대시보드로 가기 버튼 파일 존재x*/}
-              <button className="godashboard" onClick={() => navigate('/dashboard')}>대시보드로 가기</button>
-              <UserIcon src={userIcon} alt="user icon" />
-            </div>
-        </Header>
+        <TopBar />
             <Container>
                 <Sidebar>
                     <MenuItem active={selectedMenu === "전체 강의실"} onClick={() => setSelectedMenu("전체 강의실")}>
@@ -103,34 +95,6 @@ export default function Class() {
         </>
     );
 }
-
-const Header = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #fff;
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .godashboard{
-      background-color: transparent;
-      color: #000;
-      border: 1px solid #000;
-      padding: 10px 20px;
-      cursor: pointer;
-      border-radius: 60px;
-    }
-`;
-
-const UserIcon = styled.img`
-    width: 40px;
-    height: 40px;
-    margin-right: 10px;
-`;
 
 const Container = styled.div`
     display: flex;
