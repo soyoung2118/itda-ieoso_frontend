@@ -48,6 +48,7 @@ export default function TopBar() {
                                 <Dropdown>
                                     <UserInfo>
                                         <img src={userIcon} alt="user icon" className="user-info-profile" />
+                                        {/* 유저 이름으로 변경해야함 */}
                                         <p className="user-info-name">itdakim0101</p>
                                         <button className="user-info-logout-button" onClick={handleLogout}>로그아웃하기</button>
                                     </UserInfo>
@@ -150,6 +151,7 @@ const Dropdown = styled.div`
     border-radius: 8px;
     padding: 2px 15px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
 `;
 
 const UserInfo = styled.div`
