@@ -2,10 +2,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import TopBar from '../../ui/TopBar';
-import Calendar from "../../img/classroom/calendar.png";
-import Clock from "../../img/classroom/clock.png";
-import DatePicker from "react-datepicker";
-import "../../../style/react-datepicker.css";
 
 export default function Setting() {
   const navigate = useNavigate();
@@ -14,14 +10,6 @@ export default function Setting() {
   const [isLecturePending, setIsLecturePending] = useState(false);
 
   const [showDifficultyChange, setShowDifficultyChange] = useState('');
-
-  const [editableFields, setEditableFields] = useState({
-    coursename: true,
-    instructor: true,
-    lectureTime: true,
-    assignmentTime: true,
-    difficulty: true
-  });
 
   const [form, setForm] = useState({
     coursename: '',
@@ -39,20 +27,15 @@ export default function Setting() {
   useEffect(() => {
     const fetchCourseData = async () => {
       try {
-        // Simulated API call - replace with actual endpoint
-        // const response = await fetch('/api/course-details');
-        // const data = await response.json();
-        
-        // Temporary mock data
         const mockData = {
           coursename: '프로그래밍 기초',
           instructor: '김강사',
           entrycode: 'ABC123',
           startDate: '2025-03-01',
           durationWeeks: 8,
-          lectureDays: [1, 3], // 월, 수
+          lectureDays: [1, 3],
           lectureTime: '14:00',
-          assignmentDays: [], // 금
+          assignmentDays: [],
           assignmentTime: '',
           difficulty: 'medium'
         };
@@ -80,17 +63,6 @@ export default function Setting() {
     }));
   };
 
-const handleDaySelect = (type, day) => {
-  const key = type === 'lecture' ? 'lectureDays' : 'assignmentDays';
-  const dayNumber = timeSlots.indexOf(day) + 1;
-  setForm(prev => ({
-    ...prev,
-    [key]: prev[key].includes(dayNumber)
-      ? prev[key].filter(d => d !== dayNumber)
-      : [...prev[key], dayNumber]
-  }));
- };
-
   const handleCopy = (text) => {
     navigator.clipboard.writeText(text)
     .then(() => {
@@ -117,7 +89,7 @@ const handleDaySelect = (type, day) => {
     console.log('Form Data:', {
       title: form.coursename,
       instructorName: form.instructor,
-      startDate: form.startDate?.toISOString().split('T')[0],
+      startDate: form.startDate,
       durationWeeks: form.durationWeeks,
       lectureDay: form.lectureDays,
       lectureTime: form.lectureTime,
@@ -147,7 +119,6 @@ const handleDaySelect = (type, day) => {
                 name="coursename"
                 value={form.coursename}
                 onChange={handleFormChange}
-                disabled={!editableFields.coursename}
                 style={{width: '100%'}}
               />
             </FormItem>
@@ -162,7 +133,6 @@ const handleDaySelect = (type, day) => {
                 name="instructor"
                 placeholder="ex. 김잇다"
                 value={form.instructor}
-                disabled={!editableFields.instructor}
                 onChange={handleFormChange}
                 style={{width: '165px'}}
               />
