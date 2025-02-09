@@ -130,7 +130,6 @@ export default function SignUp() {
 
   const handleNext = () => {
     if (step === 2 && !validatePassword(password)) {
-      alert('비밀번호가 조건을 만족하지 않습니다.');
       return;
     }
     if (step < 3) {
@@ -171,25 +170,27 @@ export default function SignUp() {
 
   //비밀번호 조건 검사
   const validatePassword = (password) => {
-    const regex = /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const regex = /^.{8,}$/;  // 8자 이상만 체크
+    //const regex = /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/; 소문자+글자 수
     //const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/; 대문자도 필수일 때
     return regex.test(password);
   };
 
+  const validateEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
   const handleSignUp = async (e) => {
     e.preventDefault();
-    if (!validatePassword(password)) {
-      alert('비밀번호가 조건을 만족하지 않습니다.');
-      return;
-    }
+
     try {
       const requestBody = {
         email: email,
         password: password,
         name: name, 
       };
-      const response = await signup(requestBody);
-      console.log(response);
+      await signup(requestBody);
     } catch (error) {
       console.error('회원가입 실패:', error);
     }
@@ -198,6 +199,10 @@ export default function SignUp() {
   //이메일 중복 체크
   const handleEmailCheck = async (e) => {
     e.preventDefault();
+    if (!validateEmail(email)) {
+      setEmailCheckResult('유효한 이메일 주소를 입력해주세요.');
+      return;
+    }
     try {
       const response = await checkEmail(email);
 
@@ -262,7 +267,13 @@ export default function SignUp() {
                   }} onClick={handleEmailCheck}>이메일 확인</LoginButton>
                 </InputContainer>
                 {emailCheckResult && (
-                  <div style={{ fontSize: '0.8rem', color: emailCheckResult.includes('사용 가능한') ? 'green' : '#FF4747', width: '100%', margin: '-1rem 0 2rem 0' }}>
+                  <div style={{
+                    fontSize: '0.8rem',
+                    marginLeft: '0.4rem',
+                    color: emailCheckResult.includes('사용 가능한') ? 'green' : '#FF4747',
+                    width: '100%',
+                    margin: '-1rem 0 2rem 0'
+                  }}>
                     {emailCheckResult}
                   </div>
                 )}
@@ -276,7 +287,19 @@ export default function SignUp() {
                     style={{ width: '100%' }}
                   />
                 </InputContainer>
-                <div style={{ fontSize: '0.8rem', color: '#000000', width: '100%', margin: '-1rem 0 2rem 0' }}>영문 대/소문자, 숫자, 특수문자를 조합하여 8자 이상 입력해주세요.</div>
+                <div style={{
+                  fontSize: '0.8rem',
+                  marginLeft: '0.4rem',
+                  color: password.length > 0 && !validatePassword(password) ? '#FF4747' : '#000000',
+                  width: '100%',
+                  margin: '-1rem 0 2rem 0'
+                }}>
+                  {password.length === 0 
+                    ? '영문 대/소문자, 숫자, 특수문자를 조합하여 8자 이상 입력해주세요.' 
+                    : (!validatePassword(password) 
+                        ? '8자 이상으로 비밀번호를 작성해주세요.' 
+                        : '영문 대/소문자, 숫자, 특수문자를 조합하여 8자 이상 입력해주세요.')}
+                </div>
                 <Label style={{ textAlign: 'left', margin: '1rem 0' }}>비밀번호 확인</Label>
                 <InputContainer>
                   <SignUpInput
@@ -288,7 +311,13 @@ export default function SignUp() {
                   />
                 </InputContainer>
                 {step === 2 && password !== confirmPassword && (
-                  <div style={{ fontSize: '0.8rem', color: '#FF4747', width: '100%', margin: '-1rem 0 2rem 0' }}>
+                  <div style={{
+                    fontSize: '0.8rem',
+                    marginLeft: '0.4rem',
+                    color: '#FF4747',
+                    width: '100%',
+                    margin: '-1rem 0 2rem 0'
+                  }}>
                     비밀번호가 일치하지 않습니다. 다시 확인해주세요.
                   </div>
                 )}
