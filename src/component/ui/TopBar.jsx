@@ -4,43 +4,29 @@ import styled from "styled-components";
 import Logo from '../img/logo/itda_logo.svg';
 import userIcon from "../img/icon/usericon.svg";
 import { UsersContext } from "../contexts/usersContext";
-import { logout } from "../api/usersApi";
+import { UsersInfoContainer } from '../page/users/UsersInfoContainer';
 
 export default function TopBar() {
+
     const navigate = useNavigate();
     const location = useLocation();
-    const [showDropdown, setShowDropdown] = useState(false);
-    const { isUser, setIsUser } = useContext(UsersContext);
+    const { isUser } = useContext(UsersContext);
+    
+    // 드롭다운 상태 추가
+    const [showUsersInfoContainer, setShowUsersInfoContainer] = useState(false);
 
     const handleUserIconClick = () => {
-        setShowDropdown(!showDropdown);
+        setShowUsersInfoContainer(prev => !prev);  // 드롭다운 토글
     };
-
-    const handleLogout = async (e) => {
-        e.preventDefault();
-
-        try {
-            const response = await logout();
-
-            if (response.status === 200) {
-                localStorage.removeItem('token');
-                localStorage.removeItem('user');
-                
-                setIsUser(false);
-                navigate('/');
-            }
-
-
-        } catch (error) {
-            console.error('로그아웃 중 오류 발생:', error);
-        }
-    };
-
-
 
     return (
         <Wrapper>
-            <img src={Logo} style={{ width: "126px", height: "33px" }} alt="itda logo" onClick={isUser ? () => navigate('/class') : () => navigate('/')}/>
+            <img 
+                src={Logo} 
+                style={{ width: "126px", height: "33px" }} 
+                alt="itda logo" 
+                onClick={isUser ? () => navigate('/class') : () => navigate('/')}
+            />
             <Header>
                 <div className="header-right">
                     {isUser ? (
@@ -51,15 +37,8 @@ export default function TopBar() {
                                 <button className="navigate-button" onClick={() => navigate('/dashboard')}>대시보드로 가기</button>
                             )}
                             <UserIcon src={userIcon} alt="user icon" onClick={handleUserIconClick} />
-                            {showDropdown && (
-                                <Dropdown>
-                                    <UserInfo>
-                                        <img src={userIcon} alt="user icon" className="user-info-profile" />
-                                        {/* 유저 이름으로 변경해야함 */}
-                                        <p className="user-info-name">itdakim0101</p>
-                                        <button className="user-info-logout-button" onClick={handleLogout}>로그아웃하기</button>
-                                    </UserInfo>
-                                </Dropdown>
+                            {showUsersInfoContainer && (
+                               <UsersInfoContainer setShowUsersInfoContainer={setShowUsersInfoContainer} /> 
                             )}
                         </UserContainer>
                     ) : (
@@ -146,51 +125,4 @@ const UserText = styled.p`
     color: #AAAAAA;
     font-size: 14px;
     margin: 0;
-`;
-
-// 유저 아이콘 누르면 출력 드롭 다운
-const Dropdown = styled.div`
-    position: absolute;
-    top: 8vh;
-    right: 0;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 2px 15px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-`;
-
-const UserInfo = styled.div`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    padding: 5px 10px;
-    width: 100%;
-
-    .user-info-profile {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        margin-right: 10px;
-    }
-
-    .user-info-name {
-        font-size: 14px;
-        font-weight: 500;
-        margin-right: 10px;
-    }
-
-    .user-info-logout-button {
-        font-size: 12px;
-        font-weight: 500;
-        background-color: transparent;
-        border: 1px solid #000;
-        margin-right: 10px;
-        padding: 5px 10px;
-        border-radius: 60px;
-        cursor: pointer;
-        white-space: nowrap;
-    }
 `;

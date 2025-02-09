@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { UsersProvider } from "./component/contexts/usersContext.jsx";
-import LogIn from "./component/page/LogIn.jsx";
-import SignUp from "./component/page/SignUp.jsx";
+import LogIn from "./component/page/users/LogIn.jsx";
+import SignUp from "./component/page/users/SignUp.jsx";
 import ClassRoom from "./component/page/ClassRoom.jsx";
 import MainPage from "./component/page/MainPage.jsx";
 import Class from "./component/page/Class.jsx";

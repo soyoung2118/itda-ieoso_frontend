@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import TopBar from "../ui/TopBar";
-import logoImage from "../img/logo/itda_logo_symbol.svg";
+import TopBar from "../../ui/TopBar";
+import logoImage from "../../img/logo/itda_logo_symbol.svg";
 import { Checkbox, FormControlLabel, IconButton } from '@mui/material';
 import {
     Container,
@@ -21,9 +21,9 @@ import {
     NextButton,
     InputContainer,
     WelcomeMessage
-} from "../../style/Styles";
+} from "../../../style/Styles";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import { signup, checkEmail } from '../api/usersApi';
+import { signup, checkEmail } from '../../api/usersApi';
 
 
 const TERMS = {

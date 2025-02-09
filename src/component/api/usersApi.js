@@ -10,7 +10,6 @@ export const login = async (credentials) => {
     }
 };
 
-
 export const signup = async (credentials) => {
   const response = await api.post('/users/sign-up', credentials);
   return response.data;
@@ -29,4 +28,9 @@ export const logout = async () => {
     console.error('로그아웃 중 오류 발생:', error);
     throw error;
   }
+};
+
+export const getUsersInfo = async () => {
+  const response = await api.get('/users/user-info');
+  return response.data;
 };

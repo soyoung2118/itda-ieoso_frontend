@@ -1,6 +1,6 @@
 import { useState, useContext } from "react";
-import TopBar from "../ui/TopBar";
-import logoImage from "../img/logo/itda_logo_symbol.svg";
+import TopBar from "../../ui/TopBar";
+import logoImage from "../../img/logo/itda_logo_symbol.svg";
 import { Checkbox, FormControlLabel } from '@mui/material';
 import {
     Container,
@@ -13,12 +13,12 @@ import {
     CustomCheckboxSquare,
     LoginButton,
     SignUpLink,
-} from "../../style/Styles";
-import { login } from "../api/usersApi";
-import { UsersContext } from "../contexts/usersContext";
+} from "../../../style/Styles";
+import { login, getUsersInfo } from "../../api/usersApi";
+import { UsersContext } from "../../contexts/usersContext";
 
 export default function LogIn() {
-    const { setIsUser } = useContext(UsersContext);
+    const { setUser, setIsUser } = useContext(UsersContext);
     const [isChecked, setIsChecked] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -37,6 +37,9 @@ export default function LogIn() {
             localStorage.setItem('token', token);
             setIsUser(true);
 
+            const userInfo = await getUsersInfo();
+            setUser(userInfo.data);
+            localStorage.setItem('user', JSON.stringify(userInfo.data));
             window.location.href = '/class';
         } catch (error) {
             console.error('로그인 실패:', error);
