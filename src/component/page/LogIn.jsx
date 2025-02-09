@@ -18,7 +18,7 @@ import { login } from "../api/usersApi";
 import { UsersContext } from "../contexts/usersContext";
 
 export default function LogIn() {
-    const { setUser, setIsUser } = useContext(UsersContext);
+    const { setIsUser } = useContext(UsersContext);
     const [isChecked, setIsChecked] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -28,17 +28,18 @@ export default function LogIn() {
         e.preventDefault();
         try {
             const response = await login({ email, password });
+            const token = response.headers?.authorization?.replace('Bearer ', '');
 
-            // 토큰 저장 (로컬 스토리지)
-            localStorage.setItem('token', response.token);
-            localStorage.setItem('user', JSON.stringify(response.user));
+            if (!token) {
+                throw new Error('Authorization 헤더가 존재하지 않습니다.');
+            }
 
-            setUser(response.user);
+            localStorage.setItem('token', token);
             setIsUser(true);
-            // 로그인 성공 시 대시보드로 이동
+
             window.location.href = '/class';
         } catch (error) {
-            alert('로그인 실패:', error);
+            console.error('로그인 실패:', error);
             setError(error.response?.data?.message || '로그인 중 오류가 발생했습니다.');
         }
     };
@@ -50,21 +51,21 @@ export default function LogIn() {
                 <LogoImage src={logoImage} alt="logo" />
                 <LogoText>로그인</LogoText>
                 <div style={{ width: '40%', margin: '0 auto' }}>
-                    <Form>
+                    <Form onSubmit={handleLogin}>
                         {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
-                    <Label>아이디</Label>
+                        <Label>이메일</Label>
                         <LoginInput
                             type="text"
-                            placeholder="아이디를 입력해주세요."
+                            placeholder="이메일을 입력해주세요."
                             onChange={(e) => setEmail(e.target.value)}
                         />
 
-                    <Label>비밀번호</Label>
-                    <LoginInput
-                        type="password"
-                        placeholder="비밀번호를 입력해주세요."
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
+                        <Label>비밀번호</Label>
+                        <LoginInput
+                            type="password"
+                            placeholder="비밀번호를 입력해주세요."
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
 
                     <CheckboxContainer>
                         <FormControlLabel
@@ -81,7 +82,7 @@ export default function LogIn() {
                     </CheckboxContainer>
                         <LoginButton
                             style={{ fontSize: '1rem' }}
-                            onClick={handleLogin}
+                            type="submit"
                         >로그인</LoginButton>
                     <SignUpLink>
                         계정이 없으신가요? <a href="/signup">회원가입하기</a>

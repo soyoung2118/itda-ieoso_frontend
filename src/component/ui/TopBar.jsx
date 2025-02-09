@@ -1,4 +1,4 @@
-import { useState, useContext} from "react";
+import { useState, useContext } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
 import styled from "styled-components";
 import Logo from '../img/logo/itda_logo.svg';
@@ -11,25 +11,32 @@ export default function TopBar() {
     const location = useLocation();
     const [showDropdown, setShowDropdown] = useState(false);
     const { isUser, setIsUser } = useContext(UsersContext);
-    
+
     const handleUserIconClick = () => {
         setShowDropdown(!showDropdown);
     };
 
-    const handleLogout = async(e) => {
+    const handleLogout = async (e) => {
         e.preventDefault();
+
         try {
             const response = await logout();
-            if(response.status === 200){
+
+            if (response.status === 200) {
                 localStorage.removeItem('token');
                 localStorage.removeItem('user');
+                
                 setIsUser(false);
                 navigate('/');
             }
+
+
         } catch (error) {
             console.error('로그아웃 중 오류 발생:', error);
         }
     };
+
+
 
     return (
         <Wrapper>
