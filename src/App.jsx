@@ -31,16 +31,16 @@ function App() {
             <Route path="/overview/info/edit" element={<EditClass />} />
             <Route path="/overview/notice" element={<ClassNotice />} />
             <Route path="/overview/notice/create" element={<NoticeCreate />} />
-          <Route path="/curriculum" element={<ClassCurriculum />} />
-          <Route path="/curriculum/edit" element={<ClassCurriculumEdit />} />
-          <Route path="/dashboard" element={<Dashboard/>} />
-          <Route path="/login" element={<LogIn />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/participate" element={<Participate />} />
-          <Route path="/class" element={<Class />} />
-          <Route path="/classroom" element={<ClassRoom />} />
-          <Route path="/class/create" element={<Create />} />
-          <Route path="/statistics" element={<ClassStatistics/>} />
+            <Route path="/curriculum" element={<ClassCurriculum />} />
+            <Route path="/curriculum/edit" element={<ClassCurriculumEdit />} />
+            <Route path="/dashboard" element={<Dashboard/>} />
+            <Route path="/login" element={<LogIn />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/participate" element={<Participate />} />
+            <Route path="/class" element={<Class />} />
+            <Route path="/classroom" element={<ClassRoom />} />
+            <Route path="/class/create" element={<Create />} />
+            <Route path="/statistics" element={<ClassStatistics/>} />
           <Route path="/admin/setting" element={<Setting/>} />
           </Routes>
         </UsersProvider>
