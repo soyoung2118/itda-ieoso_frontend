@@ -54,8 +54,12 @@ export const LoginInput = styled.input`
 
 export const CheckboxContainer = styled.div`
     display: flex;
+    justify-content: space-between;
     align-items: center;
+    width: 100%;
     margin-bottom: 1rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
 `;
 
 export const CustomCheckboxSquare = (checked) => {
