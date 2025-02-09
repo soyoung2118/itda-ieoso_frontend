@@ -41,7 +41,7 @@ function App() {
           <Route path="/classroom" element={<ClassRoom />} />
           <Route path="/class/create" element={<Create />} />
           <Route path="/statistics" element={<ClassStatistics/>} />
-          <Route path="/setting" element={<Setting/>} />
+          <Route path="/admin/setting" element={<Setting/>} />
           </Routes>
         </UsersProvider>
       </BrowserRouter>

@@ -74,7 +74,7 @@ const handleDaySelect = (type, day) => {
         style={{width: '439px'}}
       />
       <CalendarIcon>
-        <img src={Calendar} style={{width: 16}} alt="캘린더" />
+        <img src={Calendar} style={{width: 18}} alt="캘린더" />
       </CalendarIcon>
     </InputGroup>
   ));
@@ -113,7 +113,7 @@ const handleDaySelect = (type, day) => {
                 placeholder="ex. 김잇다"
                 value={form.instructor}
                 onChange={handleFormChange}
-                style={{width: '265px'}}
+                style={{width: '165px '}}
               />
             </FormItem>
           </FormGroup>
@@ -156,7 +156,7 @@ const handleDaySelect = (type, day) => {
                   placeholder="숫자를 입력해주세요"
                   value={form.durationWeeks}
                   onChange={handleFormChange}
-                  style={{width: '249px'}}
+                  style={{width: '165px'}}
                 />
                 <Label style={{marginTop: '0px', marginLeft: '5px'}}>주</Label>
               </CuliculumGroup>
@@ -193,7 +193,7 @@ const handleDaySelect = (type, day) => {
                       disabled={isLecturePending}
                     />
                     <CalendarIcon>
-                      <img src={Clock} alt="시계 아이콘" style={{ width: '13px', height: '13px' }} />
+                      <img src={Clock} alt="시계 아이콘" style={{ width: '18px', height: '18px' }} />
                     </CalendarIcon>
                   </InputGroup>
                   { form.lectureTime && <HelpText>강의 시간이 설정되었어요!</HelpText> }
@@ -245,7 +245,7 @@ const handleDaySelect = (type, day) => {
                       disabled={isAssignmentPending}
                     />
                     <CalendarIcon>
-                      <img src={Clock} alt="시계" style={{ width: '13px', height: '13px' }} />
+                      <img src={Clock} alt="시계" style={{ width: '18px', height: '18px' }} />
                     </CalendarIcon>
                   </InputGroup>
                   
@@ -273,26 +273,9 @@ const handleDaySelect = (type, day) => {
         <Section style={{borderBottom: 'none'}}>
           <Title>STEP 3. 수강생에게 강좌를 어떻게 공개하실 건가요?</Title>
           <FormGroup>
-            {/* <FormItem>
-              <Label>강좌 공개 여부</Label>
-              <ButtonGroup>
-                <RadioButton 
-                  active={form.isPublic} 
-                  onClick={() => handlePublicToggle(true)}
-                >
-                  공개
-                </RadioButton>
-                <RadioButton 
-                  active={!form.isPublic}
-                  onClick={() => handlePublicToggle(false)}
-                >
-                  비공개
-                </RadioButton>
-              </ButtonGroup>
-            </FormItem> */}
-
             <FormItem>
-              <Label>수업 난이도</Label>
+            <RowContainer>
+            <Label style={{marginRight: '50px'}}>수업 난이도<Required>*</Required></Label>
               <ButtonGroup>
                 {['easy', 'medium', 'hard'].map((level) => (
                   <LevelButton
@@ -304,6 +287,7 @@ const handleDaySelect = (type, day) => {
                   </LevelButton>
                 ))}
               </ButtonGroup>
+            </RowContainer>
               {form.difficulty === 'easy' && <HelpText>입문자를 위한 쉬운 개념 강의!</HelpText> }
               {form.difficulty === 'medium' && <HelpText>개념을 응용하고 실전 활용 능력을 키우는 강의!</HelpText> }
               {form.difficulty === 'hard' && <HelpText>실무에 적용할 수 있는 전문 강의!</HelpText> }
@@ -330,10 +314,16 @@ const RadioButton = styled.button`
   color: ${props => props.active ? '#FFFFFF' : '#909090'};
 `;
 
-const LevelButton = styled(RadioButton)`
-  padding: 6px 24px;
+const LevelButton = styled.button`
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  background-color: ${props => props.active ? '#FF4747' : '#EEEEEE '};
+  color: ${props => props.active ? '#FFFFFF' : '#909090'};
+  padding: 6px 12px;
   border: none;
   cursor: pointer;
+  margin-bottom: 8px
 `;
 
 const CreateButton = styled.button`
@@ -388,8 +378,11 @@ const Label = styled.div`
 `;
 
 const Required = styled.span`
+  position: relative;
   color: #FF4747;
   font-weight: 800;
+  top: -5px;
+  left: 0px;
 `;
 
 const FormInput = styled.input`
@@ -423,6 +416,12 @@ const HelpText = styled.div`
   font-weight: 400;
   margin-top: 4px;
   margin-left: 10px;
+`;
+
+const RowContainer = styled.div`
+  display: flex;
+  align-items: baseline;
+  height: 50px;
 `;
 
 const DayButtonGroup = styled.div`
