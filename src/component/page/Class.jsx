@@ -2,10 +2,12 @@ import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import TopBar from "../ui/TopBar";
-import ClassData from "../img/class/ClassData.png";
 import LogoGray from "../img/logo/itda_logo_gray.svg";
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import EventIcon from '@mui/icons-material/Event';
+import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
+import PersonIcon from '@mui/icons-material/Person';
 import api from "../api/api";
 import { UsersContext } from "../contexts/usersContext";
 
@@ -23,7 +25,7 @@ export default function Class() {
     const getAllLectures = async () => {
         try{
             const response = await api.get(`/courses/${user.userId}/my-courses`);
-            setLectures(response.data.data);
+            setLectures(response.data.data); //data 안의 data
         } catch (error) {
             console.error('강의실 조회 중 오류 발생:', error);
         }
@@ -63,13 +65,28 @@ export default function Class() {
                    ) : (
                     lecturesToDisplay?.map((lecture) => (
                         <LectureCard key={lecture.courseId} onClick={() => handleLectureClick(lecture.courseId)}>
-                            {/* 이미지는 추후 수정 필요 */}
-                            <LectureImage src={ClassData} alt="Lecture" />
+                            <LectureImage src={lecture.courseThumbnail} alt="Lecture" />
                                <LectureInfo>
-                                   <LectureTitle>{lecture.courseTitle}</LectureTitle>
-                                   <LectureDate>등록 일시 {lecture.startDate || '미정'}</LectureDate>
-                                   <LectureDescription>{lecture.description}</LectureDescription>
-                                   <LectureDescription>강사 {lecture.instructorName}</LectureDescription>
+                                <LectureTitle>{lecture.courseTitle}</LectureTitle>
+                                {/* 강의 시작일 */}
+                                <LectureDetail>
+                                <IconRow>
+                                    <EventIcon />
+                                    <span>{lecture.startDate ? `${lecture.startDate} 시작` : '시작일 미정'}</span>
+                                </IconRow>
+
+                                {/* 강의 기간 */}
+                                <IconRow>
+                                    <VideoLibraryIcon />
+                                    <span>{lecture.durationWeeks > 0 ? `${lecture.durationWeeks}주 커리큘럼` : '기간 미정'}</span>
+                                </IconRow>
+
+                                {/* 강사 이름 */}
+                                <IconRow>
+                                    <PersonIcon />
+                                    <span>{lecture.instructorName}</span>
+                                </IconRow>
+                                </LectureDetail>
                                </LectureInfo>
                            </LectureCard>
                        ))
@@ -126,7 +143,7 @@ const MenuItem = styled.div`
     margin-bottom: 10px;
     color: #000;
     font-weight: ${props => props.active ? 'bold' : 'bold'};
-    background-color: ${props => props.active ? '#FFD1D1' : '#FFFFFF'};  
+    background-color: ${props => props.active ? 'var(--pink-color)' : '#FFFFFF'};  
     border-radius: 10px;
     cursor: pointer;
 `;
@@ -139,7 +156,7 @@ const Content = styled.div`
 const LectureCard = styled.div`
     display: flex;
     background-color: #fff;
-    margin-bottom: 20px;
+    margin: 10px 20px 20px 10px;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -154,6 +171,14 @@ const LectureImage = styled.img`
 
 const LectureInfo = styled.div`
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+`;
+
+const LectureDetail = styled.div`
+    flex-direction: column;
+    gap: 10px;
 `;
 
 const LectureTitle = styled.h3`
@@ -161,18 +186,22 @@ const LectureTitle = styled.h3`
     font-size: 24px;
 `;
 
-const LectureDate = styled.p`
-    margin: 10px 0 60px 0;
-    color: #888;
-`;
+const IconRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  color: var(--darkgrey-color);
 
-const LectureDescription = styled.p`
-    margin: 0;
-    color: #767676;
-    font-size: 14px;
-    background-color: #F6F7F9;
-    padding: 20px 80px 20px 10px;
-    border-radius: 10px;
+  .material-symbols-outlined {
+    font-size: 1.2rem;
+    vertical-align: middle;
+  }
+
+  span {
+    font-size: 1rem;
+    font-weight: 500;
+  }
 `;
 
 const AddButton = styled.button`
@@ -181,7 +210,7 @@ const AddButton = styled.button`
     right: 45px;
     width: 60px;
     height: 60px;
-    background-color: ${props => (props['data-showpopup'] ? '#000' : '#ff5a5f')};
+    background-color: ${props => (props['data-showpopup'] ? '#000' : 'var(--main-color)')};
     color: #fff;
     border: none;
     border-radius: 50%;
