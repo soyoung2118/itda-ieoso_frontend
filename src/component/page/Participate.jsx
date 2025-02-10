@@ -19,11 +19,11 @@ export default function Participate() {
   return (
     <>
       <TopBar />
-      <Container marginTop="100px">
+      <Container>
         <LogoImage src={logoImage} alt="logo" />
         <LogoText>Start your itda</LogoText>
         <Explain>공유 받은 강의 공간 입장 코드를 입력해주세요.</Explain>
-        <div style={{ width: '40%', margin: '0 auto' }}>
+        <div style={{ width: '60%', margin: '0 auto', display: 'flex', justifyContent: 'center' }}>
           <Form>
             <Label>강의실 입장코드</Label>
             <LoginInput 
