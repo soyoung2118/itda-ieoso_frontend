@@ -1,19 +1,23 @@
+import { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import TopBar from "../ui/TopBar";
 import logoImage from "../img/logo/itda_logo_symbol.svg";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import api from "../api/api";
+import { UsersContext } from "../contexts/usersContext";
 
 export default function Participate() {
   const navigate = useNavigate();
   const [code, setCode] = useState("");
+  const { user } = useContext(UsersContext);
 
-  function validateLoginInput() {
-    if (code.trim() === '') {
-        alert('강의실 입장코드를 입력해 주세요.');
-        return false;
+  const handleParticipate = async () => {
+    const response = await api.post(`/courses/enter/${user.userId}?entryCode=${code}`);
+    if (response.status === 200) {
+      navigate('/class');
+    } else {
+      alert('코드가 올바르지 않습니다.');
     }
-    return true;
   }
 
   return (
@@ -23,7 +27,7 @@ export default function Participate() {
         <LogoImage src={logoImage} alt="logo" />
         <LogoText>Start your itda</LogoText>
         <Explain>공유 받은 강의 공간 입장 코드를 입력해주세요.</Explain>
-        <div style={{ width: '60%', margin: '0 auto', display: 'flex', justifyContent: 'center' }}>
+        <div style={{ width: '60%', maxWidth: '800px', margin: '0 auto', display: 'flex',  justifyContent: 'center' }}>
           <Form>
             <Label>강의실 입장코드</Label>
             <LoginInput 
@@ -33,11 +37,7 @@ export default function Participate() {
               value={code} 
             />
             
-            <LoginButton style={{ fontSize: '1rem' }} onClick={() => {
-              if (validateLoginInput()) {
-                navigate('/class');
-              }
-            }}>강의실 입장하기</LoginButton>
+            <LoginButton style={{ fontSize: '1rem' }} onClick={handleParticipate}>강의실 입장하기</LoginButton>
           </Form>
         </div>
       </Container>
