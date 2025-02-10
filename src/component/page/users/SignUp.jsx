@@ -129,6 +129,10 @@ export default function SignUp() {
   const [emailCheckResult, setEmailCheckResult] = useState('');
 
   const handleNext = () => {
+    if (step === 1 && (!termsChecked.service || !termsChecked.privacy)) {
+      alert('필수 약관에 동의해주세요.');
+      return;
+    }
     if (step === 2 && !validatePassword(password)) {
       return;
     }
