@@ -167,9 +167,12 @@ export default function SignUp() {
     console.log(`${term} 문서 출력`);
   };
 
-  const handleCombinedClick = (e) => {
-    handleNext();
-    handleSignUp(e);
+  const handleCombinedClick = async (e) => {
+    e.preventDefault();
+    const signUpSuccess = await handleSignUp(e);
+    if (signUpSuccess) {
+      handleNext();
+    }
   };
 
   //비밀번호 조건 검사
@@ -185,9 +188,7 @@ export default function SignUp() {
     return regex.test(email);
   };
 
-  const handleSignUp = async (e) => {
-    e.preventDefault();
-
+  const handleSignUp = async () => {
     try {
       const requestBody = {
         email: email,
@@ -198,8 +199,11 @@ export default function SignUp() {
         marketing: termsChecked.marketing,
       };
       await signup(requestBody);
+      return true;
     } catch (error) {
       console.error('회원가입 실패:', error);
+      alert('회원가입에 실패하셨습니다.');
+      return false;
     }
   };
 
@@ -223,6 +227,16 @@ export default function SignUp() {
       console.error('이메일 중복 체크 실패:', error);
       setEmailCheckResult('이메일 중복 체크에 실패했습니다.');
     }
+  };
+
+  const isStep2Valid = () => {
+    return (
+      name.trim() !== '' &&
+      validateEmail(email) &&
+      emailCheckResult === '사용 가능한 이메일입니다.' &&
+      validatePassword(password) &&
+      password === confirmPassword
+    );
   };
 
   return (
@@ -329,7 +343,14 @@ export default function SignUp() {
                   </div>
                 )}
               </div>
-              <NextButton onClick={handleCombinedClick}>
+              <NextButton
+                onClick={handleCombinedClick}
+                disabled={!isStep2Valid()}
+                style={{
+                  backgroundColor: isStep2Valid() ? '#FF4747' : '#CDCDCD',
+                  cursor: isStep2Valid() ? 'pointer' : 'not-allowed',
+                }}
+              >
                 다음
               </NextButton>
             </>
