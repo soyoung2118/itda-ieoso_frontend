@@ -182,10 +182,10 @@ const ClassTopbar = ({ activeTab }) => {
           커리큘럼
         </TabLink>
         <TabLink
-          to="/statistics"
-          className={activeTab === "statistics" ? "active" : ""}
+          to="/admin/summary"
+          className={activeTab === "admin" ? "active" : ""}
         >
-          통계
+          관리
         </TabLink>
       </nav>
     </Navbar>

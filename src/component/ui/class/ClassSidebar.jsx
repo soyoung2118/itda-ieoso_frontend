@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import { useNavigate } from "react-router-dom"; // react-router-dom 추가
+import { useLocation, useNavigate } from "react-router-dom"; // react-router-dom 추가
 
 const SidebarContainer = styled.aside`
   width: 13.5rem;
@@ -9,6 +9,7 @@ const SidebarContainer = styled.aside`
   border-radius: 0.5rem;
   padding: 1rem;
   margin-right: 2.5rem;
+  margin-top:0.5rem;
 `;
 
 const ListItem = styled.li`
@@ -17,20 +18,24 @@ const ListItem = styled.li`
   margin-bottom: 0.5rem;
   border-radius: 0.5rem;
   cursor: pointer;
-  background-color: ${(props) =>
-    props.active ? "var(--pink-color)" : "white"};
+  background-color: ${(props) => (props.$active ? "var(--pink-color)" : "white")};
   &:hover {
     background-color: var(--pink-color);
   }
 `;
 
-const ClassSidebar = ({ items, activeItem, setActiveItem, routes }) => {
-  const navigate = useNavigate(); 
+const ClassSidebar = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleItemClick = (item, route) => {
-    setActiveItem(item); 
-    navigate(route); 
-  };
+  const items = ["강의 개요", "강의 공지"];
+  const routes = ["/overview/info", "/overview/notice"];
+
+  const activeIndex = routes.findIndex((route) => location.pathname.startsWith(route));
+  const activeItem = activeIndex !== -1 ? items[activeIndex] : null;
+  console.log("현재 경로:", location.pathname);
+  console.log("매칭된 activeIndex:", activeIndex);
+  console.log("매칭된 activeItem:", activeItem);
 
   return (
     <SidebarContainer>
@@ -38,8 +43,8 @@ const ClassSidebar = ({ items, activeItem, setActiveItem, routes }) => {
         {items.map((item, index) => (
           <ListItem
             key={index}
-            active={activeItem === item}
-            onClick={() => handleItemClick(item, routes[index])} // 클릭 시 처리
+            $active={activeItem === item} 
+            onClick={() => navigate(routes[index])}
           >
             {item}
           </ListItem>

@@ -2,6 +2,7 @@ import TopBar from "../../ui/TopBar";
 import ClassTopbar from "../../ui/class/ClassTopbar";
 import { useState } from "react";
 import { useEffect } from "react";
+import AdminTopBar from "../../ui/class/AdminTopBar";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import styled from "styled-components";
@@ -131,62 +132,53 @@ const ClassStatistics = () => {
             borderRadius: "8px",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <h1
-              style={{
-                fontSize: "2rem",
-                fontWeight: "900",
-                color: "var(--black-color)",
-              }}
-            >
-              전체 학습현황
-            </h1>
 
-            <p
-              style={{
-                color: "var(--darkgrey-color)",
-                fontSize: "1.1rem",
-                marginLeft: "1.3rem",
-                fontWeight: "550",
-                marginBottom: "0",
-              }}
-            >
-              {currentTime} 기준
-            </p>
+          <AdminTopBar />
+          <div>
+            <Section style={{ padding: "2rem 3rem", paddingBottom: "3rem" }}>
+              <div
+                style={{ display: "flex", gap: "2rem", marginBottom: "4rem" }}
+              >
+                <CalendarWrapper>
+                  <h2>{currentMonth}</h2>
+                  <Calendar
+                    locale="ko"
+                    showNavigation={false}
+                    showNeighboringMonth={true}
+                    formatDay={(locale, date) => date.getDate()}
+                  />
+                </CalendarWrapper>
+
+                <StatsContainer>
+                  <StatBox>
+                    <h2>전체 과제 제출 현황</h2>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        flex: "1",
+                      }}
+                    >
+                      <PercentRing percent={75} />
+                    </div>
+                  </StatBox>
+                  <StatBox>
+                    <h2>최근 과제 제출 현황</h2>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        flex: "1",
+                      }}
+                    >
+                      <PercentBar percent={62} />
+                    </div>
+                  </StatBox>
+                </StatsContainer>
+              </div>
+              <StudentProgressTable />
+            </Section>
           </div>
-          <Section style={{ padding: "2rem 3rem", paddingBottom:"3rem" }}>
-            <div style={{ display: "flex", gap: "2rem", marginBottom: "4rem" }}>
-              <CalendarWrapper>
-                <h2>{currentMonth}</h2>
-                <Calendar
-                  locale="ko"
-                  showNavigation={false}
-                  showNeighboringMonth={true}
-                  formatDay={(locale, date) => date.getDate()}
-                />
-              </CalendarWrapper>
-
-              <StatsContainer>
-                <StatBox>
-                  <h2>전체 과제 제출 현황</h2>
-                  <div
-                    style={{ display: "flex", alignItems: "center", flex: "1" }}
-                  >
-                    <PercentRing percent={75} />
-                  </div>
-                </StatBox>
-                <StatBox>
-                  <h2>최근 과제 제출 현황</h2>
-                  <div
-                    style={{ display: "flex", alignItems: "center", flex: "1" }}
-                  >
-                    <PercentBar percent={62} />
-                  </div>
-                </StatBox>
-              </StatsContainer>
-            </div>
-            <StudentProgressTable />
-          </Section>
         </main>
       </PageLayout>
     </div>

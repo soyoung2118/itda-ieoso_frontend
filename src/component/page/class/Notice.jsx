@@ -1,15 +1,17 @@
 import ClassSidebar from "../../ui/class/ClassSidebar";
 import ClassTopbar from "../../ui/class/ClassTopbar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import TopBar from "../../ui/TopBar";
 import styled from "styled-components";
 import { PageLayout, Section } from "../../ui/class/ClassLayout";
 import EditButton from "../../ui/class/EditButton";
-
+import api from "../../api/api";
 
 const Title = styled.h1`
   font-size: 2.6rem;
   font-weight: bold;
+  margin-top:0rem;
 `;
 
 const SearchContainer = styled.div`
@@ -56,13 +58,12 @@ const NoticeItemLeft = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 0rem; 
+  gap: 0rem;
 `;
-
 
 const NoticeItem = styled.div`
   padding: 1.5rem;
-  border-bottom: 1.5px solid #cdcdcd; 
+  border-bottom: 1.5px solid #cdcdcd;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -75,7 +76,6 @@ const NoticeItem = styled.div`
   }
 `;
 
-
 const NoticeTitle = styled.h3`
   font-size: 1.35rem;
   font-weight: 550;
@@ -87,13 +87,10 @@ const NoticeMeta = styled.div`
   font-size: 0.9rem;
   color: #474747;
   display: flex;
-  gap: 0.3rem; 
+  gap: 0.3rem;
   margin-bottom: 1.2rem;
   font-weight: semi-bold;
 `;
-
-
-
 
 const NoticeViews = styled.div`
   text-align: center;
@@ -102,7 +99,7 @@ const NoticeViews = styled.div`
   font-weight: bold;
 
   div {
-    font-size: 0.875rem; 
+    font-size: 0.875rem;
     color: #474747;
     margin-top: 0.25rem;
   }
@@ -138,51 +135,31 @@ const Icon = styled.span`
   color: var(--black-color);
 `;
 
-const ClassNotice = () => {
+const ClassNotice = ({ courseId, userId }) => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [notices, setNotices] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
 
-  const items = ["강의 개요", "강의 공지"];
-  const [activeItem, setActiveItem] = useState("강의 공지");
-  const routes = ["/overview/info", "/overview/announcement"];
+  useEffect(() => {
+    const fetchNotices = async () => {
+      try {
+        const response = await api.get(`/announcements/${courseId}/${userId}`);
+        if (response.data.success) {
+          setNotices(response.data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching announcements:", error);
+        if (error.response && error.response.status === 401) {
+          alert("로그인이 필요합니다.");
+          localStorage.removeItem("token");
+          navigate("/");
+        }
+      }
+    };
 
-  const notices = [
-    {
-      id: 1,
-      title: "1기 환급 안내사항",
-      author: "김잇다",
-      date: "25.01.11 13:15",
-      views: 25,
-    },
-    {
-      id: 2,
-      title: "1기 환급 안내사항",
-      author: "김잇다",
-      date: "25.01.11 13:15",
-      views: 25,
-    },
-    {
-      id: 3,
-      title: "1기 환급 안내사항",
-      author: "김잇다",
-      date: "25.01.11 13:15",
-      views: 25,
-    },
-    {
-      id: 4,
-      title: "1기 환급 안내사항",
-      author: "김잇다",
-      date: "25.01.11 13:15",
-      views: 25,
-    },
-    {
-      id: 5,
-      title: "1기 환급 안내사항",
-      author: "김잇다",
-      date: "25.01.11 13:15",
-      views: 25,
-    },
-  ];
+    fetchNotices();
+  }, [courseId, userId, navigate]);
 
   return (
     <div>
@@ -190,13 +167,7 @@ const ClassNotice = () => {
       <PageLayout>
         <ClassTopbar activeTab="overview" />
         <div style={{ display: "flex", marginTop: "1rem" }}>
-          <ClassSidebar
-            items={items}
-            activeItem={activeItem}
-            setActiveItem={setActiveItem}
-            routes={routes}
-            style={{ marginRight: "2rem" }}
-          />
+          <ClassSidebar style={{ marginRight: "2rem" }} />
           <main
             style={{
               flex: 1,
@@ -211,7 +182,10 @@ const ClassNotice = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <SearchIcon className="material-symbols-outlined" style={{color:"var(--black-color)", fontSize:"2.7rem"}}>
+                <SearchIcon
+                  className="material-symbols-outlined"
+                  style={{ color: "var(--black-color)", fontSize: "2.7rem" }}
+                >
                   search
                 </SearchIcon>
               </SearchContainer>
@@ -238,7 +212,12 @@ const ClassNotice = () => {
               </NoticeList>
               <Pagination>
                 <PageButton onClick={() => setCurrentPage(currentPage - 1)}>
-                  <Icon className="material-symbols-outlined" style={{fontSize:"1.3rem"}}>arrow_back_ios</Icon>
+                  <Icon
+                    className="material-symbols-outlined"
+                    style={{ fontSize: "1.3rem" }}
+                  >
+                    arrow_back_ios
+                  </Icon>
                 </PageButton>
                 <PageButton
                   active={currentPage === 1}
@@ -253,7 +232,12 @@ const ClassNotice = () => {
                   2
                 </PageButton>
                 <PageButton onClick={() => setCurrentPage(currentPage + 1)}>
-                  <Icon className="material-symbols-outlined" style={{fontSize:"1.3rem"}}>arrow_forward_ios</Icon>
+                  <Icon
+                    className="material-symbols-outlined"
+                    style={{ fontSize: "1.3rem" }}
+                  >
+                    arrow_forward_ios
+                  </Icon>
                 </PageButton>
               </Pagination>
             </Section>

@@ -9,12 +9,13 @@ import Create from "./component/page/class/Create.jsx";
 import Setting from "./component/page/class/Setting.jsx";
 import Participate from "./component/page/Participate.jsx";
 import ClassOverview from "./component/page/class/Overview.jsx";
+import ClassSummary from "./component/page/class/Summary.jsx";
+import ClassStudents from "./component/page/class/Students.jsx";
 import EditClass from "./component/ui/class/EditClass.jsx";
 import ClassNotice from "./component/page/class/Notice.jsx";
 import NoticeCreate from "./component/page/class/NoticeCreate.jsx";
 import ClassCurriculum from "./component/page/class/Curriculum.jsx";
 import ClassCurriculumEdit from "./component/page/class/CurriculumEdit.jsx";
-import ClassStatistics from "./component/page/class/Statistics.jsx";
 import Dashboard from "./component/page/Dashboard.jsx";
 
 import ClassPlaying from "./component/page/class/Playing.jsx";
@@ -49,7 +50,8 @@ function App() {
             <Route path="/class/:courseId/overview/notice/create" element={<NoticeCreate />} />
             <Route path="/class/:courseId/curriculum" element={<ClassCurriculum />} />
             <Route path="/class/:courseId/curriculum/edit" element={<ClassCurriculumEdit />} />
-            <Route path="/class/:courseId/statistics" element={<ClassStatistics />} />
+            <Route path="/class/:courseId/summary" element={<ClassSummary/>} />
+          <Route path="/class/:courseId/students" element={<ClassStudents/>} /> 
             
             {/* 대시보드 페이지 */}
             <Route path="/dashboard" element={<Dashboard />} />

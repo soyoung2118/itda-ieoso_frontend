@@ -8,9 +8,10 @@ import ClassThumbnail from "../../img/class/class_thumbnail.svg";
 import Assignment from "../../img/icon/docs.svg";
 import Material from "../../img/icon/pdf.svg";
 import PlayIcon from "../../img/class/play_icon.svg";
-import EditContainer from "../../ui/class/EditContainer";
+import EditContainer from "../../ui/curriculum/EditContainer";
 import EditButton from "../../ui/class/EditButton";
-
+import Delete from "../../img/class/edit/delete.svg";
+import DateTimeEdit from "../../ui/curriculum/DateTimeEdit";
 
 const Section = styled.div`
   display: flex;
@@ -20,6 +21,11 @@ const Section = styled.div`
   background-color: #ffffff;
   cursor: pointer;
   position: relative;
+  ${({ isEditing }) =>
+    isEditing &&
+    `
+    padding-bottom: 8.5rem;
+  `}
 `;
 
 const CurriculumTitle = styled.h3`
@@ -54,6 +60,68 @@ const Icon = styled.img`
   height: 1.4rem;
 `;
 
+const GrayLine = styled.div`
+  position: absolute;
+  width: 96%;
+  height: 1.8px;
+  background-color: #c3c3c3;
+  bottom: 5.5rem;
+`;
+
+const DeleteButton = styled.img`
+  position: absolute;
+  bottom: 2.5rem;
+  right: 2.5rem;
+  width: 1.15rem;
+  cursor: pointer;
+`;
+
+// 섹션 컴포넌트
+const CurriculumSection = ({
+  subSection,
+  index,
+  type,
+  editTarget,
+  handleSectionClick,
+  handleIconClick,
+  handleDelete,
+  children,
+}) => {
+  const isEditing = editTarget?.index === index && editTarget?.type === type;
+
+  return (
+    <Section
+      isEditing={isEditing}
+      onClick={() => handleSectionClick(index, type)}
+    >
+      <div style={{ display: "flex", flexDirection: "column",  width: "100%" }}>
+        {isEditing && type === "assignment" && (
+          <div style={{ width: "100%", display: "block" }}>
+            <DateTimeEdit />
+          </div>
+        )}
+
+        <div style={{ display: "flex", width: "100%" }}>{children}</div>
+      </div>
+
+      {/* EditContainer는 섹션의 오른쪽에 표시 */}
+      {isEditing && (
+        <>
+          <EditContainer onIconClick={handleIconClick} />
+          <GrayLine />
+          <DeleteButton
+            src={Delete}
+            alt="Delete Button"
+            onClick={(e) => {
+              e.stopPropagation(); // 클릭 이벤트 버블링 방지
+              handleDelete(index, type);
+            }}
+          />
+        </>
+      )}
+    </Section>
+  );
+};
 
 const Curriculum = () => {
   const curriculumData = [
@@ -134,6 +202,10 @@ const Curriculum = () => {
     console.log(`Icon clicked: ${action}`);
   };
 
+  const handleDelete = (index) => {
+    console.log(`Section ${index} deleted.`);
+  };
+
   return (
     <div>
       <TopBar />
@@ -205,11 +277,14 @@ const Curriculum = () => {
             {activeSection.subSections.map((subSection, index) => (
               <div key={index}>
                 <div>
-                  <Section onClick={() => handleSectionClick(index, "title")}>
-                    {editTarget?.index === index &&
-                      editTarget?.type === "title" && (
-                        <EditContainer onIconClick={handleIconClick} />
-                      )}
+                  <CurriculumSection
+                    subSection={subSection}
+                    index={index}
+                    type="title"
+                    editTarget={editTarget}
+                    handleSectionClick={handleSectionClick}
+                    handleDelete={handleDelete}
+                  >
                     <VideoContainer>
                       <VideoThumbnail
                         src={subSection.thumbnail || ClassThumbnail}
@@ -257,27 +332,24 @@ const Curriculum = () => {
                         <span>{subSection.period}</span>
                       </p>
                     </div>
-                  </Section>
+                  </CurriculumSection>
 
                   {/* 자료 */}
-                  <Section
-                    onClick={() => handleSectionClick(index, "material")}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "1rem",
-                    }}
+                  <CurriculumSection
+                    subSection={subSection}
+                    index={index}
+                    type="material"
+                    editTarget={editTarget}
+                    handleSectionClick={handleSectionClick}
+                    handleDelete={handleDelete}
                   >
-                    {editTarget?.index === index &&
-                      editTarget?.type === "material" && (
-                        <EditContainer onIconClick={handleIconClick} />
-                      )}
                     <img
                       src={Material}
                       style={{
                         width: "2.4rem",
-                        height: "50%",
                         marginLeft: "1rem",
+                        marginRight: "3rem",
+                        alignSelf: "center",
                       }}
                     />
                     <MaterialSection>
@@ -293,16 +365,20 @@ const Curriculum = () => {
                         {subSection.material.size}
                       </span>
                     </MaterialSection>
-                  </Section>
+                  </CurriculumSection>
 
                   {/* 과제 */}
-                  <Section
-                    onClick={() => handleSectionClick(index, "assignment")}
+                  <CurriculumSection
+                    subSection={subSection}
+                    index={index}
+                    type="assignment"
+                    editTarget={editTarget}
+                    handleSectionClick={handleSectionClick}
+                    handleDelete={handleDelete}
                     style={{
                       display: "flex",
                       alignItems: "center",
                       gap: "1rem",
-                      marginBottom: "2rem",
                     }}
                   >
                     {editTarget?.index === index &&
@@ -314,8 +390,9 @@ const Curriculum = () => {
                       alt="assignment icon"
                       style={{
                         width: "2.4rem",
-                        height: "50%",
                         marginLeft: "1rem",
+                        marginRight: "3rem",
+                        alignSelf: "center",
                       }}
                     />
                     <MaterialSection>
@@ -330,7 +407,7 @@ const Curriculum = () => {
                         {subSection.assignment.deadline}
                       </span>
                     </MaterialSection>
-                  </Section>
+                  </CurriculumSection>
                 </div>
               </div>
             ))}
