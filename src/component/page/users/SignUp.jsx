@@ -192,7 +192,10 @@ export default function SignUp() {
       const requestBody = {
         email: email,
         password: password,
-        name: name, 
+        name: name,
+        service: termsChecked.service,
+        privacy: termsChecked.privacy,
+        marketing: termsChecked.marketing,
       };
       await signup(requestBody);
     } catch (error) {
