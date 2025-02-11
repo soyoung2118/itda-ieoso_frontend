@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import TopBar from '../ui/TopBar';
-import Assignment from "../img/icon/docs.svg";
-import Material from "../img/icon/pdf.svg";
+import TopBar from '../../ui/TopBar';
+import Assignment from "../../img/icon/docs.svg";
+import Material from "../../img/icon/pdf.svg";
 
-export default function ClassRoom() {
+export default function ClassPlaying() {
     const [selectedMenu, setSelectedMenu] = useState('curriculum');
     const [expandedItems, setExpandedItems] = useState(new Set([1]));
 
