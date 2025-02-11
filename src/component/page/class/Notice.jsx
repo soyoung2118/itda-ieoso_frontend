@@ -1,7 +1,7 @@
 import ClassSidebar from "../../ui/class/ClassSidebar";
 import ClassTopbar from "../../ui/class/ClassTopbar";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import TopBar from "../../ui/TopBar";
 import styled from "styled-components";
 import { PageLayout, Section } from "../../ui/class/ClassLayout";
@@ -11,7 +11,7 @@ import api from "../../api/api";
 const Title = styled.h1`
   font-size: 2.6rem;
   font-weight: bold;
-  margin-top:0rem;
+  margin-top: 0rem;
 `;
 
 const SearchContainer = styled.div`
@@ -135,31 +135,60 @@ const Icon = styled.span`
   color: var(--black-color);
 `;
 
-const ClassNotice = ({ courseId, userId }) => {
+const ClassNotice = ({}) => {
+  const { courseId } = useParams();
+  const [userId, setUserId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [notices, setNotices] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const navigate = useNavigate();
+  const ITEMS_PER_PAGE = 5;
 
   useEffect(() => {
+    const getUserIdFromLocalStorage = () => {
+      const userData = localStorage.getItem("user");
+      if (!userData) return null;
+
+      try {
+        const parsedUser = JSON.parse(userData);
+        return parsedUser.userId;
+      } catch (error) {
+        console.error("로컬 스토리지 데이터 파싱 오류:", error);
+        return null;
+      }
+    };
+
+    const fetchedUserId = getUserIdFromLocalStorage();
+    if (fetchedUserId) {
+      setUserId(fetchedUserId);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!courseId || userId === null) return;
+
     const fetchNotices = async () => {
       try {
+        console.log(`Fetching with courseId: ${courseId}, userId: ${userId}`);
         const response = await api.get(`/announcements/${courseId}/${userId}`);
         if (response.data.success) {
           setNotices(response.data.data);
         }
       } catch (error) {
         console.error("Error fetching announcements:", error);
-        if (error.response && error.response.status === 401) {
-          alert("로그인이 필요합니다.");
-          localStorage.removeItem("token");
-          navigate("/");
-        }
       }
     };
 
     fetchNotices();
-  }, [courseId, userId, navigate]);
+  }, [courseId, userId]);
+
+  // 총 페이지 개수 계산
+  const totalPages = Math.ceil(notices.length / ITEMS_PER_PAGE);
+
+  // 현재 페이지의 공지 목록 가져오기
+  const currentNotices = notices.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   return (
     <div>
@@ -193,58 +222,86 @@ const ClassNotice = ({ courseId, userId }) => {
 
             <Section>
               <NoticeList>
-                {notices.map((notice) => (
-                  <NoticeItem key={notice.id}>
-                    <NoticeItemLeft>
-                      <NoticeTitle>{notice.title}</NoticeTitle>
-                      <NoticeMeta>
-                        <span>{notice.author}</span>
-                        <span>|</span>
-                        <span>{notice.date}</span>
-                      </NoticeMeta>
-                    </NoticeItemLeft>
-                    <NoticeViews>
-                      {notice.views}
-                      <div>조회수</div>
-                    </NoticeViews>
-                  </NoticeItem>
-                ))}
+                {/* 🔹 공지가 없을 때 표시할 메시지 */}
+                {notices.length === 0 ? (
+                  <div
+                    style={{
+                      textAlign: "center",
+                      fontSize: "1.5rem",
+                      fontWeight: "bold",
+                      color: "var(--darkgrey-color)",
+                      padding: "3rem 0",
+                    }}
+                  >
+                    아직 등록된 공지사항이 없습니다.
+                  </div>
+                ) : (
+                  currentNotices.map((notice) => (
+                    <NoticeItem key={notice.id}>
+                      <NoticeItemLeft>
+                        <NoticeTitle>{notice.title}</NoticeTitle>
+                        <NoticeMeta>
+                          <span>{notice.author}</span>
+                          <span>|</span>
+                          <span>{notice.date}</span>
+                        </NoticeMeta>
+                      </NoticeItemLeft>
+                      <NoticeViews>
+                        {notice.views}
+                        <div>조회수</div>
+                      </NoticeViews>
+                    </NoticeItem>
+                  ))
+                )}
               </NoticeList>
-              <Pagination>
-                <PageButton onClick={() => setCurrentPage(currentPage - 1)}>
-                  <Icon
-                    className="material-symbols-outlined"
-                    style={{ fontSize: "1.3rem" }}
+
+              {/* 페이지네이션 */}
+              {totalPages > 1 && (
+                <Pagination>
+                  {/* 이전 버튼 */}
+                  <PageButton
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(prev - 1, 1))
+                    }
+                    disabled={currentPage === 1}
                   >
-                    arrow_back_ios
-                  </Icon>
-                </PageButton>
-                <PageButton
-                  active={currentPage === 1}
-                  onClick={() => setCurrentPage(1)}
-                >
-                  1
-                </PageButton>
-                <PageButton
-                  active={currentPage === 2}
-                  onClick={() => setCurrentPage(2)}
-                >
-                  2
-                </PageButton>
-                <PageButton onClick={() => setCurrentPage(currentPage + 1)}>
-                  <Icon
-                    className="material-symbols-outlined"
-                    style={{ fontSize: "1.3rem" }}
+                    <Icon className="material-symbols-outlined">
+                      arrow_back_ios
+                    </Icon>
+                  </PageButton>
+
+                  {/* 현재 페이지 버튼 (1부터 totalPages까지 동적 생성) */}
+                  {Array.from({ length: totalPages }, (_, index) => (
+                    <PageButton
+                      key={index + 1}
+                      active={currentPage === index + 1}
+                      onClick={() => setCurrentPage(index + 1)}
+                    >
+                      {index + 1}
+                    </PageButton>
+                  ))}
+
+                  {/* 다음 버튼 */}
+                  <PageButton
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                    }
+                    disabled={currentPage === totalPages}
                   >
-                    arrow_forward_ios
-                  </Icon>
-                </PageButton>
-              </Pagination>
+                    <Icon className="material-symbols-outlined">
+                      arrow_forward_ios
+                    </Icon>
+                  </PageButton>
+                </Pagination>
+              )}
             </Section>
           </main>
         </div>
       </PageLayout>
-      <EditButton to="/overview/notice/create" edit={true} />
+      <EditButton
+        to={`/class/${courseId}/overview/notice/create`}
+        edit={true}
+      />
     </div>
   );
 };

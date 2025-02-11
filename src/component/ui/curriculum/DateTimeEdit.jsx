@@ -4,37 +4,6 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import DateTime from "../../img/class/edit/datetime.svg";
 import Calendar from "../../img/class/edit/calendar.svg";
-// 스타일 정의
-
-const GlobalStyle = createGlobalStyle`
-  .react-datepicker {
-    font-family: "Arial", sans-serif;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #ddd;
-  }
-  .react-datepicker__header {
-    background-color: #f8f9fa;
-    border-bottom: 1px solid #ddd;
-  }
-  .react-datepicker__current-month {
-    font-weight: bold;
-    color: #333;
-  }
-  .react-datepicker__day {
-    font-size: 1rem;
-    &:hover {
-      background-color: #007bff;
-      color: white;
-      border-radius: 50%;
-    }
-  }
-  .react-datepicker__day--selected {
-    background-color: #007bff !important;
-    color: white !important;
-    border-radius: 50%;
-  }
-`;
 
 const DateTimeContainer = styled.div`
   display: flex;
@@ -113,40 +82,37 @@ const DateTimeEdit = () => {
   };
 
   return (
-    <>
-      <GlobalStyle />
-      <DateTimeContainer>
-        <DateRow>
-          <img
-            src={DateTime}
-            style={{
-              width: "2.5rem",
-              marginLeft: "1rem",
-              marginRight: "1rem",
-              alignSelf: "center",
-            }}
-          />
-          {/* 시작일 */}
-          <DatePicker
-            selected={startDate}
-            onChange={handleStartDateChange}
-            showTimeSelect
-            dateFormat="yyyy년 MM월 dd일 HH:mm"
-            customInput={<CustomInput />}
-          />
+    <DateTimeContainer>
+      <DateRow>
+        <img
+          src={DateTime}
+          style={{
+            width: "2.5rem",
+            marginLeft: "1rem",
+            marginRight: "1rem",
+            alignSelf: "center",
+          }}
+        />
+        {/* 시작일 */}
+        <DatePicker
+          selected={startDate}
+          onChange={handleStartDateChange}
+          showTimeSelect
+          dateFormat="yyyy년 MM월 dd일 HH:mm"
+          customInput={<CustomInput />}
+        />
 
-          {/* 마감일 */}
-          <DatePicker
-            selected={endDate}
-            onChange={handleEndDateChange}
-            showTimeSelect
-            minDate={startDate} // 마감일은 시작일 이후만 가능
-            dateFormat="yyyy년 MM월 dd일 HH:mm"
-            customInput={<CustomInput />}
-          />
-        </DateRow>
-      </DateTimeContainer>
-    </>
+        {/* 마감일 */}
+        <DatePicker
+          selected={endDate}
+          onChange={handleEndDateChange}
+          showTimeSelect
+          minDate={startDate} // 마감일은 시작일 이후만 가능
+          dateFormat="yyyy년 MM월 dd일 HH:mm"
+          customInput={<CustomInput />}
+        />
+      </DateRow>
+    </DateTimeContainer>
   );
 };
 

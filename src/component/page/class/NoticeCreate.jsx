@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import TopBar from "../../ui/TopBar";
 import ClassTopbar from "../../ui/class/ClassTopbar";
@@ -14,7 +15,7 @@ const NoticeTitle = styled.h3`
   margin-bottom: 1rem;
   margin-left: 1rem;
   letter-spacing: -2px;
-  margin-top:1rem;
+  margin-top: 1rem;
 `;
 
 const StyledInput = styled.input`
@@ -56,24 +57,48 @@ const StyledButton = styled.button`
 `;
 
 const NoticeCreateForm = () => {
-
-  // 미정 - courseId와 userId를 가져오는 방식에 따라 수정
-  const courseId = localStorage.getItem("courseId");
-  const userId = localStorage.getItem("userId");
-  //
+  const { courseId } = useParams();
+  const [userId, setUserId] = useState(null);
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
+  useEffect(() => {
+    const getUserIdFromLocalStorage = () => {
+      const userData = localStorage.getItem("user");
+      if (!userData) return null;
+
+      try {
+        const parsedUser = JSON.parse(userData); // JSON 파싱
+        return parsedUser.userId; // userId 추출
+      } catch (error) {
+        console.error("로컬 스토리지 데이터 파싱 오류:", error);
+        return null;
+      }
+    };
+
+    const fetchedUserId = getUserIdFromLocalStorage();
+    if (fetchedUserId) {
+      setUserId(fetchedUserId);
+    }
+  }, []);
+
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    console.log(courseId, userId);
+
+    if (!courseId || !userId) {
+      alert("courseId 또는 userId를 가져오지 못했습니다.");
+      return;
+    }
 
     try {
       const response = await api.post(`/announcements/${courseId}/${userId}`, {
         title,
         content,
       });
-
 
       if (response.data.success) {
         alert("공지사항이 게시되었습니다.");
@@ -95,7 +120,9 @@ const NoticeCreateForm = () => {
         <ClassTopbar activeTab="overview" />
         <div style={{ display: "flex", marginTop: "1rem" }}>
           <ClassSidebar style={{ marginRight: "2rem" }} />
-          <main style={{ display: "flex", flexDirection: "column", width:"80.8%"}}>
+          <main
+            style={{ display: "flex", flexDirection: "column", width: "80.8%" }}
+          >
             <NoticeTitle>공지사항 작성</NoticeTitle>
             <Container style={{ padding: "2rem", paddingRight: "4.3rem" }}>
               <form onSubmit={handleSubmit}>

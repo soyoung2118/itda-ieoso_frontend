@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import { useLocation, useNavigate } from "react-router-dom"; // react-router-dom 추가
+import { useLocation, useNavigate, useParams } from "react-router-dom"; // react-router-dom 추가
 
 const SidebarContainer = styled.aside`
   width: 13.5rem;
@@ -25,11 +25,12 @@ const ListItem = styled.li`
 `;
 
 const ClassSidebar = () => {
+  const { courseId } = useParams(); 
   const navigate = useNavigate();
   const location = useLocation();
 
   const items = ["강의 개요", "강의 공지"];
-  const routes = ["/overview/info", "/overview/notice"];
+  const routes = [`/class/${courseId}/overview/info`, `/class/${courseId}/overview/notice`];
 
   const activeIndex = routes.findIndex((route) => location.pathname.startsWith(route));
   const activeItem = activeIndex !== -1 ? items[activeIndex] : null;

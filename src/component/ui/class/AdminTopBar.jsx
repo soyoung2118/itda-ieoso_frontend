@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 
@@ -38,6 +38,7 @@ const TabLink = styled(NavLink)`
 `;
 
 const AdminTopBar = ({ activeTab }) => {
+  const { courseId } = useParams();
   return (
     <div>
       <h1
@@ -52,13 +53,13 @@ const AdminTopBar = ({ activeTab }) => {
       <Navbar>
         <nav style={{ display: "flex", gap: "1rem" }}>
           <TabLink
-            to="/admin/summary"
+            to="/class/${courseId}/admin/summary"
             className={activeTab === "summary" ? "active" : ""}
           >
             요약
           </TabLink>
           <TabLink
-            to="/admin/students"
+            to="/class/${courseId}/admin/students"
             className={activeTab === "students" ? "active" : ""}
           >
             학생별 보기

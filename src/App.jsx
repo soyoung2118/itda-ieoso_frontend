@@ -21,9 +21,7 @@ import Dashboard from "./component/page/Dashboard.jsx";
 import ClassPlaying from "./component/page/class/Playing.jsx";
 import ClassAssignmentSubmit from "./component/page/class/AssignmentSubmit.jsx";
 
-
 function App() {
-
   return (
     <>
       <BrowserRouter>
@@ -39,31 +37,58 @@ function App() {
             <Route path="/class" element={<Class />} />
             <Route path="/class/create" element={<Create />} />
             <Route path="/admin/setting" element={<Setting />} />
-            
+
             {/* 강의실 입장 페이지 */}
             <Route path="/class/participate" element={<Participate />} />
 
             {/* 강의실 상세 페이지 */}
-            <Route path="/class/:courseId/overview/info" element={<ClassOverview />} />
-            <Route path="/class/:courseId/overview/info/edit" element={<EditClass />} />
-            <Route path="/class/:courseId/overview/notice" element={<ClassNotice />} />
-            <Route path="/class/:courseId/overview/notice/create" element={<NoticeCreate />} />
-            <Route path="/class/:courseId/curriculum" element={<ClassCurriculum />} />
-            <Route path="/class/:courseId/curriculum/edit" element={<ClassCurriculumEdit />} />
-            <Route path="/class/:courseId/summary" element={<ClassSummary/>} />
-          <Route path="/class/:courseId/students" element={<ClassStudents/>} /> 
-            
+            <Route
+              path="/class/:courseId/overview/info"
+              element={<ClassOverview />}
+            />
+            <Route
+              path="/class/:courseId/overview/info/edit"
+              element={<EditClass />}
+            />
+            <Route
+              path="/class/:courseId/overview/notice"
+              element={<ClassNotice />}
+            />
+            <Route
+              path="/class/:courseId/overview/notice/create"
+              element={<NoticeCreate />}
+            />
+            <Route
+              path="/class/:courseId/curriculum"
+              element={<ClassCurriculum />}
+            />
+            <Route
+              path="/class/:courseId/curriculum/edit"
+              element={<ClassCurriculumEdit />}
+            />
+            <Route
+              path="/class/:courseId/admin/summary"
+              element={<ClassSummary />}
+            />
+            <Route
+              path="/class/:courseId/admin/students"
+              element={<ClassStudents />}
+            />
+
             {/* 대시보드 페이지 */}
             <Route path="/dashboard" element={<Dashboard />} />
 
             {/* 강의실 수강  */}
             <Route path="/playing" element={<ClassPlaying />} />
-            <Route path="/assignment/submit/:lectureId/:videoId" element={<ClassAssignmentSubmit />} />
+            <Route
+              path="/assignment/submit/:lectureId/:videoId"
+              element={<ClassAssignmentSubmit />}
+            />
           </Routes>
         </UsersProvider>
       </BrowserRouter>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

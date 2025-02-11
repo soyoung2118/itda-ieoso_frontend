@@ -1,7 +1,8 @@
 import TopBar from "../../ui/TopBar";
 import ClassTopbar from "../../ui/class/ClassTopbar";
-import { useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import api from "../../api/api";
 import AdminTopBar from "../../ui/class/AdminTopBar";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
@@ -95,31 +96,27 @@ const CalendarWrapper = styled.div`
   }
 `;
 
-const ClassStatistics = () => {
-  const [currentTime, setCurrentTime] = useState("");
-  const [currentMonth, setCurrentMonth] = useState("");
+const ClassSummary = () => {
+  const { courseId } = useParams();
+  const [assignments, setAssignments] = useState([]);
 
   useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      const formattedTime = `${now.getFullYear()}.${
-        now.getMonth() + 1
-      }.${now.getDate()} ${now.getHours()}:${String(now.getMinutes()).padStart(
-        2,
-        "0"
-      )}`;
-      const calendarTime = `${now.getFullYear()}년 ${now.getMonth() + 1}월`;
-
-      setCurrentTime(formattedTime);
-      setCurrentMonth(calendarTime);
+    const fetchAssignmentStats = async () => {
+      try {
+        const response = await api.get(`/statistics/courses/${courseId}/assignments`);
+        if (response.data.success) {
+          setAssignments(response.data.data);
+        }
+      } catch (error) {
+        console.error("과제 통계 불러오기 오류:", error);
+      }
     };
 
-    updateTime();
+    if (courseId) {
+      fetchAssignmentStats();
+    }
+  }, [courseId]);
 
-    const timer = setInterval(updateTime, 60000);
-
-    return () => clearInterval(timer);
-  }, []);
   return (
     <div>
       <TopBar />
@@ -136,7 +133,7 @@ const ClassStatistics = () => {
           <AdminTopBar />
           <div>
             <Section style={{ padding: "2rem 3rem", paddingBottom: "3rem" }}>
-              <div
+              {/* <div
                 style={{ display: "flex", gap: "2rem", marginBottom: "4rem" }}
               >
                 <CalendarWrapper>
@@ -175,8 +172,8 @@ const ClassStatistics = () => {
                     </div>
                   </StatBox>
                 </StatsContainer>
-              </div>
-              <StudentProgressTable />
+              </div> */}
+              <StudentProgressTable assignments={assignments} />
             </Section>
           </div>
         </main>
@@ -185,4 +182,4 @@ const ClassStatistics = () => {
   );
 };
 
-export default ClassStatistics;
+export default ClassSummary;
