@@ -1,4 +1,4 @@
-import { useState, forwardRef } from 'react';
+import { useEffect, useState, forwardRef } from 'react';
 import { useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import TopBar from '../../ui/TopBar';
@@ -6,9 +6,11 @@ import Calendar from "../../img/classroom/calendar.png";
 import Clock from "../../img/classroom/clock.png";
 import DatePicker from "react-datepicker";
 import "../../../style/react-datepicker.css";
+import api from "../../api/api";
 
 export default function Create() {
   const navigate = useNavigate();
+  const [courseInfo, setCourseInfo] = useState(null);
   const timeSlots = ['월', '화', '수', '목', '금', '토', '일'];
   const [isAssignmentPending, setIsAssignmentPending] = useState(false);
   const [isLecturePending, setIsLecturePending] = useState(false);
@@ -48,20 +50,42 @@ const handleDaySelect = (type, day) => {
     setForm(prev => ({ ...prev, difficulty }));
   };
 
-  const handleSubmit = () => {
-    console.log('Form Data:', {
-      title: form.coursename,
-      instructorName: form.instructor,
-      startDate: form.startDate?.toISOString().split('T')[0],
-      durationWeeks: form.durationWeeks,
-      lectureDay: form.lectureDays,
-      lectureTime: form.lectureTime,
-      assignmentDueDay: form.assignmentDays,
-      assignmentDueTime: form.assignmentTime,
-      difficultyLevel: form.difficulty
-    });
-
-    navigate('/curriculum', { state: { entrycode: 'ABC123' } });
+  const handleSubmit = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (!user || !user.userId) {
+        throw new Error('사용자 정보가 없습니다');
+      }
+  
+      const createResponse = await api.post(`/courses/${user.userId}`);
+      if (!createResponse.data.success) {
+        throw new Error('강의실 생성에 실패했습니다');
+      }
+  
+      const courseData = createResponse.data.data;
+      
+      const updateData = {
+        courseTitle: form.coursename,
+        instructorName: form.instructor,
+        startDate: form.startDate?.toISOString().split('T')[0],
+        durationWeeks: Number(form.durationWeeks),
+        lectureDay: form.lectureDays,
+        lectureTime: form.lectureTime,
+        assignmentDueDay: form.assignmentDays,
+        assignmentDueTime: form.assignmentTime,
+        difficultyLevel: form.difficulty.toUpperCase()
+      };
+  
+      //await api.put(`/courses/${courseData.courseId}`, updateData);
+  
+      navigate(`/class/${courseData.courseId}/curriculum`, {
+        state: { entrycode: courseData.entryCode }
+      });
+  
+    } catch (error) {
+      console.error('강의실 생성 실패:', error);
+      alert(error.message || '강의실 생성 중 오류가 발생했습니다.');
+    }
   };
 
   const CustomInput = forwardRef(({ value, onClick }, ref) => (
