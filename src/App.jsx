@@ -1,6 +1,7 @@
-import {BrowserRouter, Route, Routes} from "react-router-dom";
-import LogIn from "./component/page/LogIn.jsx";
-import SignUp from "./component/page/SignUp.jsx";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { UsersProvider } from "./component/contexts/usersContext.jsx";
+import LogIn from "./component/page/users/LogIn.jsx";
+import SignUp from "./component/page/users/SignUp.jsx";
 import ClassRoom from "./component/page/ClassRoom.jsx";
 import MainPage from "./component/page/MainPage.jsx";
 import Class from "./component/page/Class.jsx";
@@ -23,24 +24,26 @@ function App() {
   return (
     <>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<MainPage />} />
-          <Route path="/overview/info" element={<ClassOverview />} />
-          <Route path="/overview/info/edit" element={<EditClass />} />
-          <Route path="/overview/notice" element={<ClassNotice />} />
-          <Route path="/overview/notice/create" element={<NoticeCreate />} />
-          <Route path="/curriculum" element={<ClassCurriculum />} />
-          <Route path="/curriculum/edit" element={<ClassCurriculumEdit />} />
-          <Route path="/dashboard" element={<Dashboard/>} />
-          <Route path="/login" element={<LogIn />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/participate" element={<Participate />} />
-          <Route path="/class" element={<Class />} />
-          <Route path="/classroom" element={<ClassRoom />} />
-          <Route path="/class/create" element={<Create />} />
-          <Route path="/statistics" element={<ClassStatistics/>} />
+        <UsersProvider>
+          <Routes>
+            <Route path="/" element={<MainPage />} />
+            <Route path="/overview/info" element={<ClassOverview />} />
+            <Route path="/overview/info/edit" element={<EditClass />} />
+            <Route path="/overview/notice" element={<ClassNotice />} />
+            <Route path="/overview/notice/create" element={<NoticeCreate />} />
+            <Route path="/curriculum" element={<ClassCurriculum />} />
+            <Route path="/curriculum/edit" element={<ClassCurriculumEdit />} />
+            <Route path="/dashboard" element={<Dashboard/>} />
+            <Route path="/login" element={<LogIn />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/class/participate" element={<Participate />} />
+            <Route path="/class" element={<Class />} />
+            <Route path="/classroom" element={<ClassRoom />} />
+            <Route path="/class/create" element={<Create />} />
+            <Route path="/statistics" element={<ClassStatistics/>} />
           <Route path="/admin/setting" element={<Setting/>} />
-        </Routes>
+          </Routes>
+        </UsersProvider>
       </BrowserRouter>
     </>
   )

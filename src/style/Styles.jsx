@@ -28,7 +28,7 @@ export const LogoText = styled.div`
     margin-bottom: 2rem;
 `;
 
-export const Form = styled.div`
+export const Form = styled.form`
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -54,8 +54,12 @@ export const LoginInput = styled.input`
 
 export const CheckboxContainer = styled.div`
     display: flex;
+    justify-content: space-between;
     align-items: center;
+    width: 100%;
     margin-bottom: 1rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
 `;
 
 export const CustomCheckboxSquare = (checked) => {

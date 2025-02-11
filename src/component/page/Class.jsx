@@ -1,49 +1,48 @@
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import TopBar from "../ui/TopBar";
-import userIcon from "../img/mainpage/usericon.png";
-import ClassData from "../img/class/ClassData.png";
 import LogoGray from "../img/logo/itda_logo_gray.svg";
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import EventIcon from '@mui/icons-material/Event';
+import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
+import PersonIcon from '@mui/icons-material/Person';
+import api from "../api/api";
+import { UsersContext } from "../contexts/usersContext";
 
 export default function Class() {
     const navigate = useNavigate();
     const [selectedMenu, setSelectedMenu] = useState("전체 강의실");
     const [showPopup, setShowPopup] = useState(false);
-
-    const lectures = { "전체 강의실": [], "내 강의실": []};
-    /*
-    const lectures = {
-        "전체 강의실": [
-            { id:1, title: "2025년도 통합사회 1-1", date: "2024.12.22", description: "김인덕의 폭발적 통합사회 강의를 잇다에서 만나보세요. 2019년부터 재편된 전국 고등학생의 문의, 강사 김인덕의 통합 사회 정복기!" },
-            { id:2, title: "2025년도 통합사회 1-2", date: "2025.01.02", description: "김인덕의 폭발적 통합사회 강의를 잇다에서 만나보세요. 2019년부터 재편된 전국 고등학생의 문의, 강사 김인덕의 통합 사회 정복기!" },
-            { id:3, title: "2025년도 생활과 윤리", date: "2024.12.24", description: "박윤리 선생님과 함께하는 생활과 윤리 강의! 윤리적 감수성을 키우고 도덕적 판단력을 향상시키는 강의입니다." },
-            { id:4, title: "2025년도 한국지리", date: "2024.12.28", description: "대한민국 구석구석을 탐험하는 한국지리 강의! 이지리 선생님과 함께 우리나라의 지리를 재미있게 배워보세요." }
-        ],
-        "내 강의실": [
-            { id: 5, title: "2025년도 통합사회 1-1", date: "2024.12.22", description: "김인덕의 폭발적 통합사회 강의를 잇다에서 만나보세요. 2019년부터 재편된 전국 고등학생의 문의, 강사 김인덕의 통합 사회 정복기!" }
-        ]
-    };
-    */
-
-    const lecturesCount = lectures[selectedMenu].length; // 강의실 개수 확인
+    const { user } = useContext(UsersContext);
+    const [lectures, setLectures] = useState([]);
 
     const handleLectureClick = (id) => {
         navigate(`/class/${id}`);
     };
 
+    const getAllLectures = async () => {
+        try{
+            const response = await api.get(`/courses/${user.userId}/my-courses`);
+            setLectures(response.data.data); //data 안의 data
+        } catch (error) {
+            console.error('강의실 조회 중 오류 발생:', error);
+        }
+    };
+
+    useEffect(() => {
+        if (user && user.userId) {
+            getAllLectures();
+        }
+    }, [user]);  // user가 업데이트될 때마다 호출
+
+    const lecturesToDisplay = selectedMenu === "전체 강의실" ? lectures : lectures.filter(lecture => lecture.user.userId === user.userId);
+    const lecturesCount = lecturesToDisplay.length;
+
     return (
       <>
-        <Header>
-          <TopBar />
-          <div className="header-right">
-            {/* 대시보드로 가기 버튼 파일 존재x*/}
-              <button className="godashboard" onClick={() => navigate('/dashboard')}>대시보드로 가기</button>
-              <UserIcon src={userIcon} alt="user icon" />
-            </div>
-        </Header>
+        <TopBar />
             <Container>
                 <Sidebar>
                     <MenuItem active={selectedMenu === "전체 강의실"} onClick={() => setSelectedMenu("전체 강의실")}>
@@ -59,18 +58,35 @@ export default function Class() {
                         <NoLecturesMessage>
                             <img src={LogoGray} alt="LogoGray" width="40" height="40" />
                             <br />
-                            현재 생성된 강의실이 없습니다 :(
+                            현재 생성된 강의실이 없습니다 :
                             <br />
                             + 버튼을 눌러 강의실을 생성해보세요!
                         </NoLecturesMessage>
                    ) : (
-                       lectures[selectedMenu].map((lecture) => (
-                           <LectureCard key={lecture.id} onClick={() => handleLectureClick(lecture.id)}>
-                               <LectureImage src={ClassData} alt="Lecture" />
+                    lecturesToDisplay?.map((lecture) => (
+                        <LectureCard key={lecture.courseId} onClick={() => handleLectureClick(lecture.courseId)}>
+                            <LectureImage src={lecture.courseThumbnail} alt="Lecture" />
                                <LectureInfo>
-                                   <LectureTitle>{lecture.title}</LectureTitle>
-                                   <LectureDate>등록 일시 {lecture.date}</LectureDate>
-                                   <LectureDescription>{lecture.description}</LectureDescription>
+                                <LectureTitle>{lecture.courseTitle}</LectureTitle>
+                                {/* 강의 시작일 */}
+                                <LectureDetail>
+                                <IconRow>
+                                    <EventIcon />
+                                    <span>{lecture.startDate ? `${lecture.startDate} 시작` : '시작일 미정'}</span>
+                                </IconRow>
+
+                                {/* 강의 기간 */}
+                                <IconRow>
+                                    <VideoLibraryIcon />
+                                    <span>{lecture.durationWeeks > 0 ? `${lecture.durationWeeks}주 커리큘럼` : '기간 미정'}</span>
+                                </IconRow>
+
+                                {/* 강사 이름 */}
+                                <IconRow>
+                                    <PersonIcon />
+                                    <span>{lecture.instructorName}</span>
+                                </IconRow>
+                                </LectureDetail>
                                </LectureInfo>
                            </LectureCard>
                        ))
@@ -91,7 +107,7 @@ export default function Class() {
                                     <OpenInNewIcon style={{ marginRight: '15px' }}/>
                                     강의실 만들기
                                 </PopupItem>
-                                <PopupItem onClick={() => navigate('/participate')}>
+                                <PopupItem onClick={() => navigate('/class/participate')}>
                                     <ExitToAppIcon style={{ marginRight: '15px' }}/>
                                     강의실 들어가기
                                 </PopupItem>
@@ -103,34 +119,6 @@ export default function Class() {
         </>
     );
 }
-
-const Header = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #fff;
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .godashboard{
-      background-color: transparent;
-      color: #000;
-      border: 1px solid #000;
-      padding: 10px 20px;
-      cursor: pointer;
-      border-radius: 60px;
-    }
-`;
-
-const UserIcon = styled.img`
-    width: 40px;
-    height: 40px;
-    margin-right: 10px;
-`;
 
 const Container = styled.div`
     display: flex;
@@ -155,7 +143,7 @@ const MenuItem = styled.div`
     margin-bottom: 10px;
     color: #000;
     font-weight: ${props => props.active ? 'bold' : 'bold'};
-    background-color: ${props => props.active ? '#FFD1D1' : '#FFFFFF'};  
+    background-color: ${props => props.active ? 'var(--pink-color)' : '#FFFFFF'};  
     border-radius: 10px;
     cursor: pointer;
 `;
@@ -168,7 +156,7 @@ const Content = styled.div`
 const LectureCard = styled.div`
     display: flex;
     background-color: #fff;
-    margin-bottom: 20px;
+    margin: 10px 20px 20px 10px;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -183,6 +171,14 @@ const LectureImage = styled.img`
 
 const LectureInfo = styled.div`
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+`;
+
+const LectureDetail = styled.div`
+    flex-direction: column;
+    gap: 10px;
 `;
 
 const LectureTitle = styled.h3`
@@ -190,18 +186,22 @@ const LectureTitle = styled.h3`
     font-size: 24px;
 `;
 
-const LectureDate = styled.p`
-    margin: 10px 0 60px 0;
-    color: #888;
-`;
+const IconRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  color: var(--darkgrey-color);
 
-const LectureDescription = styled.p`
-    margin: 0;
-    color: #767676;
-    font-size: 14px;
-    background-color: #F6F7F9;
-    padding: 20px 80px 20px 10px;
-    border-radius: 10px;
+  .material-symbols-outlined {
+    font-size: 1.2rem;
+    vertical-align: middle;
+  }
+
+  span {
+    font-size: 1rem;
+    font-weight: 500;
+  }
 `;
 
 const AddButton = styled.button`
@@ -210,7 +210,7 @@ const AddButton = styled.button`
     right: 45px;
     width: 60px;
     height: 60px;
-    background-color: ${props => (props['data-showpopup'] ? '#000' : '#ff5a5f')};
+    background-color: ${props => (props['data-showpopup'] ? '#000' : 'var(--main-color)')};
     color: #fff;
     border: none;
     border-radius: 50%;

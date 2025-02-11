@@ -2,39 +2,11 @@ import ClassTopbar from "../../ui/class/ClassTopbar";
 import ClassSidebar from "../../ui/class/ClassSidebar";
 import { useState, useEffect } from "react";
 import ClassThumbnail from "../../img/class/class_thumbnail.svg";
-import userIcon from "../../img/mainpage/usericon.png";
 import TopBar from "../../ui/TopBar";
 import styled from "styled-components";
 import { PageLayout, Section } from "../../ui/class/ClassLayout";
 import ReactQuill from 'react-quill-new';  // 'react-quill' -> 'react-quill-new'
 import 'react-quill-new/dist/quill.snow.css';  // 'react-quill' -> 'react-quill-new'
-import { useNavigate } from 'react-router-dom';
-
-const Header = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #FFFFFF;
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .godashboard{
-      background-color: transparent;
-      color: #000;
-      border: 1px solid #000;
-      padding: 10px 20px;
-      cursor: pointer;
-      border-radius: 60px;
-    }
-`;
-
-const UserIcon = styled.img`
-    width: 40px;
-    height: 40px;
-    margin-right: 15px;
-`;
 
 const IconRow = styled.div`
   display: flex;
@@ -165,7 +137,6 @@ const EditableSectionContent = ({ content, onChange, isEditing }) => {
 };
 
 const ClassOverview = () => {
-  const navigate = useNavigate();
   const items = ["강의 개요", "강의 공지"];
   const [activeItem, setActiveItem] = useState("강의 개요");
   const routes = ["/overview/info/edit", "/overview/notice"];
@@ -205,13 +176,7 @@ const ClassOverview = () => {
 
   return (
     <div>
-      <Header>
-        <TopBar />
-        <div className="header-right">
-          <button className="godashboard" onClick={() => navigate('/dashboard')}>대시보드로 가기</button>
-          <UserIcon src={userIcon} alt="user icon" />
-        </div>
-      </Header>
+      <TopBar />
       <PageLayout>
         <ClassTopbar activeTab="overview" />
         <div style={{ display: "flex", marginTop: "1rem" }}>

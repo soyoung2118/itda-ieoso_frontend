@@ -1,7 +1,5 @@
 import styled from "styled-components";
 import TopBar from "../ui/TopBar";
-import { useNavigate } from "react-router-dom";
-import userIcon from "../img/mainpage/usericon.png";
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import Video from "../img/dashboard/video.png";
@@ -10,8 +8,6 @@ import Pdf from "../img/icon/pdf.svg";
 import PropTypes from 'prop-types';
 
 export default function DashBoard() {
-  const navigate = useNavigate();
-  const userName = "홍길동";
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
 
@@ -36,15 +32,7 @@ export default function DashBoard() {
 
   return (
     <>
-    <Header>
-      <TopBar />
-      <div className="header-right">
-        {/* 대시보드로 가기 버튼 파일 존재x*/}
-        <button className="godashboard" onClick={() => navigate('/class')}>강의실 입장하기</button>
-        <UserIcon src={userIcon} alt="user icon" />
-        <UserName>{userName}님</UserName>
-      </div>
-    </Header>
+    <TopBar />
     <Container>
         <WeekRange>
           <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
@@ -69,36 +57,6 @@ export default function DashBoard() {
     </>
   );
 }
-
-const Header = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #fff;
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .godashboard{
-      background-color: transparent;
-      color: #000;
-      border: 1px solid #000;
-      padding: 10px 20px;
-      cursor: pointer;
-      border-radius: 60px;
-    }
-`;
-
-const UserIcon = styled.img`
-    width: 40px;
-    height: 40px;
-`;
-
-const UserName = styled.div`
-    font-size: 14px;
-    margin-right: 30px;
-`;
 
 //헤더 밑 
 const Container = styled.div`
