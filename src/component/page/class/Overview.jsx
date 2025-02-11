@@ -9,12 +9,12 @@ import styled from "styled-components";
 import { PageLayout, Section } from "../../ui/class/ClassLayout";
 import EditButton from "../../ui/class/EditButton";
 
-const SectionTitle = styled.h2`
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-  margin-top: 3.5rem;
-`;
+// const SectionTitle = styled.h2`
+//   font-size: 1.5rem;
+//   font-weight: bold;
+//   margin-bottom: 1rem;
+//   margin-top: 3.5rem;
+// `;
 
 const SectionContent = styled.div`
   font-size: 1.15rem;
@@ -70,6 +70,8 @@ const ClassOverview = () => {
     const fetchCourseData = async () => {
       try {
         const response = await api.get(`/courses/${courseId}`);
+        console.log("📡 API 응답 데이터:", response.data.data);
+
         if (response.data.success) {
           setCourseData(response.data.data);
         }
@@ -105,7 +107,7 @@ const ClassOverview = () => {
           >
             <div style={{ textAlign: "center", marginBottom: "0rem" }}>
               <img
-                src={ClassThumbnail}
+                src={courseData.courseThumbnail || ClassThumbnail}
                 style={{ width: "100%", height: "auto", borderRadius: "8px" }}
                 alt="Class Thumbnail"
               />

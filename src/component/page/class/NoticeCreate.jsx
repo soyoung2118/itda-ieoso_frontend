@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import TopBar from "../../ui/TopBar";
 import ClassTopbar from "../../ui/class/ClassTopbar";
@@ -59,7 +59,7 @@ const StyledButton = styled.button`
 const NoticeCreateForm = () => {
   const { courseId } = useParams();
   const [userId, setUserId] = useState(null);
-
+  const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
@@ -101,9 +101,11 @@ const NoticeCreateForm = () => {
       });
 
       if (response.data.success) {
+        console.log("게시된 공지:", title, content);
         alert("공지사항이 게시되었습니다.");
         setTitle("");
         setContent("");
+        navigate(`/class/${courseId}/overview/notice`);
       } else {
         alert(`공지 생성 실패: ${response.data.message}`);
       }

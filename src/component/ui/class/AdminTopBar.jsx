@@ -53,19 +53,19 @@ const AdminTopBar = ({ activeTab }) => {
       <Navbar>
         <nav style={{ display: "flex", gap: "1rem" }}>
           <TabLink
-            to="/class/${courseId}/admin/summary"
+            to={`/class/${courseId}/admin/summary`}
             className={activeTab === "summary" ? "active" : ""}
           >
             요약
           </TabLink>
           <TabLink
-            to="/class/${courseId}/admin/students"
+            to={`/class/${courseId}/admin/students`}
             className={activeTab === "students" ? "active" : ""}
           >
             학생별 보기
           </TabLink>
           <TabLink
-            to="/admin/setting"
+            to={`/class/${courseId}/admin/setting`}
             className={activeTab === "statistics" ? "active" : ""}
           >
             설정

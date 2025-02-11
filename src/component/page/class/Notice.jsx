@@ -168,13 +168,21 @@ const ClassNotice = ({}) => {
 
     const fetchNotices = async () => {
       try {
-        console.log(`Fetching with courseId: ${courseId}, userId: ${userId}`);
+        console.log(`공지사항 요청: courseId=${courseId}, userId=${userId}`);
         const response = await api.get(`/announcements/${courseId}/${userId}`);
+
+        console.log("응답 데이터:", response.data);
         if (response.data.success) {
-          setNotices(response.data.data);
+          const sortedNotices = response.data.data.sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+          );
+          setNotices(sortedNotices);
+          console.log(response.data.data);
+        } else {
+          console.warn(response.data.message);
         }
       } catch (error) {
-        console.error("Error fetching announcements:", error);
+        console.error( error);
       }
     };
 
@@ -237,17 +245,22 @@ const ClassNotice = ({}) => {
                   </div>
                 ) : (
                   currentNotices.map((notice) => (
-                    <NoticeItem key={notice.id}>
+                    <NoticeItem key={notice.announcementId}>
                       <NoticeItemLeft>
-                        <NoticeTitle>{notice.title}</NoticeTitle>
+                        <NoticeTitle>{notice.announcementTitle}</NoticeTitle>{" "}
+                        {/* ✅ title → announcementTitle */}
                         <NoticeMeta>
-                          <span>{notice.author}</span>
+                          <span>{notice.instructorName}</span>{" "}
+                          {/* ✅ author → instructorName */}
                           <span>|</span>
-                          <span>{notice.date}</span>
+                          <span>
+                            {new Date(notice.createdAt).toLocaleDateString()}
+                          </span>{" "}
+                          {/* ✅ date → createdAt */}
                         </NoticeMeta>
                       </NoticeItemLeft>
                       <NoticeViews>
-                        {notice.views}
+                        {notice.viewCount} {/* ✅ views → viewCount */}
                         <div>조회수</div>
                       </NoticeViews>
                     </NoticeItem>
