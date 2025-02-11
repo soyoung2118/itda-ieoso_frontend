@@ -27,21 +27,33 @@ function App() {
         <UsersProvider>
           <Routes>
             <Route path="/" element={<MainPage />} />
-            <Route path="/overview/info" element={<ClassOverview />} />
-            <Route path="/overview/info/edit" element={<EditClass />} />
-            <Route path="/overview/notice" element={<ClassNotice />} />
-            <Route path="/overview/notice/create" element={<NoticeCreate />} />
-            <Route path="/curriculum" element={<ClassCurriculum />} />
-            <Route path="/curriculum/edit" element={<ClassCurriculumEdit />} />
-            <Route path="/dashboard" element={<Dashboard/>} />
+
+            {/* 로그인 페이지 */}
             <Route path="/login" element={<LogIn />} />
             <Route path="/signup" element={<SignUp />} />
-            <Route path="/class/participate" element={<Participate />} />
+
+            {/* 강의실 페이지 */}
             <Route path="/class" element={<Class />} />
-            <Route path="/classroom" element={<ClassRoom />} />
             <Route path="/class/create" element={<Create />} />
-            <Route path="/statistics" element={<ClassStatistics/>} />
-          <Route path="/admin/setting" element={<Setting/>} />
+            <Route path="/admin/setting" element={<Setting />} />
+            
+            {/* 강의실 입장 페이지 */}
+            <Route path="/class/participate" element={<Participate />} />
+
+            {/* 강의실 상세 페이지 */}
+            <Route path="/class/:courseId/overview/info" element={<ClassOverview />} />
+            <Route path="/class/:courseId/overview/info/edit" element={<EditClass />} />
+            <Route path="/class/:courseId/overview/notice" element={<ClassNotice />} />
+            <Route path="/class/:courseId/overview/notice/create" element={<NoticeCreate />} />
+            <Route path="/class/:courseId/curriculum" element={<ClassCurriculum />} />
+            <Route path="/class/:courseId/curriculum/edit" element={<ClassCurriculumEdit />} />
+            <Route path="/class/:courseId/statistics" element={<ClassStatistics />} />
+            
+            {/* 대시보드 페이지 */}
+            <Route path="/dashboard" element={<Dashboard />} />
+
+            {/* 강의실 수강  */}
+            <Route path="/classroom" element={<ClassRoom />} />
           </Routes>
         </UsersProvider>
       </BrowserRouter>
