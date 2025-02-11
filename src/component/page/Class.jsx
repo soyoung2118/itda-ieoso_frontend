@@ -19,7 +19,7 @@ export default function Class() {
     const [lectures, setLectures] = useState([]);
 
     const handleLectureClick = (id) => {
-        navigate(`/class/${id}`);
+        navigate(`/class/${id}/overview/info`);
     };
 
     const getAllLectures = async () => {
@@ -97,22 +97,14 @@ export default function Class() {
                 </AddButton>
                 {showPopup && (
                     <PopupMenu>
-                        {lecturesCount === 0 ? ( // 강의실이 없을 때
-                            <PopupItem onClick={() => navigate('/class/create')}>
-                                강의실 생성하기!
-                            </PopupItem>
-                        ) : (
-                            <>
-                                <PopupItem onClick={() => navigate('/class/create')}>
-                                    <OpenInNewIcon style={{ marginRight: '15px' }}/>
-                                    강의실 만들기
-                                </PopupItem>
-                                <PopupItem onClick={() => navigate('/class/participate')}>
-                                    <ExitToAppIcon style={{ marginRight: '15px' }}/>
-                                    강의실 들어가기
-                                </PopupItem>
-                            </>
-                        )}
+                        <PopupItem onClick={() => navigate('/class/create')}>
+                            <OpenInNewIcon style={{ marginRight: '15px' }}/>
+                                강의실 만들기
+                        </PopupItem>
+                        <PopupItem onClick={() => navigate('/class/participate')}>
+                            <ExitToAppIcon style={{ marginRight: '15px' }}/>
+                                강의실 입장하기
+                        </PopupItem>
                     </PopupMenu>
                 )}
             </Container>
