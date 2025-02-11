@@ -148,6 +148,21 @@ const ClassAssignmentSubmit = () => {
         navigate('/curriculum');
     };
 
+    const handleFileDelete = (indexToDelete) => {
+        setFiles(files.filter((_, index) => index !== indexToDelete));
+    };
+
+    const handleSubmit = () => {
+        console.log({
+            title,
+            content,
+            files,
+            lectureId,
+            videoId,
+            assignmentName: getCurrentAssignment()?.name
+        });
+    };
+
     const getCurrentVideo = () => {
         for (const lecture of curriculumData) {
             const currentVideo = lecture.videos.find(video => video.videoHistoryStatus === "WATCHING");
@@ -158,6 +173,21 @@ const ClassAssignmentSubmit = () => {
                     lectureId: lecture.lectureId,
                     videoId: currentVideo.videoId
                 };
+            }
+        }
+        return null;
+    };
+
+    const getCurrentAssignment = () => {
+        const currentLecture = curriculumData.find(lecture => 
+            lecture.lectureId === parseInt(lectureId)
+        );
+        if (currentLecture) {
+            const currentVideo = currentLecture.videos.find(video => 
+                video.videoId === parseInt(videoId)
+            );
+            if (currentVideo && currentVideo.assignment) {
+                return currentVideo.assignment;
             }
         }
         return null;
@@ -180,11 +210,16 @@ const ClassAssignmentSubmit = () => {
                 </TitleContainer>
                 <SumbitContainer>
                     <AssignmentForm>
-                        <FormTitle>1차시 과제 작성</FormTitle>
-                        <FormGroup>
-                            <Label>제목</Label>
-                            <Input type="text" placeholder="제목을 입력하세요" />
-                        </FormGroup>
+                    <FormTitle>{getCurrentAssignment()?.name || "과제 작성"}</FormTitle>
+                    <FormGroup>
+                        <Label>제목</Label>
+                        <Input 
+                            type="text" 
+                            placeholder="제목을 입력하세요" 
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                        />
+                    </FormGroup>
                         <FormGroup>
                             <Label>내용</Label>
                             <EditorContainer>
@@ -210,18 +245,21 @@ const ClassAssignmentSubmit = () => {
                                 <FilePreviewContainer>
                                     {files.map((file, index) => (
                                         <FilePreview key={index}>
-                                            <img
-                                                src={file.type === 'photo' ? Photo : file.type === 'video' ? Video : Link}
-                                                alt={file.type}
-                                                style={{ width: "14px" }}
-                                            />
-                                            {file.type === 'link' ? file.url : file.file.name}
+                                            <FilePreviewContent>
+                                                <img
+                                                    src={file.type === 'photo' ? Photo : file.type === 'video' ? Video : Link}
+                                                    alt={file.type}
+                                                    style={{ width: "14px" }}
+                                                />
+                                                <span>{file.type === 'link' ? file.url : file.file.name}</span>
+                                            </FilePreviewContent>
+                                            <DeleteButton onClick={() => handleFileDelete(index)}>×</DeleteButton>
                                         </FilePreview>
                                     ))}
                                 </FilePreviewContainer>
                             </EditorContainer>
                         </FormGroup>
-                        <SubmitButton>제출하기</SubmitButton>
+                        <SubmitButton onClick={handleSubmit}>제출하기</SubmitButton>
                     </AssignmentForm>
                 </SumbitContainer>
             </LeftSide>
@@ -497,7 +535,7 @@ const FormGroup = styled.div`
 `;
 
 const Input = styled.input`
-    width: calc(100% - 32px);  // padding을 고려한 너비 조정
+    width: calc(100% - 32px);
     height: 28px;
     padding: 0 16px;
     border: 2px solid #CDCDCD;
@@ -510,7 +548,7 @@ const Input = styled.input`
 
     &:focus {
         outline: none;
-        border-color: #FF4747;
+        border-color: none;
     }
 `;
 
@@ -518,6 +556,7 @@ const FilePreviewContainer = styled.div`
     margin-top: 10px;
     display: flex;
     flex-wrap: wrap;
+    padding: 0px 10px 3px 10px;
     gap: 10px;
 `;
 
@@ -528,7 +567,30 @@ const FilePreview = styled.div`
     font-size: 13px;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+`;
+
+const FilePreviewContent = styled.div`
+    display: flex;
+    align-items: center;
     gap: 6px;
+`;
+
+const DeleteButton = styled.button`
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    &:hover {
+        color: #FF4747;
+    }
 `;
 
 const EditorContainer = styled.div`
@@ -567,11 +629,11 @@ const ToolButton = styled.button`
 
 const TextArea = styled.textarea`
     width: 100%;
-    height: 20vh;
+    height: 15vh;
     padding: 16px;
     border: none;
     resize: none;
-    font-size: 15px;
+    font-size: 13px;
 
     &::placeholder {
         color: #9E9E9E;
