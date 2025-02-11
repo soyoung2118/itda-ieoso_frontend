@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import TopBar from '../../ui/TopBar';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import Assignment from "../../img/icon/docs.svg";
 import Material from "../../img/icon/pdf.svg";
 
@@ -111,14 +112,39 @@ export default function ClassPlaying() {
         navigate(`/assignment/submit/${lectureId}/${videoId}`);
     };
 
+    const handleNavigationCurriculum = () => {
+        navigate('/curriculum');
+    };
+
+    const getCurrentVideo = () => {
+        for (const lecture of curriculumData) {
+            const currentVideo = lecture.videos.find(video => video.videoHistoryStatus === "WATCHING");
+            if (currentVideo) {
+                return {
+                    lectureTitle: lecture.lectureTitle,
+                    videoTitle: currentVideo.videoTitle,
+                    lectureId: lecture.lectureId,
+                    videoId: currentVideo.videoId
+                };
+            }
+        }
+        return null;
+    };
+
     return (
         <>
             <TopBar />
             <Container>
                 <LeftSide>
                     <TitleContainer>
-                        <MainTitle>고등학교 입학 전 마스터하는 통합사회1</MainTitle>
-                        <SubTitle>사회화 기관의 의미와 종류</SubTitle>
+                        <MainTitle onClick={handleNavigationCurriculum}>
+                            <span>{getCurrentVideo()?.lectureTitle || "강의를 선택해주세요"}</span>
+                            <ArrowForwardIosIcon style={{ width: '13px', marginLeft: '15px' }}/>
+                        </MainTitle>
+                        <SubTitle>
+                            {getCurrentVideo()?.videoId && `${getCurrentVideo()?.videoId}. `}
+                            {getCurrentVideo()?.videoTitle || "강의를 선택해주세요"}
+                        </SubTitle>
                     </TitleContainer>
                     <ThumbnailContainer>
                         <img 
@@ -159,7 +185,7 @@ export default function ClassPlaying() {
                                                 <SubItemHeader>
                                                     <SubItemLeft>
                                                         <SubItemTitle status={video.videoHistoryStatus}>
-                                                            <span>{truncate(video.videoTitle, 25)}</span>
+                                                            <span>{video.videoId}. {truncate(video.videoTitle, 25)}</span>
                                                         </SubItemTitle>
                                                         <SubItemTime>
                                                             <span className="material-icons" style={{ color: '#909090', fontSize: '13.33px', marginRight: '3px' }}>
@@ -219,16 +245,16 @@ export default function ClassPlaying() {
     );
 }
 
-// Styled components remain the same...
 const Container = styled.div`
     height: 92vh;
     display: flex;
+    overflow: hidden;
     background-color: #F6F7F9;
 `;
 
 const LeftSide = styled.div`
     width: 70vw;
-    height: 92vh;
+    height: 100%;
     padding: 0px 37px;
 `;
 
@@ -247,6 +273,9 @@ const MainTitle = styled.div`
     font-size: 24px;
     font-weight: 700;
     margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
 `;
 
 const SubTitle = styled.div`
