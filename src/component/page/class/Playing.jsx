@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import TopBar from '../../ui/TopBar';
 import Assignment from "../../img/icon/docs.svg";
 import Material from "../../img/icon/pdf.svg";
 
 export default function ClassPlaying() {
+    const navigate = useNavigate();
     const [selectedMenu, setSelectedMenu] = useState('curriculum');
     const [expandedItems, setExpandedItems] = useState(new Set([1]));
 
@@ -105,6 +107,10 @@ export default function ClassPlaying() {
         }
     };
 
+    const handleAssignmentClick = (lectureId, videoId) => {
+        navigate(`/assignment/submit/${lectureId}/${videoId}`);
+    };
+
     return (
         <>
             <TopBar />
@@ -182,7 +188,7 @@ export default function ClassPlaying() {
                                                             </ResourceItem>
                                                         )}
                                                         {video.assignment && (
-                                                            <AssignmentItem onClick={() => alert('과제 페이지로 이동')}>
+                                                            <AssignmentItem onClick={() => handleAssignmentClick(lecture.lectureId, video.videoId)}>
                                                                 <img
                                                                     className="material-icons"
                                                                     src={Assignment}

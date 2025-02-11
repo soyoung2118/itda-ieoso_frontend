@@ -15,6 +15,7 @@ import ClassStatistics from "./component/page/class/Statistics.jsx";
 import ClassCurriculumEdit from "./component/page/class/CurriculumEdit.jsx";
 import NoticeCreate from "./component/page/class/NoticeCreate.jsx";
 import EditClass from "./component/ui/class/EditClass.jsx";
+import ClassAssignmentSubmit from "./component/page/class/AssignmentSubmit.jsx";
 
 import Create from "./component/page/class/Create.jsx";
 import Setting from "./component/page/class/Setting.jsx";
@@ -39,6 +40,7 @@ function App() {
             <Route path="/class/participate" element={<Participate />} />
             <Route path="/class" element={<Class />} />
             <Route path="/playing" element={<ClassPlaying />} />
+            <Route path="/assignment/submit/:lectureId/:videoId" element={<ClassAssignmentSubmit />} />
             <Route path="/class/create" element={<Create />} />
             <Route path="/statistics" element={<ClassStatistics/>} />
           <Route path="/admin/setting" element={<Setting/>} />
