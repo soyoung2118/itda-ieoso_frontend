@@ -1,23 +1,25 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { UsersProvider } from "./component/contexts/usersContext.jsx";
+
+import MainPage from "./component/page/MainPage.jsx";
 import LogIn from "./component/page/users/LogIn.jsx";
 import SignUp from "./component/page/users/SignUp.jsx";
-import ClassRoom from "./component/page/ClassRoom.jsx";
-import MainPage from "./component/page/MainPage.jsx";
 import Class from "./component/page/Class.jsx";
-import Participate from "./component/page/Participate.jsx";
-
-import ClassCurriculum from "./component/page/class/Curriculum.jsx";
-import ClassOverview from "./component/page/class/Overview.jsx";
-import ClassNotice from "./component/page/class/Notice.jsx";
-import Dashboard from "./component/page/Dashboard.jsx";
-import ClassStatistics from "./component/page/class/Statistics.jsx";
-import ClassCurriculumEdit from "./component/page/class/CurriculumEdit.jsx";
-import NoticeCreate from "./component/page/class/NoticeCreate.jsx";
-import EditClass from "./component/ui/class/EditClass.jsx";
-
 import Create from "./component/page/class/Create.jsx";
 import Setting from "./component/page/class/Setting.jsx";
+import Participate from "./component/page/Participate.jsx";
+import ClassOverview from "./component/page/class/Overview.jsx";
+import EditClass from "./component/ui/class/EditClass.jsx";
+import ClassNotice from "./component/page/class/Notice.jsx";
+import NoticeCreate from "./component/page/class/NoticeCreate.jsx";
+import ClassCurriculum from "./component/page/class/Curriculum.jsx";
+import ClassCurriculumEdit from "./component/page/class/CurriculumEdit.jsx";
+import ClassStatistics from "./component/page/class/Statistics.jsx";
+import Dashboard from "./component/page/Dashboard.jsx";
+
+import ClassPlaying from "./component/page/class/Playing.jsx";
+import ClassAssignmentSubmit from "./component/page/class/AssignmentSubmit.jsx";
+
 
 function App() {
 
@@ -53,7 +55,8 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
 
             {/* 강의실 수강  */}
-            <Route path="/classroom" element={<ClassRoom />} />
+            <Route path="/playing" element={<ClassPlaying />} />
+            <Route path="/assignment/submit/:lectureId/:videoId" element={<ClassAssignmentSubmit />} />
           </Routes>
         </UsersProvider>
       </BrowserRouter>
