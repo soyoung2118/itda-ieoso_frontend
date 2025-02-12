@@ -5,6 +5,7 @@ import TopBar from '../../ui/TopBar';
 import Calendar from "../../img/classroom/calendar.png";
 import Clock from "../../img/classroom/clock.png";
 import DatePicker from "react-datepicker";
+import CustomTimePicker from "../../ui/CustomTimePicker";
 import "../../../style/react-datepicker.css";
 import api from "../../api/api";
 
@@ -14,6 +15,7 @@ export default function Create() {
   const timeSlots = ['월', '화', '수', '목', '금', '토', '일'];
   const [isAssignmentPending, setIsAssignmentPending] = useState(false);
   const [isLecturePending, setIsLecturePending] = useState(false);
+  const [selectedTime, setSelectedTime] = useState(new Date());
 
   const [form, setForm] = useState({
     coursename: '',
@@ -88,6 +90,13 @@ const handleDaySelect = (type, day) => {
     }
   };
 
+  const handleTimeChange = (timeString) => {
+    setForm(prev => ({
+      ...prev,
+      lectureTime: timeString
+    }));
+  };
+
   const CustomInput = forwardRef(({ value, onClick }, ref) => (
     <InputGroup onClick={onClick}> 
       <IconInput
@@ -123,6 +132,7 @@ const handleDaySelect = (type, day) => {
                 value={form.coursename}
                 onChange={handleFormChange}
                 style={{width: '100%'}}
+                autocomplete='off'
               />
             </FormItem>
 
@@ -138,6 +148,7 @@ const handleDaySelect = (type, day) => {
                 value={form.instructor}
                 onChange={handleFormChange}
                 style={{width: '165px '}}
+                autocomplete='off'
               />
             </FormItem>
           </FormGroup>
@@ -204,23 +215,22 @@ const handleDaySelect = (type, day) => {
                   </DayButtonGroup>
                   { !isLecturePending && <HelpText>복수 선택이 가능해요!</HelpText>}
                 </TimeGroup>
-
+                
                 <TimeGroup>
-                  <InputGroup>
-                    <IconInput
-                      type="time"
-                      name='lectureTime'
-                      placeholder="강의 시간을 설정해주세요."
-                      style={{width: '239px'}}
-                      value={form.lectureTime}
-                      onChange={handleFormChange}
-                      disabled={isLecturePending}
-                    />
-                    <CalendarIcon>
-                      <img src={Clock} alt="시계 아이콘" style={{ width: '18px', height: '18px' }} />
-                    </CalendarIcon>
-                  </InputGroup>
-                  { form.lectureTime && <HelpText>강의 시간이 설정되었어요!</HelpText> }
+                  {!isLecturePending && (
+                    <div className="w-60"> {/* This sets width to match your 239px requirement */}
+                      <CustomTimePicker
+                        value={form.lectureTime ? new Date(`2000-01-01T${form.lectureTime}`) : new Date()}
+                        onChange={(date) => {
+                          const timeString = date.toTimeString().split(' ')[0];
+                          handleTimeChange(timeString);
+                        }}
+                      />
+                    </div>
+                  )}
+                  {form.lectureTime && !isLecturePending && 
+                    <HelpText>강의 시간이 설정되었어요!</HelpText>
+                  }
                 </TimeGroup>
 
                 <TimeGroup>
