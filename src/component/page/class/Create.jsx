@@ -10,11 +10,9 @@ import api from "../../api/api";
 
 export default function Create() {
   const navigate = useNavigate();
-  const [courseInfo, setCourseInfo] = useState(null);
   const timeSlots = ['월', '화', '수', '목', '금', '토', '일'];
   const [isAssignmentPending, setIsAssignmentPending] = useState(false);
   const [isLecturePending, setIsLecturePending] = useState(false);
-  const [selectedTime, setSelectedTime] = useState(new Date());
 
   const [form, setForm] = useState({
     coursename: '',

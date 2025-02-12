@@ -27,6 +27,10 @@ const CustomTimePicker = ({ value = new Date(), onChange, width = 239, disabled 
       return `${meridiem} ${hour12}:${minutes}`;
     };
 
+    useEffect(() => {
+      if (disabled) setIsOpen(false);
+    }, [disabled])
+
     const [inputTime, setInputTime] = useState(value ? formatTimeString(value) : placeholder);
 
     useEffect(() => {
