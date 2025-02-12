@@ -105,6 +105,13 @@ const NoticeViews = styled.div`
   }
 `;
 
+const NoticeContent = styled.div`
+  padding: 1.5rem;
+  background-color: #F4F4F4;
+  transition: max-height 0.3s ease-out;
+  overflow: hidden;
+`;
+
 const Pagination = styled.div`
   display: flex;
   justify-content: center;
@@ -135,13 +142,15 @@ const Icon = styled.span`
   color: var(--black-color);
 `;
 
-const ClassNotice = ({}) => {
+const ClassNotice = () => {
   const { courseId } = useParams();
   const [userId, setUserId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [notices, setNotices] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const ITEMS_PER_PAGE = 5;
+  const [expandedNoticeId, setExpandedNoticeId] = useState(null);
+  const [noticeDetails, setNoticeDetails] = useState({});
 
   useEffect(() => {
     const getUserIdFromLocalStorage = () => {
@@ -182,7 +191,7 @@ const ClassNotice = ({}) => {
           console.warn(response.data.message);
         }
       } catch (error) {
-        console.error( error);
+        console.error("공지사항 가져오기 오류:", error);
       }
     };
 
@@ -197,6 +206,30 @@ const ClassNotice = ({}) => {
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
+
+  // 공지 상세조회 API
+  const handleNoticeClick = async (noticeId) => {
+    setExpandedNoticeId((prevId) => (prevId === noticeId ? null : noticeId));
+
+    if (noticeDetails[noticeId]) {
+      return; // 이미 로드된 공지라면 서버 요청 생략
+    }
+
+    try {
+      const response = await api.get(`/announcements/${courseId}/${userId}/${noticeId}`);
+      if (response.data.success) {
+        const announcementDetails = response.data.data;
+        setNoticeDetails((prevDetails) => ({
+          ...prevDetails,
+          [noticeId]: announcementDetails.announcementContent,
+        }));
+      } else {
+        console.warn(response.data.message);
+      }
+    } catch (error) {
+      console.error("공지사항 상세 정보 가져오기 오류:", error);
+    }
+  };
 
   return (
     <div>
@@ -245,29 +278,33 @@ const ClassNotice = ({}) => {
                   </div>
                 ) : (
                   currentNotices.map((notice) => (
-                    <NoticeItem key={notice.announcementId}>
-                      <NoticeItemLeft>
-                        <NoticeTitle>{notice.announcementTitle}</NoticeTitle>{" "}
-                        {/* ✅ title → announcementTitle */}
-                        <NoticeMeta>
-                          <span>{notice.instructorName}</span>{" "}
-                          {/* ✅ author → instructorName */}
-                          <span>|</span>
-                          <span>
-                            {new Date(notice.createdAt).toLocaleDateString()}
-                          </span>{" "}
+                    <div key={notice.announcementId}>
+                      <NoticeItem onClick={() => handleNoticeClick(notice.announcementId)}>
+                        <NoticeItemLeft>
+                          <NoticeTitle>{notice.announcementTitle}</NoticeTitle>
+                          {/* ✅ title → announcementTitle */}  
+                          <NoticeMeta>
+                            <span>{notice.instructorName}</span>
+                            {/* ✅ author → instructorName */}
+                            <span>|</span>
+                            <span>{new Date(notice.createdAt).toLocaleDateString()}</span>
+                          </NoticeMeta>
                           {/* ✅ date → createdAt */}
-                        </NoticeMeta>
-                      </NoticeItemLeft>
-                      <NoticeViews>
-                        {notice.viewCount} {/* ✅ views → viewCount */}
-                        <div>조회수</div>
-                      </NoticeViews>
-                    </NoticeItem>
+                        </NoticeItemLeft>
+                        <NoticeViews>
+                          {notice.viewCount} {/* ✅ views → viewCount */}
+                          <div>조회수</div>
+                        </NoticeViews>
+                      </NoticeItem>
+                      {expandedNoticeId === notice.announcementId && (
+                        <NoticeContent                        >
+                          <p>{noticeDetails[notice.announcementId]}</p>
+                        </NoticeContent>
+                      )}
+                    </div>
                   ))
                 )}
               </NoticeList>
-
               {/* 페이지네이션 */}
               {totalPages > 1 && (
                 <Pagination>
