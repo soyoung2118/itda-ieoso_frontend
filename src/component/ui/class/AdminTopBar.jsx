@@ -10,7 +10,7 @@ const Navbar = styled.div`
   align-items: center;
   border-radius: 15px;
   font-size: 1.4rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 0.4rem;
 `;
 
 const TabLink = styled(NavLink)`
