@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import TopBar from '../../ui/TopBar';
 import Calendar from "../../img/classroom/calendar.png";
-import Clock from "../../img/classroom/clock.png";
 import DatePicker from "react-datepicker";
 import CustomTimePicker from "../../ui/CustomTimePicker";
 import "../../../style/react-datepicker.css";
@@ -28,10 +27,6 @@ export default function Create() {
     assignmentTime: '',
     difficulty: 'easy',
   });
-
-  useEffect(() => {
-    console.log('현재 form 상태:', form);
-  }, [form]);
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
@@ -106,13 +101,6 @@ const handleAssignmentTimeChange = (timeString) => {
       console.error('강의실 생성 실패:', error);
       alert(error.message || '강의실 생성 중 오류가 발생했습니다.');
     }
-  };
-
-  const handleTimeChange = (timeString) => {
-    setForm(prev => ({
-      ...prev,
-      lectureTime: timeString
-    }));
   };
 
   const CustomInput = forwardRef(({ value, onClick }, ref) => (
@@ -235,17 +223,17 @@ const handleAssignmentTimeChange = (timeString) => {
                 </TimeGroup>
                 
                 <TimeGroup>
-                  {!isLecturePending && (
                     <TimePickerWrapper>
                       <CustomTimePicker
-                        value={form.lectureTime ? new Date(`2000-01-01T${form.lectureTime}`) : new Date()}
+                        value={form.lectureTime ? new Date(`2000-01-01T${form.lectureTime}`) : null}
                         onChange={(date) => {
                           const timeString = date.toTimeString().split(' ')[0];
-                          handleTimeChange(timeString);
+                          handleLectureTimeChange(timeString);
                         }}
+                        disabled={isLecturePending}
+                        placeholder="강의 시간을 설정해주세요."
                       />
                       </TimePickerWrapper>
-                  )}
                   {form.lectureTime && !isLecturePending && 
                     <HelpText>강의 시간이 설정되었어요!</HelpText>
                   }
@@ -276,29 +264,29 @@ const handleAssignmentTimeChange = (timeString) => {
                     <DayButton 
                       key={day}
                       active={!isAssignmentPending && form.assignmentDays.includes(timeSlots.indexOf(day) + 1)}
-  onClick={() => !isAssignmentPending && handleDaySelect('assignment', day)}
+                      onClick={() => !isAssignmentPending && handleDaySelect('assignment', day)}
                     >
                       {day}
                     </DayButton>
                   ))}
                   </DayButtonGroup>
-                  {!isAssignmentPending && !isLecturePending && 
+                  {!isAssignmentPending && 
                   <HelpText>복수 선택이 가능해요!</HelpText>
                   }
                 </TimeGroup>
 
                 <TimeGroup>
-                {!isAssignmentPending && (
                     <TimePickerWrapper>
                       <CustomTimePicker
-                        value={form.assignmentTime ? new Date(`2000-01-01T${form.assignmentTime}`) : new Date()}
+                        value={form.assignmentTime ? new Date(`2000-01-01T${form.assignmentTime}`) : null}
                         onChange={(date) => {
                           const timeString = date.toTimeString().split(' ')[0];
                           handleAssignmentTimeChange(timeString);
                         }}
+                        disabled={isAssignmentPending}
+                        placeholder="과제 시간을 설정해주세요."
                       />
                     </TimePickerWrapper>
-                  )}
                   { form.assignmentTime && !isAssignmentPending &&
                    <HelpText>과제 시간이 설정되었어요!</HelpText>
                    }

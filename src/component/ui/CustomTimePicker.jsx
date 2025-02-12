@@ -8,15 +8,18 @@ const MERIDIEM_ITEMS = ['오전', '오후'];
 const HOUR_ITEMS = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'));
 const MINUTE_ITEMS = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
 
-const CustomTimePicker = ({ value = new Date(), onChange, width = 239, onTimeStringChange }) => {
+const CustomTimePicker = ({ value = new Date(), onChange, width = 239, disabled = false, placeholder = "시간을 설정해주세요." }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedTime, setSelectedTime] = useState(value);
+    const [selectedTime, setSelectedTime] = useState(value || null);
     const scrollViewsRef = useRef([null, null, null]);
     const [currentMeridiem, setCurrentMeridiem] = useState(
-      value.getHours() >= 12 ? '오후' : '오전'
+      value ? (value.getHours() >= 12 ? '오후' : '오전') : '오전'
     );
+    const wheelTimeoutRef = useRef(null);
+    const lastWheelTime = useRef(0);
 
     const formatTimeString = (date) => {
+      if (!date) return placeholder;
       const hours = date.getHours();
       const minutes = String(date.getMinutes()).padStart(2, '0');
       const meridiem = hours >= 12 ? '오후' : '오전';
@@ -24,19 +27,23 @@ const CustomTimePicker = ({ value = new Date(), onChange, width = 239, onTimeStr
       return `${meridiem} ${hour12}:${minutes}`;
     };
 
-    const [inputTime, setInputTime] = useState(formatTimeString(value));
+    const [inputTime, setInputTime] = useState(value ? formatTimeString(value) : placeholder);
 
     useEffect(() => {
+      if (!value) {
+        setSelectedTime(null);
+        setCurrentMeridiem('오전');
+        setInputTime(placeholder);
+        return;
+      }
+    
       setSelectedTime(value);
       setCurrentMeridiem(value.getHours() >= 12 ? '오후' : '오전');
       setInputTime(formatTimeString(value));
-    }, [value]);
+    }, [value, placeholder]);
 
     useEffect(() => {
       setInputTime(formatTimeString(selectedTime));
-      if (onTimeStringChange) {
-        onTimeStringChange(formatTimeString(selectedTime));
-      }
     }, [selectedTime]);
 
     useEffect(() => {
@@ -66,28 +73,90 @@ const CustomTimePicker = ({ value = new Date(), onChange, width = 239, onTimeStr
           });
       };
     
-        requestAnimationFrame(initializeScrollPositions);
+      requestAnimationFrame(initializeScrollPositions);
     }, [isOpen, selectedTime, currentMeridiem]);
+
+    const moveOneStep = (index, direction) => {
+      const scrollView = scrollViewsRef.current[index];
+      if (!scrollView) return;
+
+      const currentPosition = scrollView.scrollTop;
+      const maxScroll = scrollView.scrollHeight - scrollView.clientHeight;
+      const targetPosition = currentPosition + (direction * BUTTON_HEIGHT);
+
+      // 범위를 벗어나지 않도록 체크
+      if (targetPosition < 0 || targetPosition > maxScroll) return;
+
+      scrollView.scrollTo({
+        top: targetPosition,
+        behavior: 'smooth'
+      });
+
+      const key = timeColumns[index].key;
+      handleScrollEnd(key, index);
+    };
+
+    const handleTimeButtonClick = (columnIndex, item) => {
+      const scrollView = scrollViewsRef.current[columnIndex];
+      if (!scrollView) return;
+
+      const key = timeColumns[columnIndex].key;
+      const itemIndex = timeColumns[columnIndex].items.indexOf(item);
+      const targetPosition = itemIndex * BUTTON_HEIGHT;
+
+      scrollView.scrollTo({
+        top: targetPosition,
+        behavior: 'smooth'
+      });
+
+      const newDate = new Date(selectedTime);
+      
+      if (key === 'meridiem') {
+        const currentHours = newDate.getHours();
+        if (item === '오후' && currentHours < 12) {
+          newDate.setHours(currentHours === 0 ? 12 : currentHours + 12);
+        } else if (item === '오전' && currentHours >= 12) {
+          newDate.setHours(currentHours === 12 ? 0 : currentHours - 12);
+        }
+        setCurrentMeridiem(item);
+      } else if (key === 'hour') {
+        const newHour = parseInt(item);
+        const isPM = currentMeridiem === '오후';
+        
+        if (isPM) {
+          newDate.setHours(newHour === 12 ? 12 : newHour + 12);
+        } else {
+          newDate.setHours(newHour === 12 ? 0 : newHour);
+        }
+      } else if (key === 'minute') {
+        const newMinute = parseInt(item);
+        newDate.setMinutes(newMinute);
+      }
+
+      setSelectedTime(newDate);
+      onChange(newDate);
+    };
   
+    const handleWheelEvent = (e, index) => {
+      e.preventDefault();
+      
+      const now = Date.now();
+      if (now - lastWheelTime.current < 200) {
+        // 너무 빠른 연속 스크롤 방지
+        return;
+      }
+      lastWheelTime.current = now;
+
+      const direction = e.deltaY > 0 ? 1 : -1;
+      moveOneStep(index, direction);
+    };
+
     const handleScrollEnd = debounce((key, index) => {
       if (!scrollViewsRef.current[index]) return;
   
       const scrollView = scrollViewsRef.current[index];
       const scrollTop = scrollView.scrollTop;
-      const itemIndex = Math.min(
-        Math.max(
-          Math.round(scrollTop / BUTTON_HEIGHT),
-          0
-        ),
-        key === 'meridiem' ? 1 : (key === 'hour' ? 11 : 59)
-      );
-
-      requestAnimationFrame(() => {
-        scrollView.scrollTo({
-          top: itemIndex * BUTTON_HEIGHT,
-          behavior: 'smooth'
-        });
-      });
+      const itemIndex = Math.round(scrollTop / BUTTON_HEIGHT);
       
       const newDate = new Date(selectedTime);
       
@@ -118,7 +187,7 @@ const CustomTimePicker = ({ value = new Date(), onChange, width = 239, onTimeStr
   
       setSelectedTime(newDate);
       onChange(newDate);
-    }, 50);
+    }, 100);
   
     const timeColumns = [
       { key: 'meridiem', items: MERIDIEM_ITEMS },
@@ -128,8 +197,8 @@ const CustomTimePicker = ({ value = new Date(), onChange, width = 239, onTimeStr
   
     return (
       <Container width={width}>
-        <InputDisplay onClick={() => setIsOpen(!isOpen)}>
-          <TimeText>{inputTime}</TimeText>
+        <InputDisplay onClick={() => !disabled && setIsOpen(!isOpen)}>
+          <TimeText>{selectedTime ? inputTime : placeholder}</TimeText>
           <ClockIcon>
             <img src={Clock} style={{width: 18}} alt="캘린더" />
           </ClockIcon>
@@ -138,24 +207,35 @@ const CustomTimePicker = ({ value = new Date(), onChange, width = 239, onTimeStr
         {isOpen && (
           <DropdownContainer>
             <TimePickerContainer>
-              {timeColumns.map(({ key, items }, index) => (
+              {timeColumns.map(({ key, items }, columnIndex) => (
                 <Column key={key}>
                   <ScrollView 
-                      ref={(el) => {
-                        if (el) {
-                            scrollViewsRef.current[index] = el;
-                        }
-                      }}
-                        onScroll={() => handleScrollEnd(key, index)}
-                        >
-                        <Padding />
-                        {items.map((item) => (
-                            <TimeButton key={item}>
-                            {item}
-                            </TimeButton>
-                        ))}
-                        <Padding />
-                        </ScrollView>
+                    ref={(el) => {
+                      if (el) {
+                        scrollViewsRef.current[columnIndex] = el;
+                      }
+                    }}
+                    onScroll={(e) => {
+                      if (wheelTimeoutRef.current) {
+                        clearTimeout(wheelTimeoutRef.current);
+                      }
+                      wheelTimeoutRef.current = setTimeout(() => {
+                        handleScrollEnd(key, columnIndex);
+                      }, 150);
+                    }}
+                    onWheel={(e) => handleWheelEvent(e, columnIndex)}
+                  >
+                    <Padding />
+                    {items.map((item) => (
+                      <TimeButton 
+                        key={item}
+                        onClick={() => handleTimeButtonClick(columnIndex, item)}
+                      >
+                        {item}
+                      </TimeButton>
+                    ))}
+                    <Padding />
+                  </ScrollView>
                 </Column>
               ))}
               <Selection />
@@ -164,7 +244,7 @@ const CustomTimePicker = ({ value = new Date(), onChange, width = 239, onTimeStr
         )}
       </Container>
     );
-  };
+};
 
 const Container = styled.div`
   position: relative;
@@ -218,7 +298,7 @@ const Column = styled.div`
 const ScrollView = styled.div`
   height: 100%;
   overflow-y: scroll;
-  scroll-snap-type: y mandatory;
+  scroll-snap-type: y proximity;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   
@@ -256,15 +336,6 @@ const Selection = styled.div`
   border-bottom: 1px solid #eee;
   background: rgba(0,0,0,0.02);
   pointer-events: none;
-`;
-
-const Separator = styled.div`
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  font-weight: bold;
-  color: #666;
 `;
 
 const ClockIcon = styled.span`
