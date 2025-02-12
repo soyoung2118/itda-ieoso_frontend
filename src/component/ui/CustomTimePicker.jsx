@@ -8,7 +8,7 @@ const MERIDIEM_ITEMS = ['오전', '오후'];
 const HOUR_ITEMS = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'));
 const MINUTE_ITEMS = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
 
-const CustomTimePicker = ({ value = new Date(), onChange, width = 239 }) => {
+const CustomTimePicker = ({ value = new Date(), onChange, width = 239, onTimeStringChange }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedTime, setSelectedTime] = useState(value);
     const scrollViewsRef = useRef([null, null, null]);
@@ -34,6 +34,9 @@ const CustomTimePicker = ({ value = new Date(), onChange, width = 239 }) => {
 
     useEffect(() => {
       setInputTime(formatTimeString(selectedTime));
+      if (onTimeStringChange) {
+        onTimeStringChange(formatTimeString(selectedTime));
+      }
     }, [selectedTime]);
 
     useEffect(() => {

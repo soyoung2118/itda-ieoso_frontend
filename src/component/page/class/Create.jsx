@@ -29,6 +29,10 @@ export default function Create() {
     difficulty: 'easy',
   });
 
+  useEffect(() => {
+    console.log('현재 form 상태:', form);
+  }, [form]);
+
   const handleFormChange = (e) => {
     const { name, value } = e.target;
     setForm(prev => ({
@@ -47,6 +51,20 @@ const handleDaySelect = (type, day) => {
       : [...prev[key], dayNumber]
   }));
  };
+
+ const handleLectureTimeChange = (timeString) => {
+  setForm(prev => ({
+    ...prev,
+    lectureTime: timeString
+  }));
+};
+
+const handleAssignmentTimeChange = (timeString) => {
+  setForm(prev => ({
+    ...prev,
+    assignmentTime: timeString
+  }));
+};
   
   const handleDifficultySelect = (difficulty) => {
     setForm(prev => ({ ...prev, difficulty }));
@@ -218,7 +236,7 @@ const handleDaySelect = (type, day) => {
                 
                 <TimeGroup>
                   {!isLecturePending && (
-                    <div className="w-60"> {/* This sets width to match your 239px requirement */}
+                    <TimePickerWrapper>
                       <CustomTimePicker
                         value={form.lectureTime ? new Date(`2000-01-01T${form.lectureTime}`) : new Date()}
                         onChange={(date) => {
@@ -226,7 +244,7 @@ const handleDaySelect = (type, day) => {
                           handleTimeChange(timeString);
                         }}
                       />
-                    </div>
+                      </TimePickerWrapper>
                   )}
                   {form.lectureTime && !isLecturePending && 
                     <HelpText>강의 시간이 설정되었어요!</HelpText>
@@ -264,26 +282,26 @@ const handleDaySelect = (type, day) => {
                     </DayButton>
                   ))}
                   </DayButtonGroup>
-                  {!isAssignmentPending && <HelpText>복수 선택이 가능해요!</HelpText>}
+                  {!isAssignmentPending && !isLecturePending && 
+                  <HelpText>복수 선택이 가능해요!</HelpText>
+                  }
                 </TimeGroup>
 
                 <TimeGroup>
-                  <InputGroup>
-                    <IconInput
-                      type="time"
-                      name='assignmentTime'
-                      placeholder="과제 시간을 설정해주세요."
-                      style={{width: '239px'}}
-                      value={form.assignmentTime}
-                      onChange={handleFormChange}
-                      disabled={isAssignmentPending}
-                    />
-                    <CalendarIcon>
-                      <img src={Clock} alt="시계" style={{ width: '18px', height: '18px' }} />
-                    </CalendarIcon>
-                  </InputGroup>
-                  
-                  { form.assignmentTime && <HelpText>과제 시간이 설정되었어요!</HelpText> }
+                {!isAssignmentPending && (
+                    <TimePickerWrapper>
+                      <CustomTimePicker
+                        value={form.assignmentTime ? new Date(`2000-01-01T${form.assignmentTime}`) : new Date()}
+                        onChange={(date) => {
+                          const timeString = date.toTimeString().split(' ')[0];
+                          handleAssignmentTimeChange(timeString);
+                        }}
+                      />
+                    </TimePickerWrapper>
+                  )}
+                  { form.assignmentTime && !isAssignmentPending &&
+                   <HelpText>과제 시간이 설정되었어요!</HelpText>
+                   }
                 </TimeGroup> 
 
                 <TimeGroup>
@@ -489,6 +507,13 @@ const TimeGroup = styled.div`
   display: flex;
   flex-direction: column;
 `;
+
+const TimePickerWrapper = styled.div`
+  margin-right: 20px;
+  display: flex;
+  align-items: center;
+  position: relative;
+`
 
 const CuliculumGroup = styled.div`
   width: 100%;
