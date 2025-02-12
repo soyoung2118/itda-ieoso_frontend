@@ -7,6 +7,7 @@ import styled from "styled-components";
 import { PageLayout, Section } from "../../ui/class/ClassLayout";
 import EditButton from "../../ui/class/EditButton";
 import api from "../../api/api";
+import PropTypes from "prop-types";
 
 const Title = styled.h1`
   font-size: 2.6rem;
@@ -110,6 +111,25 @@ const NoticeContent = styled.div`
   background-color: #F4F4F4;
   transition: max-height 0.3s ease-out;
   overflow: hidden;
+  margin-top: 1rem;
+  border-radius: 8px;
+  transition: max-height 0.3s ease-out;
+  overflow: hidden;
+  position: relative;
+  
+  .button-container {
+    position: absolute;
+    top: 15px;
+    right: 17px;
+  }
+
+  .button {
+    background-color: transparent;
+    color: #767676;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+  }
 `;
 
 const Pagination = styled.div`
@@ -142,6 +162,77 @@ const Icon = styled.span`
   color: var(--black-color);
 `;
 
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`;
+
+const ModalContent = styled.div`
+  background-color: white;
+  padding: 60px 150px;
+  border-radius: 8px;
+  text-align: center;
+  width: 300px;
+  font-size: 1.2rem;
+  line-height: 1.5;
+
+  .button-container {
+    display: flex;
+    margin-top: 2rem;
+    gap: 2rem;
+    justify-content: center;
+  }
+
+  .close-button {
+    background-color: #C3C3C3;
+    color: var(--white-color);
+    border: none;
+    border-radius: 15px;
+    padding: 15px 35px;
+    font-size: 1rem;
+  }
+
+  .delete-button {
+    background-color: var(--main-color);
+    color: white;
+    border: none;
+    border-radius: 15px;
+    padding: 15px 35px;
+    font-size: 1rem;
+  }
+`;
+
+const NoticeDeleteModal = ({ isOpen, onClose, onDelete }) => {
+  NoticeDeleteModal.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired, 
+    onDelete: PropTypes.func.isRequired
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <ModalOverlay>
+      <ModalContent>
+        <h2>공지 사항 삭제</h2>
+        <span>공지글을 삭제하시겠습니까? <br /> 한 번 삭제한 글은 복구할 수 없습니다.</span>
+        <div className="button-container">
+          <button className="close-button" onClick={onClose}>닫기</button>
+          <button className="delete-button" onClick={onDelete}>삭제</button>
+        </div>
+      </ModalContent>
+    </ModalOverlay>
+  );
+};
+
 const ClassNotice = () => {
   const { courseId } = useParams();
   const [userId, setUserId] = useState(null);
@@ -151,6 +242,8 @@ const ClassNotice = () => {
   const ITEMS_PER_PAGE = 5;
   const [expandedNoticeId, setExpandedNoticeId] = useState(null);
   const [noticeDetails, setNoticeDetails] = useState({});
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [noticeToDelete, setNoticeToDelete] = useState(null);
 
   useEffect(() => {
     const getUserIdFromLocalStorage = () => {
@@ -231,6 +324,26 @@ const ClassNotice = () => {
     }
   };
 
+  const handleDeleteButtonClick = (noticeId) => {
+    setNoticeToDelete(noticeId);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleNoticeDelete = async () => {
+    try {
+      const response = await api.delete(`/announcements/${courseId}/${userId}/${noticeToDelete}`);
+      if (response.data.success) {
+        console.log("공지사항 삭제 성공");
+        setNotices((prevNotices) => prevNotices.filter(notice => notice.announcementId !== noticeToDelete));
+        setIsDeleteModalOpen(false);
+      } else {
+        console.warn(response.data.message);
+      }
+    } catch (error) {
+      console.error("공지사항 삭제 오류:", error);
+    }
+  };
+
   return (
     <div>
       <TopBar />
@@ -297,7 +410,11 @@ const ClassNotice = () => {
                         </NoticeViews>
                       </NoticeItem>
                       {expandedNoticeId === notice.announcementId && (
-                        <NoticeContent                        >
+                        <NoticeContent>
+                          <div className="button-container">
+                            <button className="button">수정</button>
+                            <button className="button" onClick={() => handleDeleteButtonClick(notice.announcementId)}>삭제</button>
+                          </div>
                           <p>{noticeDetails[notice.announcementId]}</p>
                         </NoticeContent>
                       )}
@@ -351,6 +468,11 @@ const ClassNotice = () => {
       <EditButton
         to={`/class/${courseId}/overview/notice/create`}
         edit={true}
+      />
+      <NoticeDeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onDelete={handleNoticeDelete}
       />
     </div>
   );
