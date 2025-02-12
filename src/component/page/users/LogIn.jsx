@@ -40,10 +40,20 @@ export default function LogIn() {
             const userInfo = await getUsersInfo();
             setUser(userInfo.data);
             localStorage.setItem('user', JSON.stringify(userInfo.data));
+            
+            // 로그인 성공 시에만 리다이렉트
             window.location.href = '/class';
         } catch (error) {
             console.error('로그인 실패:', error);
-            setError(error.response?.data?.message || '로그인 중 오류가 발생했습니다.');
+
+            // 로그인 API에서 발생한 에러일 경우
+            if (error.config && error.config.url.includes('/login')) {
+                alert(error.response?.data?.message || '로그인 중 오류가 발생했습니다.');
+            } else {
+                // 다른 API 호출에서 발생한 에러일 경우
+                alert('다른 API 호출 중 오류가 발생했습니다.');
+                window.location.href = '/error'; // 예시로 에러 페이지로 이동
+            }
         }
     };
 
