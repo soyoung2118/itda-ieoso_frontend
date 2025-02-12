@@ -174,8 +174,8 @@ const Curriculum = () => {
               subSections: section.subSections.map(
                 (subSection, i) =>
                   i === index
-                    ? { ...subSection, isEditing: !subSection.isEditing } // ✅ 클릭한 것만 토글
-                    : { ...subSection, isEditing: false } // ✅ 나머지는 false
+                    ? { ...subSection, isEditing: !subSection.isEditing } 
+                    : { ...subSection, isEditing: false } 
               ),
             }
           : section
@@ -222,7 +222,7 @@ const Curriculum = () => {
               ...section,
               subSections: section.subSections.map((s, i) => ({
                 ...s,
-                isEditing: false, // ✅ 기존 섹션은 모두 편집 모드 OFF
+                isEditing: false, 
               })),
             }
           : section
