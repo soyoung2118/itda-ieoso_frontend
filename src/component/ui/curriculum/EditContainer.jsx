@@ -1,10 +1,8 @@
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import AddIcon from "../../img/class/edit/add.svg";
-import TextIcon from "../../img/class/edit/text.svg";
 import VideoIcon from "../../img/class/edit/video.svg";
-import ImageIcon from "../../img/class/edit/image.svg";
-import MenuIcon from "../../img/class/edit/menu.svg";
+import AssignmentIcon from "../../img/icon/docs.svg";
+import MaterialIcon from "../../img/icon/pdf.svg";
 
 const Container = styled.div`
   display: flex;
@@ -36,21 +34,19 @@ const Container = styled.div`
 const HighlightLine = styled.div`
   position: absolute;
   left: 0;
-  top: 15%;
+  top: 0%;
   bottom: 0;
   width: 0.35rem;
-  height: 70%;
+  height: 100%;
   background-color: var(--main-color);
 `;
 
 const EditContainer = ({ onIconClick }) => {
   // 아이콘 데이터 배열
   const icons = [
-    { src: AddIcon, alt: "Add", action: () => onIconClick("add") },
-    { src: TextIcon, alt: "Text", action: () => onIconClick("text") },
     { src: VideoIcon, alt: "Video", action: () => onIconClick("video") },
-    { src: ImageIcon, alt: "Image", action: () => onIconClick("image") },
-    { src: MenuIcon, alt: "Menu", action: () => onIconClick("menu") },
+    { src: MaterialIcon, alt: "Material", action: () => onIconClick("material") },
+    { src: AssignmentIcon, alt: "Assignment", action: () => onIconClick("assignment") },
   ];
 
   return (

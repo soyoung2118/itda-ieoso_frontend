@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useParams  } from "react-router-dom";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import { useState } from "react";
@@ -105,6 +105,7 @@ const TabLink = styled(NavLink)`
 `;
 
 const ClassTopbar = ({ activeTab }) => {
+  const { courseId } = useParams();
   const [selectedClass, setSelectedClass] = useState(
     "bod 다이어리 1000% 활용하기"
   );
@@ -170,22 +171,22 @@ const ClassTopbar = ({ activeTab }) => {
       </Container>
       <nav style={{ display: "flex", gap: "1rem" }}>
         <TabLink
-          to="/overview/info"
+          to={`/class/${courseId}/overview/info`}
           className={activeTab === "overview" ? "active" : ""}
         >
           개요
         </TabLink>
         <TabLink
-          to="/curriculum"
+          to={`/class/${courseId}/curriculum`}
           className={activeTab === "curriculum" ? "active" : ""}
         >
           커리큘럼
         </TabLink>
         <TabLink
-          to="/statistics"
-          className={activeTab === "statistics" ? "active" : ""}
+          to={`/class/${courseId}/admin/summary`}
+          className={activeTab === "admin" ? "active" : ""}
         >
-          통계
+          관리
         </TabLink>
       </nav>
     </Navbar>

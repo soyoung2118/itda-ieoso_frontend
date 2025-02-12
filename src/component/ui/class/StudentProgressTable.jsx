@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react"; // useRef 추가
+import { useRef, useEffect } from "react";
 import styled from "styled-components";
 import Profile from "../../img/class/profile.svg";
 import Done from "../../img/class/check/progress_done.svg";
@@ -92,174 +92,25 @@ const CheckMarkIcon = styled.img`
   height: 1.7rem;
 `;
 
-const StudentTable = () => {
-  const data = {
-    students: [
-      {
-        name: "김잇다",
-        profile: { Profile },
-        submissions: [
-          true,
-          false,
-          true,
-          false,
-          true,
-          true,
-          true,
-          false,
-          true,
-          false,
-        ],
-      },
-      {
-        name: "김잇다",
-        profile: { Profile },
-        submissions: [
-          true,
-          false,
-          true,
-          false,
-          true,
-          true,
-          true,
-          false,
-          true,
-          false,
-        ],
-      },
-      {
-        name: "김잇다",
-        profile: { Profile },
-        submissions: [
-          true,
-          false,
-          true,
-          false,
-          true,
-          true,
-          true,
-          false,
-          true,
-          false,
-        ],
-      },
-      {
-        name: "김잇다",
-        profile: { Profile },
-        submissions: [
-          true,
-          false,
-          true,
-          false,
-          true,
-          true,
-          true,
-          false,
-          true,
-          false,
-        ],
-      },
-      {
-        name: "김잇다",
-        profile: { Profile },
-        submissions: [
-          true,
-          false,
-          true,
-          false,
-          true,
-          true,
-          true,
-          false,
-          true,
-          false,
-        ],
-      },
-      {
-        name: "김잇다",
-        profile: { Profile },
-        submissions: [
-          true,
-          false,
-          true,
-          false,
-          true,
-          true,
-          true,
-          false,
-          true,
-          false,
-        ],
-      },
-      {
-        name: "김잇다",
-        profile: { Profile },
-        submissions: [
-          true,
-          false,
-          true,
-          false,
-          true,
-          true,
-          true,
-          false,
-          true,
-          false,
-        ],
-      },
-      {
-        name: "김잇다",
-        profile: { Profile },
-        submissions: [
-          true,
-          false,
-          true,
-          false,
-          true,
-          true,
-          true,
-          false,
-          true,
-          false,
-        ],
-      },
-      {
-        name: "김잇다",
-        profile: { Profile },
-        submissions: [
-          true,
-          false,
-          true,
-          false,
-          true,
-          true,
-          true,
-          false,
-          true,
-          false,
-        ],
-      },
-      {
-        name: "김잇다",
-        profile: { Profile },
-        submissions: [
-          true,
-          false,
-          true,
-          false,
-          true,
-          true,
-          true,
-          false,
-          true,
-          false,
-        ],
-      },
-    ],
-    assignments: 10,
-  };
+const StudentProgressTable = ({ assignments }) => {
+  if (!assignments.length) return <div>과제 데이터가 없습니다.</div>;
 
-  const { students, assignments } = data;
+  const studentsMap = new Map();
+
+  assignments.forEach((assignment) => {
+    assignment.studentStatuses.forEach((student) => {
+      if (!studentsMap.has(student.userId)) {
+        studentsMap.set(student.userId, {
+          name: student.studentName,
+          profile: Profile, // 기본 프로필 이미지 사용
+          submissions: [],
+        });
+      }
+      studentsMap.get(student.userId).submissions.push(student.status === "SUBMITTED");
+    });
+  });
+  const students = Array.from(studentsMap.values());
+
   const tableRef = useRef(null);
   const scrollbarThumbRef = useRef(null);
   const isDragging = useRef(false); // 드래그 상태 추적
@@ -330,9 +181,9 @@ const StudentTable = () => {
       <Table>
         <thead>
           <tr>
-            <th></th>
-            {Array.from({ length: assignments }, (_, i) => (
-              <th key={i}>과제 {i + 1}</th>
+            <th>이름</th>
+            {assignments.map((assignment) => (
+              <th key={assignment.assignmentId}>{assignment.assignmentTitle}</th>
             ))}
           </tr>
         </thead>
@@ -341,7 +192,7 @@ const StudentTable = () => {
             <tr key={index}>
               <td>
                 <ProfileContainer>
-                  <ProfileImage src={Profile} alt="프로필" />
+                  <ProfileImage src={student.profile} alt="프로필" />
                   {student.name}
                 </ProfileContainer>
               </td>
@@ -369,4 +220,4 @@ const StudentTable = () => {
   );
 };
 
-export default StudentTable;
+export default StudentProgressTable;

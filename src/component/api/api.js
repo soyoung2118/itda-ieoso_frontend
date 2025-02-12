@@ -1,20 +1,21 @@
 import axios from 'axios';
 
+
 // Axios 인스턴스 생성
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   timeout: 5000,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
 // 요청 인터셉터: 요청 전에 토큰 추가
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
+      config.headers["Authorization"] = `Bearer ${token}`;
     }
     return config;
   },
@@ -37,12 +38,13 @@ api.interceptors.response.use(
         alert('로그인이 필요합니다.');
         localStorage.removeItem('token'); // 토큰 삭제
         window.location.href = '/'; // 페이지 강제 이동
+
       }
 
       // 기타 에러 처리
       console.error(`에러 발생: ${error.response.status}`, error.response.data || '서버 오류');
     } else {
-      console.error('서버 응답 없음', error.message);
+      console.error("서버 응답 없음", error.message);
     }
     return Promise.reject(error);
   }
