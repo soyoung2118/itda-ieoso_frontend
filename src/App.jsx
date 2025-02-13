@@ -12,7 +12,6 @@ import Class from "./component/page/Class.jsx";
 import ClassOverview from "./component/page/class/Overview.jsx";
 import ClassSummary from "./component/page/class/Summary.jsx";
 import ClassStudents from "./component/page/class/Students.jsx";
-import EditClass from "./component/ui/class/EditClass.jsx";
 import ClassNotice from "./component/page/class/Notice.jsx";
 import NoticeCreate from "./component/page/class/NoticeCreate.jsx";
 import ClassCurriculum from "./component/page/class/Curriculum.jsx";
@@ -47,7 +46,6 @@ function App() {
             {/* ✅ 강의실 관련 라우트 */}
           <Route path="/class/:courseId" element={<Class />}>
             <Route path="overview/info" element={<ClassOverview />} />
-            <Route path="overview/info/edit" element={<EditClass />} />
             <Route path="overview/notice" element={<ClassNotice />} />
             <Route path="overview/notice/create" element={<NoticeCreate />} />
             <Route path="overview/notice/edit/:noticeId" element={<NoticeCreate />} />
