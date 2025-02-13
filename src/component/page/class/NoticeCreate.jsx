@@ -40,6 +40,10 @@ const StyledTextarea = styled.textarea`
   margin-top: 0.7rem;
   font-family: Pretendard, sans-serif;
   resize: none;
+
+  &:focus {
+    outline: none;
+  }
 `;
 
 const StyledButton = styled.button`
