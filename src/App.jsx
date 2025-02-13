@@ -54,8 +54,14 @@ function App() {
               path="/class/:courseId/overview/notice"
               element={<ClassNotice />}
             />
+            {/* 공지사항 생성 페이지 */}
             <Route
               path="/class/:courseId/overview/notice/create"
+              element={<NoticeCreate />}
+            />
+            {/* 공지사항 수정 페이지 */}
+            <Route
+              path="/class/:courseId/overview/notice/edit/:noticeId"
               element={<NoticeCreate />}
             />
             <Route

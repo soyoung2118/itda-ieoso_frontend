@@ -210,6 +210,7 @@ const ModalContent = styled.div`
   }
 `;
 
+//삭제 확인 모달
 const NoticeDeleteModal = ({ isOpen, onClose, onDelete }) => {
   NoticeDeleteModal.propTypes = {
     isOpen: PropTypes.bool.isRequired,
@@ -301,7 +302,7 @@ const ClassNotice = () => {
   );
 
   // 공지 상세조회 API
-  const handleNoticeClick = async (noticeId) => {
+  const handleNoticeDetail = async (noticeId) => {
     setExpandedNoticeId((prevId) => (prevId === noticeId ? null : noticeId));
 
     if (noticeDetails[noticeId]) {
@@ -342,6 +343,11 @@ const ClassNotice = () => {
     } catch (error) {
       console.error("공지사항 삭제 오류:", error);
     }
+  };
+
+  const handleEditButtonClick = (noticeId) => {
+    // 수정 페이지로 이동할 때 공지사항 ID를 URL에 포함
+    window.location.href = `/class/${courseId}/overview/notice/edit/${noticeId}`;
   };
 
   return (
@@ -392,7 +398,7 @@ const ClassNotice = () => {
                 ) : (
                   currentNotices.map((notice) => (
                     <div key={notice.announcementId}>
-                      <NoticeItem onClick={() => handleNoticeClick(notice.announcementId)}>
+                      <NoticeItem onClick={() => handleNoticeDetail(notice.announcementId)}>
                         <NoticeItemLeft>
                           <NoticeTitle>{notice.announcementTitle}</NoticeTitle>
                           {/* ✅ title → announcementTitle */}  
@@ -412,7 +418,7 @@ const ClassNotice = () => {
                       {expandedNoticeId === notice.announcementId && (
                         <NoticeContent>
                           <div className="button-container">
-                            <button className="button">수정</button>
+                            <button className="button" onClick={() => handleEditButtonClick(notice.announcementId)}>수정</button>
                             <button className="button" onClick={() => handleDeleteButtonClick(notice.announcementId)}>삭제</button>
                           </div>
                           <p>{noticeDetails[notice.announcementId]}</p>
