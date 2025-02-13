@@ -1,13 +1,11 @@
 import { useState, useContext } from "react";
 import { useParams, useOutletContext } from "react-router-dom";
 import styled from "styled-components";
-import TopBar from "../../ui/TopBar";
-import ClassTopbar from "../../ui/class/ClassTopbar";
 import ClassSidebar from "../../ui/class/ClassSidebar";
 import ClassThumbnail from "../../img/class/class_thumbnail.svg";
 import EditBtn from "../../img/class/edit_btn.svg";
 import EditedBtn from "../../img/class/edited_btn.svg";
-import { PageLayout, Section } from "../../ui/class/ClassLayout";
+import { Section } from "../../ui/class/ClassLayout";
 import ReactQuill from 'react-quill-new'; 
 import 'react-quill-new/dist/quill.snow.css';
 import api from "../../api/api";
@@ -126,10 +124,6 @@ const ClassOverview = () => {
   }
 
   return (
-    <div>
-      <TopBar />
-      <PageLayout>
-        <ClassTopbar activeTab="overview" />
         <div style={{ display: "flex", marginTop: "1rem" }}>
           <ClassSidebar style={{ marginRight: "2rem" }} />
           <main
@@ -195,8 +189,6 @@ const ClassOverview = () => {
               <EditableSectionContent content={sectionContent} onChange={setSectionContent} isEditing={isEditing} />
             </Content>
           </main>
-        </div>
-      </PageLayout>
       {isCreator && (
         <StyledButton
           onClick={() => {

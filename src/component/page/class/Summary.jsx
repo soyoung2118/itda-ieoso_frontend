@@ -1,5 +1,3 @@
-import TopBar from "../../ui/TopBar";
-import ClassTopbar from "../../ui/class/ClassTopbar";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import api from "../../api/api";
@@ -132,10 +130,6 @@ const ClassSummary = () => {
   }, [courseId]);
 
   return (
-    <div>
-      <TopBar />
-      <PageLayout>
-        <ClassTopbar activeTab="admin" />
         <main
           style={{
             flex: 1,
@@ -217,8 +211,6 @@ const ClassSummary = () => {
             </Section>
           </div>
         </main>
-      </PageLayout>
-    </div>
   );
 };
 

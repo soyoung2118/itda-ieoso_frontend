@@ -1,10 +1,8 @@
   import { useState, useEffect, useContext } from "react";
   import { useParams, useOutletContext } from "react-router-dom";
   import ClassSidebar from "../../ui/class/ClassSidebar";
-  import ClassTopbar from "../../ui/class/ClassTopbar";
-  import TopBar from "../../ui/TopBar";
   import styled from "styled-components";
-  import { PageLayout, Section } from "../../ui/class/ClassLayout";
+  import { Section } from "../../ui/class/ClassLayout";
   import EditButton from "../../ui/class/EditButton";
   import api from "../../api/api";
   import { UsersContext } from "../../contexts/usersContext";
@@ -324,10 +322,6 @@
     };
 
     return (
-      <div>
-        <TopBar />
-        <PageLayout>
-          <ClassTopbar activeTab="overview" />
           <div style={{ display: "flex", marginTop: "1rem" }}>
             <ClassSidebar style={{ marginRight: "2rem" }} />
             <main
@@ -430,8 +424,6 @@
                 )}
               </Section>
             </main>
-          </div>
-        </PageLayout>
         {isCreator && (
           <EditButton
             to={`/class/${courseId}/overview/notice/create`}
