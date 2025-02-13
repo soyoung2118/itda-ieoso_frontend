@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from "react";
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink, useParams, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import Container from "../Container";
@@ -110,9 +110,10 @@ const TabLink = styled(NavLink)`
   }
 `;
 
-const ClassTopbar = ({ activeTab, onCourseChange }) => {
+const ClassTopbar = ({ onCourseChange }) => {
   const { user } = useContext(UsersContext);
   const { courseId } = useParams();
+  const location = useLocation();
   const [classOptions, setClassOptions] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // 드롭다운 열림 상태
 
@@ -129,6 +130,13 @@ const ClassTopbar = ({ activeTab, onCourseChange }) => {
 
   const handleDropdownToggle = () => {
     setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const getActiveTab = () => {
+    if (location.pathname.includes("/overview/notice")) return "overview";
+    if (location.pathname.includes("/curriculum")) return "curriculum";
+    if (location.pathname.includes("/admin")) return "admin";
+    return ""; // 기본값
   };
 
   return (
@@ -171,19 +179,19 @@ const ClassTopbar = ({ activeTab, onCourseChange }) => {
       <nav style={{ display: "flex", gap: "1rem" }}>
         <TabLink
           to={`/class/${courseId}/overview/info`}
-          className={activeTab === "overview" ? "active" : ""}
+          className={getActiveTab() === "overview" ? "active" : ""}
         >
           개요
         </TabLink>
         <TabLink
           to={`/class/${courseId}/curriculum`}
-          className={activeTab === "curriculum" ? "active" : ""}
+          className={getActiveTab() === "curriculum" ? "active" : ""}
         >
           커리큘럼
         </TabLink>
         <TabLink
           to={`/class/${courseId}/admin/summary`}
-          className={activeTab === "admin" ? "active" : ""}
+          className={getActiveTab() === "admin" ? "active" : ""}
         >
           관리
         </TabLink>
