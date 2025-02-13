@@ -36,7 +36,6 @@ function App() {
             {/* 강의실 페이지 */}
             <Route path="/class/list" element={<ClassList />} />
             <Route path="/class/create" element={<Create />} />
-            <Route path="/admin/setting" element={<Setting />} />
 
             {/* 강의실 입장 페이지 */}
             <Route path="/class/participate" element={<Participate />} />
@@ -53,6 +52,7 @@ function App() {
             <Route path="curriculum/edit" element={<ClassCurriculumEdit />} />
             <Route path="admin/summary" element={<ClassSummary />} />
             <Route path="admin/students" element={<ClassStudents />} />
+            <Route path="admin/setting" element={<Setting />} />
           </Route>
 
             {/* 대시보드 페이지 */}

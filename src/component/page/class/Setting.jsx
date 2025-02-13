@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import styled from 'styled-components';
-import TopBar from '../../ui/TopBar';
+import AdminTopBar from '../../ui/class/AdminTopBar';
 
 export default function Setting() {
   const navigate = useNavigate();
@@ -103,7 +103,7 @@ export default function Setting() {
 
   return (
     <>
-      <TopBar />
+      <AdminTopBar />
       <Container>
         <Section>
           <Title style={{marginTop: '6px'}}>STEP 1. 강의실을 만들어볼까요?</Title>
