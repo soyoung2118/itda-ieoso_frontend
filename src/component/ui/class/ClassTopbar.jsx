@@ -83,6 +83,10 @@ const MenuItem = styled.div`
     props.selected ? "#F7F7F7" : "var(--white-color)"};
   color: ${(props) => (props.selected ? "var(--black-color)" : "#474747")};
 
+  &:hover {
+    background-color: #F7F7F7;
+  }
+
   .star-icon {
     color: ${(props) =>
       props.selected ? "var(--highlight-color)" : "var(--darkgrey-color)"};
@@ -110,7 +114,6 @@ const ClassTopbar = ({ activeTab, onCourseChange }) => {
   const { user } = useContext(UsersContext);
   const { courseId } = useParams();
   const [classOptions, setClassOptions] = useState([]);
-  const [selectedClass, setSelectedClass] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // 드롭다운 열림 상태
 
   useEffect(() => {
@@ -140,25 +143,28 @@ const ClassTopbar = ({ activeTab, onCourseChange }) => {
         <VerticalLine />
         <Dropdown>
           <DropdownButton onClick={handleDropdownToggle}>
-            {selectedClass || "강의실 선택"} <span style={{ marginLeft: "1rem" }}>▼</span>
-          </DropdownButton>
+              {classOptions.find((course) => course.courseId === courseId)?.courseTitle || "강의실 선택"} 
+              <span style={{ marginLeft: "1rem" }}>▼</span>
+            </DropdownButton>
           <DropdownMenu isOpen={isDropdownOpen}>
             <MenuTitle>강의실 목록</MenuTitle>
-              {classOptions.map((course) => (
-              <MenuItem
-                key={course.courseId}
-                selected={course.courseId === selectedClass}
-                onClick={() => {
-                  onCourseChange(course.courseId);
-                  setIsDropdownOpen(false);
-                }}
-              >
-                <div>
-                  <div>{course.courseTitle}</div>  
-                </div>
-                {/* {option.isManageable && <StarIcon className="star-icon" />} */}
-              </MenuItem>
-            ))}
+            {classOptions.map((course) => {
+              console.log("🔍 현재 선택된 강의실 ID:", courseId, "비교 대상:", course.courseId);
+
+              return (
+                <MenuItem
+                  key={course.courseId}
+                  selected={Number(courseId) === course.courseId}
+                  onClick={() => {
+                    onCourseChange(course.courseId);
+                    setIsDropdownOpen(false);
+                  }}
+                >
+                  <div>{course.courseTitle}</div>
+                  {/* {option.isManageable && <StarIcon className="star-icon" />} */}
+                </MenuItem>
+              )
+            })}
           </DropdownMenu>
         </Dropdown>
       </Container>
