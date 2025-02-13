@@ -1,8 +1,6 @@
 import ClassTopbar from "../../ui/class/ClassTopbar";
 import ClassSidebar from "../../ui/class/ClassSidebar";
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import api from "../../api/api";
+import { useParams, useOutletContext } from "react-router-dom";
 import ClassThumbnail from "../../img/class/class_thumbnail.svg";
 import TopBar from "../../ui/TopBar";
 import styled from "styled-components";
@@ -63,28 +61,11 @@ const Content = styled.div`
 `;
 
 const ClassOverview = () => {
-  const { courseId } = useParams(); // 현재 URL에서 courseId 추출
-  const [courseData, setCourseData] = useState(null);
-
-  useEffect(() => {
-    const fetchCourseData = async () => {
-      try {
-        const response = await api.get(`/courses/${courseId}`);
-        console.log("📡 API 응답 데이터:", response.data.data);
-
-        if (response.data.success) {
-          setCourseData(response.data.data);
-        }
-      } catch (error) {
-        console.error("강의 정보 불러오기 오류:", error);
-      }
-    };
-
-    if (courseId) {
-      fetchCourseData();
-    }
-  }, [courseId]);
-
+  const context = useOutletContext();
+  const courseData = context?.courseData || {};
+  const isCreator = context?.isCreator || false
+    ;
+  const { courseId } = useParams();
   if (!courseData) {
     return <div>로딩 중...</div>; // 데이터가 로딩되지 않은 경우
   }
@@ -165,7 +146,9 @@ const ClassOverview = () => {
           </main>
         </div>
       </PageLayout>
-      <EditButton to="/class/:courseId/overview/info/edit" edit={true} />{" "}
+      {isCreator && (
+        <EditButton to={`/class/${courseId}/overview/info/edit`} edit={true} />
+      )}
     </div>
   );
 };

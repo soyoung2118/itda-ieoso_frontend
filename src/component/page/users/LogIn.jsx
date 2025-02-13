@@ -42,7 +42,7 @@ export default function LogIn() {
             localStorage.setItem('user', JSON.stringify(userInfo.data));
             
             // 로그인 성공 시에만 리다이렉트
-            window.location.href = '/class';
+            window.location.href = '/class/list';
         } catch (error) {
             console.error('로그인 실패:', error);
 

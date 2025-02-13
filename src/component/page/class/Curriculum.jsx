@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation, useParams } from "react-router-dom";
+import { useNavigate, useLocation, useParams, useOutletContext } from "react-router-dom";
 import styled from "styled-components";
 import TopBar from "../../ui/TopBar";
 import LogoSymbol from "../../img/logo/itda_logo_symbol.svg";
@@ -65,6 +65,7 @@ const SectionIcon = styled.img`
 
 const Curriculum = () => {
   const navigate = useNavigate();
+  const { courseData, isCreator } = useOutletContext();
   const [showPopup, setShowPopup] = useState(false);
   const location = useLocation();
   const entrycode = location.state?.entrycode || null;
@@ -354,7 +355,9 @@ const Curriculum = () => {
           </main>
         </div>
       </PageLayout>
-      <EditButton to={`/class/${courseId}/curriculum/edit`} edit={true} />
+      {isCreator && (
+        <EditButton to={`/class/${courseId}/curriculum/edit`} edit={true} />
+      )}
 
       {isEntryCodeModalOpen && <Modal entrycode={entrycode} onClose={() => setIsEntryCodeModalOpen(false)} />}
     </div>

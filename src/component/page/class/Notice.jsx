@@ -1,487 +1,493 @@
-import ClassSidebar from "../../ui/class/ClassSidebar";
-import ClassTopbar from "../../ui/class/ClassTopbar";
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import TopBar from "../../ui/TopBar";
-import styled from "styled-components";
-import { PageLayout, Section } from "../../ui/class/ClassLayout";
-import EditButton from "../../ui/class/EditButton";
-import api from "../../api/api";
-import PropTypes from "prop-types";
+  import { useState, useEffect, useContext } from "react";
+  import { useParams, useOutletContext } from "react-router-dom";
+  import ClassSidebar from "../../ui/class/ClassSidebar";
+  import ClassTopbar from "../../ui/class/ClassTopbar";
+  import TopBar from "../../ui/TopBar";
+  import styled from "styled-components";
+  import { PageLayout, Section } from "../../ui/class/ClassLayout";
+  import EditButton from "../../ui/class/EditButton";
+  import api from "../../api/api";
+  import { UsersContext } from "../../contexts/usersContext";
+  import PropTypes from "prop-types";
 
-const Title = styled.h1`
-  font-size: 2.6rem;
-  font-weight: bold;
-  margin-top: 0rem;
-`;
+  const Title = styled.h1`
+    font-size: 2.6rem;
+    font-weight: bold;
+    margin-top: 0rem;
+  `;
 
-const SearchContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  width: 100%;
-  max-width: 20rem;
-`;
-
-const SearchInput = styled.input`
-  flex: 1;
-  padding: 0.75rem 1rem;
-  border: 2px solid var(--black-color);
-  border-radius: 30px;
-  font-size: 0.875rem;
-
-  &:focus {
-    outline: none;
-  }
-`;
-
-const SearchIcon = styled.span`
-  font-size: 1.9rem;
-  color: var(--grey-color);
-  cursor: pointer;
-`;
-
-const ContentHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-`;
-
-const NoticeList = styled.div`
-  display: flex;
-  flex-direction: column;
-  color: var(--black-color);
-  padding: 1.3rem;
-`;
-
-const NoticeItemLeft = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 0rem;
-`;
-
-const NoticeItem = styled.div`
-  padding: 1.5rem;
-  border-bottom: 1.5px solid #cdcdcd;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #fff;
-  transition: background-color 0.3s;
-  cursor: pointer;
-
-  &:hover {
-    background-color: var(--lightgrey-color);
-  }
-`;
-
-const NoticeTitle = styled.h3`
-  font-size: 1.35rem;
-  font-weight: 550;
-  color: var(--black-color);
-  margin-bottom: 0.8rem;
-`;
-
-const NoticeMeta = styled.div`
-  font-size: 0.9rem;
-  color: #474747;
-  display: flex;
-  gap: 0.3rem;
-  margin-bottom: 1.2rem;
-  font-weight: semi-bold;
-`;
-
-const NoticeViews = styled.div`
-  text-align: center;
-  color: var(--main-color);
-  font-size: 1.25rem;
-  font-weight: bold;
-
-  div {
-    font-size: 0.875rem;
-    color: #474747;
-    margin-top: 0.25rem;
-  }
-`;
-
-const NoticeContent = styled.div`
-  padding: 1.5rem;
-  background-color: #F4F4F4;
-  transition: max-height 0.3s ease-out;
-  overflow: hidden;
-  margin-top: 1rem;
-  border-radius: 8px;
-  transition: max-height 0.3s ease-out;
-  overflow: hidden;
-  position: relative;
-  
-  .button-container {
-    position: absolute;
-    top: 15px;
-    right: 17px;
-  }
-
-  .button {
-    background-color: transparent;
-    color: #767676;
-    border: none;
-    font-weight: 500;
-    cursor: pointer;
-  }
-`;
-
-const Pagination = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.8rem;
-  margin: 2rem;
-`;
-
-const PageButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 8px;
-  background-color: ${(props) =>
-    props.active ? "var(--pink-color)" : "transparent"};
-  border: none;
-  cursor: pointer;
-  font-size: 1.3rem;
-  &:hover {
-    background-color: var(--lightgrey-color);
-  }
-`;
-
-const Icon = styled.span`
-  font-size: 1.5rem;
-  color: var(--black-color);
-`;
-
-const ModalOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-`;
-
-const ModalContent = styled.div`
-  background-color: white;
-  padding: 60px 150px;
-  border-radius: 8px;
-  text-align: center;
-  width: 300px;
-  font-size: 1.2rem;
-  line-height: 1.5;
-
-  .button-container {
+  const SearchContainer = styled.div`
     display: flex;
-    margin-top: 2rem;
-    gap: 2rem;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 20rem;
+  `;
+
+  const SearchInput = styled.input`
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--black-color);
+    border-radius: 30px;
+    font-size: 0.875rem;
+
+    &:focus {
+      outline: none;
+    }
+  `;
+
+  const SearchIcon = styled.span`
+    font-size: 1.9rem;
+    color: var(--grey-color);
+    cursor: pointer;
+  `;
+
+  const ContentHeader = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  `;
+
+  const NoticeList = styled.div`
+    display: flex;
+    flex-direction: column;
+    color: var(--black-color);
+    padding: 1.3rem;
+  `;
+
+  const NoticeItemLeft = styled.div`
+    display: flex;
+    flex-direction: column;
     justify-content: center;
-  }
+    gap: 0rem;
+  `;
 
-  .close-button {
-    background-color: #C3C3C3;
-    color: var(--white-color);
+  const NoticeItem = styled.div`
+    padding: 1.5rem;
+    border-bottom: 1.5px solid #cdcdcd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    transition: background-color 0.3s;
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--lightgrey-color);
+    }
+  `;
+
+  const NoticeTitle = styled.h3`
+    font-size: 1.35rem;
+    font-weight: 550;
+    color: var(--black-color);
+    margin-bottom: 0.8rem;
+  `;
+
+  const NoticeMeta = styled.div`
+    font-size: 0.9rem;
+    color: #474747;
+    display: flex;
+    gap: 0.3rem;
+    margin-bottom: 1.2rem;
+    font-weight: semi-bold;
+  `;
+
+  const NoticeViews = styled.div`
+    text-align: center;
+    color: var(--main-color);
+    font-size: 1.25rem;
+    font-weight: bold;
+
+    div {
+      font-size: 0.875rem;
+      color: #474747;
+      margin-top: 0.25rem;
+    }
+  `;
+
+  const NoticeContent = styled.div`
+    padding: 1.5rem;
+    background-color: #F4F4F4;
+    transition: max-height 0.3s ease-out;
+    overflow: hidden;
+    margin-top: 1rem;
+    border-radius: 8px;
+    transition: max-height 0.3s ease-out;
+    overflow: hidden;
+    position: relative;
+    
+    .button-container {
+      position: absolute;
+      top: 15px;
+      right: 17px;
+    }
+
+    .button {
+      background-color: transparent;
+      color: #767676;
+      border: none;
+      font-weight: 500;
+      cursor: pointer;
+    }
+  `;
+
+  const Pagination = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.8rem;
+    margin: 2rem;
+  `;
+
+  const PageButton = styled.button`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 8px;
+    background-color: ${(props) =>
+      props.active ? "var(--pink-color)" : "transparent"};
     border: none;
-    border-radius: 15px;
-    padding: 15px 35px;
-    font-size: 1rem;
-  }
+    cursor: pointer;
+    font-size: 1.3rem;
+    &:hover {
+      background-color: var(--lightgrey-color);
+    }
+  `;
 
-  .delete-button {
-    background-color: var(--main-color);
-    color: white;
-    border: none;
-    border-radius: 15px;
-    padding: 15px 35px;
-    font-size: 1rem;
-  }
-`;
+  const Icon = styled.span`
+    font-size: 1.5rem;
+    color: var(--black-color);
+  `;
 
-//삭제 확인 모달
-const NoticeDeleteModal = ({ isOpen, onClose, onDelete }) => {
-  NoticeDeleteModal.propTypes = {
-    isOpen: PropTypes.bool.isRequired,
-    onClose: PropTypes.func.isRequired, 
-    onDelete: PropTypes.func.isRequired
-  };
+  const ModalOverlay = styled.div`
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  `;
 
-  if (!isOpen) return null;
+  const ModalContent = styled.div`
+    background-color: white;
+    padding: 60px 150px;
+    border-radius: 8px;
+    text-align: center;
+    width: 300px;
+    font-size: 1.2rem;
+    line-height: 1.5;
 
-  return (
-    <ModalOverlay>
-      <ModalContent>
-        <h2>공지 사항 삭제</h2>
-        <span>공지글을 삭제하시겠습니까? <br /> 한 번 삭제한 글은 복구할 수 없습니다.</span>
-        <div className="button-container">
-          <button className="close-button" onClick={onClose}>닫기</button>
-          <button className="delete-button" onClick={onDelete}>삭제</button>
-        </div>
-      </ModalContent>
-    </ModalOverlay>
-  );
-};
+    .button-container {
+      display: flex;
+      margin-top: 2rem;
+      gap: 2rem;
+      justify-content: center;
+    }
 
-const ClassNotice = () => {
-  const { courseId } = useParams();
-  const [userId, setUserId] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [notices, setNotices] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const ITEMS_PER_PAGE = 5;
-  const [expandedNoticeId, setExpandedNoticeId] = useState(null);
-  const [noticeDetails, setNoticeDetails] = useState({});
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [noticeToDelete, setNoticeToDelete] = useState(null);
+    .close-button {
+      background-color: #C3C3C3;
+      color: var(--white-color);
+      border: none;
+      border-radius: 15px;
+      padding: 15px 35px;
+      font-size: 1rem;
+    }
 
-  useEffect(() => {
-    const getUserIdFromLocalStorage = () => {
-      const userData = localStorage.getItem("user");
-      if (!userData) return null;
+    .delete-button {
+      background-color: var(--main-color);
+      color: white;
+      border: none;
+      border-radius: 15px;
+      padding: 15px 35px;
+      font-size: 1rem;
+    }
+  `;
 
-      try {
-        const parsedUser = JSON.parse(userData);
-        return parsedUser.userId;
-      } catch (error) {
-        console.error("로컬 스토리지 데이터 파싱 오류:", error);
-        return null;
-      }
+  //삭제 확인 모달
+  const NoticeDeleteModal = ({ isOpen, onClose, onDelete }) => {
+    NoticeDeleteModal.propTypes = {
+      isOpen: PropTypes.bool.isRequired,
+      onClose: PropTypes.func.isRequired, 
+      onDelete: PropTypes.func.isRequired
     };
 
-    const fetchedUserId = getUserIdFromLocalStorage();
-    if (fetchedUserId) {
-      setUserId(fetchedUserId);
-    }
-  }, []);
+    if (!isOpen) return null;
 
-  useEffect(() => {
-    if (!courseId || userId === null) return;
+    return (
+      <ModalOverlay>
+        <ModalContent>
+          <h2>공지 사항 삭제</h2>
+          <span>공지글을 삭제하시겠습니까? <br /> 한 번 삭제한 글은 복구할 수 없습니다.</span>
+          <div className="button-container">
+            <button className="close-button" onClick={onClose}>닫기</button>
+            <button className="delete-button" onClick={onDelete}>삭제</button>
+          </div>
+        </ModalContent>
+      </ModalOverlay>
+    );
+  };
 
-    const fetchNotices = async () => {
+  const ClassNotice = () => {
+    const { courseId } = useParams();
+    const context = useOutletContext() || {};
+    const { courseData, isCreator } = context;
+    const { user } = useContext(UsersContext);
+    const [userId, setUserId] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [notices, setNotices] = useState([]);
+    const [searchQuery, setSearchQuery] = useState("");
+    const ITEMS_PER_PAGE = 5;
+    const [expandedNoticeId, setExpandedNoticeId] = useState(null);
+    const [noticeDetails, setNoticeDetails] = useState({});
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [noticeToDelete, setNoticeToDelete] = useState(null);
+
+    useEffect(() => {
+      const getUserIdFromLocalStorage = () => {
+        const userData = localStorage.getItem("user");
+        if (!userData) return null;
+
+        try {
+          const parsedUser = JSON.parse(userData);
+          return parsedUser.userId;
+        } catch (error) {
+          console.error("로컬 스토리지 데이터 파싱 오류:", error);
+          return null;
+        }
+      };
+
+      const fetchedUserId = getUserIdFromLocalStorage();
+      if (fetchedUserId) {
+        setUserId(fetchedUserId);
+      }
+    }, []);
+
+    useEffect(() => {
+      if (!courseId || userId === null) return;
+
+      const fetchNotices = async () => {
+        try {
+          console.log(`공지사항 요청: courseId=${courseId}, userId=${userId}`);
+          const response = await api.get(`/announcements/${courseId}/${user.userId}`);
+
+          console.log("응답 데이터:", response.data);
+          if (response.data.success) {
+            const sortedNotices = response.data.data.sort(
+              (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+            );
+            setNotices(sortedNotices);
+            console.log(response.data.data);
+          } else {
+            console.warn(response.data.message);
+          }
+        } catch (error) {
+          console.error("공지사항 가져오기 오류:", error);
+        }
+      };
+
+      fetchNotices();
+    }, [courseId, userId]);
+
+    // 총 페이지 개수 계산
+    const totalPages = Math.ceil(notices.length / ITEMS_PER_PAGE);
+
+    // 현재 페이지의 공지 목록 가져오기
+    const currentNotices = notices.slice(
+      (currentPage - 1) * ITEMS_PER_PAGE,
+      currentPage * ITEMS_PER_PAGE
+    );
+
+    // 공지 상세조회 API
+    const handleNoticeDetail = async (noticeId) => {
+      setExpandedNoticeId((prevId) => (prevId === noticeId ? null : noticeId));
+
+      if (noticeDetails[noticeId]) {
+        return; // 이미 로드된 공지라면 서버 요청 생략
+      }
+
       try {
-        console.log(`공지사항 요청: courseId=${courseId}, userId=${userId}`);
-        const response = await api.get(`/announcements/${courseId}/${userId}`);
-
-        console.log("응답 데이터:", response.data);
+        const response = await api.get(`/announcements/${courseId}/${user.userId}/${noticeId}`);
         if (response.data.success) {
-          const sortedNotices = response.data.data.sort(
-            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-          );
-          setNotices(sortedNotices);
-          console.log(response.data.data);
+          const announcementDetails = response.data.data;
+          setNoticeDetails((prevDetails) => ({
+            ...prevDetails,
+            [noticeId]: announcementDetails.announcementContent,
+          }));
         } else {
           console.warn(response.data.message);
         }
       } catch (error) {
-        console.error("공지사항 가져오기 오류:", error);
+        console.error("공지사항 상세 정보 가져오기 오류:", error);
       }
     };
 
-    fetchNotices();
-  }, [courseId, userId]);
+    const handleDeleteButtonClick = (noticeId) => {
+      setNoticeToDelete(noticeId);
+      setIsDeleteModalOpen(true);
+    };
 
-  // 총 페이지 개수 계산
-  const totalPages = Math.ceil(notices.length / ITEMS_PER_PAGE);
-
-  // 현재 페이지의 공지 목록 가져오기
-  const currentNotices = notices.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
-
-  // 공지 상세조회 API
-  const handleNoticeDetail = async (noticeId) => {
-    setExpandedNoticeId((prevId) => (prevId === noticeId ? null : noticeId));
-
-    if (noticeDetails[noticeId]) {
-      return; // 이미 로드된 공지라면 서버 요청 생략
-    }
-
-    try {
-      const response = await api.get(`/announcements/${courseId}/${userId}/${noticeId}`);
-      if (response.data.success) {
-        const announcementDetails = response.data.data;
-        setNoticeDetails((prevDetails) => ({
-          ...prevDetails,
-          [noticeId]: announcementDetails.announcementContent,
-        }));
-      } else {
-        console.warn(response.data.message);
+    const handleNoticeDelete = async () => {
+      try {
+        const response = await api.delete(`/announcements/${courseId}/${user.userId}/${noticeToDelete}`);
+        if (response.data.success) {
+          console.log("공지사항 삭제 성공");
+          setNotices((prevNotices) => prevNotices.filter(notice => notice.announcementId !== noticeToDelete));
+          setIsDeleteModalOpen(false);
+        } else {
+          console.warn(response.data.message);
+        }
+      } catch (error) {
+        console.error("공지사항 삭제 오류:", error);
       }
-    } catch (error) {
-      console.error("공지사항 상세 정보 가져오기 오류:", error);
-    }
-  };
+    };
 
-  const handleDeleteButtonClick = (noticeId) => {
-    setNoticeToDelete(noticeId);
-    setIsDeleteModalOpen(true);
-  };
+    const handleEditButtonClick = (noticeId) => {
+      // 수정 페이지로 이동할 때 공지사항 ID를 URL에 포함
+      window.location.href = `/class/${courseId}/overview/notice/edit/${noticeId}`;
+    };
 
-  const handleNoticeDelete = async () => {
-    try {
-      const response = await api.delete(`/announcements/${courseId}/${userId}/${noticeToDelete}`);
-      if (response.data.success) {
-        console.log("공지사항 삭제 성공");
-        setNotices((prevNotices) => prevNotices.filter(notice => notice.announcementId !== noticeToDelete));
-        setIsDeleteModalOpen(false);
-      } else {
-        console.warn(response.data.message);
-      }
-    } catch (error) {
-      console.error("공지사항 삭제 오류:", error);
-    }
-  };
-
-  const handleEditButtonClick = (noticeId) => {
-    // 수정 페이지로 이동할 때 공지사항 ID를 URL에 포함
-    window.location.href = `/class/${courseId}/overview/notice/edit/${noticeId}`;
-  };
-
-  return (
-    <div>
-      <TopBar />
-      <PageLayout>
-        <ClassTopbar activeTab="overview" />
-        <div style={{ display: "flex", marginTop: "1rem" }}>
-          <ClassSidebar style={{ marginRight: "2rem" }} />
-          <main
-            style={{
-              flex: 1,
-              padding: "2rem",
-              borderRadius: "8px",
-            }}
-          >
-            <ContentHeader>
-              <Title>공지사항</Title>
-              <SearchContainer>
-                <SearchInput
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <SearchIcon
-                  className="material-symbols-outlined"
-                  style={{ color: "var(--black-color)", fontSize: "2.7rem" }}
-                >
-                  search
-                </SearchIcon>
-              </SearchContainer>
-            </ContentHeader>
-
-            <Section>
-              <NoticeList>
-                {/* 🔹 공지가 없을 때 표시할 메시지 */}
-                {notices.length === 0 ? (
-                  <div
-                    style={{
-                      textAlign: "center",
-                      fontSize: "1.5rem",
-                      fontWeight: "bold",
-                      color: "var(--darkgrey-color)",
-                      padding: "3rem 0",
-                    }}
+    return (
+      <div>
+        <TopBar />
+        <PageLayout>
+          <ClassTopbar activeTab="overview" />
+          <div style={{ display: "flex", marginTop: "1rem" }}>
+            <ClassSidebar style={{ marginRight: "2rem" }} />
+            <main
+              style={{
+                flex: 1,
+                padding: "2rem",
+                borderRadius: "8px",
+              }}
+            >
+              <ContentHeader>
+                <Title>공지사항</Title>
+                <SearchContainer>
+                  <SearchInput
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                  <SearchIcon
+                    className="material-symbols-outlined"
+                    style={{ color: "var(--black-color)", fontSize: "2.7rem" }}
                   >
-                    아직 등록된 공지사항이 없습니다.
-                  </div>
-                ) : (
-                  currentNotices.map((notice) => (
-                    <div key={notice.announcementId}>
-                      <NoticeItem onClick={() => handleNoticeDetail(notice.announcementId)}>
-                        <NoticeItemLeft>
-                          <NoticeTitle>{notice.announcementTitle}</NoticeTitle>
-                          {/* ✅ title → announcementTitle */}  
-                          <NoticeMeta>
-                            <span>{notice.instructorName}</span>
-                            {/* ✅ author → instructorName */}
-                            <span>|</span>
-                            <span>{new Date(notice.createdAt).toLocaleDateString()}</span>
-                          </NoticeMeta>
-                          {/* ✅ date → createdAt */}
-                        </NoticeItemLeft>
-                        <NoticeViews>
-                          {notice.viewCount} {/* ✅ views → viewCount */}
-                          <div>조회수</div>
-                        </NoticeViews>
-                      </NoticeItem>
-                      {expandedNoticeId === notice.announcementId && (
-                        <NoticeContent>
-                          <div className="button-container">
-                            <button className="button" onClick={() => handleEditButtonClick(notice.announcementId)}>수정</button>
-                            <button className="button" onClick={() => handleDeleteButtonClick(notice.announcementId)}>삭제</button>
-                          </div>
-                          <p>{noticeDetails[notice.announcementId]}</p>
-                        </NoticeContent>
-                      )}
-                    </div>
-                  ))
-                )}
-              </NoticeList>
-              {/* 페이지네이션 */}
-              {totalPages > 1 && (
-                <Pagination>
-                  {/* 이전 버튼 */}
-                  <PageButton
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.max(prev - 1, 1))
-                    }
-                    disabled={currentPage === 1}
-                  >
-                    <Icon className="material-symbols-outlined">
-                      arrow_back_ios
-                    </Icon>
-                  </PageButton>
+                    search
+                  </SearchIcon>
+                </SearchContainer>
+              </ContentHeader>
 
-                  {/* 현재 페이지 버튼 (1부터 totalPages까지 동적 생성) */}
-                  {Array.from({ length: totalPages }, (_, index) => (
-                    <PageButton
-                      key={index + 1}
-                      active={currentPage === index + 1}
-                      onClick={() => setCurrentPage(index + 1)}
+              <Section>
+                <NoticeList>
+                  {/* 🔹 공지가 없을 때 표시할 메시지 */}
+                  {notices.length === 0 ? (
+                    <div
+                      style={{
+                        textAlign: "center",
+                        fontSize: "1.5rem",
+                        fontWeight: "bold",
+                        color: "var(--darkgrey-color)",
+                        padding: "3rem 0",
+                      }}
                     >
-                      {index + 1}
+                      아직 등록된 공지사항이 없습니다.
+                    </div>
+                  ) : (
+                    currentNotices.map((notice) => (
+                      <div key={notice.announcementId}>
+                        <NoticeItem onClick={() => handleNoticeDetail(notice.announcementId)}>
+                          <NoticeItemLeft>
+                            <NoticeTitle>{notice.announcementTitle}</NoticeTitle>
+                            {/* ✅ title → announcementTitle */}  
+                            <NoticeMeta>
+                              <span>{notice.instructorName}</span>
+                              {/* ✅ author → instructorName */}
+                              <span>|</span>
+                              <span>{new Date(notice.createdAt).toLocaleDateString()}</span>
+                            </NoticeMeta>
+                            {/* ✅ date → createdAt */}
+                          </NoticeItemLeft>
+                          <NoticeViews>
+                            {notice.viewCount} {/* ✅ views → viewCount */}
+                            <div>조회수</div>
+                          </NoticeViews>
+                        </NoticeItem>
+                        {expandedNoticeId === notice.announcementId && (
+                          <NoticeContent>
+                            {isCreator &&(<div className="button-container">
+                              <button className="button" onClick={() => handleEditButtonClick(notice.announcementId)}>수정</button>
+                              <button className="button" onClick={() => handleDeleteButtonClick(notice.announcementId)}>삭제</button>
+                            </div>)}
+                            <p>{noticeDetails[notice.announcementId]}</p>
+                          </NoticeContent>
+                        )}
+                      </div>
+                    ))
+                  )}
+                </NoticeList>
+                {/* 페이지네이션 */}
+                {totalPages > 1 && (
+                  <Pagination>
+                    {/* 이전 버튼 */}
+                    <PageButton
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.max(prev - 1, 1))
+                      }
+                      disabled={currentPage === 1}
+                    >
+                      <Icon className="material-symbols-outlined">
+                        arrow_back_ios
+                      </Icon>
                     </PageButton>
-                  ))}
 
-                  {/* 다음 버튼 */}
-                  <PageButton
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                    }
-                    disabled={currentPage === totalPages}
-                  >
-                    <Icon className="material-symbols-outlined">
-                      arrow_forward_ios
-                    </Icon>
-                  </PageButton>
-                </Pagination>
-              )}
-            </Section>
-          </main>
-        </div>
-      </PageLayout>
-      <EditButton
-        to={`/class/${courseId}/overview/notice/create`}
-        edit={true}
-      />
-      <NoticeDeleteModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        onDelete={handleNoticeDelete}
-      />
-    </div>
-  );
-};
+                    {/* 현재 페이지 버튼 (1부터 totalPages까지 동적 생성) */}
+                    {Array.from({ length: totalPages }, (_, index) => (
+                      <PageButton
+                        key={index + 1}
+                        active={currentPage === index + 1}
+                        onClick={() => setCurrentPage(index + 1)}
+                      >
+                        {index + 1}
+                      </PageButton>
+                    ))}
 
-export default ClassNotice;
+                    {/* 다음 버튼 */}
+                    <PageButton
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                      }
+                      disabled={currentPage === totalPages}
+                    >
+                      <Icon className="material-symbols-outlined">
+                        arrow_forward_ios
+                      </Icon>
+                    </PageButton>
+                  </Pagination>
+                )}
+              </Section>
+            </main>
+          </div>
+        </PageLayout>
+        {isCreator && (
+          <EditButton
+            to={`/class/${courseId}/overview/notice/create`}
+            edit={true}
+          />
+        )}
+        <NoticeDeleteModal
+          isOpen={isDeleteModalOpen}
+          onClose={() => setIsDeleteModalOpen(false)}
+          onDelete={handleNoticeDelete}
+        />
+      </div>
+    );
+  };
+
+  export default ClassNotice;
