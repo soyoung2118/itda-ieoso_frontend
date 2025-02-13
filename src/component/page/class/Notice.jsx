@@ -16,32 +16,6 @@
     margin-top: 0rem;
   `;
 
-  const SearchContainer = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    width: 100%;
-    max-width: 20rem;
-  `;
-
-  const SearchInput = styled.input`
-    flex: 1;
-    padding: 0.75rem 1rem;
-    border: 2px solid var(--black-color);
-    border-radius: 30px;
-    font-size: 0.875rem;
-
-    &:focus {
-      outline: none;
-    }
-  `;
-
-  const SearchIcon = styled.span`
-    font-size: 1.9rem;
-    color: var(--grey-color);
-    cursor: pointer;
-  `;
-
   const ContentHeader = styled.div`
     display: flex;
     justify-content: space-between;
@@ -238,12 +212,11 @@
   const ClassNotice = () => {
     const { courseId } = useParams();
     const context = useOutletContext() || {};
-    const { courseData, isCreator } = context;
+    const { isCreator } = context;
     const { user } = useContext(UsersContext);
     const [userId, setUserId] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [notices, setNotices] = useState([]);
-    const [searchQuery, setSearchQuery] = useState("");
     const ITEMS_PER_PAGE = 5;
     const [expandedNoticeId, setExpandedNoticeId] = useState(null);
     const [noticeDetails, setNoticeDetails] = useState({});
@@ -366,18 +339,6 @@
             >
               <ContentHeader>
                 <Title>공지사항</Title>
-                <SearchContainer>
-                  <SearchInput
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                  <SearchIcon
-                    className="material-symbols-outlined"
-                    style={{ color: "var(--black-color)", fontSize: "2.7rem" }}
-                  >
-                    search
-                  </SearchIcon>
-                </SearchContainer>
               </ContentHeader>
 
               <Section>
