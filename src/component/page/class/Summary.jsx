@@ -99,11 +99,25 @@ const CalendarWrapper = styled.div`
 const ClassSummary = () => {
   const { courseId } = useParams();
   const [assignments, setAssignments] = useState([]);
+  const [currentTime, setCurrentTime] = useState("");
 
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      const formattedTime = `${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()}`;
+      setCurrentTime(`${formattedTime} ${now.getHours()}:${String(now.getMinutes()).padStart(2, "0")}`);
+    };
+
+    updateTime();
+    const timer = setInterval(updateTime, 60000);
+    return () => clearInterval(timer);
+  }, []);
   useEffect(() => {
     const fetchAssignmentStats = async () => {
       try {
-        const response = await api.get(`/statistics/courses/${courseId}/assignments`);
+        const response = await api.get(
+          `/statistics/courses/${courseId}/assignments`
+        );
         if (response.data.success) {
           setAssignments(response.data.data);
         }
@@ -121,7 +135,7 @@ const ClassSummary = () => {
     <div>
       <TopBar />
       <PageLayout>
-        <ClassTopbar activeTab="stat" />
+        <ClassTopbar activeTab="admin" />
         <main
           style={{
             flex: 1,
@@ -129,9 +143,35 @@ const ClassSummary = () => {
             borderRadius: "8px",
           }}
         >
-
           <AdminTopBar />
           <div>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "baseline",
+                marginLeft:"1.5rem"
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: "1.7rem",
+                  fontWeight: "900",
+                  color: "var(--black-color)",
+                }}
+              >
+                학생별 제출 현황
+              </h3>
+              <p
+                style={{
+                  color: "var(--darkgrey-color)",
+                  fontSize: "1.1rem",
+                  marginLeft: "1.3rem",
+                  fontWeight: "500",
+                }}
+              >
+                {currentTime} 기준
+              </p>
+            </div>
             <Section style={{ padding: "2rem 3rem", paddingBottom: "3rem" }}>
               {/* <div
                 style={{ display: "flex", gap: "2rem", marginBottom: "4rem" }}
