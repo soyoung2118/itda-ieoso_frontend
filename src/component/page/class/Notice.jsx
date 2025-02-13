@@ -275,16 +275,13 @@
 
       const fetchNotices = async () => {
         try {
-          console.log(`공지사항 요청: courseId=${courseId}, userId=${userId}`);
           const response = await api.get(`/announcements/${courseId}/${user.userId}`);
 
-          console.log("응답 데이터:", response.data);
           if (response.data.success) {
             const sortedNotices = response.data.data.sort(
               (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
             );
             setNotices(sortedNotices);
-            console.log(response.data.data);
           } else {
             console.warn(response.data.message);
           }
@@ -338,7 +335,6 @@
       try {
         const response = await api.delete(`/announcements/${courseId}/${user.userId}/${noticeToDelete}`);
         if (response.data.success) {
-          console.log("공지사항 삭제 성공");
           setNotices((prevNotices) => prevNotices.filter(notice => notice.announcementId !== noticeToDelete));
           setIsDeleteModalOpen(false);
         } else {

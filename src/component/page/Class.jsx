@@ -19,7 +19,6 @@ export default function Class() {
         if (response.data.success) {
           setCourseData(response.data.data);
           setIsCreator(response.data.data.user?.userId === user.userId);
-          console.log("isCreator", response.data.data.user?.userId === user.userId);
         }
       } catch (error) {
         console.error("강의 정보 가져오기 오류:", error);
