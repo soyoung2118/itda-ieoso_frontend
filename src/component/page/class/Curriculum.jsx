@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import styled from "styled-components";
 import TopBar from "../../ui/TopBar";
 import LogoSymbol from "../../img/logo/itda_logo_symbol.svg";
@@ -133,6 +133,7 @@ const Curriculum = () => {
       subSections: [],
     },
   ];
+  const { courseId } = useParams();
 
   const [activeItem, setActiveItem] = useState(curriculumData[0]?.title);
   const activeSection = curriculumData.find(
@@ -353,7 +354,7 @@ const Curriculum = () => {
           </main>
         </div>
       </PageLayout>
-      <EditButton to="/curriculum/edit" edit={true} />
+      <EditButton to={`/class/${courseId}/curriculum/edit`} edit={true} />
 
       {isEntryCodeModalOpen && <Modal entrycode={entrycode} onClose={() => setIsEntryCodeModalOpen(false)} />}
     </div>

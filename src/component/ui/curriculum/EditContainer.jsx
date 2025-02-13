@@ -34,28 +34,30 @@ const Container = styled.div`
 const HighlightLine = styled.div`
   position: absolute;
   left: 0;
-  top: 0%;
+  transform: translateY(-10%);
   bottom: 0;
   width: 0.35rem;
-  height: 100%;
+  height: 84%;
   background-color: var(--main-color);
+  
+  z-index: 9;
 `;
 
-const EditContainer = ({ onIconClick }) => {
+const EditContainer = ({ onIconClick, index }) => {
   // 아이콘 데이터 배열
   const icons = [
-    { src: VideoIcon, alt: "Video", action: () => onIconClick("video") },
-    { src: MaterialIcon, alt: "Material", action: () => onIconClick("material") },
-    { src: AssignmentIcon, alt: "Assignment", action: () => onIconClick("assignment") },
+    { src: VideoIcon, alt: "Video", action: () => onIconClick("video", index) },
+    { src: MaterialIcon, alt: "Material", action: () => onIconClick("material", index) },
+    { src: AssignmentIcon, alt: "Assignment", action: () =>onIconClick("assignment", index) },
   ];
 
   return (
     <>
       <HighlightLine />
       <Container>
-        {icons.map((icon, index) => (
+        {icons.map((icon, idx) => (
           <img
-            key={index}
+            key={idx}
             src={icon.src}
             alt={icon.alt}
             onClick={icon.action}
@@ -67,7 +69,8 @@ const EditContainer = ({ onIconClick }) => {
 };
 
 EditContainer.propTypes = {
-  onIconClick: PropTypes.func.isRequired, // 함수 타입이며 필수 값
+  onIconClick: PropTypes.func.isRequired,
+  index: PropTypes.number.isRequired,
 };
 
 export default EditContainer;

@@ -14,7 +14,7 @@ const SidebarContainer = styled.aside`
   background-color: white;
   border-radius: 12px;
   padding: 1rem;
-  margin-top:2rem;
+  margin-top: 2rem;
   letter-spacing: -0.5px;
 `;
 
@@ -86,7 +86,18 @@ const Icon = styled.img`
   width: 1.23rem;
 `;
 
-
+const getIconByType = (type) => {
+  switch (type) {
+    case "video":
+      return Class;
+    case "material":
+      return Material;
+    case "assignment":
+      return Assignment;
+    default:
+      return Class;
+  }
+};
 
 const CurriculumSidebar = ({ sections, activeItem, setActiveItem, edit }) => {
   const handleItemClick = (item) => {
@@ -97,7 +108,7 @@ const CurriculumSidebar = ({ sections, activeItem, setActiveItem, edit }) => {
     <SidebarContainer>
       {sections.map((section, sectionIndex) => (
         <ListSection key={sectionIndex}>
-          <SectionHeader selected={section.selected}>
+          <SectionHeader selected={activeItem === section.title}>
             {section.title}
             {!edit && (
               <SectionIcon
@@ -120,62 +131,86 @@ const CurriculumSidebar = ({ sections, activeItem, setActiveItem, edit }) => {
                 key={subIndex}
                 style={{
                   marginLeft: "0",
+                  marginBottom: "10px",
                 }}
               >
                 <ListItem
                   active={activeItem === subSection.title}
-                  onClick={() => handleItemClick(subSection.title)}
+                  onClick={() =>
+                    handleItemClick(subSection.title || "제목 없음")
+                  }
+                  style={{
+                    marginLeft:
+                      subSection.type === "material" ||
+                      subSection.type === "assignment"
+                        ? "-2px"
+                        : "-5px",
+                  }}
                 >
-                  <Icon src={Class} style={{ width: "1.4rem" }} />
+                  <Icon
+                    src={getIconByType(subSection.type)}
+                    style={{ width: "1.4rem" }}
+                  />
                   <TruncatedText width="10rem">
-                    {subSection.title}
+                    {subSection.title || "제목 없음"}
                   </TruncatedText>
                   {!edit && (
-                    <img src={Check} style={{marginLeft:"auto", marginRight:"1.3rem"}}/>
+                    <img
+                      src={Check}
+                      style={{ marginLeft: "auto", marginRight: "1.3rem" }}
+                    />
                   )}
                 </ListItem>
-
+                {/*
                 <SubsectionContainer>
-                  <SubsectionItem>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <Icon
-                        src={Material}
-                        style={{
-                          marginLeft: "0",
-                        }}
-                      />
-                      <TruncatedText
-                        width="10rem"
-                        style={{ marginLeft: "0.7rem" }}
-                      >
-                        {subSection.material.name}
-                      </TruncatedText>
-                    </div>
-                    {!edit && (
-                      <img src={Check} style={{marginLeft:"auto", marginRight:"1.3rem"}}/>
-                    )}
-                  </SubsectionItem>
-
-                  <SubsectionItem
-                    style={{ marginTop: "-0.3rem", marginBottom: "1rem" }}
-                  >
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <Icon src={Assignment} style={{
-                          marginLeft:"0",
-                        }}
+                  {subSection.material && (
+                    <SubsectionItem>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <Icon
+                          src={Material}
+                          style={{
+                            marginLeft: "0",
+                          }}
                         />
-                      <TruncatedText
-                        width="11rem"
-                        style={{ marginLeft: "0.7rem" }}
-                      >
-                        {subSection.assignment.name}
-                      </TruncatedText>
-                    </div>
-                    {!edit && (
-                      <img src={Check} style={{marginLeft:"auto", marginRight:"1.3rem"}}/>
-                    )}
-                  </SubsectionItem>
+                        <TruncatedText
+                          width="10rem"
+                          style={{ marginLeft: "0.7rem" }}
+                        >
+                          {subSection.material?.name || "자료 없음"}
+                        </TruncatedText>
+                      </div>
+                      {!edit && (
+                        <img
+                          src={Check}
+                          style={{ marginLeft: "auto", marginRight: "1.3rem" }}
+                        />
+                      )}
+                    </SubsectionItem>
+                  )}
+
+                  {subSection.assignment && (
+                    <SubsectionItem
+                      style={{ marginTop: "-0.3rem", marginBottom: "1rem" }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <Icon src={Assignment} style={{ marginLeft: "0" }} />
+                        <TruncatedText
+                          width="11rem"
+                          style={{ marginLeft: "0.7rem" }}
+                        >
+                          {subSection.assignment?.name || "과제 없음"}
+                        </TruncatedText>
+                      </div>
+                      {!edit && (
+                        <img
+                          src={Check}
+                          style={{ marginLeft: "auto", marginRight: "1.3rem" }}
+                        />
+                      )}
+                    </SubsectionItem>
+                  )}
                 </SubsectionContainer>
+                */}
               </div>
             ))}
           </ul>
@@ -191,21 +226,22 @@ CurriculumSidebar.propTypes = {
       title: PropTypes.string.isRequired,
       subSections: PropTypes.arrayOf(
         PropTypes.shape({
-          title: PropTypes.string.isRequired,
+          title: PropTypes.string,
           material: PropTypes.shape({
-            name: PropTypes.string.isRequired,
-            downloaded: PropTypes.bool.isRequired,
-          }).isRequired,
+            name: PropTypes.string,
+            downloaded: PropTypes.bool,
+          }),
           assignment: PropTypes.shape({
-            name: PropTypes.string.isRequired,
-            submitted: PropTypes.bool.isRequired,
-          }).isRequired,
+            name: PropTypes.string,
+            submitted: PropTypes.bool,
+          }),
         })
       ).isRequired,
     })
   ).isRequired,
   activeItem: PropTypes.string.isRequired,
   setActiveItem: PropTypes.func.isRequired,
+  edit: PropTypes.bool.isRequired,
 };
 
 export default CurriculumSidebar;

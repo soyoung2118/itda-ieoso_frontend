@@ -1,0 +1,197 @@
+import styled from "styled-components";
+import PropTypes from "prop-types";
+import ClassThumbnail from "../../img/class/class_thumbnail.svg";
+import PlayIcon from "../../img/class/play_icon.svg";
+import Material from "../../img/icon/pdf.svg";
+import Assignment from "../../img/icon/docs.svg";
+import EditContainer from "../../ui/curriculum/EditContainer";
+import EditableSection from "./EditableSection";
+
+const Section = styled.div`
+  display: flex;
+  padding: 1.3rem 1.5rem;
+  border-radius: 12px;
+  margin: 1rem 0rem;
+  background-color: #ffffff;
+  position: relative;
+  cursor: pointer;
+  width: 100%;
+`;
+
+const CurriculumTitle = styled.h3`
+  font-size: 1.63rem;
+  font-weight: 900;
+  margin-bottom: -0.3rem;
+  margin-top: 0.5rem;
+`;
+
+const VideoContainer = styled.div`
+  position: relative;
+  width: 14.5rem;
+  border-radius: 8px;
+`;
+
+const VideoThumbnail = styled.img`
+  width: 100%;
+  border-radius: 8px;
+`;
+
+const MaterialSection = styled.div`
+  display: flex;
+  background-color: var(--lightgrey-color);
+  width: 100%;
+  padding: 1.2rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1.07rem;
+`;
+
+const formatPeriod = (startDate, endDate) => {
+  return startDate && endDate ? `${startDate} ~ ${endDate}` : "기간 미정";
+};
+
+const CurriculumSection = ({
+  subSection,
+  index,
+  editTarget,
+  handleSectionClick,
+  handleIconClick,
+  
+}) => {
+  const isEditing = subSection.isEditing;
+
+  return (
+    <Section onClick={() => handleSectionClick(index, subSection.type)}>
+      {isEditing ? (
+        <div style={{ display: "flex", width: "100%", position: "relative" }}>
+          <div style={{ position: "relative" }}>
+            <EditContainer onIconClick={handleIconClick} index={index} />
+          </div>
+          <EditableSection
+            subSection={subSection}
+            type={subSection.type}
+            handleSave={(updatedTitle) => {
+              const updatedSections = curriculumData.map((section) =>
+                section.title === activeItem
+                  ? {
+                      ...section,
+                      subSections: section.subSections.map((s, i) =>
+                        i === index
+                          ? { ...s, title: updatedTitle, isEditing: false }
+                          : s
+                      ),
+                    }
+                  : section
+              );
+              setCurriculumData(updatedSections);
+            }}
+          />
+        </div>
+      ) : (
+        <>
+          {subSection.type === "video" && (
+            <>
+              <VideoContainer>
+                <VideoThumbnail src={ClassThumbnail} />
+                <img
+                  src={PlayIcon}
+                  alt="Play Icon"
+                  style={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    width: "1.8rem",
+                    height: "auto",
+                    cursor: "pointer",
+                  }}
+                />
+              </VideoContainer>
+              <div style={{ marginLeft: "2rem" }}>
+                <CurriculumTitle>
+                  {subSection.title ?? "영상 제목 없음"}
+                </CurriculumTitle>
+                <p style={{ color: "#909090", display: "flex", gap: "0.5rem" }}>
+                  <span>김잇다</span>
+                  <span
+                    style={{
+                      borderLeft: "1.5px solid #909090",
+                      height: "1rem",
+                    }}
+                  ></span>
+                  <span>
+                    {formatPeriod(subSection.startDate, subSection.endDate)}
+                  </span>
+                </p>
+              </div>
+            </>
+          )}
+
+          {subSection.type === "material" && (
+            <>
+              <img
+                src={Material}
+                style={{
+                  width: "2.4rem",
+                  marginLeft: "1rem",
+                  marginRight: "3rem",
+                }}
+              />
+              <MaterialSection>
+                <span style={{ marginRight: "0.6rem" }}>
+                  {subSection.title ?? "자료 없음"}
+                </span>
+                <span
+                  style={{ color: "var(--main-color)", fontSize: "0.9rem" }}
+                >
+                  3.1MB
+                </span>
+              </MaterialSection>
+            </>
+          )}
+
+          {subSection.type === "assignment" && (
+            <>
+              <img
+                src={Assignment}
+                alt="assignment icon"
+                style={{
+                  width: "2.4rem",
+                  marginLeft: "1rem",
+                  marginRight: "3rem",
+                }}
+              />
+              <MaterialSection>
+                <span style={{ marginRight: "0.8rem" }}>
+                  {subSection.title ?? "과제 없음"}
+                </span>
+                <span style={{ color: "var(--main-color)" }}>
+                  {formatPeriod(subSection.startDate, subSection.endDate)}
+                </span>
+              </MaterialSection>
+            </>
+          )}
+        </>
+      )}
+    </Section>
+  );
+};
+
+CurriculumSection.propTypes = {
+  subSection: PropTypes.shape({
+    type: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    file: PropTypes.string,
+    videoUrl: PropTypes.string,
+    startDate: PropTypes.string,
+    endDate: PropTypes.string,
+  }).isRequired,
+  index: PropTypes.number.isRequired,
+  editTarget: PropTypes.shape({
+    index: PropTypes.number,
+    type: PropTypes.string,
+  }),
+  handleSectionClick: PropTypes.func.isRequired,
+  handleIconClick: PropTypes.func,
+};
+
+export default CurriculumSection;
