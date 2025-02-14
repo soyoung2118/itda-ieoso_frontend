@@ -199,69 +199,82 @@ const ClassAssignmentSubmit = () => {
         <Container>
             <LeftSide>
                 <TitleContainer>
-                    <MainTitle onClick={handleNavigationCurriculum}>
-                        <span>{getCurrentVideo()?.lectureTitle || "강의를 선택해주세요"}</span>
-                         
-                    </MainTitle>
-                    <SubTitle>
-                        {getCurrentVideo()?.videoId && `${getCurrentVideo()?.videoId}. `}
-                        {getCurrentVideo()?.videoTitle || "강의를 선택해주세요"}
-                    </SubTitle>
+                        <MainTitle>
+                            <span>{getCurrentVideo()?.lectureTitle || "강의를 선택해주세요"}</span>
+                        </MainTitle>
+                        
+                        <ClickContainer onClick={handleNavigationCurriculum}>
+                            <SubTitle>
+                                {getCurrentVideo()?.videoId && `(${getCurrentVideo()?.videoId}) `}
+                                {getCurrentVideo()?.videoTitle || "강의를 선택해주세요"}
+                            </SubTitle>
+                            <ArrowForwardIosIcon style={{ width: '13px', marginLeft: '15px' }}/>
+                        </ClickContainer>
                 </TitleContainer>
-                <SumbitContainer>
-                    <AssignmentForm>
-                    <FormTitle>{getCurrentAssignment()?.name || "과제 작성"}</FormTitle>
-                    <FormGroup>
-                        <Label>제목</Label>
-                        <Input 
-                            type="text" 
-                            placeholder="제목을 입력하세요" 
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
+
+                <WhiteBoxComponent>
+                    <NoticeTitleContainer>
+                        <FormTitle style={{marginTop: '0px'}}>{getCurrentAssignment()?.name || "과제 작성"}</FormTitle>
+                    </NoticeTitleContainer>
+                    <NoticeContentContainer>
+                        <span>안녕하세요</span>
+                        <span>어쩌고저쩌고</span>
+                        <span>랄랄라라</span>
+                        <span>이것만 하고 잡니다!</span>
+                    </NoticeContentContainer>
+                </WhiteBoxComponent>
+
+                <WhiteBoxComponent>
+                    <FormTitle>내용</FormTitle>
+                    <EditorContainer>
+                        <TextArea
+                            placeholder="내용을 입력하세요" 
+                            value={content}
+                            onChange={(e) => setContent(e.target.value)}
                         />
-                    </FormGroup>
-                        <FormGroup>
-                            <Label>내용</Label>
-                            <EditorContainer>
-                                <EditorToolbar>
-                                    <ToolButton onClick={() => handleFileUpload('photo')}>
-                                        <img src={Photo} alt="photo" style={{ width: "16px", marginRight: "4px" }}/>
-                                        사진
-                                    </ToolButton>
-                                    <ToolButton onClick={() => handleFileUpload('video')}>
-                                        <img src={Video} alt="video" style={{ width: "16px", marginRight: "4px" }}/>
-                                        동영상
-                                    </ToolButton>
-                                    <ToolButton onClick={handleLinkAdd}>
-                                        <img src={Link} alt="link" style={{ width: "16px", marginRight: "4px" }}/>
-                                        링크
-                                    </ToolButton>
-                                </EditorToolbar>
-                                <TextArea 
-                                    placeholder="내용을 입력하세요" 
-                                    value={content}
-                                    onChange={(e) => setContent(e.target.value)}
-                                />
-                                <FilePreviewContainer>
-                                    {files.map((file, index) => (
-                                        <FilePreview key={index}>
-                                            <FilePreviewContent>
-                                                <img
-                                                    src={file.type === 'photo' ? Photo : file.type === 'video' ? Video : Link}
-                                                    alt={file.type}
-                                                    style={{ width: "14px" }}
-                                                />
-                                                <span>{file.type === 'link' ? file.url : file.file.name}</span>
-                                            </FilePreviewContent>
-                                            <DeleteButton onClick={() => handleFileDelete(index)}>×</DeleteButton>
-                                        </FilePreview>
-                                    ))}
-                                </FilePreviewContainer>
-                            </EditorContainer>
-                        </FormGroup>
-                        <SubmitButton onClick={handleSubmit}>제출하기</SubmitButton>
-                    </AssignmentForm>
-                </SumbitContainer>
+                    </EditorContainer>
+                    <SubmitButton onClick={handleSubmit}>제출하기</SubmitButton>
+                </WhiteBoxComponent>
+
+                <WhiteBoxComponent>
+                    <FormTitle>파일 업로드</FormTitle>
+                    <UploadContainer>
+                        파일을 업로드 합니다
+                    </UploadContainer>
+                </WhiteBoxComponent>
+
+                <WhiteBoxComponent>
+                    <FormTitle>내용</FormTitle>
+                    <EditorContainer>
+                        <TextArea
+                            placeholder="내용을 입력하세요" 
+                            value={content}
+                            onChange={(e) => setContent(e.target.value)}
+                        />
+                    </EditorContainer>
+                    <SubmitButton onClick={handleSubmit}>제출하기</SubmitButton>
+                </WhiteBoxComponent>
+
+                <WhiteBoxComponent style={{height: '60vh'}}>
+                    <Box>
+                        <FormTitle>내용</FormTitle>
+                        <EditorContainer>
+                            <TextArea
+                                placeholder="내용을 입력하세요" 
+                                value={content}
+                                onChange={(e) => setContent(e.target.value)}
+                            />
+                        </EditorContainer>
+                    </Box>
+
+                    <Box>
+                        <FormTitle>파일 업로드</FormTitle>
+                        <UploadContainer>
+                            파일을 업로드 합니다
+                        </UploadContainer>
+                    </Box>
+                    <SubmitButton onClick={handleSubmit}>제출하기</SubmitButton>
+                </WhiteBoxComponent>
             </LeftSide>
 
             <RightSide>
@@ -355,7 +368,6 @@ const ClassAssignmentSubmit = () => {
 };
 
 const Container = styled.div`
-    height: 92vh;
     display: flex;
     overflow: hidden;
     background-color: #F6F7F9;
@@ -366,6 +378,42 @@ const LeftSide = styled.div`
     height: 100%;
     padding: 0px 37px;
 `;
+
+const FormTitle = styled.div`
+    font-size: 17px;
+    font-weight: 700;
+    padding: 0px 10px;
+    margin-top: 5px;
+`;
+
+const WhiteBoxComponent = styled.div`
+    border-radius: 20px;
+    background-color: #FFFFFF;
+    width: 100%;
+    height: 30vh;
+    margin-bottom: 50px;
+    padding: 10px;
+`
+
+const Box = styled.div`
+    height: 25vh;
+    gap: 10px;
+`
+
+const NoticeTitleContainer = styled.div`
+    border-radius: 13px;
+    background-color: #F6F7F9;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+`
+
+const NoticeContentContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    padding-left: 10px;
+`
 
 const SumbitContainer = styled.div`
     border: 1px solid #E0E0E0;
@@ -378,16 +426,23 @@ const SumbitContainer = styled.div`
 const TitleContainer = styled.div`
     margin-top: 36px;
     margin-bottom: 26px;
+    display: flex;
+    align-items: flex-end;
 `;
 
 const MainTitle = styled.div`
     font-size: 24px;
     font-weight: 700;
-    margin-bottom: 18px;
     display: flex;
     align-items: center;
-    cursor: pointer;
+    align-items: center;
+    margin-right: 10px;
 `;
+
+const ClickContainer = styled.div`
+    display: flex;
+    cursor: pointer;
+`
 
 const SubTitle = styled.div`
     font-size: 16px;
@@ -516,14 +571,6 @@ const AssignmentForm = styled.div`
     padding: 20px;
 `;
 
-const FormTitle = styled.div`
-    font-size: 17px;
-    font-weight: 700;
-    margin: 0 -20px 20px -20px;
-    padding: 0 20px 10px 20px;
-    border-bottom: 2px solid #CDCDCD;
-`;
-
 const Label = styled.div`
     font-size: 17px;
     font-weight: 700;
@@ -532,6 +579,7 @@ const Label = styled.div`
 
 const FormGroup = styled.div`
     margin-bottom: 14px;
+    margin: 0px 10px;
 `;
 
 const Input = styled.input`
@@ -597,7 +645,17 @@ const EditorContainer = styled.div`
     border: 2px solid #CDCDCD;
     border-radius: 8px;
     overflow: hidden;
+    margin-top: 10px;
+    height: 18vh;
+    margin: 10px;
 `;
+
+const UploadContainer = styled.div`
+    margin-top: 10px;
+    height: 18vh;
+    margin: 10px;
+    background-color: #F6F7F9;
+`
 
 const EditorToolbar = styled.div`
     display: flex;
@@ -629,7 +687,7 @@ const ToolButton = styled.button`
 
 const TextArea = styled.textarea`
     width: 100%;
-    height: 15vh;
+    height: 18vh;
     padding: 16px;
     border: none;
     resize: none;
@@ -654,7 +712,7 @@ const SubmitButton = styled.button`
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    margin-top: 8px;
+    margin-right: 10px;
 
     &:hover {
         background-color: #E53935;
