@@ -25,14 +25,14 @@ export default function TopBar() {
                 src={Logo} 
                 style={{ width: "126px", height: "33px" }} 
                 alt="itda logo" 
-                onClick={isUser ? () => navigate('/class') : () => navigate('/')}
+                onClick={isUser ? () => navigate('/class/list') : () => navigate('/')}
             />
             <Header>
                 <div className="header-right">
                     {isUser ? (
                         <UserContainer>
                             {location.pathname === '/dashboard' ? (
-                                <button className="navigate-button" onClick={() => navigate('/class')}>강의실 입장하기</button>
+                                <button className="navigate-button" onClick={() => navigate('/class/list')}>강의실 입장하기</button>
                             ) : (
                                 <button className="navigate-button" onClick={() => navigate('/dashboard')}>대시보드로 가기</button>
                             )}

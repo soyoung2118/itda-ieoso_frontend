@@ -1,9 +1,11 @@
-import { NavLink, useParams  } from "react-router-dom";
+import { useState, useContext, useEffect } from "react";
+import { NavLink, useParams, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import { useState } from "react";
 import Container from "../Container";
 import StarIcon from "@mui/icons-material/Star";
+import { getMyCoursesTitles } from "../../api/classApi";
+import { UsersContext } from "../../contexts/usersContext";
 
 const Navbar = styled.div`
   background-color: var(--white-color);
@@ -81,6 +83,10 @@ const MenuItem = styled.div`
     props.selected ? "#F7F7F7" : "var(--white-color)"};
   color: ${(props) => (props.selected ? "var(--black-color)" : "#474747")};
 
+  &:hover {
+    background-color: #F7F7F7;
+  }
+
   .star-icon {
     color: ${(props) =>
       props.selected ? "var(--highlight-color)" : "var(--darkgrey-color)"};
@@ -104,28 +110,33 @@ const TabLink = styled(NavLink)`
   }
 `;
 
-const ClassTopbar = ({ activeTab }) => {
+const ClassTopbar = ({ onCourseChange }) => {
+  const { user } = useContext(UsersContext);
   const { courseId } = useParams();
-  const [selectedClass, setSelectedClass] = useState(
-    "bod 다이어리 1000% 활용하기"
-  );
+  const location = useLocation();
+  const [classOptions, setClassOptions] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // 드롭다운 열림 상태
 
-  const classOptions = [
-    {
-      name: "bod 다이어리 1000% 활용하기",
-      participants: "참여자 80명",
-      isManageable: true,
-    },
-    {
-      name: "다른 강의실 1",
-      participants: "참여자 45명",
-      isManageable: false,
-    },
-  ];
+  useEffect(() => {
+    const fetchClasses = async () => {
+      if (!user?.userId) return;
+      const courses = await getMyCoursesTitles(user.userId);
+      console.log("불러온 강의 목록",courses);
+      setClassOptions(courses);
+    };
+
+    fetchClasses();
+  }, [user?.userId]);
 
   const handleDropdownToggle = () => {
     setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const getActiveTab = () => {
+    if (location.pathname.includes("/overview/notice")) return "overview";
+    if (location.pathname.includes("/curriculum")) return "curriculum";
+    if (location.pathname.includes("/admin")) return "admin";
+    return ""; // 기본값
   };
 
   return (
@@ -140,51 +151,47 @@ const ClassTopbar = ({ activeTab }) => {
         <VerticalLine />
         <Dropdown>
           <DropdownButton onClick={handleDropdownToggle}>
-            {selectedClass} <span style={{ marginLeft: "1rem" }}>▼</span>
-          </DropdownButton>
+              {classOptions.find((course) => course.courseId === courseId)?.courseTitle || "강의실 선택"} 
+              <span style={{ marginLeft: "1rem" }}>▼</span>
+            </DropdownButton>
           <DropdownMenu isOpen={isDropdownOpen}>
             <MenuTitle>강의실 목록</MenuTitle>
-            {classOptions.map((option) => (
-              <MenuItem
-                key={option.name}
-                selected={option.name === selectedClass} // 선택된 상태 반영
-                onClick={() => setSelectedClass(option.name)}
-              >
-                <div>
-                  <div>{option.name}</div>
-                  <div
-                    style={{
-                      fontSize: "0.85rem",
-                      color: "#474747",
-                      fontWeight: "500",
-                      paddingTop: "0.15rem",
-                    }}
-                  >
-                    {option.participants}
-                  </div>
-                </div>
-                {option.isManageable && <StarIcon className="star-icon" />}
-              </MenuItem>
-            ))}
+            {classOptions.map((course) => {
+              console.log("🔍 현재 선택된 강의실 ID:", courseId, "비교 대상:", course.courseId);
+
+              return (
+                <MenuItem
+                  key={course.courseId}
+                  selected={Number(courseId) === course.courseId}
+                  onClick={() => {
+                    onCourseChange(course.courseId);
+                    setIsDropdownOpen(false);
+                  }}
+                >
+                  <div>{course.courseTitle}</div>
+                  {/* {option.isManageable && <StarIcon className="star-icon" />} */}
+                </MenuItem>
+              )
+            })}
           </DropdownMenu>
         </Dropdown>
       </Container>
       <nav style={{ display: "flex", gap: "1rem" }}>
         <TabLink
           to={`/class/${courseId}/overview/info`}
-          className={activeTab === "overview" ? "active" : ""}
+          className={getActiveTab() === "overview" ? "active" : ""}
         >
           개요
         </TabLink>
         <TabLink
           to={`/class/${courseId}/curriculum`}
-          className={activeTab === "curriculum" ? "active" : ""}
+          className={getActiveTab() === "curriculum" ? "active" : ""}
         >
           커리큘럼
         </TabLink>
         <TabLink
           to={`/class/${courseId}/admin/summary`}
-          className={activeTab === "admin" ? "active" : ""}
+          className={getActiveTab() === "admin" ? "active" : ""}
         >
           관리
         </TabLink>

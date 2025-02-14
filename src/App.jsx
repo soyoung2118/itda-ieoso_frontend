@@ -4,14 +4,14 @@ import { UsersProvider } from "./component/contexts/usersContext.jsx";
 import MainPage from "./component/page/MainPage.jsx";
 import LogIn from "./component/page/users/LogIn.jsx";
 import SignUp from "./component/page/users/SignUp.jsx";
-import Class from "./component/page/Class.jsx";
+import ClassList from "./component/page/ClassList.jsx";
 import Create from "./component/page/class/Create.jsx";
 import Setting from "./component/page/class/Setting.jsx";
 import Participate from "./component/page/Participate.jsx";
+import Class from "./component/page/Class.jsx";
 import ClassOverview from "./component/page/class/Overview.jsx";
 import ClassSummary from "./component/page/class/Summary.jsx";
 import ClassStudents from "./component/page/class/Students.jsx";
-import EditClass from "./component/ui/class/EditClass.jsx";
 import ClassNotice from "./component/page/class/Notice.jsx";
 import NoticeCreate from "./component/page/class/NoticeCreate.jsx";
 import ClassCurriculum from "./component/page/class/Curriculum.jsx";
@@ -34,46 +34,26 @@ function App() {
             <Route path="/signup" element={<SignUp />} />
 
             {/* 강의실 페이지 */}
-            <Route path="/class" element={<Class />} />
+            <Route path="/class/list" element={<ClassList />} />
             <Route path="/class/create" element={<Create />} />
-            <Route path="/admin/setting" element={<Setting />} />
 
             {/* 강의실 입장 페이지 */}
             <Route path="/class/participate" element={<Participate />} />
 
             {/* 강의실 상세 페이지 */}
-            <Route
-              path="/class/:courseId/overview/info"
-              element={<ClassOverview />}
-            />
-            <Route
-              path="/class/:courseId/overview/info/edit"
-              element={<EditClass />}
-            />
-            <Route
-              path="/class/:courseId/overview/notice"
-              element={<ClassNotice />}
-            />
-            <Route
-              path="/class/:courseId/overview/notice/create"
-              element={<NoticeCreate />}
-            />
-            <Route
-              path="/class/:courseId/curriculum"
-              element={<ClassCurriculum />}
-            />
-            <Route
-              path="/class/:courseId/curriculum/edit"
-              element={<ClassCurriculumEdit />}
-            />
-            <Route
-              path="/class/:courseId/admin/summary"
-              element={<ClassSummary />}
-            />
-            <Route
-              path="/class/:courseId/admin/students"
-              element={<ClassStudents />}
-            />
+
+            {/* ✅ 강의실 관련 라우트 */}
+          <Route path="/class/:courseId" element={<Class />}>
+            <Route path="overview/info" element={<ClassOverview />} />
+            <Route path="overview/notice" element={<ClassNotice />} />
+            <Route path="overview/notice/create" element={<NoticeCreate />} />
+            <Route path="overview/notice/edit/:noticeId" element={<NoticeCreate />} />
+            <Route path="curriculum" element={<ClassCurriculum />} />
+            <Route path="curriculum/edit" element={<ClassCurriculumEdit />} />
+            <Route path="admin/summary" element={<ClassSummary />} />
+            <Route path="admin/students" element={<ClassStudents />} />
+            <Route path="admin/setting" element={<Setting />} />
+          </Route>
 
             {/* 대시보드 페이지 */}
             <Route path="/dashboard" element={<Dashboard />} />

@@ -66,7 +66,7 @@ const AdminTopBar = ({ activeTab }) => {
           </TabLink>
           <TabLink
             to={`/class/${courseId}/admin/setting`}
-            className={activeTab === "statistics" ? "active" : ""}
+            className={activeTab === "setting" ? "active" : ""}
           >
             설정
           </TabLink>

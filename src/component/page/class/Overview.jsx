@@ -1,41 +1,16 @@
-import ClassTopbar from "../../ui/class/ClassTopbar";
-import ClassSidebar from "../../ui/class/ClassSidebar";
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import api from "../../api/api";
-import ClassThumbnail from "../../img/class/class_thumbnail.svg";
-import TopBar from "../../ui/TopBar";
+import { useState, useContext } from "react";
+import { useParams, useOutletContext } from "react-router-dom";
 import styled from "styled-components";
-import { PageLayout, Section } from "../../ui/class/ClassLayout";
-import EditButton from "../../ui/class/EditButton";
+import ClassSidebar from "../../ui/class/ClassSidebar";
+import ClassThumbnail from "../../img/class/class_thumbnail.svg";
+import EditBtn from "../../img/class/edit_btn.svg";
+import EditedBtn from "../../img/class/edited_btn.svg";
+import { Section } from "../../ui/class/ClassLayout";
+import ReactQuill from 'react-quill-new'; 
+import 'react-quill-new/dist/quill.snow.css';
+import api from "../../api/api";
+import { UsersContext } from "../../contexts/usersContext";
 
-// const SectionTitle = styled.h2`
-//   font-size: 1.5rem;
-//   font-weight: bold;
-//   margin-bottom: 1rem;
-//   margin-top: 3.5rem;
-// `;
-
-const SectionContent = styled.div`
-  font-size: 1.15rem;
-  line-height: 1.5;
-  color: var(--black-color);
-  margin-bottom: 2rem;
-
-  ul {
-    margin-top: 0.5rem;
-    padding-left: 1.8rem;
-    list-style-type: disc;
-
-    li {
-      margin-bottom: 0.5rem;
-
-      &::marker {
-        font-size: 0.6em;
-      }
-    }
-  }
-`;
 
 const IconRow = styled.div`
   display: flex;
@@ -56,44 +31,99 @@ const IconRow = styled.div`
 `;
 
 const Content = styled.div`
-  margin-top: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  width: 100%;
+  min-height: 50vh;
+  height: auto;
+  background-color: #FFFFFF;
+  box-sizing: border-box;
+  padding: ${({ isEditing }) => (isEditing ? "0px" : "33px 0px")};
+  box-shadow: ${({ isEditing }) => (isEditing ? "-4px 0 0 #FF4747" : "none")};
 `;
 
+const StyledQuill = styled(ReactQuill)`
+  width: 100%;
+  max-width: 1200px;
+  
+  .ql-toolbar {
+    order: 2;
+  }
+
+  .ql-container {
+    order: 1;
+    border: none;
+    font-size: 1rem;
+    box-sizing: border-box;
+    line-height: 2.2 !important; 
+  }
+
+  .ql-editor {
+    font-size: 1rem;
+    font-family: 'Pretendard', sans-serif !important;
+    padding: 10px 33px !important;
+    line-height: 2.2 !important; 
+  }
+`;
+
+const StyledButton = styled.button`
+  position: fixed;
+  bottom: 2rem;
+  right: 8rem;
+  width: 3.8rem;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+`;
+
+const EditableSectionContent = ({ content, onChange, isEditing }) => {
+
+  const modules = {
+    toolbar: [
+      ['bold', 'italic', 'underline'],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+      ['link'],
+      [{ 'indent': '-1' }, { 'indent': '+1' }],
+      ['image'],
+    ],
+  };
+
+  return (
+    <div>
+      {isEditing ? (
+        <StyledQuill value={content} onChange={onChange} modules={modules} theme="snow" />
+      ) : (
+        <div className="quill-editor" style={{ padding: '10px 33px' }} dangerouslySetInnerHTML={{ __html: content }} />
+      )}
+    </div>
+  );
+};
+
 const ClassOverview = () => {
-  const { courseId } = useParams(); // 현재 URL에서 courseId 추출
-  const [courseData, setCourseData] = useState(null);
+  const context = useOutletContext();
+  const courseData = context?.courseData || {};
+  const isCreator = context?.isCreator || false;
+  const { courseId } = useParams();
+  const { user } = useContext(UsersContext);
 
-  useEffect(() => {
-    const fetchCourseData = async () => {
-      try {
-        const response = await api.get(`/courses/${courseId}`);
-        console.log("📡 API 응답 데이터:", response.data.data);
+  const [isEditing, setIsEditing] = useState(false);
+  const [sectionContent, setSectionContent] = useState(courseData.courseDescription || "");
 
-        if (response.data.success) {
-          setCourseData(response.data.data);
-        }
-      } catch (error) {
-        console.error("강의 정보 불러오기 오류:", error);
-      }
-    };
+  const handleSaveClick = async () => {
+    try {
+      await api.put(`/courses/${courseId}/${user.userId}/overview?description=${sectionContent}`, {
+        courseDescription: sectionContent,
+      });
 
-    if (courseId) {
-      fetchCourseData();
-    }
-  }, [courseId]);
+    setIsEditing(false);
+  } catch (error) {
+    console.error("수정 후 저장 요청 중 오류 발생:", error.response ? error.response.data : error.message);
+  }
+};
 
   if (!courseData) {
     return <div>로딩 중...</div>; // 데이터가 로딩되지 않은 경우
   }
 
   return (
-    <div>
-      <TopBar />
-      <PageLayout>
-        <ClassTopbar activeTab="overview" />
         <div style={{ display: "flex", marginTop: "1rem" }}>
           <ClassSidebar style={{ marginRight: "2rem" }} />
           <main
@@ -148,26 +178,37 @@ const ClassOverview = () => {
               style={{
                 fontSize: "1.85rem",
                 fontWeight: "bold",
-                margin: "3rem 2rem",
+                margin: "3rem 1rem",
                 textAlign: "left",
               }}
             >
               강의 소개
             </h1>
 
-            <Content>
-              <Section style={{ padding: "1.5rem 5rem" }} n>
-                <SectionContent style={{ marginTop: "1.5rem" }}>
-                  {courseData.courseDescription}
-                </SectionContent>
-              </Section>
+            <Content isEditing={isEditing}>
+              <EditableSectionContent content={sectionContent} onChange={setSectionContent} isEditing={isEditing} />
             </Content>
           </main>
-        </div>
-      </PageLayout>
-      <EditButton to="/class/:courseId/overview/info/edit" edit={true} />{" "}
+      {isCreator && (
+        <StyledButton
+          onClick={() => {
+            if (isEditing) {
+              handleSaveClick();
+            } else {
+              setIsEditing((prev) => !prev);
+            }
+          }}
+        >
+      <img
+        src={isEditing ? EditedBtn : EditBtn}
+        alt="Edit Button"
+        style={{ width: "100%" }}
+      />
+        </StyledButton>
+      )}
     </div>
   );
 };
+
 
 export default ClassOverview;
