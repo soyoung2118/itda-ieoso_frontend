@@ -46,14 +46,13 @@ const Dropdown = styled.div`
 const DropdownButton = styled.div`
   display: flex;
   align-items: center;
-  padding: 5px 10px;
-  padding: 5px 10px;
+  gap: 0.5rem;
+  padding: 0.5rem 0rem;
   cursor: pointer;
   background-color: var(--white-color);
   border-radius: 8px;
   font-weight: bold;
   color: var(--black-color);
-  white-space: nowrap;
   white-space: nowrap;
 `;
 
@@ -154,7 +153,7 @@ const TabLink = styled(NavLink)`
   }
 `;
 
-const ClassTopbar = ({ onCourseChange }) => {
+const ClassTopbar = ({ onCourseChange, isCreator }) => {
   const { user } = useContext(UsersContext);
   const { courseId } = useParams();
   const location = useLocation();
@@ -168,7 +167,6 @@ const ClassTopbar = ({ onCourseChange }) => {
     const fetchClasses = async () => {
       if (!user?.userId) return;
       const courses = await getMyCoursesTitles(user.userId);
-      console.log("불러온 강의 목록", courses);
       setClassOptions(courses);
     };
 
@@ -213,17 +211,17 @@ const ClassTopbar = ({ onCourseChange }) => {
           <DropdownMenu isOpen={isDropdownOpen}>
             <MenuTitle>강의실 목록</MenuTitle>
             {classOptions.map((course) => (
-              <MenuItem
-                key={course.courseId}
-                selected={String(courseId) === String(course.courseId)}
-                onClick={() => {
-                  onCourseChange(course.courseId);
-                  setIsDropdownOpen(false);
-                }}
-              >
-                <div>{course.courseTitle}</div>
-                {course.isManageable && <StarIcon className="star-icon" />}
-              </MenuItem>
+            <MenuItem
+              key={course.courseId}
+              selected={String(courseId) === String(course.courseId)}
+              onClick={() => {
+                onCourseChange(course.courseId);
+                setIsDropdownOpen(false);
+              }}
+            >
+              <div>{course.courseTitle}</div>
+              {course.isCreator && <StarIcon className="star-icon" />}
+            </MenuItem>
             ))}
           </DropdownMenu>
         </Dropdown>
@@ -235,9 +233,14 @@ const ClassTopbar = ({ onCourseChange }) => {
         <TabLink to={`/class/${courseId}/curriculum`} className={getActiveTab() === "curriculum" ? "active" : ""}>
           커리큘럼
         </TabLink>
-        <TabLink to={`/class/${courseId}/admin/summary`} className={getActiveTab() === "admin" ? "active" : ""}>
-          관리
-        </TabLink>
+        {isCreator && (
+          <TabLink
+            to={`/class/${courseId}/admin/summary`}
+            className={getActiveTab() === "admin" ? "active" : ""}
+          >
+            관리
+          </TabLink>
+        )}
       </TabLinkContainer>
     </Navbar>
   );
@@ -245,6 +248,7 @@ const ClassTopbar = ({ onCourseChange }) => {
 
 ClassTopbar.propTypes = {
   onCourseChange: PropTypes.func.isRequired,
+  isCreator: PropTypes.bool.isRequired,
 };
 
 export default ClassTopbar;

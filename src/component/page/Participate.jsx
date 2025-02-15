@@ -14,7 +14,7 @@ export default function Participate() {
   const handleParticipate = async () => {
     const response = await api.post(`/courses/enter/${user.userId}?entryCode=${code}`);
     if (response.status === 200) {
-      navigate('/class');
+      navigate('/class/list');
     } else {
       alert('코드가 올바르지 않습니다.');
     }

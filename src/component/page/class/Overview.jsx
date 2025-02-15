@@ -6,11 +6,10 @@ import ClassThumbnail from "../../img/class/class_thumbnail.svg";
 import EditBtn from "../../img/class/edit_btn.svg";
 import EditedBtn from "../../img/class/edited_btn.svg";
 import { Section } from "../../ui/class/ClassLayout";
-import ReactQuill from 'react-quill-new'; 
-import 'react-quill-new/dist/quill.snow.css';
+import ReactQuill from "react-quill-new"; 
+import "react-quill-new/dist/quill.snow.css";
 import api from "../../api/api";
 import { UsersContext } from "../../contexts/usersContext";
-
 
 const IconRow = styled.div`
   display: flex;
@@ -36,7 +35,7 @@ const Content = styled.div`
   height: auto;
   background-color: #FFFFFF;
   box-sizing: border-box;
-  padding: ${({ isEditing }) => (isEditing ? "0px" : "33px 0px")};
+  padding: ${({ isEditing }) => (isEditing ? "0px" : "42px 0px")};
   box-shadow: ${({ isEditing }) => (isEditing ? "-4px 0 0 #FF4747" : "none")};
 `;
 
@@ -51,16 +50,14 @@ const StyledQuill = styled(ReactQuill)`
   .ql-container {
     order: 1;
     border: none;
-    font-size: 1rem;
     box-sizing: border-box;
-    line-height: 2.2 !important; 
   }
 
   .ql-editor {
     font-size: 1rem;
     font-family: 'Pretendard', sans-serif !important;
     padding: 10px 33px !important;
-    line-height: 2.2 !important; 
+    line-height: 2.2 !important;
   }
 `;
 
@@ -75,25 +72,26 @@ const StyledButton = styled.button`
 `;
 
 const EditableSectionContent = ({ content, onChange, isEditing }) => {
-
   const modules = {
     toolbar: [
-      ['bold', 'italic', 'underline'],
-      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-      ['link'],
-      [{ 'indent': '-1' }, { 'indent': '+1' }],
-      ['image'],
+      ["bold", "italic", "underline"],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["link"],
+      [{ indent: "-1" }, { indent: "+1" }],
     ],
   };
 
+  const modulesToUse = isEditing ? modules : { toolbar: false };
+
   return (
-    <div>
-      {isEditing ? (
-        <StyledQuill value={content} onChange={onChange} modules={modules} theme="snow" />
-      ) : (
-        <div className="quill-editor" style={{ padding: '10px 33px' }} dangerouslySetInnerHTML={{ __html: content }} />
-      )}
-    </div>
+    <StyledQuill
+      key={isEditing ? "editing" : "readOnly"}
+      value={content}
+      onChange={isEditing ? onChange : () => {}}
+      readOnly={!isEditing}
+      modules={modulesToUse}
+      theme="snow"
+    />
   );
 };
 
@@ -104,23 +102,30 @@ const ClassOverview = () => {
   const { courseId } = useParams();
   const { user } = useContext(UsersContext);
 
+  const [sectionContent, setSectionContent] = useState(
+    courseData.courseDescription || ""
+  );
   const [isEditing, setIsEditing] = useState(false);
-  const [sectionContent, setSectionContent] = useState(courseData.courseDescription || "");
 
   const handleSaveClick = async () => {
     try {
-      await api.put(`/courses/${courseId}/${user.userId}/overview?description=${sectionContent}`, {
-        courseDescription: sectionContent,
-      });
-
-    setIsEditing(false);
-  } catch (error) {
-    console.error("수정 후 저장 요청 중 오류 발생:", error.response ? error.response.data : error.message);
-  }
-};
+      await api.put(
+        `/courses/${courseId}/${user.userId}/overview?description=${sectionContent}`,
+        {
+          courseDescription: sectionContent,
+        }
+      );
+      setIsEditing(false);
+    } catch (error) {
+      console.error(
+        "수정 후 저장 요청 중 오류 발생:",
+        error.response ? error.response.data : error.message
+      );
+    }
+  };
 
   if (!courseData) {
-    return <div>로딩 중...</div>; // 데이터가 로딩되지 않은 경우
+    return <div>로딩 중...</div>;
   }
 
   return (
@@ -185,30 +190,33 @@ const ClassOverview = () => {
               강의 소개
             </h1>
 
-            <Content isEditing={isEditing}>
-              <EditableSectionContent content={sectionContent} onChange={setSectionContent} isEditing={isEditing} />
-            </Content>
-          </main>
+        <Content isEditing={isEditing}>
+          <EditableSectionContent
+            content={sectionContent}
+            onChange={setSectionContent}
+            isEditing={isEditing}
+          />
+        </Content>
+      </main>
       {isCreator && (
         <StyledButton
           onClick={() => {
             if (isEditing) {
               handleSaveClick();
             } else {
-              setIsEditing((prev) => !prev);
+              setIsEditing(true);
             }
           }}
         >
-      <img
-        src={isEditing ? EditedBtn : EditBtn}
-        alt="Edit Button"
-        style={{ width: "100%" }}
-      />
+          <img
+            src={isEditing ? EditedBtn : EditBtn}
+            alt="Edit Button"
+            style={{ width: "100%" }}
+          />
         </StyledButton>
       )}
     </div>
   );
 };
-
 
 export default ClassOverview;

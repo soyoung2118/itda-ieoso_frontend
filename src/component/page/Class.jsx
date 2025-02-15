@@ -48,7 +48,7 @@ export default function Class() {
     <div>
       <TopBar />
       <PageLayout>
-        <ClassTopbar selectedCourseId={selectedCourseId} onCourseChange={handleCourseChange} />
+        <ClassTopbar selectedCourseId={selectedCourseId} onCourseChange={handleCourseChange} isCreator={isCreator} />
         <Outlet context={{ courseData, isCreator }} />
       </PageLayout>
     </div>
