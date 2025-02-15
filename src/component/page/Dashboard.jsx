@@ -144,36 +144,43 @@ WeeklyCalendar.propTypes = {
 
 const CalendarContainer = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 10px;
+  gap: 5px;
   background-color: #fff;
-  padding: 20px;
   border-radius: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  height: 12vh;
+  padding: 5vh 2vw;
 `;
 
 const DateBox = styled.div`
-  width: 10vw;
-  height: 10vh;
+  flex: 1;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   border-radius: 5px;
-  font-size: 16px; 
-  padding: 2% 3%;
+  font-size: 16px;
   cursor: pointer;
+`;
+
+const DayLabel = styled.div`
+  margin-bottom: 5px;
+  font-size: 14px;
 `;
 
 const DateNumber = styled.div`
   color: #000;
   background-color: ${({ isSelected }) => (isSelected ? '#FFD1D1' : 'transparent')};
   border-radius: 50%;
-  margin-top: 12px;
   padding: 10px;
-`;
-
-const DayLabel = styled.div`
-  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
 `;
 
 const DateTodo = styled.div`
@@ -219,6 +226,7 @@ function Sidebar() {
 }
 
 const SidebarContainer = styled.div`
+    min-width: 75px;
     width: 15%;
     max-width: 200px;
     min-height: 20vh;

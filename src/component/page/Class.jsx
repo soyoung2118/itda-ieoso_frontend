@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { Outlet, useParams, useNavigate } from "react-router-dom";
 import api from "../api/api";
 import { UsersContext } from "../contexts/usersContext";
-import TopBar from "../ui/Topbar";
+import TopBar from "../ui/TopBar";
 import ClassTopbar from "../ui/class/ClassTopbar";
 import { PageLayout } from "../ui/class/ClassLayout";  
 export default function Class() {

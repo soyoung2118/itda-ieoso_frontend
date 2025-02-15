@@ -20,12 +20,12 @@ const IconRow = styled.div`
   color: var(--darkgrey-color);
 
   .material-symbols-outlined {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     vertical-align: middle;
   }
 
   span {
-    font-size: 1.18rem;
+    font-size: 1.2rem;
     font-weight: 500;
   }
 `;
@@ -67,7 +67,7 @@ const StyledQuill = styled(ReactQuill)`
 const StyledButton = styled.button`
   position: fixed;
   bottom: 2rem;
-  right: 8rem;
+  right: 2rem;
   width: 3.8rem;
   cursor: pointer;
   border: none;
@@ -145,7 +145,7 @@ const ClassOverview = () => {
             <Section style={{ marginTop: "2rem" }}>
               <span
                 style={{
-                  fontSize: "2.2rem",
+                  fontSize: "2rem",
                   fontWeight: "900",
                 }}
               >
@@ -176,9 +176,9 @@ const ClassOverview = () => {
 
             <h1
               style={{
-                fontSize: "1.85rem",
+                fontSize: "1.8rem",
                 fontWeight: "bold",
-                margin: "3rem 1rem",
+                margin: "2rem 1rem",
                 textAlign: "left",
               }}
             >
