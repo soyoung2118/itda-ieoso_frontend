@@ -1,20 +1,37 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useDropzone } from 'react-dropzone';
 import styled from 'styled-components';
 import TopBar from '../../ui/TopBar';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import Assignment from "../../img/icon/docs.svg";
 import Material from "../../img/icon/pdf.svg";
+import Cloud from "../../img/icon/cloud.svg";
 import api from "../../api/api";
 
 const ClassAssignmentSubmit = () => {
     const navigate = useNavigate();
+    const [files, setFiles] = useState([]);
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({
+      onDrop: (acceptedFiles) => {
+        setFiles((prevFiles) => [
+          ...prevFiles,
+          ...acceptedFiles.map( (file) => ({
+            id: prevFiles.length + 1,
+            object: file,
+          })),
+        ]);
+      },
+      accept: {
+        'image/*': [".jpeg", ".jpg", ".png"],
+        'application/pdf': [".pdf"],
+      }
+    });
     const { assignmentId } = useParams();
     const [selectedMenu, setSelectedMenu] = useState('curriculum');
     const [expandedItems, setExpandedItems] = useState(new Set([1]));
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
-    const [files, setFiles] = useState([]);
     const [assignmentTitle, setAssignmentTitle] = useState('');
     const [assignmentContent, setAssignmentContent] = useState('');
 
@@ -124,14 +141,8 @@ const ClassAssignmentSubmit = () => {
         console.log({
             title,
             content,
-            files,
             assignmentId,
         });
-    };
-
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
     };
 
     const getCurrentVideo = () => {
@@ -209,9 +220,26 @@ const ClassAssignmentSubmit = () => {
                     </Box>
 
                     <Box>
-                        <FormTitle>파일 업로드</FormTitle>
-                        <UploadContainer>
-                            파일을 업로드 합니다
+                        <FormTitle>파일 업로드하기</FormTitle>
+                        <UploadContainer
+                            {...getRootProps()}
+                            borderColor={isDragActive ? 'gray.500' : 'gray.500'}
+                            bg={isDragActive ? 'purple.300' : 'gray.600'}
+                            color={isDragActive ? 'gray.800' : 'white'}
+                            borderStyle={isDragActive ? 'dashed' : 'solid'}
+                        >
+                            <input {...getInputProps()} style={{ display: 'none' }} />
+                            {isDragActive ? '파일 첨부하기' : (
+                                <FileContainer>
+                                <Icon 
+                                    className="cloud-icon material-icons" 
+                                    src={Cloud} 
+                                    alt="delete icon" 
+                                    />
+                                    <FileSmallText>PDF, PNG, JPG or JPEG</FileSmallText>
+                                    <FileLargeText>파일을 선택하거나 드래그해주세요.</FileLargeText>
+                                </FileContainer>
+                            )}
                         </UploadContainer>
                     </Box>
                     <SubmitButton onClick={handleSubmit}>제출하기</SubmitButton>
@@ -509,34 +537,10 @@ const UploadContainer = styled.div`
     height: 18vh;
     margin: 10px;
     background-color: #F6F7F9;
-`
-
-const EditorToolbar = styled.div`
     display: flex;
-    gap: 8px;
-    padding: 8px 16px;
-    border-bottom: 2px solid #CDCDCD;
-`;
-
-const ToolButton = styled.button`
-    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 84px;
-    height: 22px;
-    border: none;
-    background: none;
-    border-radius: 4px;
-    cursor: pointer;
-
-    &:hover {
-        background-color: #E0E0E0;
-    }
-
-    .material-icons {
-        font-size: 20px;
-        color: #616161;
-    }
 `;
 
 const TextArea = styled.textarea`
@@ -571,6 +575,32 @@ const SubmitButton = styled.button`
     &:hover {
         background-color: #E53935;
     }
+`;
+
+const Icon = styled.img`
+  width: 46px;
+  height: 21px;
+  cursor: pointer;
+`;
+
+const FileContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+`;
+
+const FileSmallText = styled.div`
+    margin-top: 5px;
+    color: #AAAAAA;
+    font-size: 12px;
+    font-weight: 700;
+`;
+
+const FileLargeText = styled.div`
+    color: #000000;
+    font-size: 14px;
+    font-weight: 700;
 `;
 
 export default ClassAssignmentSubmit;
