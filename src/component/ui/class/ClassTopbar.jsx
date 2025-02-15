@@ -3,7 +3,7 @@ import { NavLink, useParams, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import Container from "../Container";
-import StarIcon from "@mui/icons-material/Star";
+//import StarIcon from "@mui/icons-material/Star";
 import { getMyCoursesTitles } from "../../api/classApi";
 import { UsersContext } from "../../contexts/usersContext";
 
@@ -110,7 +110,7 @@ const TabLink = styled(NavLink)`
   }
 `;
 
-const ClassTopbar = ({ onCourseChange }) => {
+const ClassTopbar = ({ onCourseChange, isCreator }) => {
   const { user } = useContext(UsersContext);
   const { courseId } = useParams();
   const location = useLocation();
@@ -189,19 +189,22 @@ const ClassTopbar = ({ onCourseChange }) => {
         >
           커리큘럼
         </TabLink>
-        <TabLink
-          to={`/class/${courseId}/admin/summary`}
-          className={getActiveTab() === "admin" ? "active" : ""}
-        >
-          관리
-        </TabLink>
+        {isCreator && (
+          <TabLink
+            to={`/class/${courseId}/admin/summary`}
+            className={getActiveTab() === "admin" ? "active" : ""}
+          >
+            관리
+          </TabLink>
+        )}
       </nav>
     </Navbar>
   );
 };
 
 ClassTopbar.propTypes = {
-  activeTab: PropTypes.string.isRequired,
+  onCourseChange: PropTypes.func.isRequired,
+  isCreator: PropTypes.bool.isRequired,
 };
 
 export default ClassTopbar;
