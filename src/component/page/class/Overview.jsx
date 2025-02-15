@@ -178,7 +178,7 @@ const ClassOverview = () => {
               style={{
                 fontSize: "1.8rem",
                 fontWeight: "bold",
-                margin: "3rem 1rem",
+                margin: "2rem 1rem",
                 textAlign: "left",
               }}
             >
