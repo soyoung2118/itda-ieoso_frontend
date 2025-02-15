@@ -3,13 +3,11 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import TopBar from "../ui/TopBar";
 import LogoGray from "../img/logo/itda_logo_gray.svg";
-import ClassThumbnail from "../img/class/classdata.png";
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import EventIcon from '@mui/icons-material/Event';
 import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
 import PersonIcon from '@mui/icons-material/Person';
-import DeleteIcon from '../img/icon/delete.svg';
 import api from "../api/api";
 import { UsersContext } from "../contexts/usersContext";
 
@@ -19,11 +17,7 @@ export default function Class() {
     const [showPopup, setShowPopup] = useState(false);
     const { user } = useContext(UsersContext);
     const [lectures, setLectures] = useState([]);
-
-    // 모달 관련 상태
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [selectedCourseId, setSelectedCourseId] = useState(null);
-
+    
     const handleLectureClick = (id) => {
         navigate(`/class/${id}/overview/info`);
     };
@@ -48,23 +42,6 @@ export default function Class() {
             ? lectures
             : lectures.filter((lecture) => lecture.user.userId === user.userId);
     const lecturesCount = lecturesToDisplay.length;
-
-    const handleDeleteLecture = async (courseId) => {
-        try {
-            await api.delete(`/courses/${courseId}?userId=${user.userId}`);
-            getAllLectures();
-        } catch (error) {
-            console.error('강의실 삭제 중 오류 발생:', error);
-        }
-    };
-
-    const confirmDelete = async () => {
-        if (selectedCourseId) {
-            await handleDeleteLecture(selectedCourseId);
-            setShowDeleteModal(false);
-            setSelectedCourseId(null);
-        }
-    };
 
     return (
       <>
@@ -126,15 +103,6 @@ export default function Class() {
                                 </IconRow>
                             </LectureDetail>
                         </LectureInfo>
-                        <DeleteIconWrapper 
-                            onClick={(e) => { 
-                                e.stopPropagation(); 
-                                setSelectedCourseId(lecture.courseId);
-                                setShowDeleteModal(true);
-                            }}
-                        >
-                            <img src={DeleteIcon} alt="Delete Icon" style={{ width: "30px", height: "30px" }} />
-                        </DeleteIconWrapper>
                     </LectureCard>
                 ))
                )}
@@ -156,17 +124,6 @@ export default function Class() {
                         강의실 입장하기
                     </PopupItem>
                 </PopupMenu>
-            )}
-
-            {/* 모달 */}
-            {showDeleteModal && (
-                <DeleteModalOverlay>
-                    <DeleteModal>
-                        <CloseIcon onClick={() => setShowDeleteModal(false)}>×</CloseIcon>
-                        <ModalTitle>강의실을 삭제하시겠습니까?</ModalTitle>
-                        <YesButton onClick={confirmDelete}>예</YesButton>
-                    </DeleteModal>
-                </DeleteModalOverlay>
             )}
         </Container>
       </>
@@ -270,13 +227,6 @@ const IconRow = styled.div`
     }
 `;
 
-const DeleteIconWrapper = styled.span`
-    position: absolute;
-    bottom: 10px;
-    right: 20px;
-    cursor: pointer;
-`;
-
 const AddButton = styled.button`
     position: fixed;
     bottom: 45px;
@@ -323,60 +273,4 @@ const NoLecturesMessage = styled.p`
     height: 60vh;
     font-size: 18px;
     color: #bababa;
-`;
-
-const DeleteModalOverlay = styled.div`
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-`;
-
-const DeleteModal = styled.div`
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #fff;
-    min-width: 350px;
-    width: 40%;
-    height: 30%;
-    border-radius: 12px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-`;
-
-const CloseIcon = styled.span`
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    font-size: 28px;
-    cursor: pointer;
-`;
-
-const ModalTitle = styled.h2`
-    margin: 0;
-    font-size: 20px;
-    font-weight: normal;
-`;
-
-const YesButton = styled.button`
-    margin-top: 40px;
-    width: 100px;
-    height: 40px;
-    border: none;
-    border-radius: 24px;
-    background-color: var(--main-color);
-    color: #fff;
-    font-size: 16px;
-    cursor: pointer;
-    &:hover {
-        opacity: 0.9;
-    }
 `;
