@@ -45,9 +45,15 @@ const StyledTextarea = styled.textarea`
 
 const ButtonContainer = styled.div`
   display: flex;
+  flex-direction: row;
   justify-content: flex-end;
   margin-left: auto;
   gap: 1.5rem;
+
+  @media (max-width: 600px) {
+    padding: 1px;
+    gap: 0.5rem;
+  }
 `;
 
 const StyledButton = styled.button`
@@ -55,13 +61,18 @@ const StyledButton = styled.button`
   color: white;
   border: none;
   border-radius: 8px;
-  padding: 13px 30px;
+  padding: 10px 30px;
   font-size: 1.25rem;
   font-weight: bold;
   cursor: pointer;
   display: block;
   margin-right: -2.1rem;
   margin-bottom: 1rem;
+
+  @media (max-width: 600px) {
+    font-size: 1.1rem;
+    padding: 10px 18px;
+  }
 `;
 
 const CancelButton = styled.button`
@@ -69,11 +80,16 @@ const CancelButton = styled.button`
   color: white;
   border: none;
   border-radius: 8px;
-  padding: 13px 30px;
+  padding: 10px 30px;
   font-size: 1.25rem;
   font-weight: bold;
   cursor: pointer;
   margin-bottom: 1rem;
+
+  @media (max-width: 600px) {
+    font-size: 1.1rem;
+    padding: 10px 18px;
+  }
 `;
 
 const NoticeCreateForm = () => {
