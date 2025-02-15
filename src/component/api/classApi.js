@@ -14,7 +14,7 @@ export const getMyCourses = async (userId) => {
 // courseId와 courseTitle만 가져오는 함수
 export const getMyCoursesTitles = async (userId) => {
   const courses = await getMyCourses(userId);
-  console.log("불러온 강의 목록",courses);
+  
   return courses.map((course) => ({
     courseId: course.courseId,
     courseTitle: course.courseTitle

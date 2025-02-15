@@ -127,8 +127,6 @@ const NoticeCreateForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(courseId, user.userId);
-
     if (!courseId || !user.userId) {
       alert("courseId 또는 userId를 가져오지 못했습니다.");
       return;
@@ -151,7 +149,6 @@ const NoticeCreateForm = () => {
       }
 
       if (response.data.success) {
-        console.log(noticeId ? "공지 수정 성공" : "공지 작성 성공", title, content);
         alert(noticeId ? "공지사항이 수정되었습니다." : "공지사항이 게시되었습니다.");
         setTitle("");
         setContent("");
