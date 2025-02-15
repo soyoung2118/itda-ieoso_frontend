@@ -59,9 +59,9 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
 
             {/* 강의실 수강  */}
-            <Route path="/playing" element={<ClassPlaying />} />
+            <Route path="/playing/:lectureId/:videoId" element={<ClassPlaying />} />
             <Route
-              path="/assignment/submit/:lectureId/:videoId"
+              path="/assignment/submit/:assignmentId"
               element={<ClassAssignmentSubmit />}
             />
           </Routes>

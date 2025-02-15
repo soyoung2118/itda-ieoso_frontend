@@ -1,47 +1,22 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import TopBar from '../../ui/TopBar';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import Photo from "../../img/icon/photo.svg";
-import Video from "../../img/icon/video.svg";
-import Link from "../../img/icon/link.svg";
 import Assignment from "../../img/icon/docs.svg";
 import Material from "../../img/icon/pdf.svg";
-
+import api from "../../api/api";
 
 const ClassAssignmentSubmit = () => {
     const navigate = useNavigate();
-    const { lectureId, videoId } = useParams();
+    const { assignmentId } = useParams();
     const [selectedMenu, setSelectedMenu] = useState('curriculum');
     const [expandedItems, setExpandedItems] = useState(new Set([1]));
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [files, setFiles] = useState([]);
-
-    const handleFileUpload = (type) => {
-        const input = document.createElement('input');
-        input.type = 'file';
-        if (type === 'photo') {
-            input.accept = 'image/*';
-        } else if (type === 'video') {
-            input.accept = 'video/*';
-        }
-        input.onchange = (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                setFiles([...files, { type, file }]);
-            }
-        };
-        input.click();
-    };
-    
-    const handleLinkAdd = () => {
-        const link = prompt('링크를 입력하세요');
-        if (link) {
-            setFiles([...files, { type: 'link', url: link }]);
-        }
-    };
+    const [assignmentTitle, setAssignmentTitle] = useState('');
+    const [assignmentContent, setAssignmentContent] = useState('');
 
     const toggleItem = (itemId) => {
         setExpandedItems(prev => {
@@ -59,68 +34,65 @@ const ClassAssignmentSubmit = () => {
         return str?.length > n ? str.substr(0, n - 1) + "..." : str;
     };
 
-    const curriculumData = [
-        {
-            lectureId: 1,
-            lectureTitle: "1. 기초를 준비해요.",
-            lectureDescription: "챕터 설명을 작성하세요.",
-            videos: [
-                {
-                    videoId: 1,
-                    videoTitle: "꾸미고 싶은 타입을 정해서 다이어리를 꾸며보세요",
-                    videoUrl: "영상 링크 첨부",
-                    time: '21:30',
-                    startDate: "2025-03-01T23:59:59",
-                    endDate: "2025-03-07T23:59:59",
-                    videoHistoryStatus: "WATCHED"
-                },
-                {
-                    videoId: 2,
-                    videoTitle: "필기구 소개",
-                    videoUrl: "영상 링크 첨부",
-                    time: '11:10',
-                    startDate: "2025-03-01T23:59:59",
-                    endDate: "2025-03-07T23:59:59",
-                    videoHistoryStatus: "WATCHING",
-                    material: {
-                        name: "오늘의 다이어리",
-                        size: "3.1MB",
-                    },
-                    assignment: {
-                        name: "1/6(월) 과제 제출",
-                        deadline: "2025.01.06 15:00:00 - 2025.01.12 23:59",
-                    },
-                },
-                {
-                    videoId: 3,
-                    videoTitle: "나만의 색연필 차트",
-                    videoUrl: "영상 링크 첨부",
-                    time: '21:30',
-                    startDate: "2025-03-01T23:59:59",
-                    endDate: "2025-03-07T23:59:59",
-                    videoHistoryStatus: "NOT_WATCHED"
-                },
-            ],
-        },
-        {
-            lectureId: 2,
-            lectureTitle: "2. 한 달을 기록해요",
-            lectureDescription: "챕터 설명을 작성하세요.",
-            videos: [],
-        },
-        {
-            lectureId: 3,
-            lectureTitle: "3. 한 주를 기록해요",
-            lectureDescription: "챕터 설명을 작성하세요.",
-            videos: [],
-        },
-        {
-            lectureId: 4,
-            lectureTitle: "4. 하루를 꾸며요",
-            lectureDescription: "챕터 설명을 작성하세요.",
-            videos: [],
-        },
-    ];
+    const curriculumData = {
+        "lectureId": 1,
+        "lectureTitle": "챕터 1~~",
+        "lectureDescription": "챕터 설명을 작성하세요.",
+        "videos": [
+            {
+                "videoId": 1,
+                "videoTitle": "강의 영상 제목을 입력하세요.",
+                "videoUrl": "영상 링크 첨부",
+                "startDate": "2025-03-01T23:59:59",
+                "endDate": "2025-03-07T23:59:59",
+                "videoHistoryStatus": "NOT_WATCHED"
+            },
+            {
+                "videoId": 2,
+                "videoTitle": "강의 영상 제목을 입력하세요.",
+                "videoUrl": "영상 링크 첨부",
+                "startDate": "2025-03-01T23:59:59",
+                "endDate": "2025-03-07T23:59:59",
+                "videoHistoryStatus": "NOT_WATCHED"
+            }
+        ],
+        "materials": [
+            {
+                "materialId": 1,
+                "materialTitle": "강의 자료 제목을 입력하세요.",
+                "materialFile": "강의자료 첨부",
+                "materialHistoryStatus": false
+            },
+        ],
+        "assignments": [
+            {
+                "assignmentId": 1,
+                "assignmentTitle": "과제 제목을 입력하세요.",
+                "assignmentDescription": "과제 설명",
+                "startDate": "2025-03-01T23:59:59",
+                "endDate": "2025-03-07T23:59:59",
+                "submissionStatus": "NOT_SUBMITTED"
+            },
+            {
+                "assignmentId": 2,
+                "assignmentTitle": "과제 제목을 입력하세요.",
+                "assignmentDescription": "과제 설명",
+                "startDate": "2025-03-01T23:59:59",
+                "endDate": "2025-03-07T23:59:59",
+                "submissionStatus": "NOT_SUBMITTED"
+            },
+            {
+                "assignmentId": 5,
+                "assignmentTitle": "자바강의 실습 공지",
+                "assignmentDescription": "실습 1은 오류있으므로 안하셔도 됩니다.",
+                "startDate": "2025-02-06T09:00:00",
+                "endDate": "2025-02-06T18:00:00",
+                "submissionStatus": "NOT_SUBMITTED"
+            }
+        ],
+        "startDate": "2025-03-01",
+        "endDate": "2025-03-07"
+    };
 
     const getStatusIcon = (status) => {
         switch (status) {
@@ -140,16 +112,12 @@ const ClassAssignmentSubmit = () => {
         }
     };
 
-    const handleAssignmentClick = (lectureId, videoId) => {
-        navigate(`/assignment/submit/${lectureId}/${videoId}`);
+    const handleAssignmentClick = (assignmentId) => {
+        navigate(`/assignment/submit/${assignmentId}`);
     };
 
     const handleNavigationCurriculum = () => {
         navigate('/curriculum');
-    };
-
-    const handleFileDelete = (indexToDelete) => {
-        setFiles(files.filter((_, index) => index !== indexToDelete));
     };
 
     const handleSubmit = () => {
@@ -157,41 +125,52 @@ const ClassAssignmentSubmit = () => {
             title,
             content,
             files,
-            lectureId,
-            videoId,
-            assignmentName: getCurrentAssignment()?.name
+            assignmentId,
         });
     };
 
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+    };
+
     const getCurrentVideo = () => {
-        for (const lecture of curriculumData) {
-            const currentVideo = lecture.videos.find(video => video.videoHistoryStatus === "WATCHING");
-            if (currentVideo) {
+        return {
+            lectureTitle: curriculumData.lectureTitle,
+            videoTitle: curriculumData.videos[0]?.videoTitle || "강의를 선택해주세요"
+        };
+    };
+
+    const getCurrentAssignment = () => {
+        if (curriculumData && assignmentId) {
+            const assignment = curriculumData.assignments.find(
+                assignment => assignment.assignmentId === parseInt(assignmentId)
+            );
+            if (assignment) {
                 return {
-                    lectureTitle: lecture.lectureTitle,
-                    videoTitle: currentVideo.videoTitle,
-                    lectureId: lecture.lectureId,
-                    videoId: currentVideo.videoId
+                    name: assignment.assignmentTitle,
+                    deadline: `${formatDate(assignment.startDate)} - ${formatDate(assignment.endDate)}`,
+                    description: assignment.assignmentDescription
                 };
             }
         }
         return null;
     };
 
-    const getCurrentAssignment = () => {
-        const currentLecture = curriculumData.find(lecture => 
-            lecture.lectureId === parseInt(lectureId)
-        );
-        if (currentLecture) {
-            const currentVideo = currentLecture.videos.find(video => 
-                video.videoId === parseInt(videoId)
-            );
-            if (currentVideo && currentVideo.assignment) {
-                return currentVideo.assignment;
+    useEffect(() => {
+        const fetchAssignment = async () => {
+            try {
+                const response = await api.get(`/assignments/${assignmentId}`);
+                if (response.data.success) {
+                    setAssignmentTitle(response.data.data.assignmentTitle);
+                    setAssignmentContent(response.data.data.assignmentDescription);
+                }
+            } catch (error) {
+                console.error("과제 내용 불러오기 오류:", error);
             }
-        }
-        return null;
-    };
+        };
+        fetchAssignment();
+    }, [assignmentId]);
 
     return (
         <>
@@ -204,55 +183,17 @@ const ClassAssignmentSubmit = () => {
                         </MainTitle>
                         
                         <ClickContainer onClick={handleNavigationCurriculum}>
-                            <SubTitle>
-                                {getCurrentVideo()?.videoId && `(${getCurrentVideo()?.videoId}) `}
-                                {getCurrentVideo()?.videoTitle || "강의를 선택해주세요"}
-                            </SubTitle>
                             <ArrowForwardIosIcon style={{ width: '13px', marginLeft: '15px' }}/>
                         </ClickContainer>
                 </TitleContainer>
 
                 <WhiteBoxComponent>
-                    <NoticeTitleContainer>
-                        <FormTitle style={{marginTop: '0px'}}>{getCurrentAssignment()?.name || "과제 작성"}</FormTitle>
-                    </NoticeTitleContainer>
-                    <NoticeContentContainer>
-                        <span>안녕하세요</span>
-                        <span>어쩌고저쩌고</span>
-                        <span>랄랄라라</span>
-                        <span>이것만 하고 잡니다!</span>
-                    </NoticeContentContainer>
-                </WhiteBoxComponent>
-
-                <WhiteBoxComponent>
-                    <FormTitle>내용</FormTitle>
-                    <EditorContainer>
-                        <TextArea
-                            placeholder="내용을 입력하세요" 
-                            value={content}
-                            onChange={(e) => setContent(e.target.value)}
-                        />
-                    </EditorContainer>
-                    <SubmitButton onClick={handleSubmit}>제출하기</SubmitButton>
-                </WhiteBoxComponent>
-
-                <WhiteBoxComponent>
-                    <FormTitle>파일 업로드</FormTitle>
-                    <UploadContainer>
-                        파일을 업로드 합니다
-                    </UploadContainer>
-                </WhiteBoxComponent>
-
-                <WhiteBoxComponent>
-                    <FormTitle>내용</FormTitle>
-                    <EditorContainer>
-                        <TextArea
-                            placeholder="내용을 입력하세요" 
-                            value={content}
-                            onChange={(e) => setContent(e.target.value)}
-                        />
-                    </EditorContainer>
-                    <SubmitButton onClick={handleSubmit}>제출하기</SubmitButton>
+                <NoticeTitleContainer>
+                    <FormTitle style={{marginTop: '0px'}}>{assignmentTitle || "과제 작성"}</FormTitle>
+                </NoticeTitleContainer>
+                <NoticeContentContainer>
+                    <span>{assignmentContent}</span>
+                </NoticeContentContainer>
                 </WhiteBoxComponent>
 
                 <WhiteBoxComponent style={{height: '60vh'}}>
@@ -290,20 +231,18 @@ const ClassAssignmentSubmit = () => {
                 <RightContainer>
                     {selectedMenu === 'curriculum' && (
                         <CurriculumList>
-                            {curriculumData.map((lecture) => (
-                                <div key={lecture.lectureId}>
-                                    <CurriculumItem>
-                                        <ItemTitle>{lecture.lectureTitle}</ItemTitle>
-                                        {lecture.videos.length > 0 && (
-                                            <IconWrapper onClick={() => toggleItem(lecture.lectureId)}>
-                                                <span className="material-icons">
-                                                    {expandedItems.has(lecture.lectureId) ? 'expand_more' : 'chevron_right'}
-                                                </span>
-                                            </IconWrapper>
-                                        )}
-                                    </CurriculumItem>
-                                    {expandedItems.has(lecture.lectureId) && lecture.videos.map((video) => (
-                                        <SubItem key={video.videoId} status={video.videoHistoryStatus}>
+                            <CurriculumItem>
+                                <ItemTitle>{curriculumData.lectureTitle}</ItemTitle>
+                                {curriculumData.videos.length > 0 && (
+                                    <IconWrapper onClick={() => toggleItem(curriculumData.lectureId)}>
+                                        <span className="material-icons">
+                                            {expandedItems.has(curriculumData.lectureId) ? 'expand_more' : 'chevron_right'}
+                                        </span>
+                                    </IconWrapper>
+                                )}
+                            </CurriculumItem>
+                            {expandedItems.has(curriculumData.lectureId) && curriculumData.videos.map((video) => (
+                                <SubItem key={video.videoId} status={video.videoHistoryStatus}>
                                             <SubItemHeader>
                                                 <SubItemLeft>
                                                     <SubItemTitle status={video.videoHistoryStatus}>
@@ -336,14 +275,14 @@ const ClassAssignmentSubmit = () => {
                                                         </ResourceItem>
                                                     )}
                                                     {video.assignment && (
-                                                        <AssignmentItem onClick={() => handleAssignmentClick(lecture.lectureId, video.videoId)}>
+                                                        <AssignmentItem onClick={() => handleAssignmentClick(video.assignment.assignmentId)}>
                                                             <img
                                                                 className="material-icons"
                                                                 src={Assignment}
                                                                 alt="assignment icon"
                                                                 style={{
-                                                                width: "16px",
-                                                                marginRight: "4px",
+                                                                    width: "16px",
+                                                                    marginRight: "4px",
                                                                 }}
                                                             />
                                                             {video.assignment.name}
@@ -356,8 +295,6 @@ const ClassAssignmentSubmit = () => {
                                             )}
                                         </SubItem>
                                     ))}
-                                </div>
-                            ))}
                         </CurriculumList>
                     )}
                 </RightContainer>
@@ -389,7 +326,6 @@ const FormTitle = styled.div`
 const WhiteBoxComponent = styled.div`
     border-radius: 20px;
     background-color: #FFFFFF;
-    width: 100%;
     height: 30vh;
     margin-bottom: 50px;
     padding: 10px;
@@ -414,14 +350,6 @@ const NoticeContentContainer = styled.div`
     flex-direction: column;
     padding-left: 10px;
 `
-
-const SumbitContainer = styled.div`
-    border: 1px solid #E0E0E0;
-    border-radius: 20px;
-    background-color: #FFFFFF;
-    width: 100%;
-    height: 70vh;
-`;
 
 const TitleContainer = styled.div`
     margin-top: 36px;
@@ -565,80 +493,6 @@ const SubItemTime = styled.div`
     color: #909090;
     display: flex;
     align-items: center;
-`;
-
-const AssignmentForm = styled.div`
-    padding: 20px;
-`;
-
-const Label = styled.div`
-    font-size: 17px;
-    font-weight: 700;
-    margin-bottom: 10px;
-`;
-
-const FormGroup = styled.div`
-    margin-bottom: 14px;
-    margin: 0px 10px;
-`;
-
-const Input = styled.input`
-    width: calc(100% - 32px);
-    height: 28px;
-    padding: 0 16px;
-    border: 2px solid #CDCDCD;
-    border-radius: 10px;
-    font-size: 13px;
-
-    &::placeholder {
-        color: #9E9E9E;
-    }
-
-    &:focus {
-        outline: none;
-        border-color: none;
-    }
-`;
-
-const FilePreviewContainer = styled.div`
-    margin-top: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    padding: 0px 10px 3px 10px;
-    gap: 10px;
-`;
-
-const FilePreview = styled.div`
-    padding: 8px 12px;
-    background-color: #F5F5F5;
-    border-radius: 6px;
-    font-size: 13px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-`;
-
-const FilePreviewContent = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 6px;
-`;
-
-const DeleteButton = styled.button`
-    background: none;
-    border: none;
-    color: #666;
-    font-size: 18px;
-    cursor: pointer;
-    padding: 0 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    
-    &:hover {
-        color: #FF4747;
-    }
 `;
 
 const EditorContainer = styled.div`
