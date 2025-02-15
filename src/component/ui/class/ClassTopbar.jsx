@@ -211,17 +211,17 @@ const ClassTopbar = ({ onCourseChange, isCreator }) => {
           <DropdownMenu isOpen={isDropdownOpen}>
             <MenuTitle>강의실 목록</MenuTitle>
             {classOptions.map((course) => (
-              <MenuItem
-                key={course.courseId}
-                selected={String(courseId) === String(course.courseId)}
-                onClick={() => {
-                  onCourseChange(course.courseId);
-                  setIsDropdownOpen(false);
-                }}
-              >
-                <div>{course.courseTitle}</div>
-                {course.isManageable && <StarIcon className="star-icon" />}
-              </MenuItem>
+            <MenuItem
+              key={course.courseId}
+              selected={String(courseId) === String(course.courseId)}
+              onClick={() => {
+                onCourseChange(course.courseId);
+                setIsDropdownOpen(false);
+              }}
+            >
+              <div>{course.courseTitle}</div>
+              {course.isCreator && <StarIcon className="star-icon" />}
+            </MenuItem>
             ))}
           </DropdownMenu>
         </Dropdown>
