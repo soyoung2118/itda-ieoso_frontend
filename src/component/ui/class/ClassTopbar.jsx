@@ -46,14 +46,13 @@ const Dropdown = styled.div`
 const DropdownButton = styled.div`
   display: flex;
   align-items: center;
-  padding: 5px 10px;
-  padding: 5px 10px;
+  gap: 0.5rem;
+  padding: 0.5rem 0rem;
   cursor: pointer;
   background-color: var(--white-color);
   border-radius: 8px;
   font-weight: bold;
   color: var(--black-color);
-  white-space: nowrap;
   white-space: nowrap;
 `;
 
@@ -168,7 +167,6 @@ const ClassTopbar = ({ onCourseChange, isCreator }) => {
     const fetchClasses = async () => {
       if (!user?.userId) return;
       const courses = await getMyCoursesTitles(user.userId);
-      console.log("불러온 강의 목록", courses);
       setClassOptions(courses);
     };
 
