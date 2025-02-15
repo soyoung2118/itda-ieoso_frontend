@@ -1,36 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useDropzone } from 'react-dropzone';
 import styled from 'styled-components';
 import TopBar from '../../ui/TopBar';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import Assignment from "../../img/icon/docs.svg";
 import Material from "../../img/icon/pdf.svg";
-import Cloud from "../../img/icon/cloud.svg";
 import api from "../../api/api";
+import DragZone from "../../ui/DragZone";
+import { UsersContext } from '../../contexts/usersContext';
 
 const ClassAssignmentSubmit = () => {
     const navigate = useNavigate();
-    const [files, setFiles] = useState([]);
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({
-      onDrop: (acceptedFiles) => {
-        setFiles((prevFiles) => [
-          ...prevFiles,
-          ...acceptedFiles.map( (file) => ({
-            id: prevFiles.length + 1,
-            object: file,
-          })),
-        ]);
-      },
-      accept: {
-        'image/*': [".jpeg", ".jpg", ".png"],
-        'application/pdf': [".pdf"],
-      }
-    });
     const { assignmentId } = useParams();
+    const { user } = useContext(UsersContext);
     const [selectedMenu, setSelectedMenu] = useState('curriculum');
     const [expandedItems, setExpandedItems] = useState(new Set([1]));
-    const [title, setTitle] = useState('');
+    const [files, setFiles] = useState([]);
     const [content, setContent] = useState('');
     const [assignmentTitle, setAssignmentTitle] = useState('');
     const [assignmentContent, setAssignmentContent] = useState('');
@@ -137,12 +122,26 @@ const ClassAssignmentSubmit = () => {
         navigate('/curriculum');
     };
 
-    const handleSubmit = () => {
-        console.log({
-            title,
-            content,
-            assignmentId,
+    const handleSubmit = async () => {
+        if (!files.length || !user) return;
+        const formData = new FormData();
+        formData.append('textContent', content);
+        files.forEach((file) => {
+            formData.append('files', file.object);
         });
+
+        try{
+            const response = await api.put(`/assignments/${assignmentId}/submissions/5/${user.userId}`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            if (response.data.success) {
+                console.log(response.data.data);
+            }
+        } catch(error) {
+            console.error("과제 제출 오류:", error);
+        }
     };
 
     const getCurrentVideo = () => {
@@ -221,26 +220,15 @@ const ClassAssignmentSubmit = () => {
 
                     <Box>
                         <FormTitle>파일 업로드하기</FormTitle>
-                        <UploadContainer
-                            {...getRootProps()}
-                            borderColor={isDragActive ? 'gray.500' : 'gray.500'}
-                            bg={isDragActive ? 'purple.300' : 'gray.600'}
-                            color={isDragActive ? 'gray.800' : 'white'}
-                            borderStyle={isDragActive ? 'dashed' : 'solid'}
-                        >
-                            <input {...getInputProps()} style={{ display: 'none' }} />
-                            {isDragActive ? '파일 첨부하기' : (
-                                <FileContainer>
-                                <Icon 
-                                    className="cloud-icon material-icons" 
-                                    src={Cloud} 
-                                    alt="delete icon" 
-                                    />
-                                    <FileSmallText>PDF, PNG, JPG or JPEG</FileSmallText>
-                                    <FileLargeText>파일을 선택하거나 드래그해주세요.</FileLargeText>
-                                </FileContainer>
-                            )}
-                        </UploadContainer>
+                        <DragZone setFiles={setFiles}/>
+
+                        {files.length > 0 && (
+                            <ul>
+                                {files.map((file, index) => (
+                                    <li key={index}>{file.object.name}</li>
+                                ))}
+                            </ul>
+                        )}
                     </Box>
                     <SubmitButton onClick={handleSubmit}>제출하기</SubmitButton>
                 </WhiteBoxComponent>
@@ -248,12 +236,7 @@ const ClassAssignmentSubmit = () => {
 
             <RightSide>
                 <MenuSelect>
-                    <MenuButton 
-                        isSelected={selectedMenu === 'curriculum'}
-                        onClick={() => setSelectedMenu('curriculum')}
-                    >
-                        커리큘럼
-                    </MenuButton>
+                    <MenuButton>커리큘럼</MenuButton>
                 </MenuSelect>
                 
                 <RightContainer>
@@ -532,17 +515,6 @@ const EditorContainer = styled.div`
     margin: 10px;
 `;
 
-const UploadContainer = styled.div`
-    margin-top: 10px;
-    height: 18vh;
-    margin: 10px;
-    background-color: #F6F7F9;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-`;
-
 const TextArea = styled.textarea`
     width: 100%;
     height: 18vh;
@@ -575,32 +547,6 @@ const SubmitButton = styled.button`
     &:hover {
         background-color: #E53935;
     }
-`;
-
-const Icon = styled.img`
-  width: 46px;
-  height: 21px;
-  cursor: pointer;
-`;
-
-const FileContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-`;
-
-const FileSmallText = styled.div`
-    margin-top: 5px;
-    color: #AAAAAA;
-    font-size: 12px;
-    font-weight: 700;
-`;
-
-const FileLargeText = styled.div`
-    color: #000000;
-    font-size: 14px;
-    font-weight: 700;
 `;
 
 export default ClassAssignmentSubmit;
