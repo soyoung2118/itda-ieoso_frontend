@@ -93,22 +93,6 @@ export default function LogIn() {
                                 label="자동 로그인"
                                 style={{ margin: 0 }}  // 여백 제거로 높이 일치
                             />
-                            
-                            {/* 아직 페이지 없음*/}
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <a 
-                                    href="/" 
-                                    style={{ 
-                                        marginRight: '15px', 
-                                        textDecoration: 'none', 
-                                        color: '#909090',
-                                        fontSize: '0.9rem',  // 폰트 크기 일치
-                                        lineHeight: '1.5'    // 라인 높이 일치
-                                    }}
-                                >
-                                    이메일/비밀번호 찾기
-                                </a>
-                            </div>
                         </CheckboxContainer>
 
                         <LoginButton
