@@ -47,11 +47,13 @@ const DropdownButton = styled.div`
   display: flex;
   align-items: center;
   padding: 5px 10px;
+  padding: 5px 10px;
   cursor: pointer;
   background-color: var(--white-color);
   border-radius: 8px;
   font-weight: bold;
   color: var(--black-color);
+  white-space: nowrap;
   white-space: nowrap;
 `;
 
@@ -125,6 +127,7 @@ const TabLinkContainer = styled.div`
 const TabLink = styled(NavLink)`
   width: 6rem;
   text-align: center;
+  padding: 5px 10px;
   padding: 5px 10px;
   text-decoration: none;
   color: var(--darkgrey-color);
