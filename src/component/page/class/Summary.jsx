@@ -133,7 +133,6 @@ const ClassSummary = () => {
         <main
           style={{
             flex: 1,
-            padding: "1rem",
             borderRadius: "8px",
           }}
         >
@@ -143,12 +142,11 @@ const ClassSummary = () => {
               style={{
                 display: "flex",
                 alignItems: "baseline",
-                marginLeft:"1.5rem"
               }}
             >
               <h3
                 style={{
-                  fontSize: "1.7rem",
+                  fontSize: "20px",
                   fontWeight: "900",
                   color: "var(--black-color)",
                 }}
@@ -158,8 +156,8 @@ const ClassSummary = () => {
               <p
                 style={{
                   color: "var(--darkgrey-color)",
-                  fontSize: "1.1rem",
-                  marginLeft: "1.3rem",
+                  fontSize: "18px",
+                  marginLeft: "18px",
                   fontWeight: "500",
                 }}
               >

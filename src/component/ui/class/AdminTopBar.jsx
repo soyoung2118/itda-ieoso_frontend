@@ -1,27 +1,54 @@
 import { NavLink, useParams } from "react-router-dom";
 import styled from "styled-components";
 import PropTypes from "prop-types";
+import Delete from "../../img/icon/bin.svg";
+import Share from "../../img/icon/share.svg";
 
-const Navbar = styled.div`
+const Container = styled.div`
+  width: 100%;
+`;
+
+const Title = styled.h1`
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--black-color);
+  margin-bottom: 1rem;
+`;
+
+const NavbarContent = styled.div`
   background-color: var(--white-color);
   padding: 0.8rem 1rem;
+  border-radius: 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-radius: 15px;
-  font-size: 1.4rem;
-  margin-bottom: 0.4rem;
+  overflow-x: auto;
+  min-width: min-content;
+  gap: 2rem;
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
+const TabContainer = styled.nav`
+  display: flex;
+  gap: 1rem;
+  flex-shrink: 0;
 `;
 
 const TabLink = styled(NavLink)`
-  width: 10rem;
+  width: 120px;
   text-align: center;
-  padding: 0.5rem 1rem;
+  padding: 5px 10px;
   text-decoration: none;
   color: #5f6368;
   font-weight: 550;
-  font-size: 1.25rem;
+  font-size: 18px;
   position: relative;
+  white-space: nowrap;
 
   &.active {
     &::after {
@@ -30,28 +57,39 @@ const TabLink = styled(NavLink)`
       bottom: -0.8rem;
       left: 0;
       width: 100%;
-      height: 0.2rem; 
-      background-color: var(--main-color); 
-      border-radius: 5px; 
+      height: 0.2rem;
+      background-color: var(--main-color);
+      border-radius: 5px;
     }
+  }
+`;
+
+const IconContainer = styled.nav`
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-shrink: 0; // 너비가 줄어들 때 압축되지 않도록
+  margin-left: auto; // 오른쪽 끝으로 정렬
+`;
+
+const Icon = styled.img`
+  width: 33px;
+  height: 33px;
+  cursor: pointer;
+
+  &.delete-icon {
+    height: 37px;
   }
 `;
 
 const AdminTopBar = ({ activeTab }) => {
   const { courseId } = useParams();
+
   return (
-    <div>
-      <h1
-        style={{
-          fontSize: "2.4rem",
-          fontWeight: "900",
-          color: "var(--black-color)",
-        }}
-      >
-        강의실 관리
-      </h1>
-      <Navbar>
-        <nav style={{ display: "flex", gap: "1rem" }}>
+    <Container>
+      <Title>강의실 관리</Title>
+      <NavbarContent>
+        <TabContainer>
           <TabLink
             to={`/class/${courseId}/admin/summary`}
             className={activeTab === "summary" ? "active" : ""}
@@ -70,13 +108,25 @@ const AdminTopBar = ({ activeTab }) => {
           >
             설정
           </TabLink>
-        </nav>
-      </Navbar>
-    </div>
+        </TabContainer>
+
+        <IconContainer>
+          <Icon 
+            className="delete-icon material-icons" 
+            src={Delete} 
+            alt="delete icon" 
+          />
+          <Icon 
+            className="material-icons" 
+            src={Share} 
+            alt="share icon" 
+          />
+        </IconContainer>
+      </NavbarContent>
+    </Container>
   );
 };
 
-// PropTypes 정의
 AdminTopBar.propTypes = {
   activeTab: PropTypes.string.isRequired,
 };
