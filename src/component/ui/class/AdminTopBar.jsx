@@ -9,6 +9,11 @@ import { UsersContext } from "../../contexts/usersContext";
 
 const Container = styled.div`
   width: 100%;
+  padding: 0 1rem;
+
+  @media (max-width: 768px) {
+    padding: 0 0.5rem;
+  }
 `;
 
 const Title = styled.h1`
@@ -16,6 +21,10 @@ const Title = styled.h1`
   font-weight: 900;
   color: var(--black-color);
   margin-bottom: 1rem;
+
+  @media (max-width: 768px) {
+    font-size: 24px;
+  }
 `;
 
 const NavbarContent = styled.div`
@@ -34,12 +43,20 @@ const NavbarContent = styled.div`
   &::-webkit-scrollbar {
     display: none;
   }
+
+  @media (max-width: 768px) {
+    gap: 1rem;
+  }
 `;
 
 const TabContainer = styled.nav`
   display: flex;
   gap: 1rem;
   flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    gap: 0.5rem;
+  }
 `;
 
 const TabLink = styled(NavLink)`
@@ -65,14 +82,24 @@ const TabLink = styled(NavLink)`
       border-radius: 5px;
     }
   }
+
+  @media (max-width: 768px) {
+    width: 70px;
+    font-size: 16px;
+  }
 `;
 
 const IconContainer = styled.nav`
   display: flex;
   gap: 20px;
   align-items: center;
-  flex-shrink: 0; // 너비가 줄어들 때 압축되지 않도록
-  margin-left: auto; // 오른쪽 끝으로 정렬
+  flex-shrink: 0;
+  margin-left: auto;
+
+  @media (max-width: 768px) {
+    justify-content: center;
+    margin-left: 0;
+  }
 `;
 
 const Icon = styled.img`
