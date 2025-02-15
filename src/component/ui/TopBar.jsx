@@ -59,10 +59,11 @@ export default function TopBar() {
 
 const Wrapper = styled.div`
   display: flex;
+  min-height: 70px;
   height: 8vh;
   align-items: center;
   justify-content: space-between;
-  padding: 1px 10px 1px 36px;
+  padding: 1px 10px 1px 25px;
   background-color: #FFFFFF;
 `;
 
@@ -79,6 +80,7 @@ const Header = styled.header`
     }
 
     .signup {
+      min-width: 90px;
       background-color: transparent;
       color: #000000;
       border: none;
@@ -87,6 +89,7 @@ const Header = styled.header`
     }
 
     .login {
+      min-width: 80px;
       background-color: #FF4747;
       color: rgb(255, 255, 255);
       border: none;
@@ -110,6 +113,7 @@ const UserContainer = styled.div`
     display: flex;
     align-items: center;
     position: relative;
+    min-width: 130px;
     padding: 10px;
     border-radius: 8px;
 `;

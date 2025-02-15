@@ -63,7 +63,7 @@ export default function LogIn() {
             <Container>
                 <LogoImage src={logoImage} alt="logo" />
                 <LogoText>로그인</LogoText>
-                <div style={{ width: '40%', margin: '0 auto' }}>
+                <div style={{ minWidth: '300px', width: '40%', margin: '0 auto' }}>
                     <Form onSubmit={handleLogin}>
                         {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
                         <Label>이메일</Label>
