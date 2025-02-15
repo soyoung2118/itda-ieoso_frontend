@@ -52,6 +52,14 @@ export const LoginInput = styled.input`
     }
 `;
 
+export const ResponsiveLabel = styled.span`
+  font-size: 0.9rem;
+
+  @media (min-width: 600px) {
+    font-size: 1rem;
+  }
+`;
+
 export const CheckboxContainer = styled.div`
     display: flex;
     justify-content: space-between;
@@ -130,7 +138,7 @@ export const SignUpContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 100%;
+  width: 80%;
   max-width: 600px;
   margin: 0 auto;
 `;
