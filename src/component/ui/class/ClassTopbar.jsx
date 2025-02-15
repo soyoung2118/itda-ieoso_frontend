@@ -40,19 +40,19 @@ const Dropdown = styled.div`
   position: relative;
   display: inline-block;
   font-weight: bold;
-  min-width: 10rem;
+  min-width: 7rem;
 `;
 
 const DropdownButton = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0rem;
+  padding: 5px 10px;
   cursor: pointer;
   background-color: var(--white-color);
   border-radius: 8px;
   font-weight: bold;
   color: var(--black-color);
+  white-space: nowrap;
 `;
 
 const DropdownMenu = styled.div`
@@ -100,17 +100,17 @@ const MenuItem = styled.div`
 const TabLinkContainer = styled.div`
   display: flex;
   gap: 0.5rem;
-  overflow-x: auto; /* 가로 스크롤 활성화 */
-  overflow-y: hidden; /* 세로 스크롤 제거 */
-  white-space: nowrap; /* 줄 바꿈 방지 */
-  padding-bottom: 0.5rem; /* 스크롤바가 탭을 가리지 않도록 여백 추가 */
+  overflow-x: auto; 
+  overflow-y: hidden; 
+  white-space: nowrap; 
+  padding-bottom: 0.5rem; 
 
   &::-webkit-scrollbar {
-    height: 5px; /* 가로 스크롤바 높이 */
+    height: 2px; 
   }
 
   &::-webkit-scrollbar-thumb {
-    background: #aaa; /* 스크롤바 색상 */
+    background: var(--natural-color); 
     border-radius: 10px;
   }
 
@@ -119,13 +119,13 @@ const TabLinkContainer = styled.div`
   }
 
   scrollbar-width: thin;
-  scrollbar-color: #aaa transparent;
+  scrollbar-color: var(--natural-color) transparent;
 `;
 
 const TabLink = styled(NavLink)`
   width: 6rem;
   text-align: center;
-  padding: 0.5rem 1rem;
+  padding: 5px 10px;
   text-decoration: none;
   color: var(--darkgrey-color);
   font-weight: bold;

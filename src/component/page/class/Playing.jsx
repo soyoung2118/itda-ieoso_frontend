@@ -112,8 +112,8 @@ export default function ClassPlaying() {
         navigate(`/assignment/submit/${lectureId}/${videoId}`);
     };
 
-    const handleNavigationCurriculum = () => {
-        navigate('/curriculum');
+    const handleNavigationCurriculum = (lectureId) => {
+        navigate(`/class/${lectureId}`);
     };
 
     const getCurrentVideo = () => {
@@ -137,14 +137,17 @@ export default function ClassPlaying() {
             <Container>
                 <LeftSide>
                     <TitleContainer>
-                        <MainTitle onClick={handleNavigationCurriculum}>
+                        <MainTitle>
                             <span>{getCurrentVideo()?.lectureTitle || "강의를 선택해주세요"}</span>
-                            <ArrowForwardIosIcon style={{ width: '13px', marginLeft: '15px' }}/>
                         </MainTitle>
-                        <SubTitle>
-                            {getCurrentVideo()?.videoId && `${getCurrentVideo()?.videoId}. `}
-                            {getCurrentVideo()?.videoTitle || "강의를 선택해주세요"}
-                        </SubTitle>
+                        
+                        <ClickContainer onClick={handleNavigationCurriculum}>
+                            <SubTitle>
+                                {getCurrentVideo()?.videoId && `(${getCurrentVideo()?.videoId}) `}
+                                {getCurrentVideo()?.videoTitle || "강의를 선택해주세요"}
+                            </SubTitle>
+                            <ArrowForwardIosIcon style={{ width: '13px', marginLeft: '15px' }}/>
+                        </ClickContainer>
                     </TitleContainer>
                     <ThumbnailContainer>
                         <img 
@@ -265,18 +268,24 @@ const ThumbnailContainer = styled.div`
 `;
 
 const TitleContainer = styled.div`
+    display: flex;
     margin-top: 36px;
     margin-bottom: 26px;
+    align-items: flex-end;
 `;
 
 const MainTitle = styled.div`
     font-size: 24px;
     font-weight: 700;
-    margin-bottom: 18px;
     display: flex;
     align-items: center;
-    cursor: pointer;
+    margin-right: 10px;
 `;
+
+const ClickContainer = styled.div`
+    display: flex;
+    cursor: pointer;
+`
 
 const SubTitle = styled.div`
     font-size: 16px;
