@@ -9,7 +9,7 @@
   import PropTypes from "prop-types";
 
   const Title = styled.h1`
-    font-size: 2.6rem;
+    font-size: 2rem;
     font-weight: bold;
     margin-top: 0rem;
   `;
@@ -26,6 +26,7 @@
     flex-direction: column;
     color: var(--black-color);
     padding: 1.3rem;
+    min-width: 175px;
   `;
 
   const NoticeItemLeft = styled.div`
@@ -36,7 +37,7 @@
   `;
 
   const NoticeItem = styled.div`
-    padding: 1.5rem;
+    padding: 1.2rem;
     border-bottom: 1.5px solid #cdcdcd;
     display: flex;
     justify-content: space-between;
@@ -51,7 +52,7 @@
   `;
 
   const NoticeTitle = styled.h3`
-    font-size: 1.35rem;
+    font-size: 1.5rem;
     font-weight: 550;
     color: var(--black-color);
     margin-bottom: 0.8rem;
@@ -64,6 +65,16 @@
     gap: 0.3rem;
     margin-bottom: 1.2rem;
     font-weight: semi-bold;
+    flex-wrap: wrap;
+
+    @media (max-width: 500px) {
+      flex-direction: column;
+      align-items: flex-start;
+
+      span:nth-child(2) {
+        display: none;
+      }
+    }
   `;
 
   const NoticeViews = styled.div`
@@ -150,12 +161,12 @@
 
   const ModalContent = styled.div`
     background-color: white;
-    padding: 60px 150px;
+    padding: 40px 80px;
     border-radius: 8px;
     text-align: center;
-    width: 300px;
-    font-size: 1.2rem;
-    line-height: 1.5;
+    width: 50%;
+    max-width: 300px;
+    font-size: 1rem;
 
     .button-container {
       display: flex;
@@ -169,7 +180,7 @@
       color: var(--white-color);
       border: none;
       border-radius: 15px;
-      padding: 15px 35px;
+      padding: 10px 32px;
       font-size: 1rem;
     }
 
@@ -178,7 +189,7 @@
       color: white;
       border: none;
       border-radius: 15px;
-      padding: 15px 35px;
+      padding: 15px 32px;
       font-size: 1rem;
     }
   `;
@@ -327,7 +338,7 @@
             <main
               style={{
                 flex: 1,
-                padding: "2rem",
+                padding: "1.5rem 1rem",
                 borderRadius: "8px",
               }}
             >
@@ -342,7 +353,7 @@
                     <div
                       style={{
                         textAlign: "center",
-                        fontSize: "1.5rem",
+                        fontSize: "1.25rem",
                         fontWeight: "bold",
                         color: "var(--darkgrey-color)",
                         padding: "3rem 0",

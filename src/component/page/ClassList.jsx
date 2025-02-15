@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import TopBar from "../ui/TopBar";
 import LogoGray from "../img/logo/itda_logo_gray.svg";
+import ClassThumbnail from "../img/class/classdata.png";
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import EventIcon from '@mui/icons-material/Event';
@@ -182,8 +183,10 @@ const Container = styled.div`
 
 const Sidebar = styled.div`
     width: 15%;
-    max-width: 200px;
-    height: 70vh;
+    min-width: 75px;
+    max-width: 175px;
+    height: 60vh;
+
     margin: 30px 20px;
     background-color: #fff;
     padding: 20px;
@@ -209,18 +212,32 @@ const Content = styled.div`
 const LectureCard = styled.div`
     position: relative;
     display: flex;
+    flex-direction: column;
     background-color: #fff;
-    margin: 10px 20px 20px 10px;
+    margin: 10px 30px 10px 0;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     cursor: pointer;
+
+    @media (min-width: 600px) {
+        flex-direction: row; // 화면이 넓어지면 가로 정렬
+    }
 `;
 
 const LectureImage = styled.img`
-    width: 200px;
-    height: 200px;
-    margin-right: 20px;
+    min-width: 200px;
+    width: 100%;
+    min-height: 200px;
+    height: auto;
+    margin-bottom: 20px;
+
+    @media (min-width: 600px) {
+        width: 200px; // 데스크탑에서 이미지 크기 조정
+        height: 200px;
+        margin-bottom: 0;
+        margin-right: 30px;
+    }
 `;
 
 const LectureInfo = styled.div`

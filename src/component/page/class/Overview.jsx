@@ -19,12 +19,12 @@ const IconRow = styled.div`
   color: var(--darkgrey-color);
 
   .material-symbols-outlined {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     vertical-align: middle;
   }
 
   span {
-    font-size: 1.18rem;
+    font-size: 1.2rem;
     font-weight: 500;
   }
 `;
@@ -64,7 +64,7 @@ const StyledQuill = styled(ReactQuill)`
 const StyledButton = styled.button`
   position: fixed;
   bottom: 2rem;
-  right: 8rem;
+  right: 2rem;
   width: 3.8rem;
   cursor: pointer;
   border: none;
@@ -129,63 +129,66 @@ const ClassOverview = () => {
   }
 
   return (
-    <div style={{ display: "flex", marginTop: "1rem" }}>
-      <ClassSidebar style={{ marginRight: "2rem" }} />
-      <main
-        style={{
-          flex: 1,
-          backgroundColor: "#f9f9f9",
-          padding: "0rem",
-          borderRadius: "8px",
-          marginTop: "0.5rem",
-        }}
-      >
-        <div style={{ textAlign: "center", marginBottom: "0rem" }}>
-          <img
-            src={courseData.courseThumbnail || ClassThumbnail}
-            style={{ width: "100%", height: "auto", borderRadius: "8px" }}
-            alt="Class Thumbnail"
-          />
-        </div>
-        <Section style={{ marginTop: "2rem" }}>
-          <span
+        <div style={{ display: "flex", marginTop: "1rem" }}>
+          <ClassSidebar style={{ marginRight: "2rem" }} />
+          <main
             style={{
-              fontSize: "2.2rem",
-              fontWeight: "900",
+              flex: 1,
+              backgroundColor: "#f9f9f9",
+              padding: "0rem",
+              borderRadius: "8px",
+              marginTop: "0.5rem",
             }}
           >
-            {courseData.courseTitle}
-          </span>
-          <IconRow style={{ marginTop: "2rem" }}>
-            <span className="material-symbols-outlined">event</span>
-            <span>
-              {courseData.startDate ? courseData.startDate : "시작 날짜 미정"}
-            </span>
-          </IconRow>
-          <IconRow>
-            <span className="material-symbols-outlined">video_library</span>
-            <span>
-              {courseData.durationWeeks > 0
-                ? `${courseData.durationWeeks}주 커리큘럼`
-                : "기간 미정"}
-            </span>
-          </IconRow>
-          <IconRow>
-            <span className="material-symbols-outlined">person</span>
-            <span>{courseData.instructorName}</span>
-          </IconRow>
-        </Section>
+            <div style={{ textAlign: "center", marginBottom: "0rem" }}>
+              <img
+                src={courseData.courseThumbnail || ClassThumbnail}
+                style={{ width: "100%", height: "auto", borderRadius: "8px" }}
+                alt="Class Thumbnail"
+              />
+            </div>
+            <Section style={{ marginTop: "2rem" }}>
+              <span
+                style={{
+                  fontSize: "2rem",
+                  fontWeight: "900",
+                }}
+              >
+                {courseData.courseTitle}
+              </span>
+              <IconRow style={{ marginTop: "2rem" }}>
+                <span className="material-symbols-outlined">event</span>
+                <span>
+                  {" "}
+                  {courseData.startDate
+                    ? courseData.startDate
+                    : "시작 날짜 미정"}
+                </span>
+              </IconRow>
+              <IconRow>
+                <span className="material-symbols-outlined">video_library</span>
+                <span>
+                  {courseData.durationWeeks > 0
+                    ? `${courseData.durationWeeks}주 커리큘럼`
+                    : "기간 미정"}
+                </span>
+              </IconRow>
+              <IconRow>
+                <span className="material-symbols-outlined">person</span>
+                <span>{courseData.instructorName}</span>
+              </IconRow>
+            </Section>
 
-        <h1
-          style={{
-            fontSize: "1.85rem",
-            fontWeight: "bold",
-            margin: "3rem 1rem",
-            textAlign: "left",
-          }}
-        >
-          강의 소개
-        </h1>
+            <h1
+              style={{
+                fontSize: "1.8rem",
+                fontWeight: "bold",
+                margin: "2rem 1rem",
+                textAlign: "left",
+              }}
+            >
+              강의 소개
+            </h1>
 
         <Content isEditing={isEditing}>
           <EditableSectionContent
