@@ -78,7 +78,6 @@ const EditableSectionContent = ({ content, onChange, isEditing }) => {
       [{ list: "ordered" }, { list: "bullet" }],
       ["link"],
       [{ indent: "-1" }, { indent: "+1" }],
-      ["image"],
     ],
   };
 
