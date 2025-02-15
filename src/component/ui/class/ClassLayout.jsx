@@ -1,8 +1,7 @@
 import styled from "styled-components";
 
 export const PageLayout = styled.div`
-  
-  padding: 3.5rem 6rem;
+  padding: 32px 42px;
 `;
 
 export const Section = styled.div`

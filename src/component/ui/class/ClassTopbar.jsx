@@ -9,25 +9,32 @@ import { UsersContext } from "../../contexts/usersContext";
 
 const Navbar = styled.div`
   background-color: var(--white-color);
-  padding: 0.6rem 1.3rem;
+  padding: 10px 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-radius: 15px;
-  font-size: 1.4rem;
+  font-size: 20px;
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const VerticalLine = styled.div`
   width: 1px;
   height: 3.4rem;
   background-color: #cdcdcd;
-  margin: 0rem;
+  margin: 0px 10px;
 `;
 
 const Dropdown = styled.div`
   position: relative;
   display: inline-block;
   font-weight: bold;
+  min-width: 0;
 
   &:hover > div {
     display: block;
@@ -37,13 +44,13 @@ const Dropdown = styled.div`
 const DropdownButton = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0rem;
+  padding: 5px 10px;
   cursor: pointer;
   background-color: var(--white-color);
   border-radius: 8px;
   font-weight: bold;
   color: var(--black-color);
+  white-space: nowrap;
 `;
 
 const DropdownMenu = styled.div`
@@ -95,19 +102,29 @@ const MenuItem = styled.div`
 `;
 
 const TabLink = styled(NavLink)`
-  width: 10rem;
+  width: 120px;
   text-align: center;
-  padding: 0.5rem 1rem;
+  padding: 5px 10px;
   text-decoration: none;
   color: var(--darkgrey-color);
   font-weight: bold;
-  font-size: 1.45rem;
+  font-size: 18px;
+  position: relative;
+  white-space: nowrap;
 
   &.active {
     color: var(--black-color);
     border-bottom: 3px solid var(--black-color);
     margin-bottom: -1rem;
   }
+`;
+
+const TabContainer = styled.nav`
+  display: flex;
+  gap: 1rem;
+  flex-shrink: 0;
+  margin-left: auto;
+  item-align: flex-end;
 `;
 
 const ClassTopbar = ({ onCourseChange }) => {
@@ -141,10 +158,10 @@ const ClassTopbar = ({ onCourseChange }) => {
 
   return (
     <Navbar>
-      <Container style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+      <Container style={{ display: "flex", alignItems: "center"}}>
         <span
           className="material-symbols-outlined"
-          style={{ fontSize: "2.15rem" }}
+          style={{ fontSize: "35px" }}
         >
           home
         </span>
@@ -152,7 +169,7 @@ const ClassTopbar = ({ onCourseChange }) => {
         <Dropdown>
           <DropdownButton onClick={handleDropdownToggle}>
               {classOptions.find((course) => course.courseId === courseId)?.courseTitle || "강의실 선택"} 
-              <span style={{ marginLeft: "1rem" }}>▼</span>
+              <span style={{ marginLeft: "15px" }}>▼</span>
             </DropdownButton>
           <DropdownMenu isOpen={isDropdownOpen}>
             <MenuTitle>강의실 목록</MenuTitle>
@@ -176,7 +193,7 @@ const ClassTopbar = ({ onCourseChange }) => {
           </DropdownMenu>
         </Dropdown>
       </Container>
-      <nav style={{ display: "flex", gap: "1rem" }}>
+      <TabContainer>
         <TabLink
           to={`/class/${courseId}/overview/info`}
           className={getActiveTab() === "overview" ? "active" : ""}
@@ -195,7 +212,7 @@ const ClassTopbar = ({ onCourseChange }) => {
         >
           관리
         </TabLink>
-      </nav>
+      </TabContainer>
     </Navbar>
   );
 };

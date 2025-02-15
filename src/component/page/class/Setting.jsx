@@ -341,7 +341,7 @@ const CreateButton = styled.button`
 `;
 
 const Container = styled.div`
-  margin: 31px;
+  margin-top: 31px;
   padding: 24px 30px;
   background-color: white;
   border-radius: 20px;
