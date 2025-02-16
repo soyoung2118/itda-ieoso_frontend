@@ -7,10 +7,12 @@ import Assignment from "../../img/icon/docs.svg";
 import Material from "../../img/icon/pdf.svg";
 import api from "../../api/api";
 import DragZone from "../../ui/DragZone";
+import CloseIcon from '@mui/icons-material/Close';
 import { UsersContext } from '../../contexts/usersContext';
 
 const ClassAssignmentSubmit = () => {
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
     const { assignmentId } = useParams();
     const { user } = useContext(UsersContext);
     const [selectedMenu, setSelectedMenu] = useState('curriculum');
@@ -19,6 +21,7 @@ const ClassAssignmentSubmit = () => {
     const [content, setContent] = useState('');
     const [assignmentTitle, setAssignmentTitle] = useState('');
     const [assignmentContent, setAssignmentContent] = useState('');
+    const [assignmentStatus, setAssignmentStatus] = useState('');
 
     const toggleItem = (itemId) => {
         setExpandedItems(prev => {
@@ -168,7 +171,12 @@ const ClassAssignmentSubmit = () => {
     };
 
     useEffect(() => {
-        const fetchAssignment = async () => {
+        if (!user) {
+            console.log("사용자 정보 없음");
+            return;
+        }
+
+        const fetchAssignmentInfo = async () => {
             try {
                 const response = await api.get(`/assignments/${assignmentId}`);
                 if (response.data.success) {
@@ -179,8 +187,32 @@ const ClassAssignmentSubmit = () => {
                 console.error("과제 내용 불러오기 오류:", error);
             }
         };
-        fetchAssignment();
-    }, [assignmentId]);
+
+        const fetchAssignmentStatus = async () => {
+            try {
+                const response = await api.get(`/assignments/${assignmentId}/submissions/5/${user.userId}`);
+                if (response.data.success) {
+                    setAssignmentStatus(response.data.data.submissionStatus);
+                }
+            } catch (error) {
+                console.error("과제 상태 불러오기 오류:", error);
+            }
+        };
+
+        fetchAssignmentStatus();
+        fetchAssignmentInfo();
+    }, [assignmentId, user]);
+
+    const DeleteImageHandle = (e, fileId) => {
+        const updatedFiles = files.filter((file) => file.id !== fileId);
+
+        const fileToDelete = files.find((file) => file.id === fileId);
+        if (fileToDelete) {
+            URL.revokeObjectURL(fileToDelete.object.preview);
+        }
+
+        setFiles(updatedFiles);
+    }
 
     return (
         <>
@@ -206,7 +238,7 @@ const ClassAssignmentSubmit = () => {
                 </NoticeContentContainer>
                 </WhiteBoxComponent>
 
-                <WhiteBoxComponent style={{height: '60vh'}}>
+                <WhiteBoxComponent style={{height: '70vh'}}>
                     <Box>
                         <FormTitle>내용</FormTitle>
                         <EditorContainer>
@@ -221,16 +253,26 @@ const ClassAssignmentSubmit = () => {
                     <Box>
                         <FormTitle>파일 업로드하기</FormTitle>
                         <DragZone setFiles={setFiles}/>
-
-                        {files.length > 0 && (
-                            <ul>
-                                {files.map((file, index) => (
-                                    <li key={index}>{file.object.name}</li>
-                                ))}
-                            </ul>
-                        )}
                     </Box>
-                    <SubmitButton onClick={handleSubmit}>제출하기</SubmitButton>
+
+                    <ImageItemContainer>
+                    {files.length > 0 && (
+                        files.map((file) => (
+                            <ImageItem key={file.id} textWidth={file.object.name.length * 10}>
+                                <ImageText>{file.object.name}</ImageText>
+                                <CloseIcon onClick={(e) => DeleteImageHandle(e, file.id)} style={{width: '15px'}}/>
+                            </ImageItem>
+                        ))
+                    )}
+                    </ImageItemContainer>
+
+                    {assignmentStatus === 'NOT_SUBMITTED' && (
+                        <SubmitButton onClick={handleSubmit}>제출하기</SubmitButton> 
+                    )}
+
+                    {assignmentStatus === 'SUBMITTED' && (
+                        <SubmitButton onClick={handleSubmit}>과제 수정하기</SubmitButton> 
+                    )}
                 </WhiteBoxComponent>
             </LeftSide>
 
@@ -317,14 +359,20 @@ const ClassAssignmentSubmit = () => {
 
 const Container = styled.div`
     display: flex;
-    overflow: hidden;
     background-color: #F6F7F9;
+    width: 100%;
+    max-width: 100vw;
+    overflow: hidden;
 `;
 
 const LeftSide = styled.div`
-    width: 70vw;
+    width: 70%;
+    min-width: 70%;
+    max-width: 70%;
     height: 100%;
     padding: 0px 37px;
+    flex-shrink: 0;
+    overflow: hidden;
 `;
 
 const FormTitle = styled.div`
@@ -382,11 +430,6 @@ const ClickContainer = styled.div`
     display: flex;
     cursor: pointer;
 `
-
-const SubTitle = styled.div`
-    font-size: 16px;
-    font-weight: 400;
-`;
 
 const RightSide = styled.div`
     width: 30vw;
@@ -530,6 +573,33 @@ const TextArea = styled.textarea`
     &:focus {
         outline: none;
     }
+`;
+
+const ImageItemContainer = styled.div`
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 10px;
+    margin: 10px;
+    padding-bottom: 5px;
+`;
+
+const ImageItem = styled.div`
+    display: flex;
+    align-items: center;
+    background-color: #F6F7F9;
+    min-width: fit-content;
+    max-width: 150px;
+    padding: 5px;
+    justify-content: space-between;
+    border-radius: 8px;
+`;
+const ImageText = styled.div`
+    margin-right: 3px;
+    max-width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 `;
 
 const SubmitButton = styled.button`

@@ -1,17 +1,15 @@
-
 import { useContext, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import styled from 'styled-components';
 import Cloud from "../img/icon/cloud.svg";
 
 const ClassAssignmentSubmit = ({ setFiles }) => {
-    const [localFiles, setLocalFiles] = useState([]);
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
       onDrop: (acceptedFiles) => {
-        setLocalFiles((prevFiles) => [
+        setFiles(prevFiles => [
           ...prevFiles,
-          ...acceptedFiles.map( (file) => ({
-            id: prevFiles.length + 1,
+          ...acceptedFiles.map(file => ({
+            id: Date.now() + '_' + Math.random().toString(36).substr(2, 9),
             object: file,
           })),
         ]);
@@ -22,12 +20,6 @@ const ClassAssignmentSubmit = ({ setFiles }) => {
       }
     });
 
-    useEffect(() => {
-        if (setFiles) {
-            setFiles(localFiles);
-        }
-    }, [localFiles, setFiles]);
-
     return(
         <UploadContainer
             {...getRootProps()}
@@ -37,23 +29,16 @@ const ClassAssignmentSubmit = ({ setFiles }) => {
             borderStyle={isDragActive ? 'dashed' : 'solid'}
         >
             <input {...getInputProps()} style={{ display: 'none' }} />
-            {isDragActive ? (
-                <FileContainer>
-                    <FileLargeText>파일을 첨부하세요.</FileLargeText>
-                </FileContainer>
-                ) : (
-                <FileContainer>
-                    <Icon 
-                        className="cloud-icon material-icons" 
-                        src={Cloud} 
-                        alt="delete icon" 
-                    />
-                    <FileSmallText>PDF, PNG, JPG or JPEG</FileSmallText>
-                    <FileLargeText>파일을 선택하거나 드래그해주세요.</FileLargeText>
-                </FileContainer>
-            )}
+            <FileContainer>
+                <Icon 
+                    className="cloud-icon material-icons" 
+                    src={Cloud} 
+                    alt="delete icon" 
+                />
+                <FileSmallText>PDF, PNG, JPG or JPEG</FileSmallText>
+                <FileLargeText>파일을 선택하거나 드래그해주세요.</FileLargeText>
+            </FileContainer>
         </UploadContainer>
-
     )
 };
 
@@ -66,6 +51,7 @@ const UploadContainer = styled.div`
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
 `;
 
 const Icon = styled.img`
