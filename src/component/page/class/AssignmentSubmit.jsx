@@ -171,36 +171,39 @@ const ClassAssignmentSubmit = () => {
     };
 
     useEffect(() => {
-        if (!user) {
-            console.log("사용자 정보 없음");
-            return;
-        }
-
-        const fetchAssignmentInfo = async () => {
+        const fetchData = async () => {
             try {
-                const response = await api.get(`/assignments/${assignmentId}`);
-                if (response.data.success) {
-                    setAssignmentTitle(response.data.data.assignmentTitle);
-                    setAssignmentContent(response.data.data.assignmentDescription);
+                // 일단 로딩 상태 설정
+                setLoading(true);
+                
+                // assignmentId가 없으면 리턴
+                if (!assignmentId) return;
+                
+                // 둘 다 user 정보가 필요한 API이므로 병렬로 호출
+                if (user) {
+                    const [infoResponse, statusResponse] = await Promise.all([
+                        api.get(`/assignments/${assignmentId}`),
+                        api.get(`/assignments/${assignmentId}/submissions/5/${user.userId}`)
+                    ]);
+    
+                    if (infoResponse.data.success) {
+                        setAssignmentTitle(infoResponse.data.data.assignmentTitle);
+                        setAssignmentContent(infoResponse.data.data.assignmentDescription);
+                    }
+    
+                    if (statusResponse.data.success) {
+                        console.log(statusResponse.data.data);
+                        setAssignmentStatus(statusResponse.data.data.submissionStatus);
+                    }
                 }
             } catch (error) {
-                console.error("과제 내용 불러오기 오류:", error);
+                console.error("데이터 로딩 오류:", error);
+            } finally {
+                setLoading(false);
             }
         };
-
-        const fetchAssignmentStatus = async () => {
-            try {
-                const response = await api.get(`/assignments/${assignmentId}/submissions/5/${user.userId}`);
-                if (response.data.success) {
-                    setAssignmentStatus(response.data.data.submissionStatus);
-                }
-            } catch (error) {
-                console.error("과제 상태 불러오기 오류:", error);
-            }
-        };
-
-        fetchAssignmentStatus();
-        fetchAssignmentInfo();
+    
+        fetchData();
     }, [assignmentId, user]);
 
     const DeleteImageHandle = (e, fileId) => {
@@ -217,6 +220,9 @@ const ClassAssignmentSubmit = () => {
     return (
         <>
         <TopBar />
+        {loading ?  (
+            <div>로딩중...</div>
+        ) : (
         <Container>
             <LeftSide>
                 <TitleContainer>
@@ -266,13 +272,8 @@ const ClassAssignmentSubmit = () => {
                     )}
                     </ImageItemContainer>
 
-                    {assignmentStatus === 'NOT_SUBMITTED' && (
-                        <SubmitButton onClick={handleSubmit}>제출하기</SubmitButton> 
-                    )}
-
-                    {assignmentStatus === 'SUBMITTED' && (
-                        <SubmitButton onClick={handleSubmit}>과제 수정하기</SubmitButton> 
-                    )}
+                    {assignmentStatus === 'NOT_SUBMITTED' ?
+                    (<SubmitButton onClick={handleSubmit}>제출하기</SubmitButton> ) : (<SubmitButton onClick={handleSubmit}>과제 수정하기</SubmitButton> ) }
                 </WhiteBoxComponent>
             </LeftSide>
 
@@ -353,6 +354,7 @@ const ClassAssignmentSubmit = () => {
                 </RightContainer>
             </RightSide>
         </Container>
+        )}
         </>
     );
 };
