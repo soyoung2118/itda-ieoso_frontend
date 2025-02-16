@@ -13,7 +13,8 @@ import { UsersContext } from '../../contexts/usersContext';
 const ClassAssignmentSubmit = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
-    const { assignmentId } = useParams();
+    const { lectureId, assignmentId } = useParams();
+    const [submissionId, setSubmissionId] = useState(null);
     const { user } = useContext(UsersContext);
     const [selectedMenu, setSelectedMenu] = useState('curriculum');
     const [expandedItems, setExpandedItems] = useState(new Set([1]));
@@ -134,7 +135,7 @@ const ClassAssignmentSubmit = () => {
         });
 
         try{
-            const response = await api.put(`/assignments/${assignmentId}/submissions/5/${user.userId}`, formData, {
+            const response = await api.put(`/assignments/${assignmentId}/submissions/${submissionId}/${user.userId}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -173,17 +174,27 @@ const ClassAssignmentSubmit = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // 일단 로딩 상태 설정
                 setLoading(true);
+    
+                if (!assignmentId || !lectureId || !user) return;
                 
-                // assignmentId가 없으면 리턴
-                if (!assignmentId) return;
-                
-                // 둘 다 user 정보가 필요한 API이므로 병렬로 호출
-                if (user) {
+                // 먼저 lecture 정보를 가져와서 submissionId 설정
+                const lectureResponse = await api.get(`/lectures/history/${lectureId}/${user.userId}`);
+                if(lectureResponse.data.success) {
+                    const submission = lectureResponse.data.data.submissions.find(
+                        (submission) => submission.assignmentId === parseInt(assignmentId)
+                    );
+                    if (submission) {
+                        setSubmissionId(submission.submissionId);
+                        setAssignmentStatus(submission.submissionStatus);
+                    }
+                }
+    
+                // 그 다음 나머지 API 호출
+                if (submissionId) {
                     const [infoResponse, statusResponse] = await Promise.all([
                         api.get(`/assignments/${assignmentId}`),
-                        api.get(`/assignments/${assignmentId}/submissions/5/${user.userId}`)
+                        api.get(`/assignments/${assignmentId}/submissions/${submissionId}/${user.userId}`)
                     ]);
     
                     if (infoResponse.data.success) {
@@ -192,8 +203,7 @@ const ClassAssignmentSubmit = () => {
                     }
     
                     if (statusResponse.data.success) {
-                        console.log(statusResponse.data.data);
-                        setAssignmentStatus(statusResponse.data.data.submissionStatus);
+                        setContent(statusResponse.data.data.textContent);
                     }
                 }
             } catch (error) {
@@ -204,7 +214,7 @@ const ClassAssignmentSubmit = () => {
         };
     
         fetchData();
-    }, [assignmentId, user]);
+    }, [assignmentId, lectureId, user, submissionId]);
 
     const DeleteImageHandle = (e, fileId) => {
         const updatedFiles = files.filter((file) => file.id !== fileId);
@@ -273,7 +283,7 @@ const ClassAssignmentSubmit = () => {
                     </ImageItemContainer>
 
                     {assignmentStatus === 'NOT_SUBMITTED' ?
-                    (<SubmitButton onClick={handleSubmit}>제출하기</SubmitButton> ) : (<SubmitButton onClick={handleSubmit}>과제 수정하기</SubmitButton> ) }
+                    (<SubmitButton onClick={handleSubmit}>제출하기</SubmitButton> ) : (<SubmitButton onClick={handleSubmit}>과제 수정하기</SubmitButton>) }
                 </WhiteBoxComponent>
             </LeftSide>
 
