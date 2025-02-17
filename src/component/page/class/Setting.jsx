@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import AdminTopBar from '../../ui/class/AdminTopBar';
+import api from "../../api/api";
 
 export default function Setting() {
   const navigate = useNavigate();
+  const { courseId } = useParams();
   const timeSlots = ['월', '화', '수', '목', '금', '토', '일'];
   const [isAssignmentPending, setIsAssignmentPending] = useState(false);
   const [isLecturePending, setIsLecturePending] = useState(false);
@@ -16,7 +18,7 @@ export default function Setting() {
     instructor: '',
     entrycode: '',
     startDate: null,
-    durationWeeks: 6,
+    durationWeeks: 1,
     lectureDays: [],
     lectureTime: '',
     assignmentDays: [],
@@ -27,33 +29,36 @@ export default function Setting() {
   useEffect(() => {
     const fetchCourseData = async () => {
       try {
-        const mockData = {
-          coursename: '프로그래밍 기초',
-          instructor: '김강사',
-          entrycode: 'ABC123',
-          startDate: '2025-03-01',
-          durationWeeks: 8,
-          lectureDays: [1, 3],
-          lectureTime: '14:00',
-          assignmentDays: [],
-          assignmentTime: '',
-          difficulty: 'medium'
-        };
-        
-        setForm(mockData);
-        if(form.assignmentDays.length === 0 && form.assignmentTime === '') {
-          setIsAssignmentPending(true);
+        const courseResponse = await api.get(`/courses/${courseId}`);
+        if(!courseResponse.data.success) {
+          console.log("강의 정보 불러오기 실패");
+        } else{
+          const courseData = courseResponse.data.data;
+          console.log(courseData);
+          
+          setForm({
+            coursename: courseData.courseTitle,
+            instructor: courseData.instructorName,
+            entrycode: courseData.entryCode,
+            startDate: courseData.startDate,
+            durationWeeks: courseData.durationWeeks,
+            lectureDays: courseData.lectureDay,
+            lectureTime: courseData.lectureTime?.slice(0, -3),
+            assignmentDays: courseData.assignmentDueDay,
+            assignmentTime: courseData.assignmentDueTime?.slice(0, -3),
+            difficulty: courseData.difficultyLevel?.toLowerCase()
+          });
+
+          setIsAssignmentPending(courseData.assignmentDueTime === '00:00:00');
+          setIsLecturePending(courseData.lectureTime === '00:00:00');
         }
-        if(form.lectureDays.length === 0 && form.lectureTime === '') {
-            setIsLecturePending(true);
-          }
       } catch (error) {
         console.error('Failed to fetch course data:', error);
       }
     };
 
     fetchCourseData();
-  }, []);
+  }, [courseId]);
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
@@ -169,10 +174,10 @@ export default function Setting() {
                 <Required>*</Required>
               </Label>
               <DisableInput
-                value={form.startDate}
+                value={new Date(form.startDate).toLocaleDateString()}
                 disabled
                 style={{width: '289px'}}
-                />
+              />
             </FormHalfItem>
 
             <FormHalfItem>
@@ -199,7 +204,7 @@ export default function Setting() {
                         {timeSlots.map((day) => (
                             <DayButton 
                             key={day}
-                            active={form.lectureDays.includes(timeSlots.indexOf(day) + 1)}
+                            active={form.lectureDays?.includes(timeSlots.indexOf(day) + 1)}
                             >
                             {day}
                             </DayButton>
@@ -208,12 +213,12 @@ export default function Setting() {
                 </TimeGroup>
 
                 <TimeGroup>
-                    <DisableInput
-                      name='lectureTime'
-                      style={{width: '289px'}}
-                      value={form.lectureTime}
-                      disabled
-                    />
+                <DisableInput
+                  name='lectureTime'
+                  style={{width: '289px'}}
+                  value={isLecturePending ? '오전 00:00' : `${form.lectureTime >= '12:00' ? '오후' : '오전'} ${form.lectureTime}`}
+                  disabled
+                />
                 </TimeGroup>
 
                 <TimeGroup>
@@ -230,7 +235,7 @@ export default function Setting() {
                   {timeSlots.map((day) => (
                     <DayButton 
                       key={day}
-                      active={form.assignmentDays.includes(timeSlots.indexOf(day) + 1)}
+                      active={form.assignmentDays?.includes(timeSlots.indexOf(day) + 1)}
                     >
                       {day}
                     </DayButton>
@@ -239,12 +244,12 @@ export default function Setting() {
                 </TimeGroup>
 
                 <TimeGroup>
-                    <DisableInput
-                      name='assignmentTime'
-                      style={{width: '289px'}}
-                      value={form.assignmentTime}
-                      disabled
-                    />
+                <DisableInput
+                  name='assignmentTime'
+                  style={{width: '289px'}}
+                  value={isAssignmentPending ? '오전 00:00' : `${form.assignmentTime >= '12:00' ? '오후' : '오전'} ${form.assignmentTime}`}
+                  disabled
+                />
                 </TimeGroup> 
 
                 <TimeGroup>
