@@ -13,16 +13,22 @@ import { UsersContext } from '../../contexts/usersContext';
 const ClassAssignmentSubmit = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
-    const { lectureId, assignmentId } = useParams();
-    const [submissionId, setSubmissionId] = useState(null);
+    const { courseId, lectureId, assignmentId } = useParams();
+    
     const { user } = useContext(UsersContext);
     const [selectedMenu, setSelectedMenu] = useState('curriculum');
     const [expandedItems, setExpandedItems] = useState(new Set([1]));
-    const [files, setFiles] = useState([]);
+
     const [content, setContent] = useState('');
+    const [files, setFiles] = useState([]);
+    
+    
     const [assignmentTitle, setAssignmentTitle] = useState('');
     const [assignmentContent, setAssignmentContent] = useState('');
-    const [assignmentStatus, setAssignmentStatus] = useState('');
+    const [submissionId, setSubmissionId] = useState(null);
+    const [submissionStatus, setSubmissionStatus] = useState('');
+
+    const [curriculumData, setCurriculumData] = useState([]);
 
     const toggleItem = (itemId) => {
         setExpandedItems(prev => {
@@ -38,66 +44,6 @@ const ClassAssignmentSubmit = () => {
 
     const truncate = (str, n) => {
         return str?.length > n ? str.substr(0, n - 1) + "..." : str;
-    };
-
-    const curriculumData = {
-        "lectureId": 1,
-        "lectureTitle": "챕터 1~~",
-        "lectureDescription": "챕터 설명을 작성하세요.",
-        "videos": [
-            {
-                "videoId": 1,
-                "videoTitle": "강의 영상 제목을 입력하세요.",
-                "videoUrl": "영상 링크 첨부",
-                "startDate": "2025-03-01T23:59:59",
-                "endDate": "2025-03-07T23:59:59",
-                "videoHistoryStatus": "NOT_WATCHED"
-            },
-            {
-                "videoId": 2,
-                "videoTitle": "강의 영상 제목을 입력하세요.",
-                "videoUrl": "영상 링크 첨부",
-                "startDate": "2025-03-01T23:59:59",
-                "endDate": "2025-03-07T23:59:59",
-                "videoHistoryStatus": "NOT_WATCHED"
-            }
-        ],
-        "materials": [
-            {
-                "materialId": 1,
-                "materialTitle": "강의 자료 제목을 입력하세요.",
-                "materialFile": "강의자료 첨부",
-                "materialHistoryStatus": false
-            },
-        ],
-        "assignments": [
-            {
-                "assignmentId": 1,
-                "assignmentTitle": "과제 제목을 입력하세요.",
-                "assignmentDescription": "과제 설명",
-                "startDate": "2025-03-01T23:59:59",
-                "endDate": "2025-03-07T23:59:59",
-                "submissionStatus": "NOT_SUBMITTED"
-            },
-            {
-                "assignmentId": 2,
-                "assignmentTitle": "과제 제목을 입력하세요.",
-                "assignmentDescription": "과제 설명",
-                "startDate": "2025-03-01T23:59:59",
-                "endDate": "2025-03-07T23:59:59",
-                "submissionStatus": "NOT_SUBMITTED"
-            },
-            {
-                "assignmentId": 5,
-                "assignmentTitle": "자바강의 실습 공지",
-                "assignmentDescription": "실습 1은 오류있으므로 안하셔도 됩니다.",
-                "startDate": "2025-02-06T09:00:00",
-                "endDate": "2025-02-06T18:00:00",
-                "submissionStatus": "NOT_SUBMITTED"
-            }
-        ],
-        "startDate": "2025-03-01",
-        "endDate": "2025-03-07"
     };
 
     const getStatusIcon = (status) => {
@@ -151,7 +97,7 @@ const ClassAssignmentSubmit = () => {
     const getCurrentVideo = () => {
         return {
             lectureTitle: curriculumData.lectureTitle,
-            videoTitle: curriculumData.videos[0]?.videoTitle || "강의를 선택해주세요"
+            //videoTitle: curriculumData.videos[0]?.videoTitle || "강의를 선택해주세요"
         };
     };
 
@@ -177,20 +123,24 @@ const ClassAssignmentSubmit = () => {
                 setLoading(true);
     
                 if (!assignmentId || !lectureId || !user) return;
+
+                const curriculumResponse = await api.get(`/lectures/curriculum/${courseId}/${user.userId}`);
+                if (curriculumResponse.data.success) {
+                    setCurriculumData(curriculumResponse.data.data);
+                    console.log(curriculumData);
+                }
                 
-                // 먼저 lecture 정보를 가져와서 submissionId 설정
-                const lectureResponse = await api.get(`/lectures/history/${lectureId}/${user.userId}`);
+                const lectureResponse = await api.get(`/lectures/history/${courseId}/${user.userId}`);
                 if(lectureResponse.data.success) {
                     const submission = lectureResponse.data.data.submissions.find(
                         (submission) => submission.assignmentId === parseInt(assignmentId)
                     );
                     if (submission) {
                         setSubmissionId(submission.submissionId);
-                        setAssignmentStatus(submission.submissionStatus);
+                        setSubmissionStatus(submission.submissionStatus);
                     }
                 }
     
-                // 그 다음 나머지 API 호출
                 if (submissionId) {
                     const [infoResponse, statusResponse] = await Promise.all([
                         api.get(`/assignments/${assignmentId}`),
@@ -282,7 +232,7 @@ const ClassAssignmentSubmit = () => {
                     )}
                     </ImageItemContainer>
 
-                    {assignmentStatus === 'NOT_SUBMITTED' ?
+                    {submissionStatus === 'NOT_SUBMITTED' ?
                     (<SubmitButton onClick={handleSubmit}>제출하기</SubmitButton> ) : (<SubmitButton onClick={handleSubmit}>과제 수정하기</SubmitButton>) }
                 </WhiteBoxComponent>
             </LeftSide>
@@ -297,13 +247,13 @@ const ClassAssignmentSubmit = () => {
                         <CurriculumList>
                             <CurriculumItem>
                                 <ItemTitle>{curriculumData.lectureTitle}</ItemTitle>
-                                {curriculumData.videos.length > 0 && (
+                                {/* {curriculumData.videos.length > 0 && ( */}
                                     <IconWrapper onClick={() => toggleItem(curriculumData.lectureId)}>
                                         <span className="material-icons">
                                             {expandedItems.has(curriculumData.lectureId) ? 'expand_more' : 'chevron_right'}
                                         </span>
                                     </IconWrapper>
-                                )}
+                                {/* )} */}
                             </CurriculumItem>
                             {expandedItems.has(curriculumData.lectureId) && curriculumData.videos.map((video) => (
                                 <SubItem key={video.videoId} status={video.videoHistoryStatus}>
