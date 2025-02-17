@@ -52,46 +52,33 @@ const formatPeriod = (startDate, endDate) => {
 const CurriculumSection = ({
   subSection,
   index,
-  editTarget,
   handleSectionClick,
   handleIconClick,
-  
+  handleDelete,
+  editTarget,
 }) => {
   const isEditing = subSection.isEditing;
 
   return (
-    <Section onClick={() => handleSectionClick(index, subSection.type)}>
+    <Section onClick={() => handleSectionClick(index)}>
       {isEditing ? (
         <div style={{ display: "flex", width: "100%", position: "relative" }}>
           <div style={{ position: "relative" }}>
             <EditContainer onIconClick={handleIconClick} index={index} />
           </div>
+
           <EditableSection
             subSection={subSection}
-            type={subSection.type}
-            handleSave={(updatedTitle) => {
-              const updatedSections = curriculumData.map((section) =>
-                section.title === activeItem
-                  ? {
-                      ...section,
-                      subSections: section.subSections.map((s, i) =>
-                        i === index
-                          ? { ...s, title: updatedTitle, isEditing: false }
-                          : s
-                      ),
-                    }
-                  : section
-              );
-              setCurriculumData(updatedSections);
-            }}
+            index={index}
+            handleDelete={handleDelete}
           />
         </div>
       ) : (
         <>
-          {subSection.type === "video" && (
+          {subSection.contentType === "video" && (
             <>
               <VideoContainer>
-                <VideoThumbnail src={ClassThumbnail} />
+                <VideoThumbnail src={getYouTubeThumbnail(subSection.videoUrl)} />
                 <img
                   src={PlayIcon}
                   alt="Play Icon"
@@ -108,7 +95,7 @@ const CurriculumSection = ({
               </VideoContainer>
               <div style={{ marginLeft: "2rem" }}>
                 <CurriculumTitle>
-                  {subSection.title ?? "영상 제목 없음"}
+                  {subSection.videoTitle ?? "영상 제목 없음"}
                 </CurriculumTitle>
                 <p style={{ color: "#909090", display: "flex", gap: "0.5rem" }}>
                   <span>김잇다</span>
@@ -126,7 +113,7 @@ const CurriculumSection = ({
             </>
           )}
 
-          {subSection.type === "material" && (
+          {subSection.contentType === "material" && (
             <>
               <img
                 src={Material}
@@ -138,7 +125,7 @@ const CurriculumSection = ({
               />
               <MaterialSection>
                 <span style={{ marginRight: "0.6rem" }}>
-                  {subSection.title ?? "자료 없음"}
+                  {subSection.materialTitle ?? "자료 없음"}
                 </span>
                 <span
                   style={{ color: "var(--main-color)", fontSize: "0.9rem" }}
@@ -149,7 +136,7 @@ const CurriculumSection = ({
             </>
           )}
 
-          {subSection.type === "assignment" && (
+          {subSection.contentType === "assignment" && (
             <>
               <img
                 src={Assignment}
@@ -162,7 +149,7 @@ const CurriculumSection = ({
               />
               <MaterialSection>
                 <span style={{ marginRight: "0.8rem" }}>
-                  {subSection.title ?? "과제 없음"}
+                  {subSection.assignmentTitle ?? "과제 없음"}
                 </span>
                 <span style={{ color: "var(--main-color)" }}>
                   {formatPeriod(subSection.startDate, subSection.endDate)}
@@ -176,22 +163,5 @@ const CurriculumSection = ({
   );
 };
 
-CurriculumSection.propTypes = {
-  subSection: PropTypes.shape({
-    type: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    file: PropTypes.string,
-    videoUrl: PropTypes.string,
-    startDate: PropTypes.string,
-    endDate: PropTypes.string,
-  }).isRequired,
-  index: PropTypes.number.isRequired,
-  editTarget: PropTypes.shape({
-    index: PropTypes.number,
-    type: PropTypes.string,
-  }),
-  handleSectionClick: PropTypes.func.isRequired,
-  handleIconClick: PropTypes.func,
-};
 
 export default CurriculumSection;

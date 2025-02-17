@@ -1,4 +1,4 @@
-import { useState, forwardRef } from "react";
+import { useState, forwardRef, useEffect } from "react";
 import styled from "styled-components";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -22,13 +22,13 @@ const DateRow = styled.div`
 const InputBox = styled.div`
   display: flex;
   align-items: center;
-  width: 12rem;
+  width: 14rem;
   border: 2px solid #c3c3c3;
   border-radius: 8px;
   color: #c3c3c3;
   font-weight: bold;
   font-size: 1rem;
-  padding: 0.8rem 1.5rem;
+  padding: 0.8rem 1rem;
   cursor: pointer;
   flex: 1;
   justify-content: space-between;
@@ -44,24 +44,35 @@ const ErrorText = styled.p`
   margin-top: 0.5rem;
 `;
 
-const CustomInput = forwardRef(({ value, onClick }, ref) => (
-  <InputBox
-    onClick={(e) => {
-      e.stopPropagation();
-      onClick(e);
-    }}
-    ref={ref}
-  >
-    <span>{value || "날짜 선택"}</span>
-    <Icon src={Calendar} alt="Calendar Icon" />
-  </InputBox>
-));
+const CustomInput = forwardRef(({ value, onClick, text }, ref) => {
+  return (
+    <InputBox
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick(e);
+      }}
+      ref={ref}
+    >
+      <span>{value || text}</span>
+      <Icon src={Calendar} alt="Calendar Icon" />
+    </InputBox>
+  );
+});
 
 // DateTimeEdit 컴포넌트
-const DateTimeEdit = () => {
+const DateTimeEdit = ({ initialStartDate, initialEndDate }) => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (initialStartDate) {
+      setStartDate(new Date(initialStartDate));
+    }
+    if (initialEndDate) {
+      setEndDate(new Date(initialEndDate));
+    }
+  }, [initialStartDate, initialEndDate]);
 
   const handleStartDateChange = (date) => {
     setStartDate(date);
@@ -77,7 +88,6 @@ const DateTimeEdit = () => {
       setError("마감일은 시작일보다 이후이어야 합니다.");
     } else {
       setEndDate(date);
-      setError("");
     }
   };
 
@@ -99,7 +109,7 @@ const DateTimeEdit = () => {
           onChange={handleStartDateChange}
           showTimeSelect
           dateFormat="yyyy년 MM월 dd일 HH:mm"
-          customInput={<CustomInput />}
+          customInput={<CustomInput text="시작일" />}
         />
 
         {/* 마감일 */}
@@ -109,7 +119,7 @@ const DateTimeEdit = () => {
           showTimeSelect
           minDate={startDate} // 마감일은 시작일 이후만 가능
           dateFormat="yyyy년 MM월 dd일 HH:mm"
-          customInput={<CustomInput />}
+          customInput={<CustomInput text="마감일" />}
         />
       </DateRow>
     </DateTimeContainer>

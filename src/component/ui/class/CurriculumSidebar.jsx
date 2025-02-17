@@ -99,17 +99,34 @@ const getIconByType = (type) => {
   }
 };
 
+const getSubSectionTitle = (subSection) => {
+  switch (subSection.type) {
+    case "video":
+      return subSection.videoTitle || "영상 제목 없음";
+    case "material":
+      return subSection.materialTitle || "자료 제목 없음";
+    case "assignment":
+      return subSection.assignmentTitle || "과제 제목 없음";
+    default:
+      return "제목 없음";
+  }
+};
+
+
 const CurriculumSidebar = ({ sections, activeItem, setActiveItem, edit }) => {
-  const handleItemClick = (item) => {
-    setActiveItem(item);
+  const handleItemClick = (lectureId) => {
+    setActiveItem(lectureId);
   };
 
   return (
     <SidebarContainer>
-      {sections.map((section, sectionIndex) => (
-        <ListSection key={sectionIndex}>
-          <SectionHeader selected={activeItem === section.title}>
-            {section.title}
+      {sections.map((section) => (
+        <ListSection key={section.lectureId}>
+          <SectionHeader
+            selected={activeItem === section.lectureId}
+            onClick={() => handleItemClick(section.lectureId)}
+          >
+            {section.lectureTitle}
             {!edit && (
               <SectionIcon
                 src={
@@ -126,9 +143,9 @@ const CurriculumSidebar = ({ sections, activeItem, setActiveItem, edit }) => {
             )}
           </SectionHeader>
           <ul style={{ listStyle: "none", padding: 0 }}>
-            {section.subSections.map((subSection, subIndex) => (
+            {section.subSections.map((subSection) => (
               <div
-                key={subIndex}
+                key={subSection.id}
                 style={{
                   marginLeft: "0",
                   marginBottom: "10px",
@@ -152,7 +169,7 @@ const CurriculumSidebar = ({ sections, activeItem, setActiveItem, edit }) => {
                     style={{ width: "1.4rem" }}
                   />
                   <TruncatedText width="10rem">
-                    {subSection.title || "제목 없음"}
+                    {getSubSectionTitle(subSection)}
                   </TruncatedText>
                   {!edit && (
                     <img
@@ -223,25 +240,23 @@ const CurriculumSidebar = ({ sections, activeItem, setActiveItem, edit }) => {
 CurriculumSidebar.propTypes = {
   sections: PropTypes.arrayOf(
     PropTypes.shape({
-      title: PropTypes.string.isRequired,
+      lectureId: PropTypes.number.isRequired,
+      lectureTitle: PropTypes.string.isRequired,
       subSections: PropTypes.arrayOf(
         PropTypes.shape({
-          title: PropTypes.string,
-          material: PropTypes.shape({
-            name: PropTypes.string,
-            downloaded: PropTypes.bool,
-          }),
-          assignment: PropTypes.shape({
-            name: PropTypes.string,
-            submitted: PropTypes.bool,
-          }),
+          id: PropTypes.number.isRequired,
+          type: PropTypes.string.isRequired,
+          videoTitle: PropTypes.string,
+          materialTitle: PropTypes.string,
+          assignmentTitle: PropTypes.string,
         })
       ).isRequired,
     })
   ).isRequired,
-  activeItem: PropTypes.string.isRequired,
+  activeItem: PropTypes.number,
   setActiveItem: PropTypes.func.isRequired,
   edit: PropTypes.bool.isRequired,
 };
+
 
 export default CurriculumSidebar;

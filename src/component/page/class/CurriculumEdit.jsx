@@ -8,7 +8,7 @@ import { PageLayout } from "../../ui/class/ClassLayout";
 import EditButton from "../../ui/class/EditButton";
 import EditableSection from "../../ui/curriculum/EditableSection";
 import CurriculumSection from "../../ui/curriculum/CurriculumSection";
-// import api from "../../api/api";
+import api from "../../api/api";
 // import Delete from "../../img/class/edit/delete.svg";
 // import DateTimeEdit from "../../ui/curriculum/DateTimeEdit";
 // import ClassThumbnail from "../../img/class/class_thumbnail.svg";
@@ -51,79 +51,40 @@ const DeleteButton = styled.img`
   cursor: pointer;
 `;
 
-// 더미 데이터
-const dummyData = [
-  {
-    title: "1. 기초를 준비해요",
-    subSections: [
-      {
-        type: "video",
-        title: "1. 꾸미고 싶은 타입을 정해서 다이어리를 골라봅시다.",
-        videoUrl: "https://video.example.com/1",
-        startDate: "2025-03-01T23:59:59",
-        endDate: "2025-03-07T23:59:59",
-      },
-      {
-        type: "video",
-        title: "필기구 소개",
-        videoUrl: "https://video.example.com/2",
-        startDate: "2025-03-01T23:59:59",
-        endDate: "2025-03-07T23:59:59",
-      },
-      {
-        type: "material",
-        title: "오늘의 다이어리",
-        file: "강의자료.pdf",
-      },
-      {
-        type: "assignment",
-        title: "1/6(월) 과제 제출",
-        description: "과제 설명입니다.",
-        startDate: "2025-03-01T23:59:59",
-        endDate: "2025-03-07T23:59:59",
-      },
-    ],
-  },
-  {
-    title: "2. 한달을 기록해요",
-    subSections: [
-      {
-        type: "video",
-        title: "나만의 색연필 차트",
-        videoUrl: "https://video.example.com/3",
-        startDate: "2025-03-08T23:59:59",
-        endDate: "2025-03-14T23:59:59",
-      },
-      {
-        type: "material",
-        title: "오늘의 다이어리",
-        file: "강의자료2.pdf",
-      },
-      {
-        type: "assignment",
-        title: "과제 2",
-        description: "챕터 2의 과제 설명입니다.",
-        startDate: "2025-03-08T23:59:59",
-        endDate: "2025-03-14T23:59:59",
-      },
-    ],
-  },
-];
-
 const Curriculum = () => {
   const { courseId } = useParams();
   const [userId, setUserId] = useState(null);
-  const [activeItem, setActiveItem] = useState(dummyData[0]?.title || "");
+  const [curriculumData, setCurriculumData] = useState([]);
+  const [activeLectureId, setActiveLectureId] = useState(1); // ✅ 기본 선택 lectureId = 1
+  const [activeLecture, setActiveLecture] = useState(null);
+  // const [curriculumData, setCurriculumData] = useState(
+  //   dummyData[0]?.data.map((lecture) => ({
+  //     ...lecture,
+  //     subSections: [
+  //       ...lecture.videos.map((v) => ({ ...v, title: v.videoTitle, isEditing: false })),
+  //       ...lecture.materials.map((m) => ({ ...m, title: m.materialTitle, isEditing: false })),
+  //       ...lecture.assignments.map((a) => ({ ...a, title: a.assignmentTitle, isEditing: false })),
+  //     ].sort((a, b) => a.id - b.id),
+  //   })) || []
+  // );
+
+  // const [activeLecture, setActiveLecture] = useState(() => {
+  //   const initialLecture = dummyData[0]?.data[0]; // 첫 번째 강의 선택
+  //   return initialLecture
+  //     ? {
+  //         ...initialLecture,
+  //         subSections: [
+  //           ...(initialLecture.videos || []).map((v) => ({ ...v, title: v.videoTitle, isEditing: false })),
+  //           ...(initialLecture.materials || []).map((m) => ({ ...m, title: m.materialTitle, isEditing: false })),
+  //           ...(initialLecture.assignments || []).map((a) => ({ ...a, title: a.assignmentTitle, isEditing: false })),
+  //         ].sort((a, b) => a.id - b.id),
+  //       }
+  //     : { subSections: [] }; // 기본값 설정
+  // });
+
   const [editTarget, setEditTarget] = useState(null);
-  const [curriculumData, setCurriculumData] = useState(
-    dummyData.map((section) => ({
-      ...section,
-      subSections: section.subSections.map((subSection) => ({
-        ...subSection,
-        isEditing: false,
-      })),
-    }))
-  );
+  const [actionQueue, setActionQueue] = useState([]);
+  const [activeSection, setActiveSection] = useState(null);
 
   // userid 가져오기
   useEffect(() => {
@@ -146,134 +107,201 @@ const Curriculum = () => {
     }
   }, []);
 
-  // 커리큘럼 데이터 없을 경우 초기 섹션 (title/video)
+  // 데이터 받아와서 초기화
   useEffect(() => {
-    if (curriculumData.length === 0) {
-      setCurriculumData([
-        { title: "1주차 학습", subSections: [], isEditing: true },
-      ]);
-    }
-  }, [curriculumData]);
+    if (!userId) return;
 
-  useEffect(() => {
-    if (curriculumData.length > 0 && !activeItem) {
-      setActiveItem(curriculumData[0].title);
-    }
-  }, [curriculumData, activeItem]);
+    const fetchCurriculum = async () => {
+      try {
+        const response = await api.get(
+          `/lectures/curriculum/${courseId}/${userId}`
+        );
+        if (response.data.success) {
+          const lectures = response.data.data;
+          setCurriculumData(lectures);
 
-  const activeSection = curriculumData.find(
-    (section) => section.title === activeItem
-  ) || { title: "챕터 없음", subSections: [] };
+          const defaultLecture =
+            lectures.find((lec) => lec.lectureId === 1) || lectures[0];
+          setActiveLectureId(defaultLecture.lectureId);
 
-  const handleSectionClick = (index, type) => {
-    setCurriculumData((prevData) =>
-      prevData.map((section) =>
-        section.title === activeItem
-          ? {
-              ...section,
-              subSections: section.subSections.map(
-                (subSection, i) =>
-                  i === index
-                    ? { ...subSection, isEditing: !subSection.isEditing } 
-                    : { ...subSection, isEditing: false } 
-              ),
-            }
-          : section
-      )
-    );
-
-    setEditTarget((prev) =>
-      prev?.index === index && prev?.type === type ? null : { index, type }
-    );
-
-    console.log("Clicked Section:", { index, type });
-    console.log(
-      "Updated Curriculum Data:",
-      curriculumData.map((section) =>
-        section.subSections.map((s, i) => ({
-          index: i,
-          title: s.title,
-          type: s.type,
-          isEditing: s.isEditing,
-        }))
-      )
-    );
-  };
-
-  const handleIconClick = (type, index) => {
-    if (!activeSection) return;
-
-    const newSubSection = {
-      type,
-      title: `${
-        type === "video"
-          ? "새 영상"
-          : type === "material"
-          ? "새 자료"
-          : "새 과제"
-      }`,
-      isEditing: true,
+          setActiveLecture({
+            ...defaultLecture,
+            subSections: [
+              ...(defaultLecture.videos || []).map((v) => ({
+                ...v,
+                title: v.videoTitle,
+                isEditing: false,
+              })),
+              ...(defaultLecture.materials || []).map((m) => ({
+                ...m,
+                title: m.materialTitle,
+                isEditing: false,
+              })),
+              ...(defaultLecture.assignments || []).map((a) => ({
+                ...a,
+                title: a.assignmentTitle,
+                isEditing: false,
+              })),
+            ].sort(
+              (a, b) => (a.contentOrderIndex || 0) - (b.contentOrderIndex || 0)
+            ), // 정렬
+          });
+        }
+      } catch (error) {
+        console.error("커리큘럼 불러오기 실패:", error);
+      }
     };
 
-    setCurriculumData((prevData) =>
-      prevData.map((section) =>
-        section.title === activeItem
-          ? {
-              ...section,
-              subSections: section.subSections.map((s, i) => ({
-                ...s,
-                isEditing: false, 
-              })),
-            }
-          : section
-      )
-    );
+    fetchCurriculum();
+  }, [courseId, userId]);
 
-    setTimeout(() => {
-      setCurriculumData((prevData) =>
-        prevData.map((section) =>
-          section.title === activeItem
-            ? {
-                ...section,
-                subSections: [
-                  ...section.subSections.slice(0, index + 1),
-                  newSubSection,
-                  ...section.subSections.slice(index + 1),
-                ],
-              }
-            : section
-        )
-      );
-    }, 0);
+  // 커리큘럼 데이터 없을 경우 초기 섹션 (video)
+  // 다시 수정하기
+
+  const handleActionQueue = (action) => {
+    setActionQueue((prev) => [...prev, action]);
   };
 
-  const handleDelete = async (index, type) => {
-    const subSection = activeSection.subSections[index];
-    let url = "";
+  // 섹션 수정
+  const handleSectionClick = (index) => {
+    setActiveLecture((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        subSections: prev.subSections.map((s, i) => ({
+          ...s,
+          isEditing: i === index ? !s.isEditing : false,
+        })),
+      };
+    });
+    setEditTarget((prev) =>
+      prev?.index === index
+        ? null
+        : { index, sectionIndex: activeLecture.lectureId }
+    );
+    handleActionQueue({ type: "edit", index });
+  };
 
-    if (type === "video") {
-      url = `/videos/${courseId}/${subSection.videoId}/${userId}`;
-    } else if (type === "material") {
-      url = `/materials/${courseId}/${subSection.materialId}/${userId}`;
-    } else if (type === "assignment") {
-      url = `/assignments/${courseId}/${subSection.assignmentId}/${userId}`;
-    } else {
-      console.error("Invalid type:", type);
-      return;
-    }
+  // 섹션 추가
+  const handleIconClick = (type, index) => {
+    if (!activeLecture) return;
+    const newId = activeLecture.subSections.length
+      ? Math.max(...activeLecture.subSections.map((s) => s.id)) + 1
+      : 1;
+    const newSubSection = {
+      id: newId,
+      type,
+      title: "새 항목",
+      isEditing: true,
+    };
+    setActiveLecture((prev) => ({
+      ...prev,
+      subSections: [
+        ...prev.subSections.map((s) => ({ ...s, isEditing: false })),
+        newSubSection,
+      ].sort((a, b) => a.id - b.id),
+    }));
+    setEditTarget({ index: newId - 1, sectionIndex: activeLecture.lectureId });
+    setActionQueue((prev) => [
+      ...prev,
+      { type: "add", section: newSubSection },
+    ]);
+  };
 
+  // 섹션 삭제
+  const handleDelete = (index, type, id) => {
+    if (!activeLecture) return;
+    setActiveLecture((prev) => ({
+      ...prev,
+      subSections: prev.subSections
+        .filter((_, i) => i !== index)
+        .map((s, i) => ({ ...s, id: i + 1 })),
+    }));
+    handleActionQueue({ type: "delete", id, sectionType: type });
+    // 삭제한 후 편집 상태 초기화
+    setEditTarget(null);
+  };
+
+  // 저장 버튼 클릭 시 API 요청
+  const handleSave = async () => {
     try {
-      const response = await fetch(url, {
-        method: "DELETE",
-      });
+      for (const action of actionQueue) {
+        let url = "";
+        let method = "PATCH";
+        let data = {};
 
-      if (!response.ok) {
-        throw new Error("삭제 요청 실패");
+        if (action.type === "edit") {
+          const subSection = activeLecture.subSections[action.index];
+          if (!subSection) continue;
+
+          // 새 데이터 구조 반영: contentOrderId, contentType
+          const { contentOrderId, contentType, contentData } = subSection;
+
+          if (contentType === "video") {
+            url = `/videos/${courseId}/${contentOrderId}/${userId}`;
+            data = {
+              videoTitle: contentData.videoTitle,
+              videoUrl: contentData.videoUrl,
+              startDate: contentData.startDate,
+              endDate: contentData.endDate,
+            };
+          } else if (contentType === "material") {
+            url = `/materials/${courseId}/${contentOrderId}/${userId}`;
+            method = "POST";
+            data = new FormData();
+            data.append("files", contentData.materialFile);
+            data.append("materialTitle", contentData.materialTitle);
+          } else if (contentType === "assignment") {
+            url = `/assignments/${courseId}/${contentOrderId}/${userId}`;
+            data = {
+              assignmentTitle: contentData.assignmentTitle,
+              assignmentDescription: contentData.assignmentDescription,
+              startDate: contentData.startDate,
+              endDate: contentData.endDate,
+            };
+          } else if (contentType === "lecture") {
+            url = `/lectures/${courseId}/${contentOrderId}/${userId}`;
+            data = {
+              lectureTitle: contentData.lectureTitle,
+              lectureDescription: contentData.lectureDescription,
+              startDate: contentData.startDate,
+              endDate: contentData.endDate,
+            };
+          }
+        }
+
+        // 삭제 처리
+        else if (action.type === "delete") {
+          if (action.sectionType === "video") {
+            url = `/videos/${courseId}/${action.id}/${userId}`;
+          } else if (action.sectionType === "material") {
+            url = `/materials/${courseId}/${action.id}/${userId}`;
+          } else if (action.sectionType === "assignment") {
+            url = `/assignments/${courseId}/${action.id}/${userId}`;
+          } else if (action.sectionType === "lecture") {
+            url = `/lectures/${courseId}/${action.id}/${userId}`;
+          }
+          method = "DELETE";
+        }
+
+        // API 요청 전송
+        if (url) {
+          if (method === "POST") {
+            await api.post(url, data, {
+              headers: { "Content-Type": "multipart/form-data" },
+            });
+          } else if (method === "DELETE") {
+            await api.delete(url);
+          } else {
+            await api.patch(url, data);
+          }
+        }
       }
 
-      console.log(`Section ${index} (${type}) deleted.`);
+      setActionQueue([]);
+      alert("변경 사항이 저장되었습니다.");
     } catch (error) {
-      console.error("삭제 중 오류 발생:", error);
+      console.error("저장 중 오류 발생:", error);
     }
   };
 
@@ -285,8 +313,8 @@ const Curriculum = () => {
         <div style={{ display: "flex", marginTop: "1rem" }}>
           <CurriculumSidebar
             sections={curriculumData}
-            activeItem={activeItem}
-            setActiveItem={setActiveItem}
+            activeItem={activeLectureId}
+            setActiveItem={setActiveLectureId}
             edit={true}
           />
           <main
@@ -312,7 +340,7 @@ const Curriculum = () => {
                   margin: "0",
                 }}
               >
-                1주차 학습
+                {activeLecture?.lectureTitle ?? "제목 없음"}
               </h1>
 
               <p
@@ -324,7 +352,9 @@ const Curriculum = () => {
                   margin: "0.2rem 1rem",
                 }}
               >
-                [학습기간 설정하기]
+                {activeLecture?.startDate && activeLecture?.endDate
+                  ? `${activeLecture.startDate} ~ ${activeLecture.endDate}`
+                  : "[학습 기간 설정하기]"}
               </p>
             </Section>
             <Section
@@ -340,47 +370,31 @@ const Curriculum = () => {
                   letterSpacing: "-1px",
                 }}
               >
-                {activeSection.title}
+                {activeLecture.lectureDescription}
               </h1>
             </Section>
 
-            {activeSection?.subSections.map((subSection, index) => (
-              <SectionWrapper key={index}>
+            {activeLecture?.subSections.map((subSection, index) => (
+              <SectionWrapper key={subSection.id}>
                 {subSection.isEditing && (
                   <EditContainer onIconClick={handleIconClick} index={index} />
                 )}
                 {subSection.isEditing ? (
                   <EditableSection
                     subSection={subSection}
-                    type={subSection.type}
-                    handleSave={(updatedTitle) => {
-                      const updatedSections = curriculumData.map((section) =>
-                        section.title === activeItem
-                          ? {
-                              ...section,
-                              subSections: section.subSections.map((s, i) =>
-                                i === index
-                                  ? {
-                                      ...s,
-                                      title: updatedTitle,
-                                      isEditing: false,
-                                    }
-                                  : s
-                              ),
-                            }
-                          : section
-                      );
-                      setCurriculumData(updatedSections);
-                    }}
+                    handleDelete={() =>
+                      handleDelete(index, subSection.id, subSection.type)
+                    }
                   />
                 ) : (
                   <CurriculumSection
                     subSection={subSection}
                     index={index}
-                    type={subSection.type}
                     editTarget={editTarget}
-                    handleSectionClick={handleSectionClick}
-                    handleDelete={handleDelete}
+                    handleSectionClick={() => handleSectionClick(index)}
+                    handleDelete={() =>
+                      handleDelete(index, subSection.id, subSection.type)
+                    }
                   />
                 )}
               </SectionWrapper>
@@ -388,7 +402,11 @@ const Curriculum = () => {
           </main>
         </div>
       </PageLayout>
-      <EditButton to="/class/${courseId}/curriculum" edit={false} />
+      <EditButton
+        onClick={handleSave}
+        to="/class/${courseId}/curriculum"
+        edit={false}
+      />
     </div>
   );
 };

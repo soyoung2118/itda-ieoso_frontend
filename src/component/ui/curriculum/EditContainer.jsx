@@ -39,7 +39,7 @@ const HighlightLine = styled.div`
   width: 0.35rem;
   height: 84%;
   background-color: var(--main-color);
-  
+
   z-index: 9;
 `;
 
@@ -47,8 +47,16 @@ const EditContainer = ({ onIconClick, index }) => {
   // 아이콘 데이터 배열
   const icons = [
     { src: VideoIcon, alt: "Video", action: () => onIconClick("video", index) },
-    { src: MaterialIcon, alt: "Material", action: () => onIconClick("material", index) },
-    { src: AssignmentIcon, alt: "Assignment", action: () =>onIconClick("assignment", index) },
+    {
+      src: MaterialIcon,
+      alt: "Material",
+      action: () => onIconClick("material", index),
+    },
+    {
+      src: AssignmentIcon,
+      alt: "Assignment",
+      action: () => onIconClick("assignment", index),
+    },
   ];
 
   return (
@@ -56,12 +64,7 @@ const EditContainer = ({ onIconClick, index }) => {
       <HighlightLine />
       <Container>
         {icons.map((icon, idx) => (
-          <img
-            key={idx}
-            src={icon.src}
-            alt={icon.alt}
-            onClick={icon.action}
-          />
+          <img key={idx} src={icon.src} alt={icon.alt} onClick={icon.action} />
         ))}
       </Container>
     </>
