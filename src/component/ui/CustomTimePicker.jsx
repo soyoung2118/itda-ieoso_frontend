@@ -10,8 +10,8 @@ const MINUTE_ITEMS = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, 
 
 const CustomTimePicker = ({ value = new Date(), onChange, width = 239, disabled = false, placeholder = "시간을 설정해주세요." }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedTime, setSelectedTime] = useState(value || null);
     const scrollViewsRef = useRef([null, null, null]);
+    const [selectedTime, setSelectedTime] = useState(value || new Date(2000, 0, 1, 0, 0, 0));
     const [currentMeridiem, setCurrentMeridiem] = useState(
       value ? (value.getHours() >= 12 ? '오후' : '오전') : '오전'
     );
@@ -23,7 +23,7 @@ const CustomTimePicker = ({ value = new Date(), onChange, width = 239, disabled 
       const hours = date.getHours();
       const minutes = String(date.getMinutes()).padStart(2, '0');
       const meridiem = hours >= 12 ? '오후' : '오전';
-      const hour12 = String(hours % 12 || 12).padStart(2, '0');
+      const hour12 = String(hours % 12).padStart(2, '0');
       return `${meridiem} ${hour12}:${minutes}`;
     };
 
@@ -35,9 +35,10 @@ const CustomTimePicker = ({ value = new Date(), onChange, width = 239, disabled 
 
     useEffect(() => {
       if (!value) {
-        setSelectedTime(null);
+        const defaultTime = new Date(2000, 0, 1, 0, 0, 0);
+        setSelectedTime(defaultTime);
         setCurrentMeridiem('오전');
-        setInputTime(placeholder);
+        setInputTime(formatTimeString(defaultTime));
         return;
       }
     
