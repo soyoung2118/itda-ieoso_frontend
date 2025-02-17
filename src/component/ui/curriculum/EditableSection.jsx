@@ -97,7 +97,9 @@ const EditableSection = ({ subSection, handleDelete, index }) => {
       ? `${subSection.startDate} ~ ${subSection.endDate}`
       : "기간 미정"
   );
-  const [assignmentDescription, setAssignmentDescription] = useState(subSection?.assignmentDescription || "");
+  const [assignmentDescription, setAssignmentDescription] = useState(
+    subSection?.assignmentDescription || ""
+  );
 
   const handleVideoInput = () => {
     const newThumbnail = getYouTubeThumbnail(videoUrl);
@@ -172,7 +174,7 @@ const EditableSection = ({ subSection, handleDelete, index }) => {
                       style={{
                         border: "2px solid #c3c3c3",
                         borderRadius: "7px",
-                        color: "#c3c3c3",
+                        color: "black",
                         padding: "15px",
                         fontSize: "16px",
                         fontWeight: "bold",
@@ -180,6 +182,7 @@ const EditableSection = ({ subSection, handleDelete, index }) => {
                         boxSizing: "border-box",
                       }}
                     />
+
                   </div>
                   <div style={{ display: "flex" }}>
                     <Input
@@ -197,6 +200,13 @@ const EditableSection = ({ subSection, handleDelete, index }) => {
                         boxSizing: "border-box",
                       }}
                     />
+                    <style>
+                      {`
+                        input::placeholder {
+                          color: #c3c3c3;
+                        }
+                      `}
+                    </style>
                     <button
                       onClick={handleVideoInput}
                       style={{
@@ -262,7 +272,10 @@ const EditableSection = ({ subSection, handleDelete, index }) => {
 
         {subSection.contentType === "assignment" && (
           <div>
-            <DateTimeEdit  initialStartDate={subSection.startDate} initialEndDate={subSection.endDate} />
+            <DateTimeEdit
+              initialStartDate={subSection.startDate}
+              initialEndDate={subSection.endDate}
+            />
             <div style={{ display: "flex", alignItems: "flex-start" }}>
               <img
                 src={Assignment}
@@ -330,7 +343,11 @@ const EditableSection = ({ subSection, handleDelete, index }) => {
               }}
               onClick={(e) => {
                 e.stopPropagation(); // 클릭 이벤트 버블링 방지
-                handleDelete(index, subSection.contentType, subSection.contentOrderId);
+                handleDelete(
+                  index,
+                  subSection.contentType,
+                  subSection.contentOrderId
+                );
               }}
             />
           </div>

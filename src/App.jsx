@@ -42,7 +42,7 @@ function App() {
 
             {/* 강의실 상세 페이지 */}
 
-            {/* ✅ 강의실 관련 라우트 */}
+            {/* 강의실 관련 라우트 */}
           <Route path="/class/:courseId" element={<Class />}>
             <Route path="overview/info" element={<ClassOverview />} />
             <Route path="overview/notice" element={<ClassNotice />} />

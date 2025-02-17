@@ -51,11 +51,11 @@ const DeleteButton = styled.img`
   cursor: pointer;
 `;
 
-const Curriculum = () => {
+const CurriculumEdit = () => {
   const { courseId } = useParams();
   const [userId, setUserId] = useState(null);
   const [curriculumData, setCurriculumData] = useState([]);
-  const [activeLectureId, setActiveLectureId] = useState(1); // ✅ 기본 선택 lectureId = 1
+  const [activeLectureId, setActiveLectureId] = useState(null);
   const [activeLecture, setActiveLecture] = useState(null);
   // const [curriculumData, setCurriculumData] = useState(
   //   dummyData[0]?.data.map((lecture) => ({
@@ -107,6 +107,19 @@ const Curriculum = () => {
     }
   }, []);
 
+  const defaultEditableSection = {
+    videoId: 1,
+    videoTitle: null,
+    videoUrl: "",
+    startDate: null,
+    endDate: null,
+    contentOrderId: 1,
+    contentType: "video",
+    contentOrderIndex: 1,
+    title: null,
+    isEditing: true,
+  };
+
   // 데이터 받아와서 초기화
   useEffect(() => {
     if (!userId) return;
@@ -116,37 +129,57 @@ const Curriculum = () => {
         const response = await api.get(
           `/lectures/curriculum/${courseId}/${userId}`
         );
-        if (response.data.success) {
-          const lectures = response.data.data;
-          setCurriculumData(lectures);
 
-          const defaultLecture =
-            lectures.find((lec) => lec.lectureId === 1) || lectures[0];
-          setActiveLectureId(defaultLecture.lectureId);
-
-          setActiveLecture({
-            ...defaultLecture,
-            subSections: [
-              ...(defaultLecture.videos || []).map((v) => ({
-                ...v,
-                title: v.videoTitle,
-                isEditing: false,
-              })),
-              ...(defaultLecture.materials || []).map((m) => ({
-                ...m,
-                title: m.materialTitle,
-                isEditing: false,
-              })),
-              ...(defaultLecture.assignments || []).map((a) => ({
-                ...a,
-                title: a.assignmentTitle,
-                isEditing: false,
-              })),
-            ].sort(
-              (a, b) => (a.contentOrderIndex || 0) - (b.contentOrderIndex || 0)
-            ), // 정렬
-          });
+        if (!response.data || !response.data.success) {
+          console.error("API 요청 실패:", response.data);
+          return;
         }
+
+        const lectures = response.data.data || []; // 데이터 없을 경우 빈 배열로 처리
+        setCurriculumData(lectures);
+
+        let defaultLecture;
+
+        defaultLecture =
+          lectures.find((lec) => lec.lectureId === 1) || lectures[0];
+
+        if (
+          !defaultLecture.subSections ||
+          defaultLecture.subSections.length === 0
+        ) {
+          defaultLecture.subSections = [defaultEditableSection];
+        }
+
+        console.log("[DEBUG] Before setting activeLecture:");
+        console.log("defaultLecture:", defaultLecture);
+        console.log("defaultLecture.subSections:", defaultLecture.subSections);
+
+        setActiveLecture({
+          ...defaultLecture,
+          subSections: [
+            ...(defaultLecture.videos || []).map((v) => ({
+              ...v,
+              title: v.videoTitle,
+              isEditing: false,
+            })),
+            ...(defaultLecture.materials || []).map((m) => ({
+              ...m,
+              title: m.materialTitle,
+              isEditing: false,
+            })),
+            ...(defaultLecture.assignments || []).map((a) => ({
+              ...a,
+              title: a.assignmentTitle,
+              isEditing: false,
+            })),
+          ].sort(
+            (a, b) => (a.contentOrderIndex || 0) - (b.contentOrderIndex || 0)
+          ), // 정렬
+        });
+
+        console.log("After", defaultLecture);
+
+        setActiveLectureId(defaultLecture.lectureId);
       } catch (error) {
         console.error("커리큘럼 불러오기 실패:", error);
       }
@@ -155,8 +188,9 @@ const Curriculum = () => {
     fetchCurriculum();
   }, [courseId, userId]);
 
-  // 커리큘럼 데이터 없을 경우 초기 섹션 (video)
-  // 다시 수정하기
+  // 강의 데이터가 없는 경우 기본 `EditableSection` 생성
+  const isEmptyLecture =
+    !activeLecture?.subSections || activeLecture.subSections.length === 0;
 
   const handleActionQueue = (action) => {
     setActionQueue((prev) => [...prev, action]);
@@ -164,6 +198,10 @@ const Curriculum = () => {
 
   // 섹션 수정
   const handleSectionClick = (index) => {
+    console.log(
+      `[DEBUG] handleSectionClick - Index: ${index}, Previous isEditing:`,
+      activeLecture.subSections[index]?.isEditing
+    );
     setActiveLecture((prev) => {
       if (!prev) return prev;
       return {
@@ -307,9 +345,7 @@ const Curriculum = () => {
 
   return (
     <div>
-      <TopBar />
       <PageLayout>
-        <ClassTopbar activeTab="curriculum" />
         <div style={{ display: "flex", marginTop: "1rem" }}>
           <CurriculumSidebar
             sections={curriculumData}
@@ -370,45 +406,54 @@ const Curriculum = () => {
                   letterSpacing: "-1px",
                 }}
               >
-                {activeLecture.lectureDescription}
+                {activeLecture?.lectureDescription ?? "설명 없음"}
               </h1>
             </Section>
 
-            {activeLecture?.subSections.map((subSection, index) => (
-              <SectionWrapper key={subSection.id}>
-                {subSection.isEditing && (
-                  <EditContainer onIconClick={handleIconClick} index={index} />
-                )}
-                {subSection.isEditing ? (
-                  <EditableSection
-                    subSection={subSection}
-                    handleDelete={() =>
-                      handleDelete(index, subSection.id, subSection.type)
-                    }
-                  />
-                ) : (
-                  <CurriculumSection
-                    subSection={subSection}
-                    index={index}
-                    editTarget={editTarget}
-                    handleSectionClick={() => handleSectionClick(index)}
-                    handleDelete={() =>
-                      handleDelete(index, subSection.id, subSection.type)
-                    }
-                  />
-                )}
+            {isEmptyLecture ? (
+              <SectionWrapper>
+                <EditableSection subSection={defaultEditableSection} />
               </SectionWrapper>
-            ))}
+            ) : (
+              activeLecture?.subSections.map((subSection, index) => (
+                <SectionWrapper key={subSection.id}>
+                  {subSection.isEditing && (
+                    <EditContainer
+                      onIconClick={handleIconClick}
+                      index={index}
+                    />
+                  )}
+                  {subSection.isEditing ? (
+                    <EditableSection
+                      subSection={subSection}
+                      handleDelete={() =>
+                        handleDelete(index, subSection.id, subSection.type)
+                      }
+                    />
+                  ) : (
+                    <CurriculumSection
+                      subSection={subSection}
+                      index={index}
+                      editTarget={editTarget}
+                      handleSectionClick={() => handleSectionClick(index)}
+                      handleDelete={() =>
+                        handleDelete(index, subSection.id, subSection.type)
+                      }
+                    />
+                  )}
+                </SectionWrapper>
+              ))
+            )}
           </main>
         </div>
       </PageLayout>
       <EditButton
         onClick={handleSave}
-        to="/class/${courseId}/curriculum"
+        to={`/class/${courseId}/curriculum`}
         edit={false}
       />
     </div>
   );
 };
 
-export default Curriculum;
+export default CurriculumEdit;

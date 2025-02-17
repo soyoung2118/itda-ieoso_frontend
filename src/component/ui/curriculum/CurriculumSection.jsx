@@ -59,13 +59,16 @@ const CurriculumSection = ({
 }) => {
   const isEditing = subSection.isEditing;
 
+  console.log(
+    `[DEBUG] CurriculumSection - Index: ${index}, isEditing:`,
+    isEditing
+  );
+
   return (
     <Section onClick={() => handleSectionClick(index)}>
       {isEditing ? (
         <div style={{ display: "flex", width: "100%", position: "relative" }}>
-          <div style={{ position: "relative" }}>
-            <EditContainer onIconClick={handleIconClick} index={index} />
-          </div>
+          <EditContainer onIconClick={handleIconClick} index={index} />
 
           <EditableSection
             subSection={subSection}
@@ -78,7 +81,9 @@ const CurriculumSection = ({
           {subSection.contentType === "video" && (
             <>
               <VideoContainer>
-                <VideoThumbnail src={getYouTubeThumbnail(subSection.videoUrl)} />
+                <VideoThumbnail
+                  src={getYouTubeThumbnail(subSection.videoUrl)}
+                />
                 <img
                   src={PlayIcon}
                   alt="Play Icon"
@@ -162,6 +167,5 @@ const CurriculumSection = ({
     </Section>
   );
 };
-
 
 export default CurriculumSection;
