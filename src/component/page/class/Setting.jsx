@@ -80,6 +80,22 @@ export default function Setting() {
     });
   };
 
+  const formatTimeWithMeridiem = (timeString) => {
+    if (!timeString) return '';
+  
+    const [hours, minutes] = timeString.split(':');
+    const hourNum = parseInt(hours, 10);
+    
+    if (hourNum === 0) return '오전 12:' + minutes;
+    if (hourNum === 12) return '오후 12:' + minutes;
+    
+    if (hourNum < 12) {
+      return `오전 ${String(hourNum).padStart(2, '0')}:${minutes}`;
+    } else {
+      return `오후 ${String(hourNum - 12).padStart(2, '0')}:${minutes}`;
+    }
+  };
+
   const handleDifficultySelect = (newLevel) => {
     if (form.difficulty !== newLevel) {
         const difficultyText = {
@@ -241,7 +257,7 @@ export default function Setting() {
                 <DisableInput
                   name='lectureTime'
                   style={{width: '289px'}}
-                  value={isLecturePending ? '' : `${form.lectureTime >= '12:00' ? '오후' : '오전'} ${form.lectureTime}`}
+                  value={isLecturePending ? '' : formatTimeWithMeridiem(form.lectureTime)}
                   disabled
                 />
                 </TimeGroup>
@@ -272,7 +288,7 @@ export default function Setting() {
                 <DisableInput
                   name='assignmentTime'
                   style={{width: '289px'}}
-                  value={isAssignmentPending ? '' : `${form.assignmentTime >= '12:00' ? '오후' : '오전'} ${form.assignmentTime}`}
+                  value={isAssignmentPending ? '' : formatTimeWithMeridiem(form.assignmentTime)}
                   disabled
                 />
                 </TimeGroup> 
