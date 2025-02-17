@@ -216,7 +216,7 @@ export default function Setting() {
                 <DisableInput
                   name='lectureTime'
                   style={{width: '289px'}}
-                  value={isLecturePending ? '오전 00:00' : `${form.lectureTime >= '12:00' ? '오후' : '오전'} ${form.lectureTime}`}
+                  value={isLecturePending ? '' : `${form.lectureTime >= '12:00' ? '오후' : '오전'} ${form.lectureTime}`}
                   disabled
                 />
                 </TimeGroup>
@@ -247,7 +247,7 @@ export default function Setting() {
                 <DisableInput
                   name='assignmentTime'
                   style={{width: '289px'}}
-                  value={isAssignmentPending ? '오전 00:00' : `${form.assignmentTime >= '12:00' ? '오후' : '오전'} ${form.assignmentTime}`}
+                  value={isAssignmentPending ? '' : `${form.assignmentTime >= '12:00' ? '오후' : '오전'} ${form.assignmentTime}`}
                   disabled
                 />
                 </TimeGroup> 
