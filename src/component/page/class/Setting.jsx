@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import AdminTopBar from '../../ui/class/AdminTopBar';
 import api from "../../api/api";
+import { UsersContext } from '../../contexts/usersContext';
 
 export default function Setting() {
   const navigate = useNavigate();
   const { courseId } = useParams();
+  const { user } = useContext(UsersContext);
   const timeSlots = ['월', '화', '수', '목', '금', '토', '일'];
   const [isAssignmentPending, setIsAssignmentPending] = useState(false);
   const [isLecturePending, setIsLecturePending] = useState(false);
@@ -18,7 +20,7 @@ export default function Setting() {
     instructor: '',
     entrycode: '',
     startDate: null,
-    durationWeeks: 1,
+    durationWeeks: 1, 
     lectureDays: [],
     lectureTime: '',
     assignmentDays: [],
@@ -42,14 +44,14 @@ export default function Setting() {
             entrycode: courseData.entryCode,
             startDate: courseData.startDate,
             durationWeeks: courseData.durationWeeks,
-            lectureDays: courseData.lectureDay,
+            lectureDays: courseData.lectureDay ? courseData.lectureDay.split(',').map(Number) : [],
             lectureTime: courseData.lectureTime?.slice(0, -3),
-            assignmentDays: courseData.assignmentDueDay,
+            assignmentDays: courseData.assignmentDueDay ? courseData.assignmentDueDay.split(',').map(Number) : [],
             assignmentTime: courseData.assignmentDueTime?.slice(0, -3),
             difficulty: courseData.difficultyLevel?.toLowerCase()
           });
 
-          setIsAssignmentPending(courseData.assignmentDueTime === '00:00:00');
+          setIsAssignmentPending(!courseData.assignmentDueDay || courseData.assignmentDueTime === '00:00:00');
           setIsLecturePending(courseData.lectureTime === '00:00:00');
         }
       } catch (error) {
@@ -90,20 +92,41 @@ export default function Setting() {
     setForm(prev => ({ ...prev, difficulty: newLevel }));
     };
 
-  const handleSubmit = () => {
-    console.log('Form Data:', {
-      title: form.coursename,
-      instructorName: form.instructor,
-      startDate: form.startDate,
-      durationWeeks: form.durationWeeks,
-      lectureDay: form.lectureDays,
-      lectureTime: form.lectureTime,
-      assignmentDueDay: form.assignmentDays,
-      assignmentDueTime: form.assignmentTime,
-      difficultyLevel: form.difficulty
-    });
+  const handleSubmit = async () => {
+    try{
+      if (!user) {
+        console.log('사용자 정보가 없습니다');
+        return;
+      }
 
-    navigate('/curriculum');
+      const settingData = {
+        title: form.coursename,
+        instructorName: form.instructor,
+        startDate: form.startDate,
+        durationWeeks: Number(form.durationWeeks),
+        lectureDay: form.lectureDays,
+        lectureTime: form.lectureTime + ':00',
+        assignmentDueDay: form.assignmentDays,
+        assignmentDueTime: form.assignmentTime + ':00',
+        difficultyLevel: form.difficulty.toUpperCase()
+      };
+
+      console.log(settingData);
+
+      const settingResponse = await api.put(`/courses/${courseId}/${user.userId}/setting`, 
+        settingData
+      );
+
+      if (settingResponse.data.success) {
+        console.log(settingResponse.data);
+      } else {
+        throw new Error('강의실 내용 수정에 실패했습니다');
+      }
+    } catch (error) {
+      console.error('Failed to update course setting:', error);
+    }
+
+    //navigate('/curriculum');
   };
 
   return (
@@ -125,6 +148,7 @@ export default function Setting() {
                 value={form.coursename}
                 onChange={handleFormChange}
                 style={{width: '100%'}}
+                autoComplete='off'
               />
             </FormItem>
 
@@ -140,6 +164,7 @@ export default function Setting() {
                 value={form.instructor}
                 onChange={handleFormChange}
                 style={{width: '165px'}}
+                autoComplete='off'
               />
             </FormItem>
 

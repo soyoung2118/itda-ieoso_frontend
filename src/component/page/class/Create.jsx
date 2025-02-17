@@ -178,7 +178,7 @@ const handleAssignmentTimeChange = (timeString) => {
                 value={form.coursename}
                 onChange={handleFormChange}
                 style={{width: '100%'}}
-                autocomplete='off'
+                autoComplete='off'
               />
             </FormItem>
 
@@ -194,7 +194,7 @@ const handleAssignmentTimeChange = (timeString) => {
                 value={form.instructor}
                 onChange={handleFormChange}
                 style={{width: '165px '}}
-                autocomplete='off'
+                autoComplete='off'
               />
             </FormItem>
           </FormGroup>
