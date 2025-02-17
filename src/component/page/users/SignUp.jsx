@@ -15,6 +15,7 @@ import {
     Step,
     Terms,
     Term,
+    ResponsiveLabel,
     SignUpInput,
     CustomCheckboxCircle,
     CustomCheckboxTransparent,
@@ -45,7 +46,7 @@ function TermsAgreement({ isChecked, termsChecked, handleCheckAll, handleIndivid
               onChange={handleCheckAll}
             />
           }
-          label="전체 동의"
+          label={<ResponsiveLabel>전체 동의</ResponsiveLabel>}
         />
       </Term>
       <div style={{borderBottom: '1px solid #CDCDCD', margin: '10px 0' }}></div>
@@ -59,10 +60,10 @@ function TermsAgreement({ isChecked, termsChecked, handleCheckAll, handleIndivid
               onChange={() => handleIndividualCheck('service')}
             />
           }
-          label={TERMS.service}
+          label={<ResponsiveLabel>{TERMS.service}</ResponsiveLabel>}
         />
         <IconButton onClick={() => handleDocumentOpen('service')}>
-          <ArrowForwardIosIcon style={{ fontSize: '16px' }} />
+          <ArrowForwardIosIcon style={{ fontSize: '15px' }} />
         </IconButton>
       </Term>
       <Term>
@@ -75,10 +76,10 @@ function TermsAgreement({ isChecked, termsChecked, handleCheckAll, handleIndivid
               onChange={() => handleIndividualCheck('privacy')}
             />
           }
-          label={TERMS.privacy}
+          label={<ResponsiveLabel>{TERMS.privacy}</ResponsiveLabel>}
         />
         <IconButton onClick={() => handleDocumentOpen('privacy')}>
-          <ArrowForwardIosIcon style={{ fontSize: '16px' }} />
+          <ArrowForwardIosIcon style={{ fontSize: '15px' }} />
         </IconButton>
       </Term>
       <Term>
@@ -91,10 +92,10 @@ function TermsAgreement({ isChecked, termsChecked, handleCheckAll, handleIndivid
               onChange={() => handleIndividualCheck('marketing')}
             />
           }
-          label={TERMS.marketing}
+          label={<ResponsiveLabel>{TERMS.marketing}</ResponsiveLabel>}
         />
         <IconButton onClick={() => handleDocumentOpen('marketing')}>
-          <ArrowForwardIosIcon style={{ fontSize: '16px' }} />
+          <ArrowForwardIosIcon style={{ fontSize: '15px' }} />
         </IconButton>
       </Term>
     </Terms>
@@ -254,7 +255,7 @@ export default function SignUp() {
           {step === 1 && (
             <>
               <p>※ itda 계정을 만들기 위해 약관에 동의해주세요.</p>
-              <div style={{minWidth: '400px', width: '100%', margin: '0 auto' }}>
+              <div style={{minWidth: '250px', width: '100%', margin: '0 auto' }}>
                 <TermsAgreement
                   isChecked={isChecked}
                   termsChecked={termsChecked}
@@ -270,7 +271,7 @@ export default function SignUp() {
           )}
           {step === 2 && (
             <>
-              <div style={{ minWidth: '400px', maxWidth: '600px', width: '100%', margin: '0 auto' }}>
+              <div style={{ minWidth: '300px', maxWidth: '600px', width: '100%', margin: '0 auto' }}>
                 <Label style={{ textAlign: 'left', width: '100%' }}>이름</Label>
                 <InputContainer>
                   <SignUpInput placeholder="이름을 입력해주세요." style={{ width: '100%' }}

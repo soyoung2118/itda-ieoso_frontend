@@ -1,11 +1,8 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation, useParams } from "react-router-dom";
+import { useNavigate, useLocation, useParams, useOutletContext } from "react-router-dom";
 import styled from "styled-components";
-import TopBar from "../../ui/TopBar";
 import LogoSymbol from "../../img/logo/itda_logo_symbol.svg";
 import CurriculumSidebar from "../../ui/class/CurriculumSidebar";
-import ClassTopbar from "../../ui/class/ClassTopbar";
-import { PageLayout } from "../../ui/class/ClassLayout";
 import ClassThumbnail from "../../img/class/class_thumbnail.svg";
 import DoneIcon from "../../img/class/check/done_icon.svg";
 import UndoneIcon from "../../img/class/check/undone_icon.svg";
@@ -65,6 +62,7 @@ const SectionIcon = styled.img`
 
 const Curriculum = () => {
   const navigate = useNavigate();
+  const { courseData, isCreator } = useOutletContext();
   const [showPopup, setShowPopup] = useState(false);
   const location = useLocation();
   const entrycode = location.state?.entrycode || null;
@@ -141,10 +139,6 @@ const Curriculum = () => {
   );
 
   return (
-    <div>
-      <TopBar />
-      <PageLayout>
-        <ClassTopbar activeTab="curriculum" />
         <div style={{ display: "flex", marginTop: "1rem" }}>
           <CurriculumSidebar
             sections={curriculumData}
@@ -352,9 +346,9 @@ const Curriculum = () => {
               </div>
             ))}
           </main>
-        </div>
-      </PageLayout>
-      <EditButton to={`/class/${courseId}/curriculum/edit`} edit={true} />
+      {isCreator && (
+        <EditButton to={`/class/${courseId}/curriculum/edit`} edit={true} />
+      )}
 
       {isEntryCodeModalOpen && <Modal entrycode={entrycode} onClose={() => setIsEntryCodeModalOpen(false)} />}
     </div>

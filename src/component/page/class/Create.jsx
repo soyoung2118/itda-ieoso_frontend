@@ -3,14 +3,13 @@ import { useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import TopBar from '../../ui/TopBar';
 import Calendar from "../../img/classroom/calendar.png";
-import Clock from "../../img/classroom/clock.png";
 import DatePicker from "react-datepicker";
+import CustomTimePicker from "../../ui/CustomTimePicker";
 import "../../../style/react-datepicker.css";
 import api from "../../api/api";
 
 export default function Create() {
   const navigate = useNavigate();
-  const [courseInfo, setCourseInfo] = useState(null);
   const timeSlots = ['월', '화', '수', '목', '금', '토', '일'];
   const [isAssignmentPending, setIsAssignmentPending] = useState(false);
   const [isLecturePending, setIsLecturePending] = useState(false);
@@ -45,6 +44,20 @@ const handleDaySelect = (type, day) => {
       : [...prev[key], dayNumber]
   }));
  };
+
+ const handleLectureTimeChange = (timeString) => {
+  setForm(prev => ({
+    ...prev,
+    lectureTime: timeString
+  }));
+};
+
+const handleAssignmentTimeChange = (timeString) => {
+  setForm(prev => ({
+    ...prev,
+    assignmentTime: timeString
+  }));
+};
   
   const handleDifficultySelect = (difficulty) => {
     setForm(prev => ({ ...prev, difficulty }));
@@ -123,6 +136,7 @@ const handleDaySelect = (type, day) => {
                 value={form.coursename}
                 onChange={handleFormChange}
                 style={{width: '100%'}}
+                autocomplete='off'
               />
             </FormItem>
 
@@ -138,6 +152,7 @@ const handleDaySelect = (type, day) => {
                 value={form.instructor}
                 onChange={handleFormChange}
                 style={{width: '165px '}}
+                autocomplete='off'
               />
             </FormItem>
           </FormGroup>
@@ -204,23 +219,22 @@ const handleDaySelect = (type, day) => {
                   </DayButtonGroup>
                   { !isLecturePending && <HelpText>복수 선택이 가능해요!</HelpText>}
                 </TimeGroup>
-
+                
                 <TimeGroup>
-                  <InputGroup>
-                    <IconInput
-                      type="time"
-                      name='lectureTime'
-                      placeholder="강의 시간을 설정해주세요."
-                      style={{width: '239px'}}
-                      value={form.lectureTime}
-                      onChange={handleFormChange}
-                      disabled={isLecturePending}
-                    />
-                    <CalendarIcon>
-                      <img src={Clock} alt="시계 아이콘" style={{ width: '18px', height: '18px' }} />
-                    </CalendarIcon>
-                  </InputGroup>
-                  { form.lectureTime && <HelpText>강의 시간이 설정되었어요!</HelpText> }
+                    <TimePickerWrapper>
+                      <CustomTimePicker
+                        value={form.lectureTime ? new Date(`2000-01-01T${form.lectureTime}`) : null}
+                        onChange={(date) => {
+                          const timeString = date.toTimeString().split(' ')[0];
+                          handleLectureTimeChange(timeString);
+                        }}
+                        disabled={isLecturePending}
+                        placeholder="강의 시간을 설정해주세요."
+                      />
+                      </TimePickerWrapper>
+                  {form.lectureTime && !isLecturePending && 
+                    <HelpText>강의 시간이 설정되었어요!</HelpText>
+                  }
                 </TimeGroup>
 
                 <TimeGroup>
@@ -248,32 +262,32 @@ const handleDaySelect = (type, day) => {
                     <DayButton 
                       key={day}
                       active={!isAssignmentPending && form.assignmentDays.includes(timeSlots.indexOf(day) + 1)}
-  onClick={() => !isAssignmentPending && handleDaySelect('assignment', day)}
+                      onClick={() => !isAssignmentPending && handleDaySelect('assignment', day)}
                     >
                       {day}
                     </DayButton>
                   ))}
                   </DayButtonGroup>
-                  {!isAssignmentPending && <HelpText>복수 선택이 가능해요!</HelpText>}
+                  {!isAssignmentPending && 
+                  <HelpText>복수 선택이 가능해요!</HelpText>
+                  }
                 </TimeGroup>
 
                 <TimeGroup>
-                  <InputGroup>
-                    <IconInput
-                      type="time"
-                      name='assignmentTime'
-                      placeholder="과제 시간을 설정해주세요."
-                      style={{width: '239px'}}
-                      value={form.assignmentTime}
-                      onChange={handleFormChange}
-                      disabled={isAssignmentPending}
-                    />
-                    <CalendarIcon>
-                      <img src={Clock} alt="시계" style={{ width: '18px', height: '18px' }} />
-                    </CalendarIcon>
-                  </InputGroup>
-                  
-                  { form.assignmentTime && <HelpText>과제 시간이 설정되었어요!</HelpText> }
+                    <TimePickerWrapper>
+                      <CustomTimePicker
+                        value={form.assignmentTime ? new Date(`2000-01-01T${form.assignmentTime}`) : null}
+                        onChange={(date) => {
+                          const timeString = date.toTimeString().split(' ')[0];
+                          handleAssignmentTimeChange(timeString);
+                        }}
+                        disabled={isAssignmentPending}
+                        placeholder="과제 시간을 설정해주세요."
+                      />
+                    </TimePickerWrapper>
+                  { form.assignmentTime && !isAssignmentPending &&
+                   <HelpText>과제 시간이 설정되었어요!</HelpText>
+                   }
                 </TimeGroup> 
 
                 <TimeGroup>
@@ -479,6 +493,13 @@ const TimeGroup = styled.div`
   display: flex;
   flex-direction: column;
 `;
+
+const TimePickerWrapper = styled.div`
+  margin-right: 20px;
+  display: flex;
+  align-items: center;
+  position: relative;
+`
 
 const CuliculumGroup = styled.div`
   width: 100%;

@@ -1,41 +1,15 @@
-import ClassTopbar from "../../ui/class/ClassTopbar";
-import ClassSidebar from "../../ui/class/ClassSidebar";
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import api from "../../api/api";
-import ClassThumbnail from "../../img/class/class_thumbnail.svg";
-import TopBar from "../../ui/TopBar";
+import { useState, useContext } from "react";
+import { useParams, useOutletContext } from "react-router-dom";
 import styled from "styled-components";
-import { PageLayout, Section } from "../../ui/class/ClassLayout";
-import EditButton from "../../ui/class/EditButton";
-
-// const SectionTitle = styled.h2`
-//   font-size: 1.5rem;
-//   font-weight: bold;
-//   margin-bottom: 1rem;
-//   margin-top: 3.5rem;
-// `;
-
-const SectionContent = styled.div`
-  font-size: 1.15rem;
-  line-height: 1.5;
-  color: var(--black-color);
-  margin-bottom: 2rem;
-
-  ul {
-    margin-top: 0.5rem;
-    padding-left: 1.8rem;
-    list-style-type: disc;
-
-    li {
-      margin-bottom: 0.5rem;
-
-      &::marker {
-        font-size: 0.6em;
-      }
-    }
-  }
-`;
+import ClassSidebar from "../../ui/class/ClassSidebar";
+import ClassThumbnail from "../../img/class/class_thumbnail.svg";
+import EditBtn from "../../img/class/edit_btn.svg";
+import EditedBtn from "../../img/class/edited_btn.svg";
+import { Section } from "../../ui/class/ClassLayout";
+import ReactQuill from "react-quill-new"; 
+import "react-quill-new/dist/quill.snow.css";
+import api from "../../api/api";
+import { UsersContext } from "../../contexts/usersContext";
 
 const IconRow = styled.div`
   display: flex;
@@ -45,55 +19,116 @@ const IconRow = styled.div`
   color: var(--darkgrey-color);
 
   .material-symbols-outlined {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     vertical-align: middle;
   }
 
   span {
-    font-size: 1.18rem;
+    font-size: 1.2rem;
     font-weight: 500;
   }
 `;
 
 const Content = styled.div`
-  margin-top: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  width: 100%;
+  min-height: 50vh;
+  height: auto;
+  background-color: #FFFFFF;
+  box-sizing: border-box;
+  padding: ${({ isEditing }) => (isEditing ? "0px" : "42px 0px")};
+  box-shadow: ${({ isEditing }) => (isEditing ? "-4px 0 0 #FF4747" : "none")};
 `;
 
+const StyledQuill = styled(ReactQuill)`
+  width: 100%;
+  max-width: 1200px;
+  
+  .ql-toolbar {
+    order: 2;
+  }
+
+  .ql-container {
+    order: 1;
+    border: none;
+    box-sizing: border-box;
+  }
+
+  .ql-editor {
+    font-size: 1rem;
+    font-family: 'Pretendard', sans-serif !important;
+    padding: 10px 33px !important;
+    line-height: 2.2 !important;
+  }
+`;
+
+const StyledButton = styled.button`
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 3.8rem;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+`;
+
+const EditableSectionContent = ({ content, onChange, isEditing }) => {
+  const modules = {
+    toolbar: [
+      ["bold", "italic", "underline"],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["link"],
+      [{ indent: "-1" }, { indent: "+1" }],
+    ],
+  };
+
+  const modulesToUse = isEditing ? modules : { toolbar: false };
+
+  return (
+    <StyledQuill
+      key={isEditing ? "editing" : "readOnly"}
+      value={content}
+      onChange={isEditing ? onChange : () => {}}
+      readOnly={!isEditing}
+      modules={modulesToUse}
+      theme="snow"
+    />
+  );
+};
+
 const ClassOverview = () => {
-  const { courseId } = useParams(); // 현재 URL에서 courseId 추출
-  const [courseData, setCourseData] = useState(null);
+  const context = useOutletContext();
+  const courseData = context?.courseData || {};
+  const isCreator = context?.isCreator || false;
+  const { courseId } = useParams();
+  const { user } = useContext(UsersContext);
 
-  useEffect(() => {
-    const fetchCourseData = async () => {
-      try {
-        const response = await api.get(`/courses/${courseId}`);
-        console.log("📡 API 응답 데이터:", response.data.data);
+  const [sectionContent, setSectionContent] = useState(
+    courseData.courseDescription || ""
+  );
+  const [isEditing, setIsEditing] = useState(false);
 
-        if (response.data.success) {
-          setCourseData(response.data.data);
+  const handleSaveClick = async () => {
+    try {
+      await api.put(
+        `/courses/${courseId}/${user.userId}/overview?description=${sectionContent}`,
+        {
+          courseDescription: sectionContent,
         }
-      } catch (error) {
-        console.error("강의 정보 불러오기 오류:", error);
-      }
-    };
-
-    if (courseId) {
-      fetchCourseData();
+      );
+      setIsEditing(false);
+    } catch (error) {
+      console.error(
+        "수정 후 저장 요청 중 오류 발생:",
+        error.response ? error.response.data : error.message
+      );
     }
-  }, [courseId]);
+  };
 
   if (!courseData) {
-    return <div>로딩 중...</div>; // 데이터가 로딩되지 않은 경우
+    return <div>로딩 중...</div>;
   }
 
   return (
-    <div>
-      <TopBar />
-      <PageLayout>
-        <ClassTopbar activeTab="overview" />
         <div style={{ display: "flex", marginTop: "1rem" }}>
           <ClassSidebar style={{ marginRight: "2rem" }} />
           <main
@@ -115,7 +150,7 @@ const ClassOverview = () => {
             <Section style={{ marginTop: "2rem" }}>
               <span
                 style={{
-                  fontSize: "2.2rem",
+                  fontSize: "2rem",
                   fontWeight: "900",
                 }}
               >
@@ -146,26 +181,40 @@ const ClassOverview = () => {
 
             <h1
               style={{
-                fontSize: "1.85rem",
+                fontSize: "1.8rem",
                 fontWeight: "bold",
-                margin: "3rem 2rem",
+                margin: "2rem 1rem",
                 textAlign: "left",
               }}
             >
               강의 소개
             </h1>
 
-            <Content>
-              <Section style={{ padding: "1.5rem 5rem" }} n>
-                <SectionContent style={{ marginTop: "1.5rem" }}>
-                  {courseData.courseDescription}
-                </SectionContent>
-              </Section>
-            </Content>
-          </main>
-        </div>
-      </PageLayout>
-      <EditButton to="/class/:courseId/overview/info/edit" edit={true} />{" "}
+        <Content isEditing={isEditing}>
+          <EditableSectionContent
+            content={sectionContent}
+            onChange={setSectionContent}
+            isEditing={isEditing}
+          />
+        </Content>
+      </main>
+      {isCreator && (
+        <StyledButton
+          onClick={() => {
+            if (isEditing) {
+              handleSaveClick();
+            } else {
+              setIsEditing(true);
+            }
+          }}
+        >
+          <img
+            src={isEditing ? EditedBtn : EditBtn}
+            alt="Edit Button"
+            style={{ width: "100%" }}
+          />
+        </StyledButton>
+      )}
     </div>
   );
 };

@@ -1,8 +1,6 @@
-import TopBar from "../../ui/TopBar";
-import ClassTopbar from "../../ui/class/ClassTopbar";
 import { useState, useEffect } from "react";
 import AdminTopBar from "../../ui/class/AdminTopBar";
-import { PageLayout, Section } from "../../ui/class/ClassLayout";
+import { Section } from "../../ui/class/ClassLayout";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
@@ -122,22 +120,17 @@ const ClassStudents = () => {
   ];
 
   return (
-    <div>
-      <TopBar />
-      <PageLayout>
-        <ClassTopbar activeTab="admin" />
-        <main style={{ flex: 1, padding: "1rem", borderRadius: "8px" }}>
+        <main style={{ flex: 1, borderRadius: "8px" }}>
           <AdminTopBar />
           <div
             style={{
               display: "flex",
               alignItems: "baseline",
-              marginLeft:"1.5rem"
             }}
           >
             <h3
               style={{
-                fontSize: "1.7rem",
+                fontSize: "20px",
                 fontWeight: "900",
                 color: "var(--black-color)",
               }}
@@ -147,8 +140,8 @@ const ClassStudents = () => {
             <p
               style={{
                 color: "var(--darkgrey-color)",
-                fontSize: "1.1rem",
-                marginLeft: "1.3rem",
+                fontSize: "18px",
+                marginLeft: "18px",
                 fontWeight: "500",
               }}
             >
@@ -189,8 +182,6 @@ const ClassStudents = () => {
             </div>
           </Section>
         </main>
-      </PageLayout>
-    </div>
   );
 };
 

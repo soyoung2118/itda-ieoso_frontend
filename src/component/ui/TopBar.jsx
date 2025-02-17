@@ -25,14 +25,14 @@ export default function TopBar() {
                 src={Logo} 
                 style={{ width: "126px", height: "33px" }} 
                 alt="itda logo" 
-                onClick={isUser ? () => navigate('/class') : () => navigate('/')}
+                onClick={isUser ? () => navigate('/class/list') : () => navigate('/')}
             />
             <Header>
                 <div className="header-right">
                     {isUser ? (
                         <UserContainer>
                             {location.pathname === '/dashboard' ? (
-                                <button className="navigate-button" onClick={() => navigate('/class')}>강의실 입장하기</button>
+                                <button className="navigate-button" onClick={() => navigate('/class/list')}>강의실 입장하기</button>
                             ) : (
                                 <button className="navigate-button" onClick={() => navigate('/dashboard')}>대시보드로 가기</button>
                             )}
@@ -59,10 +59,11 @@ export default function TopBar() {
 
 const Wrapper = styled.div`
   display: flex;
+  min-height: 70px;
   height: 8vh;
   align-items: center;
   justify-content: space-between;
-  padding: 1px 10px 1px 36px;
+  padding: 1px 10px 1px 25px;
   background-color: #FFFFFF;
 `;
 
@@ -79,6 +80,7 @@ const Header = styled.header`
     }
 
     .signup {
+      min-width: 90px;
       background-color: transparent;
       color: #000000;
       border: none;
@@ -87,6 +89,7 @@ const Header = styled.header`
     }
 
     .login {
+      min-width: 80px;
       background-color: #FF4747;
       color: rgb(255, 255, 255);
       border: none;
@@ -110,6 +113,7 @@ const UserContainer = styled.div`
     display: flex;
     align-items: center;
     position: relative;
+    min-width: 130px;
     padding: 10px;
     border-radius: 8px;
 `;

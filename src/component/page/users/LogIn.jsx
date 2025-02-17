@@ -40,10 +40,20 @@ export default function LogIn() {
             const userInfo = await getUsersInfo();
             setUser(userInfo.data);
             localStorage.setItem('user', JSON.stringify(userInfo.data));
-            window.location.href = '/class';
+            
+            // 로그인 성공 시에만 리다이렉트
+            window.location.href = '/class/list';
         } catch (error) {
             console.error('로그인 실패:', error);
-            setError(error.response?.data?.message || '로그인 중 오류가 발생했습니다.');
+
+            // 로그인 API에서 발생한 에러일 경우
+            if (error.config && error.config.url.includes('/login')) {
+                alert(error.response?.data?.message || '로그인 중 오류가 발생했습니다.');
+            } else {
+                // 다른 API 호출에서 발생한 에러일 경우
+                alert('다른 API 호출 중 오류가 발생했습니다.');
+                window.location.href = '/error'; // 예시로 에러 페이지로 이동
+            }
         }
     };
 
@@ -53,7 +63,7 @@ export default function LogIn() {
             <Container>
                 <LogoImage src={logoImage} alt="logo" />
                 <LogoText>로그인</LogoText>
-                <div style={{ width: '40%', margin: '0 auto' }}>
+                <div style={{ minWidth: '300px', width: '40%', margin: '0 auto' }}>
                     <Form onSubmit={handleLogin}>
                         {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
                         <Label>이메일</Label>
@@ -83,22 +93,6 @@ export default function LogIn() {
                                 label="자동 로그인"
                                 style={{ margin: 0 }}  // 여백 제거로 높이 일치
                             />
-                            
-                            {/* 아직 페이지 없음*/}
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <a 
-                                    href="/" 
-                                    style={{ 
-                                        marginRight: '15px', 
-                                        textDecoration: 'none', 
-                                        color: '#909090',
-                                        fontSize: '0.9rem',  // 폰트 크기 일치
-                                        lineHeight: '1.5'    // 라인 높이 일치
-                                    }}
-                                >
-                                    이메일/비밀번호 찾기
-                                </a>
-                            </div>
                         </CheckboxContainer>
 
                         <LoginButton
