@@ -1,4 +1,4 @@
-import { useEffect, useState, forwardRef } from 'react';
+import { useEffect, useState, forwardRef, useContext } from 'react';
 import { useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import TopBar from '../../ui/TopBar';
@@ -7,12 +7,14 @@ import DatePicker from "react-datepicker";
 import CustomTimePicker from "../../ui/CustomTimePicker";
 import "../../../style/react-datepicker.css";
 import api from "../../api/api";
+import { UsersContext } from '../../contexts/usersContext';
 
 export default function Create() {
   const navigate = useNavigate();
   const timeSlots = ['월', '화', '수', '목', '금', '토', '일'];
   const [isAssignmentPending, setIsAssignmentPending] = useState(false);
   const [isLecturePending, setIsLecturePending] = useState(false);
+  const { user } = useContext(UsersContext);
 
   const [form, setForm] = useState({
     coursename: '',
@@ -46,16 +48,18 @@ const handleDaySelect = (type, day) => {
  };
 
  const handleLectureTimeChange = (timeString) => {
+  const timeOnly = timeString.split(':').slice(0, 2).join(':');
   setForm(prev => ({
     ...prev,
-    lectureTime: timeString
+    lectureTime: timeOnly
   }));
 };
 
 const handleAssignmentTimeChange = (timeString) => {
+  const timeOnly = timeString.split(':').slice(0, 2).join(':');
   setForm(prev => ({
     ...prev,
-    assignmentTime: timeString
+    assignmentTime: timeOnly
   }));
 };
   
@@ -63,11 +67,15 @@ const handleAssignmentTimeChange = (timeString) => {
     setForm(prev => ({ ...prev, difficulty }));
   };
 
+  const formatTimeToServer = (timeString) => {
+    if (!timeString) return null;
+    return `${timeString}:00`;
+  };
+
   const handleSubmit = async () => {
     try {
-      const user = JSON.parse(localStorage.getItem('user'));
-      if (!user || !user.userId) {
-        throw new Error('사용자 정보가 없습니다');
+      if (!user) {
+        console.log('사용자 정보가 없습니다');
       }
   
       const createResponse = await api.post(`/courses/${user.userId}`);
@@ -77,19 +85,31 @@ const handleAssignmentTimeChange = (timeString) => {
   
       const courseData = createResponse.data.data;
       
-      const updateData = {
-        courseTitle: form.coursename,
+      const settingData  = {
+        title: form.coursename,
         instructorName: form.instructor,
         startDate: form.startDate?.toISOString().split('T')[0],
         durationWeeks: Number(form.durationWeeks),
         lectureDay: form.lectureDays,
-        lectureTime: form.lectureTime,
+        lectureTime: isLecturePending ? '00:00:00' : formatTimeToServer(form.lectureTime),
         assignmentDueDay: form.assignmentDays,
-        assignmentDueTime: form.assignmentTime,
+        assignmentDueTime: isAssignmentPending ? '00:00:00' : formatTimeToServer(form.assignmentTime),
         difficultyLevel: form.difficulty.toUpperCase()
       };
+      if ((!isLecturePending && !settingData.lectureTime) || 
+          (!isAssignmentPending && !settingData.assignmentDueTime)) {
+        throw new Error('시간 형식이 올바르지 않습니다');
+      }
   
-      //await api.put(`/courses/${courseData.courseId}`, updateData);
+      const settingResponse = await api.put(`/courses/${courseData.courseId}/${user.userId}/setting`, 
+        settingData
+      );
+
+      if (settingResponse.data.success) {
+        console.log(settingResponse.data.data);
+      } else {
+        throw new Error('강의실 설정에 실패했습니다');
+      }
   
       navigate(`/class/${courseData.courseId}/curriculum`, {
         state: { entrycode: courseData.entryCode }
@@ -225,8 +245,12 @@ const handleAssignmentTimeChange = (timeString) => {
                       <CustomTimePicker
                         value={form.lectureTime ? new Date(`2000-01-01T${form.lectureTime}`) : null}
                         onChange={(date) => {
-                          const timeString = date.toTimeString().split(' ')[0];
-                          handleLectureTimeChange(timeString);
+                          if (date) {
+                            const hours = String(date.getHours()).padStart(2, '0');
+                            const minutes = String(date.getMinutes()).padStart(2, '0');
+                            const timeString = `${hours}:${minutes}`;
+                            handleLectureTimeChange(timeString);
+                          }
                         }}
                         disabled={isLecturePending}
                         placeholder="강의 시간을 설정해주세요."
@@ -243,7 +267,7 @@ const handleAssignmentTimeChange = (timeString) => {
                     onClick={() => {
                       setIsLecturePending(!isLecturePending)
                       if (!isLecturePending) {
-                        setForm(prev => ({ ...prev, lectureDays: [], lectureTime: '' }));
+                        setForm(prev => ({ ...prev, lectureDays: [], lectureTime: '00:00' }));
                       }
                     }}
                   >
@@ -278,8 +302,12 @@ const handleAssignmentTimeChange = (timeString) => {
                       <CustomTimePicker
                         value={form.assignmentTime ? new Date(`2000-01-01T${form.assignmentTime}`) : null}
                         onChange={(date) => {
-                          const timeString = date.toTimeString().split(' ')[0];
-                          handleAssignmentTimeChange(timeString);
+                          if (date) {
+                            const hours = String(date.getHours()).padStart(2, '0');
+                            const minutes = String(date.getMinutes()).padStart(2, '0');
+                            const timeString = `${hours}:${minutes}`;
+                            handleAssignmentTimeChange(timeString);
+                          }
                         }}
                         disabled={isAssignmentPending}
                         placeholder="과제 시간을 설정해주세요."
@@ -296,7 +324,7 @@ const handleAssignmentTimeChange = (timeString) => {
                     onClick={() => {
                       setIsAssignmentPending(!isAssignmentPending)
                       if (!isAssignmentPending) {
-                        setForm(prev => ({ ...prev, assignmentDays: [], assignmentTime: '' })); // 시간도 초기화
+                        setForm(prev => ({ ...prev, assignmentDays: [], assignmentTime: '00:00' })); // 시간도 초기화
                       }
                     }}
                   >
