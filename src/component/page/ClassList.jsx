@@ -17,15 +17,15 @@ export default function Class() {
     const [showPopup, setShowPopup] = useState(false);
     const { user } = useContext(UsersContext);
     const [lectures, setLectures] = useState([]);
-
+    
     const handleLectureClick = (id) => {
         navigate(`/class/${id}/overview/info`);
     };
 
     const getAllLectures = async () => {
-        try{
+        try {
             const response = await api.get(`/courses/${user.userId}/my-courses`);
-            setLectures(response.data.data); //data 안의 data
+            setLectures(response.data.data);
         } catch (error) {
             console.error('강의실 조회 중 오류 발생:', error);
         }
@@ -35,84 +35,103 @@ export default function Class() {
         if (user && user.userId) {
             getAllLectures();
         }
-    }, [user]);  // user가 업데이트될 때마다 호출
+    }, [user]);
 
-    const lecturesToDisplay = selectedMenu === "전체 강의실" ? lectures : lectures.filter(lecture => lecture.user.userId === user.userId);
+    const lecturesToDisplay =
+        selectedMenu === "전체 강의실"
+            ? lectures
+            : lectures.filter((lecture) => lecture.user.userId === user.userId);
     const lecturesCount = lecturesToDisplay.length;
 
     return (
       <>
         <TopBar />
-            <Container>
-                <Sidebar>
-                    <MenuItem active={selectedMenu === "전체 강의실"} onClick={() => setSelectedMenu("전체 강의실")}>
-                        전체 강의실
-                    </MenuItem>
-                    <MenuItem active={selectedMenu === "내 강의실"} onClick={() => setSelectedMenu("내 강의실")}>
-                        내 강의실
-                    </MenuItem>
-                </Sidebar>
-                <Content>
-                   <h2>{selectedMenu}</h2>
-                   {lecturesCount === 0 ? ( // 강의실이 없을 경우
-                        <NoLecturesMessage>
-                            <img src={LogoGray} alt="LogoGray" width="40" height="40" />
-                            <br />
-                            현재 생성된 강의실이 없습니다 :
-                            <br />
-                            + 버튼을 눌러 강의실을 생성해보세요!
-                        </NoLecturesMessage>
-                   ) : (
-                    lecturesToDisplay?.map((lecture) => (
-                        <LectureCard key={lecture.courseId} onClick={() => handleLectureClick(lecture.courseId)}>
-                            <LectureImage src={lecture.courseThumbnail} alt="Lecture" />
-                               <LectureInfo>
-                                <LectureTitle>{lecture.courseTitle}</LectureTitle>
-                                {/* 강의 시작일 */}
-                                <LectureDetail>
+        <Container>
+            <Sidebar>
+                <MenuItem
+                    active={selectedMenu === "전체 강의실"}
+                    onClick={() => setSelectedMenu("전체 강의실")}
+                >
+                    전체 강의실
+                </MenuItem>
+                <MenuItem
+                    active={selectedMenu === "내 강의실"}
+                    onClick={() => setSelectedMenu("내 강의실")}
+                >
+                    내 강의실
+                </MenuItem>
+            </Sidebar>
+            <Content>
+               <h2>{selectedMenu}</h2>
+               {lecturesCount === 0 ? (
+                    <NoLecturesMessage>
+                        <img src={LogoGray} alt="LogoGray" width="40" height="40" />
+                        <br />
+                        현재 생성된 강의실이 없습니다 :
+                        <br />
+                        + 버튼을 눌러 강의실을 생성해보세요!
+                    </NoLecturesMessage>
+               ) : (
+                lecturesToDisplay?.map((lecture) => (
+                    <LectureCard
+                        key={lecture.courseId}
+                        onClick={() => handleLectureClick(lecture.courseId)}
+                    >
+                        <LectureImage src={lecture.courseThumbnail} alt="Lecture" />
+                        <LectureInfo>
+                            <LectureTitle>{lecture.courseTitle}</LectureTitle>
+                            <LectureDetail>
                                 <IconRow>
                                     <EventIcon />
-                                    <span>{lecture.startDate ? `${lecture.startDate} 시작` : '시작일 미정'}</span>
+                                    <span>
+                                        {lecture.startDate
+                                            ? `${lecture.startDate} 시작`
+                                            : "시작일 미정"}
+                                    </span>
                                 </IconRow>
-
-                                {/* 강의 기간 */}
                                 <IconRow>
                                     <VideoLibraryIcon />
-                                    <span>{lecture.durationWeeks > 0 ? `${lecture.durationWeeks}주 커리큘럼` : '기간 미정'}</span>
+                                    <span>
+                                        {lecture.durationWeeks > 0
+                                            ? `${lecture.durationWeeks}주 커리큘럼`
+                                            : "기간 미정"}
+                                    </span>
                                 </IconRow>
-
-                                {/* 강사 이름 */}
                                 <IconRow>
                                     <PersonIcon />
                                     <span>{lecture.instructorName}</span>
                                 </IconRow>
-                                </LectureDetail>
-                               </LectureInfo>
-                           </LectureCard>
-                       ))
-                   )}
-                </Content>
-                <AddButton onClick={() => setShowPopup(!showPopup)} data-showpopup={showPopup}>
-                    {showPopup ? '×' : '+'}
-                </AddButton>
-                {showPopup && (
-                    <PopupMenu>
-                        <PopupItem onClick={() => navigate('/class/create')}>
-                            <OpenInNewIcon style={{ marginRight: '15px' }}/>
-                                강의실 만들기
-                        </PopupItem>
-                        <PopupItem onClick={() => navigate('/class/participate')}>
-                            <ExitToAppIcon style={{ marginRight: '15px' }}/>
-                                강의실 입장하기
-                        </PopupItem>
-                    </PopupMenu>
-                )}
-            </Container>
-        </>
+                            </LectureDetail>
+                        </LectureInfo>
+                    </LectureCard>
+                ))
+               )}
+            </Content>
+            <AddButton
+                onClick={() => setShowPopup(!showPopup)}
+                data-showpopup={showPopup}
+            >
+                {showPopup ? "×" : "+"}
+            </AddButton>
+            {showPopup && (
+                <PopupMenu>
+                    <PopupItem onClick={() => navigate("/class/create")}>
+                        <OpenInNewIcon style={{ marginRight: "15px" }} />
+                        강의실 만들기
+                    </PopupItem>
+                    <PopupItem onClick={() => navigate("/class/participate")}>
+                        <ExitToAppIcon style={{ marginRight: "15px" }} />
+                        강의실 입장하기
+                    </PopupItem>
+                </PopupMenu>
+            )}
+        </Container>
+      </>
     );
 }
 
 const Container = styled.div`
+    position: relative;
     display: flex;
     height: 100%;
     width: 100%;
@@ -121,8 +140,9 @@ const Container = styled.div`
 
 const Sidebar = styled.div`
     width: 15%;
-    max-width: 200px;
-    height: 70vh;
+    min-width: 75px;
+    max-width: 175px;
+    height: 60vh;
 
     margin: 30px 20px;
     background-color: #fff;
@@ -131,11 +151,12 @@ const Sidebar = styled.div`
 `;
 
 const MenuItem = styled.div`
-    padding: 15px 15px;
+    padding: 15px;
     margin-bottom: 10px;
     color: #000;
-    font-weight: ${props => props.active ? 'bold' : 'bold'};
-    background-color: ${props => props.active ? 'var(--pink-color)' : '#FFFFFF'};  
+    font-weight: bold;
+    background-color: ${(props) =>
+        props.active ? "var(--pink-color)" : "#FFFFFF"};
     border-radius: 10px;
     cursor: pointer;
 `;
@@ -146,19 +167,34 @@ const Content = styled.div`
 `;
 
 const LectureCard = styled.div`
+    position: relative;
     display: flex;
+    flex-direction: column;
     background-color: #fff;
-    margin: 10px 20px 20px 10px;
+    margin: 10px 30px 10px 0;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     cursor: pointer;
+
+    @media (min-width: 600px) {
+        flex-direction: row; // 화면이 넓어지면 가로 정렬
+    }
 `;
 
 const LectureImage = styled.img`
-    width: 200px;
-    height: 200px;
-    margin-right: 20px;
+    min-width: 200px;
+    width: 100%;
+    min-height: 200px;
+    height: auto;
+    margin-bottom: 20px;
+
+    @media (min-width: 600px) {
+        width: 200px; // 데스크탑에서 이미지 크기 조정
+        height: 200px;
+        margin-bottom: 0;
+        margin-right: 30px;
+    }
 `;
 
 const LectureInfo = styled.div`
@@ -179,21 +215,16 @@ const LectureTitle = styled.h3`
 `;
 
 const IconRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 0.5rem;
-  color: var(--darkgrey-color);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+    color: var(--darkgrey-color);
 
-  .material-symbols-outlined {
-    font-size: 1.2rem;
-    vertical-align: middle;
-  }
-
-  span {
-    font-size: 1rem;
-    font-weight: 500;
-  }
+    span {
+        font-size: 1rem;
+        font-weight: 500;
+    }
 `;
 
 const AddButton = styled.button`
@@ -202,7 +233,8 @@ const AddButton = styled.button`
     right: 45px;
     width: 60px;
     height: 60px;
-    background-color: ${props => (props['data-showpopup'] ? '#000' : 'var(--main-color)')};
+    background-color: ${(props) =>
+        props["data-showpopup"] ? "#000" : "var(--main-color)"};
     color: #fff;
     border: none;
     border-radius: 50%;
@@ -238,7 +270,7 @@ const NoLecturesMessage = styled.p`
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 60vh; /* 원하는 높이로 조정 */
+    height: 60vh;
     font-size: 18px;
-    color: #BABABA;
+    color: #bababa;
 `;

@@ -1,16 +1,13 @@
 import { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import TopBar from "../../ui/TopBar";
-import ClassTopbar from "../../ui/class/ClassTopbar";
-import { PageLayout } from "../../ui/class/ClassLayout";
 import Container from "../../ui/Container";
 import ClassSidebar from "../../ui/class/ClassSidebar";
 import api from "../../api/api";
 import { UsersContext } from "../../contexts/usersContext";
 
 const NoticeTitle = styled.h3`
-  font-size: 2.3rem;
+  font-size: 2rem;
   font-weight: 700;
   color: var(--black-color);
   margin-bottom: 1rem;
@@ -24,7 +21,7 @@ const StyledInput = styled.input`
   border: 2px solid var(--neutralgrey-color);
   border-radius: 10px;
   padding: 12px 15px;
-  font-size: 1.35rem;
+  font-size: 1.3rem;
   margin-bottom: 2rem;
   margin-top: 0.7rem;
   font-family: Pretendard, sans-serif;
@@ -35,7 +32,7 @@ const StyledTextarea = styled.textarea`
   border: 2px solid var(--neutralgrey-color);
   border-radius: 10px;
   padding: 12px 15px;
-  font-size: 1.35rem;
+  font-size: 1.25rem;
   margin-bottom: 1rem;
   margin-top: 0.7rem;
   font-family: Pretendard, sans-serif;
@@ -46,19 +43,53 @@ const StyledTextarea = styled.textarea`
   }
 `;
 
+const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  margin-left: auto;
+  gap: 1.5rem;
+
+  @media (max-width: 600px) {
+    padding: 1px;
+    gap: 0.5rem;
+  }
+`;
+
 const StyledButton = styled.button`
   background-color: var(--main-color);
   color: white;
   border: none;
   border-radius: 8px;
-  padding: 13px 30px;
-  font-size: 1.35rem;
+  padding: 10px 30px;
+  font-size: 1.25rem;
   font-weight: bold;
   cursor: pointer;
-  margin-left: auto;
   display: block;
   margin-right: -2.1rem;
   margin-bottom: 1rem;
+
+  @media (max-width: 600px) {
+    font-size: 1.1rem;
+    padding: 10px 18px;
+  }
+`;
+
+const CancelButton = styled.button`
+  background-color: var(--neutralgrey-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 30px;
+  font-size: 1.25rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 1rem;
+
+  @media (max-width: 600px) {
+    font-size: 1.1rem;
+    padding: 10px 18px;
+  }
 `;
 
 const NoticeCreateForm = () => {
@@ -67,28 +98,6 @@ const NoticeCreateForm = () => {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-
-  /*
-  useEffect(() => {
-    const getUserIdFromLocalStorage = () => {
-      const userData = localStorage.getItem("user");
-      if (!userData) return null;
-
-      try {
-        const parsedUser = JSON.parse(userData); // JSON 파싱
-        return parsedUser.userId; // userId 추출
-      } catch (error) {
-        console.error("로컬 스토리지 데이터 파싱 오류:", error);
-        return null;
-      }
-    };
-
-    const fetchedUserId = getUserIdFromLocalStorage();
-    if (fetchedUserId) {
-      setUserId(fetchedUserId);
-    }
-  }, []);
-  */
 
   useEffect(() => {
     if (noticeId && user && user.userId) {
@@ -118,8 +127,6 @@ const NoticeCreateForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(courseId, user.userId);
-
     if (!courseId || !user.userId) {
       alert("courseId 또는 userId를 가져오지 못했습니다.");
       return;
@@ -142,7 +149,6 @@ const NoticeCreateForm = () => {
       }
 
       if (response.data.success) {
-        console.log(noticeId ? "공지 수정 성공" : "공지 작성 성공", title, content);
         alert(noticeId ? "공지사항이 수정되었습니다." : "공지사항이 게시되었습니다.");
         setTitle("");
         setContent("");
@@ -156,11 +162,12 @@ const NoticeCreateForm = () => {
     }
   };
 
+  const handleCancel = () => {
+    navigate(`/class/${courseId}/overview/notice`);
+  };
+
   return (
     <div>
-      <TopBar />
-      <PageLayout>
-        <ClassTopbar activeTab="overview" />
         <div style={{ display: "flex", marginTop: "1rem" }}>
           <ClassSidebar style={{ marginRight: "2rem" }} />
           <main
@@ -171,7 +178,7 @@ const NoticeCreateForm = () => {
               <form onSubmit={handleSubmit}>
                 <label
                   htmlFor="title"
-                  style={{ fontSize: "1.5rem", fontWeight: "600" }}
+                  style={{ fontSize: "1.35em", fontWeight: "600" }}
                 >
                   제목
                 </label>
@@ -184,7 +191,7 @@ const NoticeCreateForm = () => {
                 />
                 <label
                   htmlFor="content"
-                  style={{ fontSize: "1.5rem", fontWeight: "600" }}
+                  style={{ fontSize: "1.35rem", fontWeight: "600" }}
                 >
                   내용
                 </label>
@@ -194,13 +201,19 @@ const NoticeCreateForm = () => {
                   onChange={(e) => setContent(e.target.value)}
                   rows="15"
                   required
-                ></StyledTextarea>
+              ></StyledTextarea>
+              <ButtonContainer>
+                {noticeId && (
+                  <CancelButton type="button" onClick={handleCancel}>
+                    취소하기
+                  </CancelButton>
+                )}
                 <StyledButton type="submit">게시하기</StyledButton>
+              </ButtonContainer>
               </form>
             </Container>
           </main>
         </div>
-      </PageLayout>
     </div>
   );
 };

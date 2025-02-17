@@ -11,12 +11,14 @@ export const getMyCourses = async (userId) => {
   }
 };
 
-// courseId와 courseTitle만 가져오는 함수
+// courseId와 courseTitle 가져오고 개설자인지 확인하는 함수
 export const getMyCoursesTitles = async (userId) => {
   const courses = await getMyCourses(userId);
-  console.log("불러온 강의 목록",courses);
+
   return courses.map((course) => ({
     courseId: course.courseId,
-    courseTitle: course.courseTitle
+    courseTitle: course.courseTitle,
+    isCreator: String(course.user?.userId) === String(userId)
   }));
 };
+

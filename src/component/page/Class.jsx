@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { Outlet, useParams, useNavigate } from "react-router-dom";
 import api from "../api/api";
 import { UsersContext } from "../contexts/usersContext";
-import TopBar from "../ui/Topbar";
+import TopBar from "../ui/TopBar";
 import ClassTopbar from "../ui/class/ClassTopbar";
 import { PageLayout } from "../ui/class/ClassLayout";  
 export default function Class() {
@@ -48,7 +48,7 @@ export default function Class() {
     <div>
       <TopBar />
       <PageLayout>
-        <ClassTopbar selectedCourseId={selectedCourseId} onCourseChange={handleCourseChange} />
+        <ClassTopbar selectedCourseId={selectedCourseId} onCourseChange={handleCourseChange} isCreator={isCreator} />
         <Outlet context={{ courseData, isCreator }} />
       </PageLayout>
     </div>

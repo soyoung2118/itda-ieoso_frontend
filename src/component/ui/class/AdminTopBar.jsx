@@ -1,11 +1,19 @@
-import { NavLink, useParams } from "react-router-dom";
+import { useState, useContext } from "react";
+import { NavLink, useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import Delete from "../../img/icon/bin.svg";
 import Share from "../../img/icon/share.svg";
+import api from "../../api/api";
+import { UsersContext } from "../../contexts/usersContext";
 
 const Container = styled.div`
   width: 100%;
+  padding: 0 1rem;
+
+  @media (max-width: 768px) {
+    padding: 0 0.5rem;
+  }
 `;
 
 const Title = styled.h1`
@@ -13,6 +21,10 @@ const Title = styled.h1`
   font-weight: 900;
   color: var(--black-color);
   margin-bottom: 1rem;
+
+  @media (max-width: 768px) {
+    font-size: 24px;
+  }
 `;
 
 const NavbarContent = styled.div`
@@ -31,12 +43,20 @@ const NavbarContent = styled.div`
   &::-webkit-scrollbar {
     display: none;
   }
+
+  @media (max-width: 768px) {
+    gap: 1rem;
+  }
 `;
 
 const TabContainer = styled.nav`
   display: flex;
   gap: 1rem;
   flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    gap: 0.5rem;
+  }
 `;
 
 const TabLink = styled(NavLink)`
@@ -62,14 +82,24 @@ const TabLink = styled(NavLink)`
       border-radius: 5px;
     }
   }
+
+  @media (max-width: 768px) {
+    width: 70px;
+    font-size: 16px;
+  }
 `;
 
 const IconContainer = styled.nav`
   display: flex;
   gap: 20px;
   align-items: center;
-  flex-shrink: 0; // 너비가 줄어들 때 압축되지 않도록
-  margin-left: auto; // 오른쪽 끝으로 정렬
+  flex-shrink: 0;
+  margin-left: auto;
+
+  @media (max-width: 768px) {
+    justify-content: center;
+    margin-left: 0;
+  }
 `;
 
 const Icon = styled.img`
@@ -82,8 +112,78 @@ const Icon = styled.img`
   }
 `;
 
+const DeleteModalOverlay = styled.div`
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+`;
+
+const DeleteModal = styled.div`
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    min-width: 350px;
+    width: 40%;
+    height: 30%;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+`;
+
+const CloseIcon = styled.span`
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 28px;
+    cursor: pointer;
+`;
+
+const ModalTitle = styled.h2`
+    margin: 0;
+    font-size: 20px;
+    font-weight: normal;
+`;
+
+const YesButton = styled.button`
+    margin-top: 40px;
+    width: 100px;
+    height: 40px;
+    border: none;
+    border-radius: 24px;
+    background-color: var(--main-color);
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    &:hover {
+        opacity: 0.9;
+    }
+`;
+
 const AdminTopBar = ({ activeTab }) => {
   const { courseId } = useParams();
+  const { user } = useContext(UsersContext);
+  const navigate = useNavigate();
+  // 모달 관련 상태
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const handleDeleteLecture = async (courseId) => {
+    console.log('Deleting course with ID:', courseId);
+    try {
+        await api.delete(`/courses/${courseId}?userId=${user.userId}`);
+        navigate("/class/list");
+    } catch (error) {
+        console.error('강의실 삭제 중 오류 발생:', error);
+    }
+};
 
   return (
     <Container>
@@ -112,9 +212,12 @@ const AdminTopBar = ({ activeTab }) => {
 
         <IconContainer>
           <Icon 
-            className="delete-icon material-icons" 
+            className="material-icons" 
             src={Delete} 
             alt="delete icon" 
+            onClick={() => {
+              setShowDeleteModal(true);
+            }}
           />
           <Icon 
             className="material-icons" 
@@ -123,6 +226,15 @@ const AdminTopBar = ({ activeTab }) => {
           />
         </IconContainer>
       </NavbarContent>
+      {showDeleteModal && (
+        <DeleteModalOverlay>
+          <DeleteModal>
+            <CloseIcon onClick={() => setShowDeleteModal(false)}>×</CloseIcon>
+            <ModalTitle>강의실을 삭제하시겠습니까?</ModalTitle>
+            <YesButton onClick={() => handleDeleteLecture(courseId)}>예</YesButton>
+          </DeleteModal>
+        </DeleteModalOverlay>
+      )}
     </Container>
   );
 };
