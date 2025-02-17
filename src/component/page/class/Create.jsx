@@ -73,9 +73,30 @@ const handleAssignmentTimeChange = (timeString) => {
   };
 
   const handleSubmit = async () => {
+    if (!form.coursename.trim()) {
+      alert('강의명을 입력해주세요.');
+      return;
+    }
+
+    if (!form.instructor.trim()) {
+      alert('강의자명을 입력해주세요.');
+      return;
+    }
+
+    if (!form.startDate) {
+      alert('커리큘럼 시작일을 선택해주세요.');
+      return;
+    }
+
+    if (form.durationWeeks < 1 || form.durationWeeks > 12) {
+      alert('커리큘럼 주차는 1~12주차까지 입력 가능해요.');
+      return;
+    }
+
     try {
       if (!user) {
         console.log('사용자 정보가 없습니다');
+        return;
       }
   
       const createResponse = await api.post(`/courses/${user.userId}`);
@@ -96,6 +117,7 @@ const handleAssignmentTimeChange = (timeString) => {
         assignmentDueTime: isAssignmentPending ? '00:00:00' : formatTimeToServer(form.assignmentTime),
         difficultyLevel: form.difficulty.toUpperCase()
       };
+
       if ((!isLecturePending && !settingData.lectureTime) || 
           (!isAssignmentPending && !settingData.assignmentDueTime)) {
         throw new Error('시간 형식이 올바르지 않습니다');
@@ -106,14 +128,14 @@ const handleAssignmentTimeChange = (timeString) => {
       );
 
       if (settingResponse.data.success) {
-        console.log(settingResponse.data.data);
+        console.log(settingResponse.data);
       } else {
         throw new Error('강의실 설정에 실패했습니다');
       }
-  
-      navigate(`/class/${courseData.courseId}/curriculum`, {
-        state: { entrycode: courseData.entryCode }
-      });
+      
+      // navigate(`/class/${courseData.courseId}/curriculum`, {
+      //   state: { entrycode: courseData.entryCode }
+      // });
   
     } catch (error) {
       console.error('강의실 생성 실패:', error);
@@ -243,7 +265,8 @@ const handleAssignmentTimeChange = (timeString) => {
                 <TimeGroup>
                     <TimePickerWrapper>
                       <CustomTimePicker
-                        value={form.lectureTime ? new Date(`2000-01-01T${form.lectureTime}`) : null}
+                        value={isLecturePending ? new Date(2000, 0, 1, 0, 0, 0) : 
+                              (form.lectureTime ? new Date(`2000-01-01T${form.lectureTime}`) : null)}
                         onChange={(date) => {
                           if (date) {
                             const hours = String(date.getHours()).padStart(2, '0');
@@ -256,9 +279,9 @@ const handleAssignmentTimeChange = (timeString) => {
                         placeholder="강의 시간을 설정해주세요."
                       />
                       </TimePickerWrapper>
-                  {form.lectureTime && !isLecturePending && 
-                    <HelpText>강의 시간이 설정되었어요!</HelpText>
-                  }
+                      {form.lectureTime && form.lectureTime !== '00:00' && !isLecturePending && 
+                        <HelpText>강의 시간이 설정되었어요!</HelpText>
+                      }
                 </TimeGroup>
 
                 <TimeGroup>
@@ -300,7 +323,8 @@ const handleAssignmentTimeChange = (timeString) => {
                 <TimeGroup>
                     <TimePickerWrapper>
                       <CustomTimePicker
-                        value={form.assignmentTime ? new Date(`2000-01-01T${form.assignmentTime}`) : null}
+                        value={isAssignmentPending ? new Date(2000, 0, 1, 0, 0, 0) : 
+                              (form.assignmentTime ? new Date(`2000-01-01T${form.assignmentTime}`) : null)}
                         onChange={(date) => {
                           if (date) {
                             const hours = String(date.getHours()).padStart(2, '0');
@@ -313,7 +337,7 @@ const handleAssignmentTimeChange = (timeString) => {
                         placeholder="과제 시간을 설정해주세요."
                       />
                     </TimePickerWrapper>
-                  { form.assignmentTime && !isAssignmentPending &&
+                    {form.assignmentTime && form.assignmentTime !== '00:00' && !isAssignmentPending &&
                    <HelpText>과제 시간이 설정되었어요!</HelpText>
                    }
                 </TimeGroup> 
