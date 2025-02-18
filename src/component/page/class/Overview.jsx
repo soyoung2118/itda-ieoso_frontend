@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useRef } from "react";
 import { useParams, useOutletContext } from "react-router-dom";
 import styled from "styled-components";
 import ClassSidebar from "../../ui/class/ClassSidebar";
@@ -71,6 +71,30 @@ const StyledButton = styled.button`
   background-color: transparent;
 `;
 
+const ImageContainer = styled.div`
+  position: relative;
+  text-align: center;
+  margin-bottom: 0rem;
+
+  img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .camera-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    color: rgba(255, 255, 255, 0.7);
+    display: ${({ isEditing }) => (isEditing ? "block" : "none")};
+    pointer-events: none;
+  }
+`;
+
 const EditableSectionContent = ({ content, onChange, isEditing }) => {
   const modules = {
     toolbar: [
@@ -102,25 +126,83 @@ const ClassOverview = () => {
   const { courseId } = useParams();
   const { user } = useContext(UsersContext);
 
-  const [sectionContent, setSectionContent] = useState(
-    courseData.courseDescription || ""
-  );
+  const [sectionContent, setSectionContent] = useState(courseData.courseDescription || "");
   const [isEditing, setIsEditing] = useState(false);
+  const [courseThumbnail, setCourseThumbnail] = useState(courseData.courseThumbnail || ClassThumbnail);
+  const [newThumbnail, setNewThumbnail] = useState(null);
+  const [files, setFiles] = useState([]);
+
+  const fileInputRef = useRef(null);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // FileReader 사용 예시: 파일의 Base64 데이터를 콘솔에 출력
+      const reader = new FileReader();
+      reader.onload = () => {
+        console.log("Base64 인코딩된 파일 데이터:", reader.result);
+      };
+      reader.readAsDataURL(file);
+
+      // Blob URL 생성하여 미리보기 이미지로 사용
+      const imageUrl = URL.createObjectURL(file);
+      setNewThumbnail(imageUrl);
+      setFiles([file]);
+    } else {
+      // 파일이 선택되지 않았을 경우 기본 썸네일로 설정
+      setNewThumbnail(null);
+    }
+  };
+
+  const handleImageClick = () => {
+    if (isEditing) {
+      fileInputRef.current.click();
+    }
+  };
 
   const handleSaveClick = async () => {
+    if (!user) return;
+
+    const formData = new FormData();
+    formData.append('textContent', sectionContent);
+
+    // 파일 객체가 있을 경우 FormData에 첨부
+    if (files && files.length > 0) {
+      formData.append('courseThumbnail', files[0]);
+    }
+
+    // FormData 내용을 콘솔에 확인
+    for (let [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+
     try {
-      await api.put(
-        `/courses/${courseId}/${user.userId}/overview?description=${sectionContent}`,
+      const response = await api.put(
+        `/courses/${courseId}/${user.userId}/overview?description=${encodeURIComponent(sectionContent)}`,
+        formData,
         {
-          courseDescription: sectionContent,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         }
       );
+
+      // 파일이 첨부된 경우 화면 업데이트
+      if (files && files.length > 0) {
+        const imageUrl = URL.createObjectURL(files[0]);
+        setCourseThumbnail(imageUrl);
+        setNewThumbnail(null);
+        setFiles([]);
+      }
       setIsEditing(false);
+
+      if (response.status === 200) {
+        console.log("수정 사항이 저장되었습니다.");
+      } else {
+        console.log("수정 사항 저장에 실패했습니다.");
+      }
     } catch (error) {
-      console.error(
-        "수정 후 저장 요청 중 오류 발생:",
-        error.response ? error.response.data : error.message
-      );
+      console.error("수정 후 저장 요청 중 오류 발생:", error);
     }
   };
 
@@ -129,66 +211,67 @@ const ClassOverview = () => {
   }
 
   return (
-        <div style={{ display: "flex", marginTop: "1rem" }}>
-          <ClassSidebar style={{ marginRight: "2rem" }} />
-          <main
+    <div style={{ display: "flex", marginTop: "1rem" }}>
+      <ClassSidebar style={{ marginRight: "2rem" }} />
+      <main
+        style={{
+          flex: 1,
+          backgroundColor: "#f9f9f9",
+          padding: "0rem",
+          borderRadius: "8px",
+          marginTop: "0.5rem",
+        }}
+      >
+        <ImageContainer isEditing={isEditing} onClick={handleImageClick}>
+          <img src={newThumbnail || courseThumbnail} alt="Class Thumbnail" />
+          <span className="material-symbols-outlined camera-icon">camera_alt</span>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            ref={fileInputRef}
+            style={{ display: "none" }}
+          />
+        </ImageContainer>
+        <Section style={{ marginTop: "2rem" }}>
+          <span
             style={{
-              flex: 1,
-              backgroundColor: "#f9f9f9",
-              padding: "0rem",
-              borderRadius: "8px",
-              marginTop: "0.5rem",
+              fontSize: "2rem",
+              fontWeight: "900",
             }}
           >
-            <div style={{ textAlign: "center", marginBottom: "0rem" }}>
-              <img
-                src={courseData.courseThumbnail || ClassThumbnail}
-                style={{ width: "100%", height: "auto", borderRadius: "8px" }}
-                alt="Class Thumbnail"
-              />
-            </div>
-            <Section style={{ marginTop: "2rem" }}>
-              <span
-                style={{
-                  fontSize: "2rem",
-                  fontWeight: "900",
-                }}
-              >
-                {courseData.courseTitle}
-              </span>
-              <IconRow style={{ marginTop: "2rem" }}>
-                <span className="material-symbols-outlined">event</span>
-                <span>
-                  {" "}
-                  {courseData.startDate
-                    ? courseData.startDate
-                    : "시작 날짜 미정"}
-                </span>
-              </IconRow>
-              <IconRow>
-                <span className="material-symbols-outlined">video_library</span>
-                <span>
-                  {courseData.durationWeeks > 0
-                    ? `${courseData.durationWeeks}주 커리큘럼`
-                    : "기간 미정"}
-                </span>
-              </IconRow>
-              <IconRow>
-                <span className="material-symbols-outlined">person</span>
-                <span>{courseData.instructorName}</span>
-              </IconRow>
-            </Section>
+            {courseData.courseTitle}
+          </span>
+          <IconRow style={{ marginTop: "2rem" }}>
+            <span className="material-symbols-outlined">event</span>
+            <span>
+              {courseData.startDate ? courseData.startDate : "시작 날짜 미정"}
+            </span>
+          </IconRow>
+          <IconRow>
+            <span className="material-symbols-outlined">video_library</span>
+            <span>
+              {courseData.durationWeeks > 0
+                ? `${courseData.durationWeeks}주 커리큘럼`
+                : "기간 미정"}
+            </span>
+          </IconRow>
+          <IconRow>
+            <span className="material-symbols-outlined">person</span>
+            <span>{courseData.instructorName}</span>
+          </IconRow>
+        </Section>
 
-            <h1
-              style={{
-                fontSize: "1.8rem",
-                fontWeight: "bold",
-                margin: "2rem 1rem",
-                textAlign: "left",
-              }}
-            >
-              강의 소개
-            </h1>
+        <h1
+          style={{
+            fontSize: "1.8rem",
+            fontWeight: "bold",
+            margin: "2rem 1rem",
+            textAlign: "left",
+          }}
+        >
+          강의 소개
+        </h1>
 
         <Content isEditing={isEditing}>
           <EditableSectionContent
@@ -196,7 +279,7 @@ const ClassOverview = () => {
             onChange={setSectionContent}
             isEditing={isEditing}
           />
-        </Content>
+        </Content>        
       </main>
       {isCreator && (
         <StyledButton
