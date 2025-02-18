@@ -193,7 +193,44 @@ const CustomTimePicker = ({ value = new Date(), onChange, width = 239, disabled 
       setSelectedTime(newDate);
       onChange(newDate);
     }, 100);
-  
+
+    useEffect(() => {
+        // Add non-passive wheel event listeners to scroll views
+        const scrollViews = scrollViewsRef.current;
+        
+        const handleWheel = (e, index) => {
+            e.preventDefault();
+            
+            const now = Date.now();
+            if (now - lastWheelTime.current < 200) {
+                return;
+            }
+            lastWheelTime.current = now;
+
+            const direction = e.deltaY > 0 ? 1 : -1;
+            moveOneStep(index, direction);
+        };
+
+        if (isOpen) {
+            scrollViews.forEach((scrollView, index) => {
+                if (scrollView) {
+                    const wheelHandler = (e) => handleWheel(e, index);
+                    scrollView.addEventListener('wheel', wheelHandler, { passive: false });
+                    return () => scrollView.removeEventListener('wheel', wheelHandler);
+                }
+            });
+        }
+
+        return () => {
+            scrollViews.forEach((scrollView, index) => {
+                if (scrollView) {
+                    const wheelHandler = (e) => handleWheel(e, index);
+                    scrollView.removeEventListener('wheel', wheelHandler);
+                }
+            });
+        };
+    }, [isOpen]);
+    
     const timeColumns = [
       { key: 'meridiem', items: MERIDIEM_ITEMS },
       { key: 'hour', items: HOUR_ITEMS },
@@ -211,42 +248,42 @@ const CustomTimePicker = ({ value = new Date(), onChange, width = 239, disabled 
   
         {isOpen && (
           <DropdownContainer>
-            <TimePickerContainer>
-              {timeColumns.map(({ key, items }, columnIndex) => (
-                <Column key={key}>
-                  <ScrollView 
-                    ref={(el) => {
-                      if (el) {
-                        scrollViewsRef.current[columnIndex] = el;
-                      }
-                    }}
-                    onScroll={(e) => {
-                      if (wheelTimeoutRef.current) {
-                        clearTimeout(wheelTimeoutRef.current);
-                      }
-                      wheelTimeoutRef.current = setTimeout(() => {
-                        handleScrollEnd(key, columnIndex);
-                      }, 150);
-                    }}
-                    onWheel={(e) => handleWheelEvent(e, columnIndex)}
-                  >
-                    <Padding />
-                    {items.map((item) => (
-                      <TimeButton 
-                        key={item}
-                        onClick={() => handleTimeButtonClick(columnIndex, item)}
-                      >
-                        {item}
-                      </TimeButton>
-                    ))}
-                    <Padding />
-                  </ScrollView>
-                </Column>
-              ))}
-              <Selection />
-            </TimePickerContainer>
+              <TimePickerContainer>
+                  {timeColumns.map(({ key, items }, columnIndex) => (
+                      <Column key={key}>
+                          <ScrollView 
+                              ref={(el) => {
+                                  if (el) {
+                                      scrollViewsRef.current[columnIndex] = el;
+                                  }
+                              }}
+                              onScroll={(e) => {
+                                  if (wheelTimeoutRef.current) {
+                                      clearTimeout(wheelTimeoutRef.current);
+                                  }
+                                  wheelTimeoutRef.current = setTimeout(() => {
+                                      handleScrollEnd(key, columnIndex);
+                                  }, 150);
+                              }}
+                              // Remove the onWheel prop as we're now handling it with addEventListener
+                          >
+                              <Padding />
+                              {items.map((item) => (
+                                  <TimeButton 
+                                      key={item}
+                                      onClick={() => handleTimeButtonClick(columnIndex, item)}
+                                  >
+                                      {item}
+                                  </TimeButton>
+                              ))}
+                              <Padding />
+                          </ScrollView>
+                      </Column>
+                  ))}
+                  <Selection />
+              </TimePickerContainer>
           </DropdownContainer>
-        )}
+      )}
       </Container>
     );
 };

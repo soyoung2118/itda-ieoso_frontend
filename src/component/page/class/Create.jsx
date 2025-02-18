@@ -22,9 +22,9 @@ export default function Create() {
     startDate: null,
     durationWeeks: 1,
     lectureDays: [],
-    lectureTime: '',
+    lectureTime: '00:00',
     assignmentDays: [],
-    assignmentTime: '',
+    assignmentTime: '00:00',
     difficulty: 'easy',
   });
 
@@ -93,6 +93,26 @@ const handleAssignmentTimeChange = (timeString) => {
       return;
     }
 
+    if(!isLecturePending && form.lectureDays.length === 0) {
+      alert('강의 요일을 선택하세요.');
+      return;
+    }
+
+    if(!isLecturePending && form.lectureTime === '00:00') {
+      alert('강의 시간을 선택하세요');
+      return;
+    }
+
+    if(!isAssignmentPending && form.assignmentDays.length === 0) {
+      alert('과제 요일을 선택하세요.');
+      return;
+    }
+
+    if(!isAssignmentPending && form.assignmentTime === '00:00') {
+      alert('과제 시간을 선택하세요');
+      return;
+    }
+
     try {
       if (!user) {
         console.log('사용자 정보가 없습니다');
@@ -109,7 +129,9 @@ const handleAssignmentTimeChange = (timeString) => {
       const settingData  = {
         title: form.coursename,
         instructorName: form.instructor,
-        startDate: form.startDate?.toISOString().split('T')[0],
+        startDate: form.startDate?
+          `${form.startDate.getFullYear()}-${String(form.startDate.getMonth() + 1).padStart(2, '0')}-${String(form.startDate.getDate()).padStart(2, '0')}` 
+          : null,
         durationWeeks: Number(form.durationWeeks),
         lectureDay: form.lectureDays,
         lectureTime: isLecturePending ? '00:00:00' : formatTimeToServer(form.lectureTime),
@@ -133,9 +155,9 @@ const handleAssignmentTimeChange = (timeString) => {
         throw new Error('강의실 설정에 실패했습니다');
       }
       
-      // navigate(`/class/${courseData.courseId}/curriculum`, {
-      //   state: { entrycode: courseData.entryCode }
-      // });
+      navigate(`/class/${courseData.courseId}/curriculum`, {
+        state: { entrycode: courseData.entryCode }
+      });
   
     } catch (error) {
       console.error('강의실 생성 실패:', error);
