@@ -22,9 +22,9 @@ export default function Create() {
     startDate: null,
     durationWeeks: 1,
     lectureDays: [],
-    lectureTime: '00:00',
+    lectureTime: '',
     assignmentDays: [],
-    assignmentTime: '00:00',
+    assignmentTime: '',
     difficulty: 'easy',
   });
 
@@ -156,6 +156,7 @@ const handleAssignmentTimeChange = (timeString) => {
       }
       
       navigate(`/class/${courseData.courseId}/curriculum`, {
+      //  navigate(`/class/${courseData.courseId}/overview/info`, {
         state: { entrycode: courseData.entryCode }
       });
   
@@ -301,7 +302,7 @@ const handleAssignmentTimeChange = (timeString) => {
                         placeholder="강의 시간을 설정해주세요."
                       />
                       </TimePickerWrapper>
-                      {form.lectureTime && form.lectureTime !== '00:00' && !isLecturePending && 
+                      {form.lectureTime && !isLecturePending && 
                         <HelpText>강의 시간이 설정되었어요!</HelpText>
                       }
                 </TimeGroup>
@@ -312,7 +313,7 @@ const handleAssignmentTimeChange = (timeString) => {
                     onClick={() => {
                       setIsLecturePending(!isLecturePending)
                       if (!isLecturePending) {
-                        setForm(prev => ({ ...prev, lectureDays: [], lectureTime: '00:00' }));
+                        setForm(prev => ({ ...prev, lectureDays: [], lectureTime: '' }));
                       }
                     }}
                   >
@@ -359,7 +360,7 @@ const handleAssignmentTimeChange = (timeString) => {
                         placeholder="과제 시간을 설정해주세요."
                       />
                     </TimePickerWrapper>
-                    {form.assignmentTime && form.assignmentTime !== '00:00' && !isAssignmentPending &&
+                    {form.assignmentTime && !isAssignmentPending &&
                    <HelpText>과제 시간이 설정되었어요!</HelpText>
                    }
                 </TimeGroup> 
@@ -370,7 +371,7 @@ const handleAssignmentTimeChange = (timeString) => {
                     onClick={() => {
                       setIsAssignmentPending(!isAssignmentPending)
                       if (!isAssignmentPending) {
-                        setForm(prev => ({ ...prev, assignmentDays: [], assignmentTime: '00:00' })); // 시간도 초기화
+                        setForm(prev => ({ ...prev, assignmentDays: [], assignmentTime: '' }));
                       }
                     }}
                   >
