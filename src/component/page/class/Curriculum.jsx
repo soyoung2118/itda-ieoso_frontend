@@ -13,7 +13,7 @@ import SelectedSection from "../../img/class/check/sel_sec.svg";
 import UnselectedSection from "../../img/class/check/sel_sec.svg";
 import DoneSection from "../../img/class/check/done_sec.svg";
 import EditButton from "../../ui/class/EditButton";
-import EntrycodeModal from "../../ui/Modal";
+import EntryCodeModal from "../../ui/class/EntryCodeModal";
 
 const Section = styled.div`
   display: flex;
@@ -350,7 +350,7 @@ const Curriculum = () => {
         <EditButton to={`/class/${courseId}/curriculum/edit`} edit={true} />
       )}
 
-      {isEntryCodeModalOpen && <EntrycodeModal entrycode={entrycode} onClose={() => setIsEntryCodeModalOpen(false)} />}
+      {isEntryCodeModalOpen && <EntryCodeModal entrycode={entrycode} onClose={() => setIsEntryCodeModalOpen(false)} />}
     </div>
   );
 };

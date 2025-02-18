@@ -1,10 +1,8 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useLocation, useParams, useOutletContext } from "react-router-dom";
 import styled from "styled-components";
-import LogoSymbol from "../img/logo/itda_logo_symbol.svg";
+import LogoSymbol from "../../img/logo/itda_logo_symbol.svg";
 import Close from '@mui/icons-material/Close';
 
-export default function EntrycodeModal({ entrycode, onClose }) {
+export default function EntryCodeModal({ entrycode, onClose }) {
     return (
         <ModalBackdrop>
             <ModalWrapper>
@@ -19,9 +17,8 @@ export default function EntrycodeModal({ entrycode, onClose }) {
             </ModalWrapper>
         </ModalBackdrop>  
     );
-  }
+}
 
-  
   const ModalBackdrop = styled.div`
   position: fixed;
   top: 0;
