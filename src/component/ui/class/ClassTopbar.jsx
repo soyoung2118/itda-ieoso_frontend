@@ -46,7 +46,6 @@ const Dropdown = styled.div`
 const DropdownButton = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
   padding: 0.5rem 0rem;
   cursor: pointer;
   background-color: var(--white-color);
@@ -100,56 +99,32 @@ const MenuItem = styled.div`
 
 const TabLinkContainer = styled.div`
   display: flex;
-  gap: 0.5rem;
-  overflow-x: auto; 
-  overflow-y: hidden; 
-  white-space: nowrap; 
-  padding-bottom: 0.5rem; 
-
-  &::-webkit-scrollbar {
-    height: 2px; 
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: var(--natural-color); 
-    border-radius: 10px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  scrollbar-width: thin;
-  scrollbar-color: var(--natural-color) transparent;
+  justify-content: flex-end;
+  gap: clamp(1rem, 2vw, 2rem);
+  white-space: nowrap;
 `;
 
 const TabLink = styled(NavLink)`
-  width: 6rem;
+  width: clamp(3em, 7vw, 6rem);
   text-align: center;
-  padding: 5px 10px;
   padding: 5px 10px;
   text-decoration: none;
   color: var(--darkgrey-color);
   font-weight: bold;
-  font-size: 1.2rem;
   position: relative;
 
-  &.active {
+ &.active {
     color: var(--black-color);
+    border-bottom: 3px solid var(--black-color);
+    margin-bottom: -18px;
   }
 
-  &.active::after {
-    content: "";
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background-color: var(--black-color);
-  }
-
-  .scrolling &.active::after {
-    display: none;
+/* 화면이 768px보다 작아지면 고정 너비 해제 + 최소 너비만 지정 */
+  @media (max-width: 768px) {
+    font-size: 18px;
+    &.active {
+      margin-bottom: -21px;
+    }
   }
 `;
 
