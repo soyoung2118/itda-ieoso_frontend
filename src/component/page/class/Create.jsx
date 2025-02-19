@@ -98,7 +98,7 @@ const handleAssignmentTimeChange = (timeString) => {
       return;
     }
 
-    if(!isLecturePending && form.lectureTime === '00:00') {
+    if(!isLecturePending && !form.lectureTime) {
       alert('강의 시간을 선택하세요');
       return;
     }
@@ -108,7 +108,7 @@ const handleAssignmentTimeChange = (timeString) => {
       return;
     }
 
-    if(!isAssignmentPending && form.assignmentTime === '00:00') {
+    if(!isAssignmentPending && !form.assignmentTime) {
       alert('과제 시간을 선택하세요');
       return;
     }
