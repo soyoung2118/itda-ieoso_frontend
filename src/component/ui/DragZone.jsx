@@ -15,7 +15,8 @@ const ClassAssignmentSubmit = ({ setFiles }) => {
         ]);
       },
       accept: {
-        'image/*': [".jpeg", ".jpg", ".png"],
+        'image/jpeg': [".jpeg", ".jpg"],
+        'image/png': [".png"],
         'application/pdf': [".pdf"],
       }
     });
