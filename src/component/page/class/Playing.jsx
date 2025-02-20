@@ -3,50 +3,27 @@ import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import TopBar from '../../ui/TopBar';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import api from "../../api/api";
 import PlayingCurriculumSidebar from '../../ui/class/PlayingCurriculumSidebar';
-import { UsersContext } from '../../contexts/usersContext';
 import VideoPlaying from '../../ui/class/VideoPlaying'
 
-export default function ClassPlaying() {
+const ClassPlaying = () => {
     const navigate = useNavigate();
     const { courseId, lectureId, videoId } = useParams();
-    const { user } = useContext(UsersContext);
 
     const [curriculumData, setCurriculumData] = useState([]);
     const [currentLectureInfo, setCurrentLectureInfo] = useState([]);
     const [currentVideoInfo, setCurrentVideoInfo] = useState([]);
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                if (!videoId || !lectureId || !user) return;
-
-                const curriculumResponse = await api.get(`/lectures/curriculum/${courseId}/${user.userId}`);
-                if (curriculumResponse.data.success) {
-                    setCurriculumData(curriculumResponse.data.data);
-                    console.log("커리큘럼 데이터", curriculumData);
-                }
-            } catch (error) {
-                console.error("데이터 로딩 오류:", error);
-            }
-        };
-    
-        fetchData();
-    }, [videoId, lectureId, user])
-
-    useEffect(() => {
-        if (!curriculumData || curriculumData.length === 0) return;
-
-        const foundLecture = curriculumData.find(lecture => lecture.lectureId === Number(lectureId));
-        if (foundLecture) {
-            setCurrentLectureInfo(foundLecture);
-        }
-        const foundVideo = foundLecture.videos.find(video => video.videoId === Number(videoId));
+        if (!currentLectureInfo?.videos || !videoId) return;
+        
+        const foundVideo = currentLectureInfo.videos.find(
+            video => video.videoId === Number(videoId)
+        );
         if (foundVideo) {
             setCurrentVideoInfo(foundVideo);
         }
-    }, [curriculumData, lectureId]);
+    }, [currentLectureInfo, videoId]);
 
     const handleNavigationCurriculum = () => {
         navigate(`/class/${courseId}/curriculum`);
@@ -73,7 +50,7 @@ export default function ClassPlaying() {
                 </LeftSide>
 
                 <RightSide>
-                    <PlayingCurriculumSidebar curriculumData={curriculumData} />
+                <PlayingCurriculumSidebar curriculumData={curriculumData} setCurriculumData={setCurriculumData} currentLectureInfo={currentLectureInfo} setCurrentLectureInfo={setCurrentLectureInfo}/>
                 </RightSide>
             </Container>
         </>
@@ -138,3 +115,5 @@ const ResourceItem = styled.div`
         text-decoration: underline;
     }
 `;
+
+export default ClassPlaying;

@@ -1,12 +1,58 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useContext, useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Assignment from "../../img/icon/docs.svg";
 import Material from "../../img/icon/pdf.svg";
+import api from "../../api/api";
+import { UsersContext } from '../../contexts/usersContext';
 
-const PlayingCurriculumSidebar = ({curriculumData}) => {
+const PlayingCurriculumSidebar = ({ 
+    curriculumData, 
+    setCurriculumData, 
+    currentLectureInfo, 
+    setCurrentLectureInfo 
+}) => {
     const navigate = useNavigate();
+    const { courseId, lectureId, videoId, assignmentId } = useParams();
+    const { user } = useContext(UsersContext);
     const [expandedItems, setExpandedItems] = useState(new Set([1]));
+    const [curriculumSidebarData, setCurriculumSidebarData] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                if (!courseId || !user) return;
+
+                const curriculumResponse = await api.get(`/lectures/curriculum/${courseId}/${user.userId}`);
+                if (curriculumResponse.data.success) {
+                    const data = curriculumResponse.data.data;
+                    setCurriculumData(data);
+                    setCurriculumSidebarData(data);
+                    console.log(curriculumSidebarData);
+                }
+            } catch (error) {
+                console.error("데이터 로딩 오류:", error);
+            }
+        };
+        
+        fetchData();
+    }, [courseId, user, setCurriculumData]);
+
+    useEffect(() => {
+        if (!curriculumSidebarData?.length || !lectureId) return;
+        
+        const foundLecture = curriculumSidebarData.find(
+            lecture => lecture.lectureId === Number(lectureId)
+        );
+        
+        if (foundLecture) {
+            setCurrentLectureInfo(foundLecture);
+            
+            if (videoId || assignmentId) {
+                setExpandedItems(prev => new Set([...prev, foundLecture.lectureId]));
+            }
+        }
+    }, [curriculumSidebarData, lectureId, videoId, assignmentId, setCurrentLectureInfo]);
 
     const toggleItem = (itemId) => {
         setExpandedItems(prev => {
@@ -42,43 +88,12 @@ const PlayingCurriculumSidebar = ({curriculumData}) => {
         }
     };
 
-    const handleAssignmentClick = (lectureId, videoId) => {
-        navigate(`/assignment/submit/${lectureId}/${videoId}/${target}`);
+    const handleVideoClick = (lectureId, videoId) => {
+        navigate(`/class/${courseId}/${lectureId}/${videoId}`);
     };
 
-    const handleNavigationVideoClick = (lectureId) => {
-        navigate(`/class/${lectureId}`);
-    };
-
-    const getCurrentVideo = () => {
-        for (const lecture of curriculumData) {
-            const currentVideo = lecture.videos.find(video => video.videoHistoryStatus === "WATCHING");
-            if (currentVideo) {
-                return {
-                    lectureTitle: lecture.lectureTitle,
-                    videoTitle: currentVideo.videoTitle,
-                    lectureId: lecture.lectureId,
-                    videoId: currentVideo.videoId
-                };
-            }
-        }
-        return null;
-    };
-
-    const getCurrentAssignment = () => {
-        if (curriculumData && assignmentId) {
-            const assignment = curriculumData.assignments.find(
-                assignment => assignment.assignmentId === parseInt(assignmentId)
-            );
-            if (assignment) {
-                return {
-                    name: assignment.assignmentTitle,
-                    deadline: `${formatDate(assignment.startDate)} - ${formatDate(assignment.endDate)}`,
-                    description: assignment.assignmentDescription
-                };
-            }
-        }
-        return null;
+    const handleAssignmentClick = (lectureId, assignmentId) => {
+        navigate(`/assignment/submit/${courseId}/${lectureId}/${assignmentId}`);
     };
 
     return (
@@ -87,7 +102,7 @@ const PlayingCurriculumSidebar = ({curriculumData}) => {
             
             <RightContainer>
                 <CurriculumList>
-                    {curriculumData.map((lecture) => (
+                    {curriculumSidebarData.map((lecture) => (
                         <div key={lecture.lectureId}>
                             <CurriculumItem>
                                 <ItemTitle>{lecture.lectureTitle}</ItemTitle>

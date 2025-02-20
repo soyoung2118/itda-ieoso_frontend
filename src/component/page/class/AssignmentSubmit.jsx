@@ -12,7 +12,6 @@ import AssignmentModal from "../../ui/class/AssignmentModal";
 
 const ClassAssignmentSubmit = () => {
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(true);
     const { courseId, lectureId, assignmentId } = useParams();
     const { user } = useContext(UsersContext);
 
@@ -21,8 +20,6 @@ const ClassAssignmentSubmit = () => {
     const [previousFiles, setPreviousFiles] = useState([]);
     const [deletedFiles, setDeletedFiles] = useState([]);
     
-    const [assignmentTitle, setAssignmentTitle] = useState('');
-    const [assignmentContent, setAssignmentContent] = useState('');
     const [submissionId, setSubmissionId] = useState(null);
     const [submissionStatus, setSubmissionStatus] = useState('');
 
@@ -119,22 +116,41 @@ const ClassAssignmentSubmit = () => {
         navigate(`/class/${courseId}/curriculum`);
     };
 
-    const getCurrentVideo = () => {
-        return {
-            lectureTitle: curriculumData.lectureTitle,
-            //videoTitle: curriculumData.videos[0]?.videoTitle || "강의를 선택해주세요"
+    useEffect(() => {
+        const fetchSubmissionData = async () => {
+            try {
+                if (!assignmentId || !lectureId || !user || !courseId) return;
+
+                const lectureResponse = await api.get(`/lectures/history/${courseId}/${user.userId}`);
+                if (lectureResponse.data.success) {
+                    const submission = lectureResponse.data.data.submissions.find(
+                        (submission) => submission.assignmentId === parseInt(assignmentId)
+                    );
+                    if (submission) {
+                        setSubmissionId(submission.submissionId);
+                        setSubmissionStatus(submission.submissionStatus);
+                    } else {
+                        setSubmissionId(null);
+                        setSubmissionStatus("NOT_SUBMITTED");
+                    }
+                }
+            } catch (error) {
+                console.error("제출 정보 로딩 오류:", error);
+            }
         };
-    };
+
+        fetchSubmissionData();
+    }, [assignmentId, lectureId, courseId, user]);
 
     useEffect(() => {
         const fetchAssignmentData = async () => {
-            if (!submissionId) return;
-    
+            if (!submissionId || !assignmentId || !user) return;
+
             try {
                 const statusResponse = await api.get(
                     `/assignments/${assignmentId}/submissions/${submissionId}/${user.userId}`
                 );
-    
+
                 if (statusResponse.data.success) {
                     const filesData = statusResponse.data.data.fileNames.map((fileName, index) => ({
                         id: Date.now() + '_' + Math.random().toString(36).substr(2, 9),
@@ -151,65 +167,21 @@ const ClassAssignmentSubmit = () => {
                 console.error("과제 정보 로딩 오류:", error);
             }
         };
-    
+
         fetchAssignmentData();
-    }, [submissionId]); 
+    }, [submissionId, assignmentId, user]);
 
     useEffect(() => {
-        const fetchSubmissionData = async () => {
-            try {
-                if (!assignmentId || !lectureId || !user) return;
-    
-                const lectureResponse = await api.get(`/lectures/history/${courseId}/${user.userId}`);
-                if (lectureResponse.data.success) {
-                    const submission = lectureResponse.data.data.submissions.find((submission) => submission.assignmentId === parseInt(assignmentId));
-                    if (submission) {
-                        setSubmissionId(submission.submissionId);
-                        setSubmissionStatus(submission.submissionStatus);
-                    } else {
-                        setSubmissionId(null);
-                        setSubmissionStatus("NOT_SUBMITTED");
-                    }
-                }
-            } catch (error) {
-                console.error("데이터 로딩 오류:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
+        if (!currentLectureInfo?.videos || !assignmentId) return;
 
-        const fetchData = async () => {
-            try {
-                if (!assignmentId || !lectureId || !user) return;
+        const foundAssignment = currentLectureInfo.assignments.find(
+            assignment => assignment.assignmentId === Number(assignmentId)
+        );
 
-                const curriculumResponse = await api.get(`/lectures/curriculum/${courseId}/${user.userId}`);
-                if (curriculumResponse.data.success) {
-                    setCurriculumData(curriculumResponse.data.data);
-                    console.log("커리큘럼 데이터", curriculumData);
-                }
-            } catch (error) {
-                console.error("데이터 로딩 오류:", error);
-            }
-        };
-    
-        fetchSubmissionData();
-        fetchData();
-    }, [assignmentId, lectureId, user]);
-
-    useEffect(() => {
-        if (!curriculumData || curriculumData.length === 0) return;
-
-        const foundLecture = curriculumData.find(lecture => lecture.lectureId === Number(lectureId));
-        if (foundLecture) {
-            setCurrentLectureInfo(foundLecture);
-        }
-        const foundAssignment = foundLecture.assignments.find(assignment => assignment.assignmentId === Number(assignmentId));
         if (foundAssignment) {
             setCurrentAssignmentInfo(foundAssignment);
         }
-        console.log(currentLectureInfo);
-        console.log(currentAssignmentInfo);
-    }, [curriculumData, lectureId]);
+    }, [currentLectureInfo, assignmentId]);
     
     const DeleteImageHandle = (e, fileId) => {
         e.preventDefault();
@@ -274,22 +246,24 @@ const ClassAssignmentSubmit = () => {
         <TopBar />
         <Container>
             <LeftSide>
-                <TitleContainer>
-                        <MainTitle>
-                            {currentLectureInfo.lectureTitle || "강의를 선택해주세요"}
-                        </MainTitle>
-                        
-                        <ClickContainer onClick={handleNavigationCurriculum}>
-                            <ArrowForwardIosIcon style={{ width: '13px', marginLeft: '15px' }}/>
-                        </ClickContainer>
+            <TitleContainer>
+                    <MainTitle>
+                        {currentLectureInfo?.lectureTitle || "강의를 선택해주세요"}
+                    </MainTitle>
+                    
+                    <ClickContainer onClick={handleNavigationCurriculum}>
+                        <ArrowForwardIosIcon style={{ width: '13px', marginLeft: '15px' }}/>
+                    </ClickContainer>
                 </TitleContainer>
 
                 <WhiteBoxComponent>
                     <NoticeTitleContainer>
-                        <FormTitle style={{marginTop: '0px'}}>{currentAssignmentInfo.assignmentTitle || "과제 작성"}</FormTitle>
+                        <FormTitle style={{marginTop: '0px'}}>
+                            {currentAssignmentInfo?.assignmentTitle || "과제 제목"}
+                        </FormTitle>
                     </NoticeTitleContainer>
                     <NoticeContentContainer>
-                        <span>{currentAssignmentInfo.assignmentContent || "과제 작성"}</span>
+                        <span>{currentAssignmentInfo?.assignmentContent || "과제 설명"}</span>
                     </NoticeContentContainer>
                 </WhiteBoxComponent>
 
@@ -336,7 +310,7 @@ const ClassAssignmentSubmit = () => {
             </LeftSide>
 
             <RightSide>
-                <PlayingCurriculumSidebar curriculumData={curriculumData} />
+                <PlayingCurriculumSidebar curriculumData={curriculumData} setCurriculumData={setCurriculumData} currentLectureInfo={currentLectureInfo} setCurrentLectureInfo={setCurrentLectureInfo}/>
             </RightSide>
 
             { isSubmittedModalOpen && <AssignmentModal text="과제 제출이 완료되었습니다."  onClose={() => setIsSubmittedModalOpen(false)}/> }
