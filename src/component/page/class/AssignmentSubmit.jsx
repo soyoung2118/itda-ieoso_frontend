@@ -206,9 +206,9 @@ const ClassAssignmentSubmit = () => {
     };
     
     const OnClickImage = async (e, fileId) => {
-        console.log(files);
-        const fileToDownload = files.find((file) => file.id === fileId);
+        e.preventDefault();
         
+        const fileToDownload = files.find((file) => file.id === fileId);
         if (!fileToDownload) {
             console.error('파일을 찾을 수 없습니다.');
             return;
@@ -217,27 +217,18 @@ const ClassAssignmentSubmit = () => {
         try {
             const response = await api.get("/files/download", {
                 params: { 
-                    fileUrl: fileToDownload.object.fileUrl 
+                    fileUrl: fileToDownload.fileUrl 
                 },
-                responseType: 'blob'
             });
-    
-            const blob = new Blob([response.data], { 
-                type: 'application/octet-stream' 
-            });
-    
-            const downloadUrl = window.URL.createObjectURL(blob);
+
+            const fileUrl = response.data; // 백엔드에서 반환된 파일 URL
             const link = document.createElement('a');
-            link.href = downloadUrl;
-            link.download = fileToDownload.object.name;
-            document.body.appendChild(link);
-            link.click();
-            
-            document.body.removeChild(link);
-            window.URL.revokeObjectURL(downloadUrl);
+            link.href = fileUrl;
+            link.download = 'filename.ext'; // 원하는 파일 이름과 확장자
+            link.click();    
     
         } catch (error) {
-            console.error("파일 다운로드 중 오류:", error);
+            console.error("파일 처리 중 오류:", error);
         }
     };
 
