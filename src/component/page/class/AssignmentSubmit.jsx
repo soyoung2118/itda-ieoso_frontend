@@ -27,6 +27,8 @@ const ClassAssignmentSubmit = () => {
     const [submissionStatus, setSubmissionStatus] = useState('');
 
     const [curriculumData, setCurriculumData] = useState([]);
+    const [currentLectureInfo, setCurrentLectureInfo] = useState([]);
+    const [currentAssignmentInfo, setCurrentAssignmentInfo] = useState([]);
 
     const [isSubmittedModalOpen, setIsSubmittedModalOpen] = useState(false);
     const [isReSubmittedModalOpen, setIsReSubmittedModalOpen] = useState(false);
@@ -160,11 +162,7 @@ const ClassAssignmentSubmit = () => {
     
                 const lectureResponse = await api.get(`/lectures/history/${courseId}/${user.userId}`);
                 if (lectureResponse.data.success) {
-                    console.log(lectureResponse);
-                    const submission = lectureResponse.data.data.submissions.find(
-                        (submission) => submission.assignmentId === parseInt(assignmentId)
-                    );
-    
+                    const submission = lectureResponse.data.data.submissions.find((submission) => submission.assignmentId === parseInt(assignmentId));
                     if (submission) {
                         setSubmissionId(submission.submissionId);
                         setSubmissionStatus(submission.submissionStatus);
@@ -179,11 +177,40 @@ const ClassAssignmentSubmit = () => {
                 setLoading(false);
             }
         };
+
+        const fetchData = async () => {
+            try {
+                if (!assignmentId || !lectureId || !user) return;
+
+                const curriculumResponse = await api.get(`/lectures/curriculum/${courseId}/${user.userId}`);
+                if (curriculumResponse.data.success) {
+                    setCurriculumData(curriculumResponse.data.data);
+                    console.log("커리큘럼 데이터", curriculumData);
+                }
+            } catch (error) {
+                console.error("데이터 로딩 오류:", error);
+            }
+        };
     
         fetchSubmissionData();
+        fetchData();
     }, [assignmentId, lectureId, user]);
-    
 
+    useEffect(() => {
+        if (!curriculumData || curriculumData.length === 0) return;
+
+        const foundLecture = curriculumData.find(lecture => lecture.lectureId === Number(lectureId));
+        if (foundLecture) {
+            setCurrentLectureInfo(foundLecture);
+        }
+        const foundAssignment = foundLecture.assignments.find(assignment => assignment.assignmentId === Number(assignmentId));
+        if (foundAssignment) {
+            setCurrentAssignmentInfo(foundAssignment);
+        }
+        console.log(currentLectureInfo);
+        console.log(currentAssignmentInfo);
+    }, [curriculumData, lectureId]);
+    
     const DeleteImageHandle = (e, fileId) => {
         e.preventDefault();
     
@@ -245,14 +272,11 @@ const ClassAssignmentSubmit = () => {
     return (
         <>
         <TopBar />
-        {loading ?  (
-            <></>
-        ) : (
         <Container>
             <LeftSide>
                 <TitleContainer>
                         <MainTitle>
-                            <span>{getCurrentVideo()?.lectureTitle || "강의를 선택해주세요"}</span>
+                            {currentLectureInfo.lectureTitle || "강의를 선택해주세요"}
                         </MainTitle>
                         
                         <ClickContainer onClick={handleNavigationCurriculum}>
@@ -261,12 +285,12 @@ const ClassAssignmentSubmit = () => {
                 </TitleContainer>
 
                 <WhiteBoxComponent>
-                <NoticeTitleContainer>
-                    <FormTitle style={{marginTop: '0px'}}>{assignmentTitle || "과제 작성"}</FormTitle>
-                </NoticeTitleContainer>
-                <NoticeContentContainer>
-                    <span>{assignmentContent}</span>
-                </NoticeContentContainer>
+                    <NoticeTitleContainer>
+                        <FormTitle style={{marginTop: '0px'}}>{currentAssignmentInfo.assignmentTitle || "과제 작성"}</FormTitle>
+                    </NoticeTitleContainer>
+                    <NoticeContentContainer>
+                        <span>{currentAssignmentInfo.assignmentContent || "과제 작성"}</span>
+                    </NoticeContentContainer>
                 </WhiteBoxComponent>
 
                 <WhiteBoxComponent style={{height: '70vh'}}>
@@ -318,27 +342,20 @@ const ClassAssignmentSubmit = () => {
             { isSubmittedModalOpen && <AssignmentModal text="과제 제출이 완료되었습니다."  onClose={() => setIsSubmittedModalOpen(false)}/> }
             { isReSubmittedModalOpen && <AssignmentModal text="과제 수정이 완료되었습니다."  onClose={() => setIsReSubmittedModalOpen(false)}/> }
         </Container>
-        )}
         </>
     );
 };
 
 const Container = styled.div`
     display: flex;
-    background-color: #F6F7F9;
-    width: 100%;
-    max-width: 100vw;
     overflow: hidden;
+    background-color: #F6F7F9;
 `;
 
 const LeftSide = styled.div`
-    width: 70%;
-    min-width: 70%;
-    max-width: 70%;
+    width: 70vw;
     height: 100%;
     padding: 0px 37px;
-    flex-shrink: 0;
-    overflow: hidden;
 `;
 
 const FormTitle = styled.div`
@@ -402,20 +419,6 @@ const RightSide = styled.div`
     padding: 0px 15px;
     padding-top: 36px;
     background-color: #FFFFFF;
-`;
-
-const ResourceItem = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 0;
-    font-size: 13px;
-    color: #474747;
-    cursor: pointer;
-
-    &:hover {
-        text-decoration: underline;
-    }
 `;
 
 const EditorContainer = styled.div`
