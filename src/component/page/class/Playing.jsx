@@ -12,7 +12,6 @@ export default function ClassPlaying() {
     const navigate = useNavigate();
     const { courseId, lectureId, videoId } = useParams();
     const { user } = useContext(UsersContext);
-    const [expandedItems, setExpandedItems] = useState(new Set([1]));
 
     const [curriculumData, setCurriculumData] = useState([]);
     const [currentLectureInfo, setCurrentLectureInfo] = useState([]);
@@ -46,29 +45,8 @@ export default function ClassPlaying() {
         const foundVideo = foundLecture.videos.find(video => video.videoId === Number(videoId));
         if (foundVideo) {
             setCurrentVideoInfo(foundVideo);
-            console.log("현재 비디오의 데이터", foundVideo);
         }
     }, [curriculumData, lectureId]);
-
-    const toggleItem = (itemId) => {
-        setExpandedItems(prev => {
-            const newSet = new Set(prev);
-            if (newSet.has(itemId)) {
-                newSet.delete(itemId);
-            } else {
-                newSet.add(itemId);
-            }
-            return newSet;
-        });
-    };
-
-    const truncate = (str, n) => {
-        return str?.length > n ? str.substr(0, n - 1) + "..." : str;
-    };
-
-    const handleAssignmentClick = (lectureId, videoId) => {
-        navigate(`/assignment/submit/${lectureId}/${videoId}`);
-    };
 
     const handleNavigationCurriculum = (lectureId) => {
         navigate(`/class/${lectureId}`);
@@ -103,7 +81,7 @@ export default function ClassPlaying() {
 }
 
 const Container = styled.div`
-    height: 92vh;
+    height: 92vh - 1px;
     display: flex;
     overflow: hidden;
     background-color: #F6F7F9;
@@ -117,8 +95,7 @@ const LeftSide = styled.div`
 
 const RightSide = styled.div`
     width: 30vw;
-    padding: 0px 15px;
-    padding-top: 36px;
+    padding: 36px 15px;
     background-color: #FFFFFF;
 `;
 
