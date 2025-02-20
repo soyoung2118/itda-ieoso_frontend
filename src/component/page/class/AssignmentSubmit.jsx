@@ -93,15 +93,6 @@ const ClassAssignmentSubmit = () => {
                 .filter(file => file.fileUrl)
                 .map(file => file.fileUrl);
             const deleteFileUrls = [...deletedFiles];
-            
-            console.log("=== 제출 시점의 파일 상태 ===");
-            console.log("현재 files 길이:", files.length);
-            console.log("previousFiles 길이:", previousFiles.length);
-            console.log("현재 files:", files);
-            console.log("previousFiles:", previousFiles);
-            console.log("📌 기존 파일 유지:", existingFileUrls);
-            console.log("📌 새 파일 업로드:", newFiles);
-            console.log("🚨 삭제할 파일:", deleteFileUrls);
     
             const formData = new FormData();
             formData.append("textContent", content);
@@ -282,6 +273,7 @@ const ClassAssignmentSubmit = () => {
     };
     
     const OnClickImage = async (e, fileId) => {
+        console.log(files);
         const fileToDownload = files.find((file) => file.id === fileId);
         
         if (!fileToDownload) {
@@ -366,13 +358,14 @@ const ClassAssignmentSubmit = () => {
                             <ImageItem 
                                 key={file.fileUrl} 
                                 $textWidth={file.name?.length ? file.name.length * 10 : 100}
+                                title={file.fileName}
                             >
-                                <ImageText onClick={(e) => OnClickImage(e, file.fileUrl)}>{file.name}</ImageText>
+                                <ImageText title={file.fileName} onClick={(e) => OnClickImage(e, file.id)}>{file.name}</ImageText>
                                 <CloseIcon 
                                     onClick={(e) => {
                                         DeleteImageHandle(e, file.id);
                                     }} 
-                                    style={{width: '15px'}}
+                                    style={{width: '15px', cursor: 'pointer'}}
                                 />
                             </ImageItem>
                         ))
@@ -711,7 +704,7 @@ const ImageText = styled.div`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    curosr: pointer;
+    cursor: pointer;
 `;
 
 const SubmitButton = styled.button`
