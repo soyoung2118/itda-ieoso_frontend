@@ -133,7 +133,6 @@ export default function PlayingCurriculumSidebar() {
 
     return (
         <>
-        <Container>
             <MenuTitle>커리큘럼</MenuTitle>
             
             <RightContainer>
@@ -210,7 +209,6 @@ export default function PlayingCurriculumSidebar() {
                     </CurriculumList>
                 )}
             </RightContainer>
-        </Container>
         </>
     );
 }
