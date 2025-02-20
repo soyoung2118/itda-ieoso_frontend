@@ -23,6 +23,7 @@ const ClassAssignmentSubmit = () => {
     const [content, setContent] = useState('');
     const [files, setFiles] = useState([]);
     const [previousFiles, setPreviousFiles] = useState([]);
+    const [deletedFiles, setDeletedFiles] = useState([]);
     
     const [assignmentTitle, setAssignmentTitle] = useState('');
     const [assignmentContent, setAssignmentContent] = useState('');
@@ -91,10 +92,13 @@ const ClassAssignmentSubmit = () => {
             const existingFileUrls = files
                 .filter(file => file.fileUrl)
                 .map(file => file.fileUrl);
-            const deleteFileUrls = previousFiles
-                .filter(prevFile => !existingFileUrls.includes(prevFile.fileUrl))
-                .map(prevFile => prevFile.fileUrl);
+            const deleteFileUrls = [...deletedFiles];
             
+            console.log("=== 제출 시점의 파일 상태 ===");
+            console.log("현재 files 길이:", files.length);
+            console.log("previousFiles 길이:", previousFiles.length);
+            console.log("현재 files:", files);
+            console.log("previousFiles:", previousFiles);
             console.log("📌 기존 파일 유지:", existingFileUrls);
             console.log("📌 새 파일 업로드:", newFiles);
             console.log("🚨 삭제할 파일:", deleteFileUrls);
@@ -124,15 +128,17 @@ const ClassAssignmentSubmit = () => {
                 }
                 
                 case "SUBMITTED": {
-                    // existingFileUrls.forEach(url => {
-                    //     formData.append("existingFileUrls", url);
-                    // });
-                    // deleteFileUrls.forEach(url => {
-                    //     formData.append("deleteFileUrls", url);
-                    // });
-
-                    formData.append("existingFileUrls", JSON.stringify(existingFileUrls));
-                    formData.append("deleteFileUrls", JSON.stringify(deleteFileUrls));
+                    if (existingFileUrls.length > 0) {
+                        existingFileUrls.forEach(url => {
+                            formData.append("existingFileUrls", url);
+                        });
+                    }
+                    
+                    if (deleteFileUrls.length > 0) {
+                        deleteFileUrls.forEach(url => {
+                            formData.append("deleteFileUrls", url);
+                        });
+                    }
     
                     response = await api.put(
                         `/assignments/${assignmentId}/submissions/${submissionId}/${user.userId}`,
@@ -146,22 +152,19 @@ const ClassAssignmentSubmit = () => {
                     break;
                 }
             }
-    
             if (response.data.success) {
-                console.log("✅ 제출 완료:", response.data.data);
-    
                 const statusResponse = await api.get(
                     `/assignments/${assignmentId}/submissions/${submissionId}/${user.userId}`
                 );
     
-                console.log("📌 업데이트된 상태:", statusResponse.data.data);
-    
-                submissionStatus === "NOT_SUBMITTED"
-                    ? setIsSubmittedModalOpen(true)
-                    : setIsReSubmittedModalOpen(true);
+                if (statusResponse.data.success) {
+                    submissionStatus === "NOT_SUBMITTED"
+                        ? setIsSubmittedModalOpen(true)
+                        : setIsReSubmittedModalOpen(true);
+                }
             }
         } catch (error) {
-            console.error("🚨 과제 제출 오류:", error);
+            console.error("과제 제출 오류:", error);
         }
     };
 
@@ -249,6 +252,11 @@ const ClassAssignmentSubmit = () => {
 
     const DeleteImageHandle = (e, fileId) => {
         e.preventDefault();
+
+        console.log("=== 삭제 전 상태 ===");
+        console.log("삭제할 fileId:", fileId);
+        console.log("현재 files:", files);
+        console.log("현재 previousFiles:", previousFiles);
     
         const fileToDelete = files.find((file) => file.id === fileId);
     
@@ -263,6 +271,14 @@ const ClassAssignmentSubmit = () => {
     
         const updatedFiles = files.filter((file) => file.id !== fileId);
         setFiles(updatedFiles);
+        
+        if (fileToDelete.fileUrl) {
+            setDeletedFiles((prev) => [...prev, fileToDelete.fileUrl]);
+        }
+
+        console.log("=== 삭제 후 상태 ===");
+        console.log("업데이트된 files:", updatedFiles);
+        console.log("previousFiles 유지:", previousFiles);
     };
     
     const OnClickImage = async (e, fileId) => {
