@@ -81,7 +81,6 @@ export default function ClassPlaying() {
 }
 
 const Container = styled.div`
-    height: 92vh - 1px;
     display: flex;
     overflow: hidden;
     background-color: #F6F7F9;
@@ -95,7 +94,9 @@ const LeftSide = styled.div`
 
 const RightSide = styled.div`
     width: 30vw;
-    padding: 36px 15px;
+    padding: 0px 15px;
+    padding-top: 36px;
+    padding-bottom: 24px;
     background-color: #FFFFFF;
 `;
 
