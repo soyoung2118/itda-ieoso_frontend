@@ -1,14 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import TopBar from '../../ui/TopBar';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import Assignment from "../../img/icon/docs.svg";
 import Material from "../../img/icon/pdf.svg";
 
-export default function PlayingCurriculumSidebar() {
+const PlayingCurriculumSidebar = ({curriculumData}) => {
     const navigate = useNavigate();
-    const [selectedMenu, setSelectedMenu] = useState('curriculum');
     const [expandedItems, setExpandedItems] = useState(new Set([1]));
 
     const toggleItem = (itemId) => {
@@ -26,69 +23,6 @@ export default function PlayingCurriculumSidebar() {
     const truncate = (str, n) => {
         return str?.length > n ? str.substr(0, n - 1) + "..." : str;
     };
-
-    const curriculumData = [
-        {
-            lectureId: 1,
-            lectureTitle: "1. 기초를 준비해요.",
-            lectureDescription: "챕터 설명을 작성하세요.",
-            videos: [
-                {
-                    videoId: 1,
-                    videoTitle: "꾸미고 싶은 타입을 정해서 다이어리를 꾸며보세요",
-                    videoUrl: "영상 링크 첨부",
-                    time: '21:30',
-                    startDate: "2025-03-01T23:59:59",
-                    endDate: "2025-03-07T23:59:59",
-                    videoHistoryStatus: "WATCHED"
-                },
-                {
-                    videoId: 2,
-                    videoTitle: "필기구 소개",
-                    videoUrl: "영상 링크 첨부",
-                    time: '11:10',
-                    startDate: "2025-03-01T23:59:59",
-                    endDate: "2025-03-07T23:59:59",
-                    videoHistoryStatus: "WATCHING",
-                    material: {
-                        name: "오늘의 다이어리",
-                        size: "3.1MB",
-                    },
-                    assignment: {
-                        name: "1/6(월) 과제 제출",
-                        deadline: "2025.01.06 15:00:00 - 2025.01.12 23:59",
-                    },
-                },
-                {
-                    videoId: 3,
-                    videoTitle: "나만의 색연필 차트",
-                    videoUrl: "영상 링크 첨부",
-                    time: '21:30',
-                    startDate: "2025-03-01T23:59:59",
-                    endDate: "2025-03-07T23:59:59",
-                    videoHistoryStatus: "NOT_WATCHED"
-                },
-            ],
-        },
-        {
-            lectureId: 2,
-            lectureTitle: "2. 한 달을 기록해요",
-            lectureDescription: "챕터 설명을 작성하세요.",
-            videos: [],
-        },
-        {
-            lectureId: 3,
-            lectureTitle: "3. 한 주를 기록해요",
-            lectureDescription: "챕터 설명을 작성하세요.",
-            videos: [],
-        },
-        {
-            lectureId: 4,
-            lectureTitle: "4. 하루를 꾸며요",
-            lectureDescription: "챕터 설명을 작성하세요.",
-            videos: [],
-        },
-    ];
 
     const getStatusIcon = (status) => {
         switch (status) {
@@ -152,78 +86,76 @@ export default function PlayingCurriculumSidebar() {
             <MenuTitle>커리큘럼</MenuTitle>
             
             <RightContainer>
-                {selectedMenu === 'curriculum' && (
-                    <CurriculumList>
-                        {curriculumData.map((lecture) => (
-                            <div key={lecture.lectureId}>
-                                <CurriculumItem>
-                                    <ItemTitle>{lecture.lectureTitle}</ItemTitle>
-                                    {lecture.videos.length > 0 && (
-                                        <IconWrapper onClick={() => toggleItem(lecture.lectureId)}>
-                                            <span className="material-icons">
-                                                {expandedItems.has(lecture.lectureId) ? 'expand_more' : 'chevron_right'}
-                                            </span>
-                                        </IconWrapper>
-                                    )}
-                                </CurriculumItem>
-                                {expandedItems.has(lecture.lectureId) && lecture.videos.map((video) => (
-                                    <SubItem key={video.videoId} status={video.videoHistoryStatus}>
-                                        <SubItemHeader>
-                                            <SubItemLeft>
-                                                <SubItemTitle status={video.videoHistoryStatus}>
-                                                    <span>{video.videoId}. {truncate(video.videoTitle, 25)}</span>
-                                                </SubItemTitle>
-                                                <SubItemTime>
-                                                    <span className="material-icons" style={{ color: '#909090', fontSize: '13.33px', marginRight: '3px' }}>
-                                                        play_circle_outline
+                <CurriculumList>
+                    {curriculumData.map((lecture) => (
+                        <div key={lecture.lectureId}>
+                            <CurriculumItem>
+                                <ItemTitle>{lecture.lectureTitle}</ItemTitle>
+                                {lecture.videos.length > 0 && (
+                                    <IconWrapper onClick={() => toggleItem(lecture.lectureId)}>
+                                        <span className="material-icons">
+                                            {expandedItems.has(lecture.lectureId) ? 'expand_more' : 'chevron_right'}
+                                        </span>
+                                    </IconWrapper>
+                                )}
+                            </CurriculumItem>
+                            {expandedItems.has(lecture.lectureId) && lecture.videos.map((video) => (
+                                <SubItem key={video.videoId} status={video.videoHistoryStatus}>
+                                    <SubItemHeader>
+                                        <SubItemLeft>
+                                            <SubItemTitle status={video.videoHistoryStatus}>
+                                                <span>{video.videoId}. {truncate(video.videoTitle, 25)}</span>
+                                            </SubItemTitle>
+                                            <SubItemTime>
+                                                <span className="material-icons" style={{ color: '#909090', fontSize: '13.33px', marginRight: '3px' }}>
+                                                    play_circle_outline
+                                                </span>
+                                                {video.time}
+                                            </SubItemTime>
+                                        </SubItemLeft>
+                                        {getStatusIcon(video.videoHistoryStatus)}
+                                    </SubItemHeader>
+                                    {(video.material || video.assignment) && (
+                                        <SubItemContent>
+                                            {video.material && (
+                                                <ResourceItem>
+                                                    <img
+                                                        className="material-icons"
+                                                        src={Material}
+                                                        alt="assignment icon"
+                                                        style={{
+                                                        width: "16px",
+                                                        marginRight: "4px",
+                                                        }}
+                                                    />
+                                                    {video.material.name}
+                                                    <span style={{ fontSize: '12px', color: '#FF4747' }}>({video.material.size})</span>
+                                                </ResourceItem>
+                                            )}
+                                            {video.assignment && (
+                                                <AssignmentItem onClick={() => handleAssignmentClick(lecture.lectureId, video.videoId)}>
+                                                    <img
+                                                        className="material-icons"
+                                                        src={Assignment}
+                                                        alt="assignment icon"
+                                                        style={{
+                                                        width: "16px",
+                                                        marginRight: "4px",
+                                                        }}
+                                                    />
+                                                    {video.assignment.name}
+                                                    <span style={{ fontSize: '12px', color: '#FF4747' }}>
+                                                        {video.assignment.deadline}
                                                     </span>
-                                                    {video.time}
-                                                </SubItemTime>
-                                            </SubItemLeft>
-                                            {getStatusIcon(video.videoHistoryStatus)}
-                                        </SubItemHeader>
-                                        {(video.material || video.assignment) && (
-                                            <SubItemContent>
-                                                {video.material && (
-                                                    <ResourceItem>
-                                                        <img
-                                                            className="material-icons"
-                                                            src={Material}
-                                                            alt="assignment icon"
-                                                            style={{
-                                                            width: "16px",
-                                                            marginRight: "4px",
-                                                            }}
-                                                        />
-                                                        {video.material.name}
-                                                        <span style={{ fontSize: '12px', color: '#FF4747' }}>({video.material.size})</span>
-                                                    </ResourceItem>
-                                                )}
-                                                {video.assignment && (
-                                                    <AssignmentItem onClick={() => handleAssignmentClick(lecture.lectureId, video.videoId)}>
-                                                        <img
-                                                            className="material-icons"
-                                                            src={Assignment}
-                                                            alt="assignment icon"
-                                                            style={{
-                                                            width: "16px",
-                                                            marginRight: "4px",
-                                                            }}
-                                                        />
-                                                        {video.assignment.name}
-                                                        <span style={{ fontSize: '12px', color: '#FF4747' }}>
-                                                            {video.assignment.deadline}
-                                                        </span>
-                                                    </AssignmentItem>
-                                                )}
-                                            </SubItemContent>
-                                        )}
-                                    </SubItem>
-                                ))}
-                            </div>
-                        ))}
-                    </CurriculumList>
-                )}
+                                                </AssignmentItem>
+                                            )}
+                                        </SubItemContent>
+                                    )}
+                                </SubItem>
+                            ))}
+                        </div>
+                    ))}
+                </CurriculumList>
             </RightContainer>
         </>
     );
@@ -343,3 +275,5 @@ const SubItemTime = styled.div`
     display: flex;
     align-items: center;
 `;
+
+export default PlayingCurriculumSidebar;

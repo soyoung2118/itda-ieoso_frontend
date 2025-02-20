@@ -336,7 +336,7 @@ const ClassAssignmentSubmit = () => {
             </LeftSide>
 
             <RightSide>
-                <PlayingCurriculumSidebar />
+                <PlayingCurriculumSidebar curriculumData={curriculumData} />
             </RightSide>
 
             { isSubmittedModalOpen && <AssignmentModal text="과제 제출이 완료되었습니다."  onClose={() => setIsSubmittedModalOpen(false)}/> }

@@ -73,7 +73,7 @@ export default function ClassPlaying() {
                 </LeftSide>
 
                 <RightSide>
-                    <PlayingCurriculumSidebar />
+                    <PlayingCurriculumSidebar curriculumData={curriculumData} />
                 </RightSide>
             </Container>
         </>
