@@ -48,8 +48,8 @@ export default function ClassPlaying() {
         }
     }, [curriculumData, lectureId]);
 
-    const handleNavigationCurriculum = (lectureId) => {
-        navigate(`/class/${lectureId}`);
+    const handleNavigationCurriculum = () => {
+        navigate(`/class/${courseId}/curriculum`);
     };
 
     return (

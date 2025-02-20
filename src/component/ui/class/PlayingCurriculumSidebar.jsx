@@ -109,10 +109,10 @@ export default function PlayingCurriculumSidebar() {
     };
 
     const handleAssignmentClick = (lectureId, videoId) => {
-        navigate(`/assignment/submit/${lectureId}/${videoId}`);
+        navigate(`/assignment/submit/${lectureId}/${videoId}/${target}`);
     };
 
-    const handleNavigationCurriculum = (lectureId) => {
+    const handleNavigationVideoClick = (lectureId) => {
         navigate(`/class/${lectureId}`);
     };
 
@@ -125,6 +125,22 @@ export default function PlayingCurriculumSidebar() {
                     videoTitle: currentVideo.videoTitle,
                     lectureId: lecture.lectureId,
                     videoId: currentVideo.videoId
+                };
+            }
+        }
+        return null;
+    };
+
+    const getCurrentAssignment = () => {
+        if (curriculumData && assignmentId) {
+            const assignment = curriculumData.assignments.find(
+                assignment => assignment.assignmentId === parseInt(assignmentId)
+            );
+            if (assignment) {
+                return {
+                    name: assignment.assignmentTitle,
+                    deadline: `${formatDate(assignment.startDate)} - ${formatDate(assignment.endDate)}`,
+                    description: assignment.assignmentDescription
                 };
             }
         }
