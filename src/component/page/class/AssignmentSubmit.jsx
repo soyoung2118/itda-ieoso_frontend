@@ -9,6 +9,7 @@ import api from "../../api/api";
 import DragZone from "../../ui/DragZone";
 import CloseIcon from '@mui/icons-material/Close';
 import { UsersContext } from '../../contexts/usersContext';
+import AssignmentModal from "../../ui/class/AssignmentModal";
 
 const ClassAssignmentSubmit = () => {
     const navigate = useNavigate();
@@ -21,7 +22,7 @@ const ClassAssignmentSubmit = () => {
 
     const [content, setContent] = useState('');
     const [files, setFiles] = useState([]);
-    
+    const [previousFiles, setPreviousFiles] = useState([]);
     
     const [assignmentTitle, setAssignmentTitle] = useState('');
     const [assignmentContent, setAssignmentContent] = useState('');
@@ -29,6 +30,9 @@ const ClassAssignmentSubmit = () => {
     const [submissionStatus, setSubmissionStatus] = useState('');
 
     const [curriculumData, setCurriculumData] = useState([]);
+
+    const [isSubmittedModalOpen, setIsSubmittedModalOpen] = useState(false);
+    const [isReSubmittedModalOpen, setIsReSubmittedModalOpen] = useState(false);
 
     const toggleItem = (itemId) => {
         setExpandedItems(prev => {
@@ -73,24 +77,91 @@ const ClassAssignmentSubmit = () => {
     };
 
     const handleSubmit = async () => {
-        if (!files.length || !user) return;
-        const formData = new FormData();
-        formData.append('textContent', content);
-        files.forEach((file) => {
-            formData.append('files', file.object);
-        });
+        if (!user) return;
 
-        try{
-            const response = await api.put(`/assignments/${assignmentId}/submissions/${submissionId}/${user.userId}`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-            if (response.data.success) {
-                console.log(response.data.data);
+        if(!content && files.length === 0) {
+            alert("제출할 것이 없습니다.");
+            return;
+        }
+
+        try {
+            let response;
+
+            const newFiles = files.filter(file => !file.fileUrl);
+            const existingFileUrls = files
+                .filter(file => file.fileUrl)
+                .map(file => file.fileUrl);
+            const deleteFileUrls = previousFiles
+                .filter(prevFile => !existingFileUrls.includes(prevFile.fileUrl))
+                .map(prevFile => prevFile.fileUrl);
+            
+            console.log("📌 기존 파일 유지:", existingFileUrls);
+            console.log("📌 새 파일 업로드:", newFiles);
+            console.log("🚨 삭제할 파일:", deleteFileUrls);
+    
+            const formData = new FormData();
+            formData.append("textContent", content);
+
+            if (newFiles.length > 0) {
+                newFiles.forEach((file) => {
+                    formData.append("files", file.object);
+                });
             }
-        } catch(error) {
-            console.error("과제 제출 오류:", error);
+    
+            switch(submissionStatus) {
+                case "NOT_SUBMITTED":
+                case "LATE": {
+                    response = await api.put(
+                        `/assignments/${assignmentId}/submissions/${submissionId}/${user.userId}`,
+                        formData,
+                        {
+                            headers: {
+                                'Content-Type': 'multipart/form-data'
+                            }
+                        }
+                    );
+                    break;
+                }
+                
+                case "SUBMITTED": {
+                    // existingFileUrls.forEach(url => {
+                    //     formData.append("existingFileUrls", url);
+                    // });
+                    // deleteFileUrls.forEach(url => {
+                    //     formData.append("deleteFileUrls", url);
+                    // });
+
+                    formData.append("existingFileUrls", JSON.stringify(existingFileUrls));
+                    formData.append("deleteFileUrls", JSON.stringify(deleteFileUrls));
+    
+                    response = await api.put(
+                        `/assignments/${assignmentId}/submissions/${submissionId}/${user.userId}`,
+                        formData,
+                        {
+                            headers: {
+                                'Content-Type': 'multipart/form-data'
+                            }
+                        }
+                    );
+                    break;
+                }
+            }
+    
+            if (response.data.success) {
+                console.log("✅ 제출 완료:", response.data.data);
+    
+                const statusResponse = await api.get(
+                    `/assignments/${assignmentId}/submissions/${submissionId}/${user.userId}`
+                );
+    
+                console.log("📌 업데이트된 상태:", statusResponse.data.data);
+    
+                submissionStatus === "NOT_SUBMITTED"
+                    ? setIsSubmittedModalOpen(true)
+                    : setIsReSubmittedModalOpen(true);
+            }
+        } catch (error) {
+            console.error("🚨 과제 제출 오류:", error);
         }
     };
 
@@ -118,42 +189,51 @@ const ClassAssignmentSubmit = () => {
     };
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setLoading(true);
+        const fetchAssignmentData = async () => {
+            if (!submissionId) return;
     
-                if (!assignmentId || !lectureId || !user) return;
-
-                const curriculumResponse = await api.get(`/lectures/curriculum/${courseId}/${user.userId}`);
-                if (curriculumResponse.data.success) {
-                    setCurriculumData(curriculumResponse.data.data);
-                    console.log(curriculumData);
+            try {
+                const statusResponse = await api.get(
+                    `/assignments/${assignmentId}/submissions/${submissionId}/${user.userId}`
+                );
+    
+                if (statusResponse.data.success) {
+                    const filesData = statusResponse.data.data.fileNames.map((fileName, index) => ({
+                        id: Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                        name: fileName,
+                        size: statusResponse.data.data.fileSizes[index],
+                        fileUrl: statusResponse.data.data.fileUrls[index],
+                    }));
+                    
+                    setFiles(filesData);
+                    setPreviousFiles(filesData);
+                    setContent(statusResponse.data.data.textContent);
                 }
-                
+            } catch (error) {
+                console.error("과제 정보 로딩 오류:", error);
+            }
+        };
+    
+        fetchAssignmentData();
+    }, [submissionId]); 
+
+    useEffect(() => {
+        const fetchSubmissionData = async () => {
+            try {
+                if (!assignmentId || !lectureId || !user) return;
+    
                 const lectureResponse = await api.get(`/lectures/history/${courseId}/${user.userId}`);
-                if(lectureResponse.data.success) {
+                if (lectureResponse.data.success) {
                     const submission = lectureResponse.data.data.submissions.find(
                         (submission) => submission.assignmentId === parseInt(assignmentId)
                     );
+    
                     if (submission) {
                         setSubmissionId(submission.submissionId);
                         setSubmissionStatus(submission.submissionStatus);
-                    }
-                }
-    
-                if (submissionId) {
-                    const [infoResponse, statusResponse] = await Promise.all([
-                        api.get(`/assignments/${assignmentId}`),
-                        api.get(`/assignments/${assignmentId}/submissions/${submissionId}/${user.userId}`)
-                    ]);
-    
-                    if (infoResponse.data.success) {
-                        setAssignmentTitle(infoResponse.data.data.assignmentTitle);
-                        setAssignmentContent(infoResponse.data.data.assignmentDescription);
-                    }
-    
-                    if (statusResponse.data.success) {
-                        setContent(statusResponse.data.data.textContent);
+                    } else {
+                        setSubmissionId(null);
+                        setSubmissionStatus("NOT_SUBMITTED");
                     }
                 }
             } catch (error) {
@@ -163,25 +243,68 @@ const ClassAssignmentSubmit = () => {
             }
         };
     
-        fetchData();
-    }, [assignmentId, lectureId, user, submissionId]);
+        fetchSubmissionData();
+    }, [assignmentId, lectureId, user]);
+    
 
     const DeleteImageHandle = (e, fileId) => {
-        const updatedFiles = files.filter((file) => file.id !== fileId);
-
+        e.preventDefault();
+    
         const fileToDelete = files.find((file) => file.id === fileId);
-        if (fileToDelete) {
+    
+        if (!fileToDelete) {
+            console.warn("삭제할 파일을 찾을 수 없습니다.");
+            return;
+        }
+    
+        if (fileToDelete.object?.preview) {
             URL.revokeObjectURL(fileToDelete.object.preview);
         }
-
+    
+        const updatedFiles = files.filter((file) => file.id !== fileId);
         setFiles(updatedFiles);
-    }
+    };
+    
+    const OnClickImage = async (e, fileId) => {
+        const fileToDownload = files.find((file) => file.id === fileId);
+        
+        if (!fileToDownload) {
+            console.error('파일을 찾을 수 없습니다.');
+            return;
+        }
+    
+        try {
+            const response = await api.get("/files/download", {
+                params: { 
+                    fileUrl: fileToDownload.object.fileUrl 
+                },
+                responseType: 'blob'
+            });
+    
+            const blob = new Blob([response.data], { 
+                type: 'application/octet-stream' 
+            });
+    
+            const downloadUrl = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = fileToDownload.object.name;
+            document.body.appendChild(link);
+            link.click();
+            
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(downloadUrl);
+    
+        } catch (error) {
+            console.error("파일 다운로드 중 오류:", error);
+        }
+    };
 
     return (
         <>
         <TopBar />
         {loading ?  (
-            <div>로딩중...</div>
+            <></>
         ) : (
         <Container>
             <LeftSide>
@@ -210,7 +333,7 @@ const ClassAssignmentSubmit = () => {
                         <EditorContainer>
                             <TextArea
                                 placeholder="내용을 입력하세요" 
-                                value={content}
+                                value={content || ''}
                                 onChange={(e) => setContent(e.target.value)}
                             />
                         </EditorContainer>
@@ -224,16 +347,24 @@ const ClassAssignmentSubmit = () => {
                     <ImageItemContainer>
                     {files.length > 0 && (
                         files.map((file) => (
-                            <ImageItem key={file.id} textWidth={file.object.name.length * 10}>
-                                <ImageText>{file.object.name}</ImageText>
-                                <CloseIcon onClick={(e) => DeleteImageHandle(e, file.id)} style={{width: '15px'}}/>
+                            <ImageItem 
+                                key={file.fileUrl} 
+                                $textWidth={file.name?.length ? file.name.length * 10 : 100}
+                            >
+                                <ImageText onClick={(e) => OnClickImage(e, file.fileUrl)}>{file.name}</ImageText>
+                                <CloseIcon 
+                                    onClick={(e) => {
+                                        DeleteImageHandle(e, file.id);
+                                    }} 
+                                    style={{width: '15px'}}
+                                />
                             </ImageItem>
                         ))
                     )}
                     </ImageItemContainer>
-
-                    {submissionStatus === 'NOT_SUBMITTED' ?
-                    (<SubmitButton onClick={handleSubmit}>제출하기</SubmitButton> ) : (<SubmitButton onClick={handleSubmit}>과제 수정하기</SubmitButton>) }
+                    {submissionStatus === 'LATE' ?
+                        (<SubmitButton onClick={handleSubmit}>수정하기</SubmitButton> ) 
+                        : (<SubmitButton onClick={handleSubmit}>제출하기</SubmitButton> ) }
                 </WhiteBoxComponent>
             </LeftSide>
 
@@ -313,6 +444,8 @@ const ClassAssignmentSubmit = () => {
                     )}
                 </RightContainer>
             </RightSide>
+            { isSubmittedModalOpen && <AssignmentModal text="과제 제출이 완료되었습니다."  onClose={() => setIsSubmittedModalOpen(false)}/> }
+            { isReSubmittedModalOpen && <AssignmentModal text="과제 수정이 완료되었습니다."  onClose={() => setIsReSubmittedModalOpen(false)}/> }
         </Container>
         )}
         </>
@@ -562,6 +695,7 @@ const ImageText = styled.div`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    curosr: pointer;
 `;
 
 const SubmitButton = styled.button`

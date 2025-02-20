@@ -11,6 +11,7 @@ const ClassAssignmentSubmit = ({ setFiles }) => {
           ...acceptedFiles.map(file => ({
             id: Date.now() + '_' + Math.random().toString(36).substr(2, 9),
             object: file,
+            name: file.name,
           })),
         ]);
       },
@@ -22,24 +23,26 @@ const ClassAssignmentSubmit = ({ setFiles }) => {
     });
 
     return(
-        <UploadContainer
-            {...getRootProps()}
-            borderColor={isDragActive ? 'gray.500' : 'gray.500'}
-            bg={isDragActive ? 'purple.300' : 'gray.600'}
-            color={isDragActive ? 'gray.800' : 'white'}
-            borderStyle={isDragActive ? 'dashed' : 'solid'}
-        >
-            <input {...getInputProps()} style={{ display: 'none' }} />
-            <FileContainer>
-                <Icon 
-                    className="cloud-icon material-icons" 
-                    src={Cloud} 
-                    alt="delete icon" 
-                />
-                <FileSmallText>PDF, PNG, JPG or JPEG</FileSmallText>
-                <FileLargeText>파일을 선택하거나 드래그해주세요.</FileLargeText>
-            </FileContainer>
-        </UploadContainer>
+      <UploadContainer
+        {...getRootProps()}
+        style={{
+            borderStyle: isDragActive ? 'dashed' : 'solid',
+            borderColor: isDragActive ? 'gray.500' : 'gray.500',
+            backgroundColor: isDragActive ? 'purple.300' : 'gray.600',
+            color: isDragActive ? 'gray.800' : 'white'
+        }}
+      >
+          <input {...getInputProps()} style={{ display: 'none' }} />
+          <FileContainer>
+              <Icon 
+                  className="cloud-icon material-icons" 
+                  src={Cloud} 
+                  alt="delete icon" 
+              />
+              <FileSmallText>PDF, PNG, JPG or JPEG</FileSmallText>
+              <FileLargeText>파일을 선택하거나 드래그해주세요.</FileLargeText>
+          </FileContainer>
+      </UploadContainer>
     )
 };
 
