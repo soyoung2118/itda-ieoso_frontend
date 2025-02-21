@@ -23,7 +23,7 @@ const CustomTimePicker = ({ value = new Date(), onChange, width = 239, disabled 
       const hours = date.getHours();
       const minutes = String(date.getMinutes()).padStart(2, '0');
       const meridiem = hours >= 12 ? '오후' : '오전';
-      const hour12 = String(hours % 12).padStart(2, '0');
+      const hour12 = hours % 12 === 0 ? '12' : String(hours % 12).padStart(2, '0');
       return `${meridiem} ${hour12}:${minutes}`;
     };
 
@@ -143,7 +143,7 @@ const CustomTimePicker = ({ value = new Date(), onChange, width = 239, disabled 
     };
   
     const handleWheelEvent = (e, index) => {
-      e.preventDefault();
+      //e.preventDefault();
       
       const now = Date.now();
       if (now - lastWheelTime.current < 200) {

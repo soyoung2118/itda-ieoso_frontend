@@ -6,8 +6,6 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import styled from "styled-components";
 import { PageLayout, Section } from "../../ui/class/ClassLayout";
-import PercentRing from "../../ui/class/PercentRing";
-import PercentBar from "../../ui/class/PercentBar";
 import StudentProgressTable from "../../ui/class/StudentProgressTable";
 
 const StatsContainer = styled.div`
@@ -137,16 +135,17 @@ const ClassSummary = () => {
           }}
         >
           <AdminTopBar />
-          <div>
+          <div  style={{margin:"1vh 0vh"}}>
             <div
               style={{
                 display: "flex",
                 alignItems: "baseline",
+                marginLeft: "2.5vh"
               }}
             >
               <h3
                 style={{
-                  fontSize: "20px",
+                  fontSize: "23px",
                   fontWeight: "900",
                   color: "var(--black-color)",
                 }}
@@ -156,15 +155,15 @@ const ClassSummary = () => {
               <p
                 style={{
                   color: "var(--darkgrey-color)",
-                  fontSize: "18px",
-                  marginLeft: "18px",
+                  fontSize: "15px",
+                  marginLeft: "1.5vh",
                   fontWeight: "500",
                 }}
               >
                 {currentTime} 기준
               </p>
             </div>
-            <Section style={{ padding: "2rem 3rem", paddingBottom: "3rem" }}>
+            <Section style={{ padding: "5vh 5vh", paddingBottom: "3rem" }}>
               {/* <div
                 style={{ display: "flex", gap: "2rem", marginBottom: "4rem" }}
               >

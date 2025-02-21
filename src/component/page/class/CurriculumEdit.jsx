@@ -1,21 +1,17 @@
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useEffect, useContext } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import TopBar from "../../ui/TopBar";
 import CurriculumSidebar from "../../ui/class/CurriculumSidebar";
 import ClassTopbar from "../../ui/class/ClassTopbar";
 import { PageLayout } from "../../ui/class/ClassLayout";
-import EditButton from "../../ui/class/EditButton";
 import EditableSection from "../../ui/curriculum/EditableSection";
 import CurriculumSection from "../../ui/curriculum/CurriculumSection";
-// import api from "../../api/api";
-// import Delete from "../../img/class/edit/delete.svg";
-// import DateTimeEdit from "../../ui/curriculum/DateTimeEdit";
-// import ClassThumbnail from "../../img/class/class_thumbnail.svg";
-// import Assignment from "../../img/icon/docs.svg";
-// import Material from "../../img/icon/pdf.svg";
-// import PlayIcon from "../../img/class/play_icon.svg";
+import api from "../../api/api";
 import EditContainer from "../../ui/curriculum/EditContainer";
+import { UsersContext } from "../../contexts/usersContext";
+import { formatLecturePeriod } from "./Curriculum";
+import EditButton from "../../ui/class/EditButton";
 
 const SectionWrapper = styled.div`
   display: flex;
@@ -51,242 +47,204 @@ const DeleteButton = styled.img`
   cursor: pointer;
 `;
 
-// 더미 데이터
-const dummyData = [
-  {
-    title: "1. 기초를 준비해요",
-    subSections: [
-      {
-        type: "video",
-        title: "1. 꾸미고 싶은 타입을 정해서 다이어리를 골라봅시다.",
-        videoUrl: "https://video.example.com/1",
-        startDate: "2025-03-01T23:59:59",
-        endDate: "2025-03-07T23:59:59",
-      },
-      {
-        type: "video",
-        title: "필기구 소개",
-        videoUrl: "https://video.example.com/2",
-        startDate: "2025-03-01T23:59:59",
-        endDate: "2025-03-07T23:59:59",
-      },
-      {
-        type: "material",
-        title: "오늘의 다이어리",
-        file: "강의자료.pdf",
-      },
-      {
-        type: "assignment",
-        title: "1/6(월) 과제 제출",
-        description: "과제 설명입니다.",
-        startDate: "2025-03-01T23:59:59",
-        endDate: "2025-03-07T23:59:59",
-      },
-    ],
-  },
-  {
-    title: "2. 한달을 기록해요",
-    subSections: [
-      {
-        type: "video",
-        title: "나만의 색연필 차트",
-        videoUrl: "https://video.example.com/3",
-        startDate: "2025-03-08T23:59:59",
-        endDate: "2025-03-14T23:59:59",
-      },
-      {
-        type: "material",
-        title: "오늘의 다이어리",
-        file: "강의자료2.pdf",
-      },
-      {
-        type: "assignment",
-        title: "과제 2",
-        description: "챕터 2의 과제 설명입니다.",
-        startDate: "2025-03-08T23:59:59",
-        endDate: "2025-03-14T23:59:59",
-      },
-    ],
-  },
-];
+export const toLocalDateTime = (isoString) => {
+  if (!isoString) return null;
+  return isoString.replace("T", " ") + ":00"; // "2025-02-22 11:00:00" 형태로 변환
+};
 
-const Curriculum = () => {
+const CurriculumEdit = () => {
   const { courseId } = useParams();
-  const [userId, setUserId] = useState(null);
-  const [activeItem, setActiveItem] = useState(dummyData[0]?.title || "");
+  const navigate = useNavigate();
+  const { user } = useContext(UsersContext);
+  const userId = user.userId;
+  const [curriculumData, setCurriculumData] = useState([]);
+  const [activeLectureId, setActiveLectureId] = useState(null);
+  const [activeLecture, setActiveLecture] = useState(null);
+
   const [editTarget, setEditTarget] = useState(null);
-  const [curriculumData, setCurriculumData] = useState(
-    dummyData.map((section) => ({
-      ...section,
-      subSections: section.subSections.map((subSection) => ({
-        ...subSection,
-        isEditing: false,
-      })),
-    }))
-  );
+  const [activeSection, setActiveSection] = useState(null);
 
-  // userid 가져오기
+  // 데이터 받아와서 초기화
   useEffect(() => {
-    const getUserIdFromLocalStorage = () => {
-      const userData = localStorage.getItem("user");
-      if (!userData) return null;
+    if (!userId) return;
 
+    const fetchCurriculum = async () => {
       try {
-        const parsedUser = JSON.parse(userData);
-        return parsedUser.userId;
+        const response = await api.get(
+          `/lectures/curriculum/${courseId}/${userId}`
+        );
+
+        if (!response.data || !response.data.success) {
+          console.error("API 요청 실패:", response.data);
+          return;
+        }
+
+        const lectures = response.data.data || []; // 데이터 없을 경우 빈 배열로 처리
+        setCurriculumData(lectures);
+
+        console.log("[DEBUG] curriculumData:", lectures);
+
+        const defaultLecture =
+          lectures.find((lec) => lec.lectureId === 1) || lectures[0];
+
+        setActiveLecture({
+          ...defaultLecture,
+          subSections: [
+            ...(defaultLecture.videos || []).map((v) => ({
+              ...v,
+              title: v.videoTitle,
+              isEditing: false,
+            })),
+            ...(defaultLecture.materials || []).map((m) => ({
+              ...m,
+              title: m.materialTitle,
+              isEditing: false,
+            })),
+            ...(defaultLecture.assignments || []).map((a) => ({
+              ...a,
+              title: a.assignmentTitle,
+              isEditing: false,
+            })),
+          ].sort(
+            (a, b) => (a.contentOrderIndex || 0) - (b.contentOrderIndex || 0)
+          ), // 정렬
+        });
+
+        console.log("After", defaultLecture);
+
+        setActiveLectureId(defaultLecture.lectureId);
       } catch (error) {
-        console.error("로컬 스토리지 데이터 파싱 오류:", error);
-        return null;
+        console.error("커리큘럼 불러오기 실패:", error);
       }
     };
 
-    const fetchedUserId = getUserIdFromLocalStorage();
-    if (fetchedUserId) {
-      setUserId(fetchedUserId);
+    fetchCurriculum();
+  }, [courseId, userId]);
+
+  // const updateSubSection = (index, updatedData) => {
+  //   setActiveLecture((prev) => {
+  //     if (!prev) return prev;
+
+  //     const updatedSubSections = prev.subSections.map((s, i) =>
+  //       i === index ? { ...s, ...updatedData, isEditing: true } : s
+  //     );
+
+  //     console.log(
+  //       "[DEBUG] updateSubSection 실행됨, 최신 subSection:",
+  //       updatedSubSections[index]
+  //     );
+
+  //     return { ...prev, subSections: updatedSubSections };
+  //   });
+  // };
+
+  // 섹션 추가
+  const handleAdd = async (type) => {
+    if (!activeLecture) return;
+
+    try {
+      let url = "";
+      if (type === "video") {
+        url = `/videos/${courseId}/${activeLectureId}/${userId}`;
+      } else if (type === "material") {
+        url = `/materials/${courseId}/${activeLectureId}/${userId}`;
+      } else if (type === "assignment") {
+        url = `/assignments/${courseId}/${activeLectureId}/${userId}`;
+      }
+
+      await api.post(url);
+      location.reload(); 
+    } catch (error) {
+      console.error("추가 실패:", error);
     }
-  }, []);
-
-  // 커리큘럼 데이터 없을 경우 초기 섹션 (title/video)
-  useEffect(() => {
-    if (curriculumData.length === 0) {
-      setCurriculumData([
-        { title: "1주차 학습", subSections: [], isEditing: true },
-      ]);
-    }
-  }, [curriculumData]);
-
-  useEffect(() => {
-    if (curriculumData.length > 0 && !activeItem) {
-      setActiveItem(curriculumData[0].title);
-    }
-  }, [curriculumData, activeItem]);
-
-  const activeSection = curriculumData.find(
-    (section) => section.title === activeItem
-  ) || { title: "챕터 없음", subSections: [] };
-
-  const handleSectionClick = (index, type) => {
-    setCurriculumData((prevData) =>
-      prevData.map((section) =>
-        section.title === activeItem
-          ? {
-              ...section,
-              subSections: section.subSections.map(
-                (subSection, i) =>
-                  i === index
-                    ? { ...subSection, isEditing: !subSection.isEditing } 
-                    : { ...subSection, isEditing: false } 
-              ),
-            }
-          : section
-      )
-    );
-
-    setEditTarget((prev) =>
-      prev?.index === index && prev?.type === type ? null : { index, type }
-    );
-
-    console.log("Clicked Section:", { index, type });
-    console.log(
-      "Updated Curriculum Data:",
-      curriculumData.map((section) =>
-        section.subSections.map((s, i) => ({
-          index: i,
-          title: s.title,
-          type: s.type,
-          isEditing: s.isEditing,
-        }))
-      )
-    );
   };
 
-  const handleIconClick = (type, index) => {
-    if (!activeSection) return;
+  // 섹션 삭제 (즉시 API 호출)
+  const handleDelete = async (event, index) => {
+    if (event) event.stopPropagation();
+    if (!activeLecture) return;
 
-    const newSubSection = {
-      type,
-      title: `${
-        type === "video"
-          ? "새 영상"
-          : type === "material"
-          ? "새 자료"
-          : "새 과제"
-      }`,
-      isEditing: true,
-    };
-
-    setCurriculumData((prevData) =>
-      prevData.map((section) =>
-        section.title === activeItem
-          ? {
-              ...section,
-              subSections: section.subSections.map((s, i) => ({
-                ...s,
-                isEditing: false, 
-              })),
-            }
-          : section
-      )
-    );
-
-    setTimeout(() => {
-      setCurriculumData((prevData) =>
-        prevData.map((section) =>
-          section.title === activeItem
-            ? {
-                ...section,
-                subSections: [
-                  ...section.subSections.slice(0, index + 1),
-                  newSubSection,
-                  ...section.subSections.slice(index + 1),
-                ],
-              }
-            : section
-        )
-      );
-    }, 0);
-  };
-
-  const handleDelete = async (index, type) => {
-    const subSection = activeSection.subSections[index];
+    const subSection = activeLecture.subSections[index];
     let url = "";
 
-    if (type === "video") {
+    if (subSection.contentType === "video") {
       url = `/videos/${courseId}/${subSection.videoId}/${userId}`;
-    } else if (type === "material") {
+    } else if (subSection.contentType === "material") {
       url = `/materials/${courseId}/${subSection.materialId}/${userId}`;
-    } else if (type === "assignment") {
+    } else if (subSection.contentType === "assignment") {
       url = `/assignments/${courseId}/${subSection.assignmentId}/${userId}`;
-    } else {
-      console.error("Invalid type:", type);
-      return;
     }
 
     try {
-      const response = await fetch(url, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        throw new Error("삭제 요청 실패");
-      }
-
-      console.log(`Section ${index} (${type}) deleted.`);
+      await api.delete(url);
+      location.reload(); // 삭제 후 새로 불러오기
     } catch (error) {
-      console.error("삭제 중 오류 발생:", error);
+      console.error("삭제 실패:", error);
     }
   };
 
+  const handleSectionClick = (index, event) => {
+    event.stopPropagation(); // 이벤트 버블링 방지
+
+    const excludedTags = ["INPUT", "TEXTAREA", "BUTTON", "SELECT", "LABEL"];
+    if (excludedTags.includes(event.target.tagName)) {
+      console.log("[DEBUG] 입력 필드 클릭 감지 → handleSectionClick 실행 안함");
+      return;
+    }
+
+    if (event.target.closest(".datetime-edit")) {
+      console.log(
+        "[DEBUG] DateTimeEdit 내부 클릭 감지 → handleSectionClick 실행 안함"
+      );
+      return;
+    }
+
+    setActiveLecture((prev) => {
+      if (!prev) return prev;
+
+      const updatedSubSections = prev.subSections.map((s, i) =>
+        i === index
+          ? { ...s, isEditing: !s.isEditing }
+          : { ...s, isEditing: false }
+      );
+
+      return { ...prev, subSections: updatedSubSections };
+    });
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest(".editable-section")) {
+        console.log("[DEBUG] handleMainClick 실행됨 -> isEditing=false 처리");
+
+        setActiveLecture((prev) => {
+          if (!prev) return prev;
+
+          const updatedSubSections = prev.subSections.map((s) => ({
+            ...s,
+            isEditing: false,
+          }));
+
+          return { ...prev, subSections: updatedSubSections };
+        });
+      }
+    };
+
+    document.body.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.body.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
   return (
     <div>
-      <TopBar />
       <PageLayout>
-        <ClassTopbar activeTab="curriculum" />
         <div style={{ display: "flex", marginTop: "1rem" }}>
           <CurriculumSidebar
             sections={curriculumData}
-            activeItem={activeItem}
-            setActiveItem={setActiveItem}
+            activeItem={activeLectureId}
+            setActiveItem={setActiveLectureId}
             edit={true}
           />
           <main
@@ -312,7 +270,7 @@ const Curriculum = () => {
                   margin: "0",
                 }}
               >
-                1주차 학습
+                {activeLecture?.lectureTitle ?? "제목 없음"}
               </h1>
 
               <p
@@ -324,7 +282,8 @@ const Curriculum = () => {
                   margin: "0.2rem 1rem",
                 }}
               >
-                [학습기간 설정하기]
+                {formatLecturePeriod(activeLecture?.startDate)} ~{" "}
+                {formatLecturePeriod(activeLecture?.endDate)}
               </p>
             </Section>
             <Section
@@ -340,57 +299,48 @@ const Curriculum = () => {
                   letterSpacing: "-1px",
                 }}
               >
-                {activeSection.title}
+                {activeLecture?.lectureDescription ?? "설명 없음"}
               </h1>
             </Section>
-
-            {activeSection?.subSections.map((subSection, index) => (
-              <SectionWrapper key={index}>
-                {subSection.isEditing && (
-                  <EditContainer onIconClick={handleIconClick} index={index} />
-                )}
-                {subSection.isEditing ? (
-                  <EditableSection
-                    subSection={subSection}
-                    type={subSection.type}
-                    handleSave={(updatedTitle) => {
-                      const updatedSections = curriculumData.map((section) =>
-                        section.title === activeItem
-                          ? {
-                              ...section,
-                              subSections: section.subSections.map((s, i) =>
-                                i === index
-                                  ? {
-                                      ...s,
-                                      title: updatedTitle,
-                                      isEditing: false,
-                                    }
-                                  : s
-                              ),
-                            }
-                          : section
-                      );
-                      setCurriculumData(updatedSections);
-                    }}
-                  />
-                ) : (
-                  <CurriculumSection
-                    subSection={subSection}
-                    index={index}
-                    type={subSection.type}
-                    editTarget={editTarget}
-                    handleSectionClick={handleSectionClick}
-                    handleDelete={handleDelete}
-                  />
-                )}
-              </SectionWrapper>
-            ))}
+            <main>
+              {activeLecture?.subSections.map((subSection, index) => (
+                <SectionWrapper
+                  key={subSection.id}
+                  onClick={(event) => handleSectionClick(index, event)}
+                >
+                  {subSection.isEditing && (
+                    <EditContainer handleAdd={handleAdd} index={index} />
+                  )}
+                  {subSection.isEditing ? (
+                    <EditableSection
+                      subSection={subSection}
+                      index={index}
+                      // updateSection={updateSubSection}
+                      className="editable-section"
+                      handleDelete={(event) => handleDelete(event, index)}
+                    />
+                  ) : (
+                    <CurriculumSection
+                      subSection={subSection}
+                      index={index}
+                      editTarget={editTarget}
+                      handleDelete={(event) => handleDelete(event, index)}
+                      handleSectionClick={handleSectionClick}
+                      // updateSection={updateSubSection}
+                    />
+                  )}
+                </SectionWrapper>
+              ))}
+            </main>
           </main>
         </div>
       </PageLayout>
-      <EditButton to="/class/${courseId}/curriculum" edit={false} />
+      <EditButton
+        edit={false}
+        to={`/class/${courseId}/curriculum/${activeLectureId}/`}
+      />
     </div>
   );
 };
 
-export default Curriculum;
+export default CurriculumEdit;

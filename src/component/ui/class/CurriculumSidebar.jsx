@@ -7,10 +7,13 @@ import SelectedSection from "../../img/class/check/sel_sec.svg";
 import UnselectedSection from "../../img/class/check/unsel_sec.svg";
 import DoneSection from "../../img/class/check/done_sec.svg";
 import Check from "../../img/class/check/check.svg";
+import { useState, useContext } from "react";
+import { useParams, useOutletContext, useNavigate } from "react-router-dom";
+import { UsersContext } from "../../contexts/usersContext";
 
 const SidebarContainer = styled.aside`
-  width: 15rem;
-  height: 45rem;
+  width: 28vh;
+  height: 90vh;
   background-color: white;
   border-radius: 12px;
   padding: 1rem;
@@ -19,7 +22,7 @@ const SidebarContainer = styled.aside`
 `;
 
 const ListSection = styled.div`
-  margin-bottom: -1.5rem;
+  margin-bottom: -2vh;
   padding: 0.7rem 0rem;
   transition: background-color 0.3s ease;
 `;
@@ -36,6 +39,7 @@ const SectionHeader = styled.div`
     props.selected ? "var(--pink-color)" : "#ffffff"};
   margin-bottom: 0rem;
   border-radius: 9px;
+  cursor: pointer;
 `;
 
 const ListItem = styled.li`
@@ -99,123 +103,116 @@ const getIconByType = (type) => {
   }
 };
 
-const CurriculumSidebar = ({ sections, activeItem, setActiveItem, edit }) => {
-  const handleItemClick = (item) => {
-    setActiveItem(item);
+const getSubSectionTitle = (subSection) => {
+  return subSection.title || "제목 없음";
+};
+
+const CurriculumSidebar = ({
+  sections = [],
+  activeItem,
+  setActiveItem,
+  edit,
+}) => {
+  const context = useOutletContext();
+  const courseData = context?.courseData || {};
+  const isCreator = context?.isCreator || false;
+  const { courseId } = useParams();
+  const { user } = useContext(UsersContext);
+  const navigate = useNavigate();
+
+  const handleItemClick = (lectureId) => {
+    setActiveItem(lectureId);
+    navigate(`/class/${courseId}/curriculum/${lectureId}`);
   };
 
   return (
     <SidebarContainer>
-      {sections.map((section, sectionIndex) => (
-        <ListSection key={sectionIndex}>
-          <SectionHeader selected={activeItem === section.title}>
-            {section.title}
-            {!edit && (
-              <SectionIcon
-                src={
-                  !section.selected
-                    ? UnselectedSection
-                    : section.done
-                    ? DoneSection
-                    : SelectedSection
-                }
-                style={{
-                  width: "1.5rem",
-                }}
-              />
-            )}
-          </SectionHeader>
-          <ul style={{ listStyle: "none", padding: 0 }}>
-            {section.subSections.map((subSection, subIndex) => (
-              <div
-                key={subIndex}
-                style={{
-                  marginLeft: "0",
-                  marginBottom: "10px",
-                }}
-              >
-                <ListItem
-                  active={activeItem === subSection.title}
-                  onClick={() =>
-                    handleItemClick(subSection.title || "제목 없음")
+      {sections.map((section, lectureIndex) => {
+        const subSections = [
+          ...(section.videos || []).map((v) => ({
+            ...v,
+            title: v.videoTitle,
+            contentType: "video",
+            id: v.contentOrderId,
+          })),
+          ...(section.materials || []).map((m) => ({
+            ...m,
+            title: m.materialTitle,
+            contentType: "material",
+            id: m.contentOrderId,
+          })),
+          ...(section.assignments || []).map((a) => ({
+            ...a,
+            title: a.assignmentTitle,
+            contentType: "assignment",
+            id: a.contentOrderId,
+          })),
+        ].sort(
+          (a, b) => (a.contentOrderIndex || 0) - (b.contentOrderIndex || 0)
+        );
+
+        return (
+          <ListSection key={section.lectureId}>
+            <SectionHeader
+              selected={activeItem === section.lectureId}
+              onClick={() => handleItemClick(section.lectureId)}
+            >
+              {`${lectureIndex + 1}. ${section.lectureTitle}`}
+              {!edit && (
+                <SectionIcon
+                  src={
+                    !section.selected
+                      ? UnselectedSection
+                      : section.done
+                      ? DoneSection
+                      : SelectedSection
                   }
                   style={{
-                    marginLeft:
-                      subSection.type === "material" ||
-                      subSection.type === "assignment"
-                        ? "-2px"
-                        : "-5px",
+                    width: "1.5rem",
                   }}
-                >
-                  <Icon
-                    src={getIconByType(subSection.type)}
-                    style={{ width: "1.4rem" }}
-                  />
-                  <TruncatedText width="10rem">
-                    {subSection.title || "제목 없음"}
-                  </TruncatedText>
-                  {!edit && (
-                    <img
-                      src={Check}
-                      style={{ marginLeft: "auto", marginRight: "1.3rem" }}
-                    />
-                  )}
-                </ListItem>
-                {/*
-                <SubsectionContainer>
-                  {subSection.material && (
-                    <SubsectionItem>
-                      <div style={{ display: "flex", alignItems: "center" }}>
-                        <Icon
-                          src={Material}
-                          style={{
-                            marginLeft: "0",
-                          }}
-                        />
-                        <TruncatedText
-                          width="10rem"
-                          style={{ marginLeft: "0.7rem" }}
-                        >
-                          {subSection.material?.name || "자료 없음"}
-                        </TruncatedText>
-                      </div>
-                      {!edit && (
-                        <img
-                          src={Check}
-                          style={{ marginLeft: "auto", marginRight: "1.3rem" }}
-                        />
-                      )}
-                    </SubsectionItem>
-                  )}
-
-                  {subSection.assignment && (
-                    <SubsectionItem
-                      style={{ marginTop: "-0.3rem", marginBottom: "1rem" }}
+                />
+              )}
+            </SectionHeader>
+            {activeItem === section.lectureId && (
+              <ul style={{ listStyle: "none", padding: 0 }}>
+                {subSections.map((subSection) => (
+                  <div
+                    key={subSection.id}
+                    style={{ marginLeft: "0", marginBottom: "10px" }}
+                  >
+                    <ListItem
+                      active={activeItem === subSection.id}
+                      onClick={() => handleItemClick(subSection.id)}
+                      style={{
+                        marginLeft:
+                          subSection.contentType === "material" ||
+                          subSection.contentType === "assignment"
+                            ? "-2px"
+                            : "-5px",
+                        marginBottom: "10px",
+                      }}
                     >
-                      <div style={{ display: "flex", alignItems: "center" }}>
-                        <Icon src={Assignment} style={{ marginLeft: "0" }} />
-                        <TruncatedText
-                          width="11rem"
-                          style={{ marginLeft: "0.7rem" }}
-                        >
-                          {subSection.assignment?.name || "과제 없음"}
-                        </TruncatedText>
-                      </div>
+                      <Icon
+                        src={getIconByType(subSection.contentType)}
+                        style={{ width: "1.4rem" }}
+                      />
+                      <TruncatedText width="10rem">
+                        {getSubSectionTitle(subSection)}
+                      </TruncatedText>
                       {!edit && (
                         <img
                           src={Check}
                           style={{ marginLeft: "auto", marginRight: "1.3rem" }}
                         />
                       )}
-                    </SubsectionItem>
-                  )}
-                </SubsectionContainer>
-                */}
-              </div>
-            ))}
-          </ul>
-        </ListSection>
-      ))}
+                    </ListItem>
+                  </div>
+                ))}
+              </ul>
+            )}
+          </ListSection>
+        );
+      })}
     </SidebarContainer>
   );
 };
@@ -223,23 +220,20 @@ const CurriculumSidebar = ({ sections, activeItem, setActiveItem, edit }) => {
 CurriculumSidebar.propTypes = {
   sections: PropTypes.arrayOf(
     PropTypes.shape({
-      title: PropTypes.string.isRequired,
+      lectureId: PropTypes.number.isRequired,
+      lectureTitle: PropTypes.string.isRequired,
       subSections: PropTypes.arrayOf(
         PropTypes.shape({
-          title: PropTypes.string,
-          material: PropTypes.shape({
-            name: PropTypes.string,
-            downloaded: PropTypes.bool,
-          }),
-          assignment: PropTypes.shape({
-            name: PropTypes.string,
-            submitted: PropTypes.bool,
-          }),
+          id: PropTypes.number.isRequired,
+          type: PropTypes.string.isRequired,
+          videoTitle: PropTypes.string,
+          materialTitle: PropTypes.string,
+          assignmentTitle: PropTypes.string,
         })
       ).isRequired,
     })
   ).isRequired,
-  activeItem: PropTypes.string.isRequired,
+  activeItem: PropTypes.number,
   setActiveItem: PropTypes.func.isRequired,
   edit: PropTypes.bool.isRequired,
 };
