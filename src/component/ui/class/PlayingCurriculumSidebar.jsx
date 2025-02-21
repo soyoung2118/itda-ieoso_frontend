@@ -109,14 +109,14 @@ const PlayingCurriculumSidebar = ({
             <MenuTitle>커리큘럼</MenuTitle>
             <RightContainer>
                 <CurriculumList>
-                {curriculumData.map((lecture) => {
+                {curriculumData.map((lecture, index) => {
                         const sortedContents = [...lecture.videos, ...lecture.materials, ...lecture.assignments]
                             .sort((a, b) => a.contentOrderIndex - b.contentOrderIndex);
 
                         return (
                             <div key={lecture.lectureId}>
                                 <CurriculumItem>
-                                    <ItemTitle>{lecture.lectureId}. {lecture.lectureDescription}</ItemTitle>
+                                    <ItemTitle>{index + 1}. {lecture.lectureDescription}</ItemTitle>
                                 </CurriculumItem>
                                   {lecture.lectureId && sortedContents.map((content) => (
                                     <SubItem key={content.contentOrderId} status={content.contentType == 'video' ? content.videoHistoryStatus : null}>
@@ -132,7 +132,8 @@ const PlayingCurriculumSidebar = ({
                                                     marginRight: "4px",
                                                     }}
                                                 />
-                                                {truncate(content.videoTitle, 25)}
+                                                <BlackText>{truncate(content.videoTitle, 25)}</BlackText>
+                                                {getStatusIcon(content.videoHistoryStatus)}
                                               </ContentItem> 
                                             }
                                             {content.contentType === 'material' &&
@@ -146,8 +147,8 @@ const PlayingCurriculumSidebar = ({
                                                     marginRight: "4px",
                                                     }}
                                                 />
-                                                {content.title}
-                                                {content.size}
+                                                <BlackText>{content.title}</BlackText>
+                                                <RedText>{content.size}</RedText>
                                               </ContentItem>
                                             }
                                             {content.contentType === 'assignment' &&
@@ -162,10 +163,8 @@ const PlayingCurriculumSidebar = ({
                                                     }}
                                                 />
                                                 <TextContainer>
-                                                <div>{content.assignmentTitle}</div>
-                                                <div style={{ fontSize: '12px', color: '#FF4747', width: '100%', whiteSpace: 'no-wrap', textOverflow: 'ellipsis'}}>
-                                                    {dateText(content.startDate)} - {dateText(content.endDate)}
-                                                </div>
+                                                <BlackText>{content.assignmentTitle}</BlackText>
+                                                <RedText>{dateText(content.startDate)} - {dateText(content.endDate)}</RedText>
                                                 </TextContainer>
                                               </ContentItem>
                                             }
@@ -249,18 +248,11 @@ const SubItemHeader = styled.div`
     width: 100%;
 `;
 
-const SubItemContent = styled.div`
-    margin-top: 8px;
-    padding-left: 2px;
-`;
-
 const ContentItem = styled.div`
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 4px 0;
-    font-size: 13px;
-    color: #474747;
+    padding: 2px 0;
     cursor: pointer;
 
     &:hover {
@@ -274,6 +266,17 @@ const SubItemTitle = styled.div`
     font-weight: ${props => props.status === 'WATCHING' ? 800 : 400}
 `;
 const TextContainer = styled.div`
-  
+`
+
+const BlackText = styled.div`
+  font-size: 13px;
+  color: #474747;
+`
+
+const RedText = styled.div`
+  font-size: 11px;
+  color: #FF4747;
+  white-space: no-wrap;
+  text-overflow: ellipsis;
 `
 export default PlayingCurriculumSidebar;

@@ -213,8 +213,6 @@ const ClassAssignmentSubmit = () => {
             console.error('파일을 찾을 수 없습니다.');
             return;
         }
-
-        console.log(fileToDownload);
     
         try {
             const response = await api.get("/files/download", {
@@ -222,23 +220,23 @@ const ClassAssignmentSubmit = () => {
                     fileUrl: fileToDownload.fileUrl
                 },
             });
-
-            console.log('Response:', response);
-            console.log('Response data:', response.data);
             
-            const url = window.URL.createObjectURL(response.data);
-            const link = document.createElement("a");
-            link.download = fileToDownload.name; // 원하는 파일명 설정 가능
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            const presignedUrl = response.data;
 
+            const fileResponse = await fetch(presignedUrl);
 
-            // const fileUrl = response.data; // 백엔드에서 반환된 파일 URL
-            // const link = document.createElement('a');
-            // link.href = fileUrl;
-            // link.download = fileToDownload.name; // 원하는 파일 이름과 확장자
-            // link.click();   
+            const contentType = response.headers["content-type"];
+            console.log("Content-Type:", contentType);  // 콘솔에 출력
+
+            const arrayBuffer = await fileResponse.arrayBuffer();
+            const blob = new Blob([arrayBuffer], { type: fileToDownload.type === 'pdf' ? 'application/pdf' : fileToDownload.mimeType });
+        
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = fileToDownload.name;
+            a.click();
+            window.URL.revokeObjectURL(url);
 
         } catch (error) {
             console.error("파일 처리 중 오류:", error);
