@@ -49,10 +49,10 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
     background-color: #FFFFFF;
     width: 100%;
-    padding-top: 8rem;
+    height: calc(92vh - 16px);
+    justify-content: center;
 `;
 
 export const Logo = styled.div`

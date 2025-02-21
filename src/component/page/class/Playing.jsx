@@ -65,7 +65,7 @@ const Container = styled.div`
 
 const LeftSide = styled.div`
     width: 70vw;
-    height: 100%;
+    flex: 1;
     padding: 0px 37px;
 `;
 

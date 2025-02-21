@@ -113,7 +113,7 @@ const ClassAssignmentSubmit = () => {
     };
 
     const handleNavigationCurriculum = () => {
-        navigate(`/class/${courseId}/curriculum`);
+        navigate(`/class/${courseId}/curriculum/${lectureId}`);
     };
 
     useEffect(() => {
@@ -246,11 +246,11 @@ const ClassAssignmentSubmit = () => {
     };
 
     return (
-        <>
+        <Wrapper>
         <TopBar />
         <Container>
             <LeftSide>
-            <TitleContainer>
+                <TitleContainer>
                     <MainTitle>
                         {currentLectureInfo?.lectureTitle || "강의를 선택해주세요"}
                     </MainTitle>
@@ -259,7 +259,7 @@ const ClassAssignmentSubmit = () => {
                         <ArrowForwardIosIcon style={{ width: '13px', marginLeft: '15px' }}/>
                     </ClickContainer>
                 </TitleContainer>
-
+                
                 <WhiteBoxComponent>
                     <NoticeTitleContainer>
                         <FormTitle style={{marginTop: '0px'}}>
@@ -314,26 +314,38 @@ const ClassAssignmentSubmit = () => {
             </LeftSide>
 
             <RightSide>
-                <PlayingCurriculumSidebar curriculumData={curriculumData} setCurriculumData={setCurriculumData} currentLectureInfo={currentLectureInfo} setCurrentLectureInfo={setCurrentLectureInfo}/>
+                <PlayingCurriculumSidebar
+                    curriculumData={curriculumData} setCurriculumData={setCurriculumData}
+                    currentLectureInfo={currentLectureInfo} setCurrentLectureInfo={setCurrentLectureInfo}
+                />
             </RightSide>
 
             { isSubmittedModalOpen && <AssignmentModal text="과제 제출이 완료되었습니다."  onClose={() => setIsSubmittedModalOpen(false)}/> }
             { isReSubmittedModalOpen && <AssignmentModal text="과제 수정이 완료되었습니다."  onClose={() => setIsReSubmittedModalOpen(false)}/> }
         </Container>
-        </>
+        </Wrapper>
     );
 };
 
+const Wrapper = styled.div`
+    height: 100vh;
+`
+
 const Container = styled.div`
     display: flex;
-    overflow: hidden;
+    height: 100%,
     background-color: #F6F7F9;
 `;
 
 const LeftSide = styled.div`
     width: 70vw;
-    height: 100%;
+    flex: 1;
     padding: 0px 37px;
+    height: calc(92vh - 16px);
+    overflow-y: scroll;
+    &::-webkit-scrollbar {
+        display: none;
+    }
 `;
 
 const FormTitle = styled.div`
