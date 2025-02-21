@@ -93,6 +93,26 @@ export default function Create() {
       return;
     }
 
+    if(!isLecturePending && form.lectureDays.length === 0) {
+      alert('강의 요일을 선택하세요.');
+      return;
+    }
+
+    if(!isLecturePending && !form.lectureTime) {
+      alert('강의 시간을 선택하세요');
+      return;
+    }
+
+    if(!isAssignmentPending && form.assignmentDays.length === 0) {
+      alert('과제 요일을 선택하세요.');
+      return;
+    }
+
+    if(!isAssignmentPending && !form.assignmentTime) {
+      alert('과제 시간을 선택하세요');
+      return;
+    }
+
     try {
       if (!user) {
         console.log("사용자 정보가 없습니다");
@@ -109,7 +129,10 @@ export default function Create() {
       const settingData = {
         title: form.coursename,
         instructorName: form.instructor,
-        startDate: form.startDate?.toISOString().split("T")[0],
+
+        startDate: form.startDate?
+          `${form.startDate.getFullYear()}-${String(form.startDate.getMonth() + 1).padStart(2, '0')}-${String(form.startDate.getDate()).padStart(2, '0')}` 
+          : null,
         durationWeeks: Number(form.durationWeeks),
         lectureDay: form.lectureDays,
         lectureTime: isLecturePending
@@ -140,9 +163,12 @@ export default function Create() {
         throw new Error("강의실 설정에 실패했습니다");
       }
 
+      
       navigate(`/class/${courseData.courseId}/curriculum`, {
-        state: { entrycode: courseData.entryCode },
+      //  navigate(`/class/${courseData.courseId}/overview/info`, {
+        state: { entrycode: courseData.entryCode }
       });
+  
     } catch (error) {
       console.error("강의실 생성 실패:", error);
       alert(error.message || "강의실 생성 중 오류가 발생했습니다.");
@@ -280,14 +306,25 @@ export default function Create() {
                 </TimeGroup>
 
                 <TimeGroup>
-                  <TimePickerWrapper>
-                    <CustomTimePicker
-                      value={
-                        isLecturePending
-                          ? new Date(2000, 0, 1, 0, 0, 0)
-                          : form.lectureTime
-                          ? new Date(`2000-01-01T${form.lectureTime}`)
-                          : null
+
+                    <TimePickerWrapper>
+                      <CustomTimePicker
+                        value={isLecturePending ? new Date(2000, 0, 1, 0, 0, 0) : 
+                              (form.lectureTime ? new Date(`2000-01-01T${form.lectureTime}`) : null)}
+                        onChange={(date) => {
+                          if (date) {
+                            const hours = String(date.getHours()).padStart(2, '0');
+                            const minutes = String(date.getMinutes()).padStart(2, '0');
+                            const timeString = `${hours}:${minutes}`;
+                            handleLectureTimeChange(timeString);
+                          }
+                        }}
+                        disabled={isLecturePending}
+                        placeholder="강의 시간을 설정해주세요."
+                      />
+                      </TimePickerWrapper>
+                      {form.lectureTime && !isLecturePending && 
+                        <HelpText>강의 시간이 설정되었어요!</HelpText>
                       }
                       onChange={(date) => {
                         if (date) {
@@ -320,11 +357,8 @@ export default function Create() {
                     onClick={() => {
                       setIsLecturePending(!isLecturePending);
                       if (!isLecturePending) {
-                        setForm((prev) => ({
-                          ...prev,
-                          lectureDays: [],
-                          lectureTime: "00:00",
-                        }));
+
+                        setForm(prev => ({ ...prev, lectureDays: [], lectureTime: '' }));
                       }
                     }}
                   >
@@ -363,39 +397,27 @@ export default function Create() {
                 </TimeGroup>
 
                 <TimeGroup>
-                  <TimePickerWrapper>
-                    <CustomTimePicker
-                      value={
-                        isAssignmentPending
-                          ? new Date(2000, 0, 1, 0, 0, 0)
-                          : form.assignmentTime
-                          ? new Date(`2000-01-01T${form.assignmentTime}`)
-                          : null
-                      }
-                      onChange={(date) => {
-                        if (date) {
-                          const hours = String(date.getHours()).padStart(
-                            2,
-                            "0"
-                          );
-                          const minutes = String(date.getMinutes()).padStart(
-                            2,
-                            "0"
-                          );
-                          const timeString = `${hours}:${minutes}`;
-                          handleAssignmentTimeChange(timeString);
-                        }
-                      }}
-                      disabled={isAssignmentPending}
-                      placeholder="과제 시간을 설정해주세요."
-                    />
-                  </TimePickerWrapper>
-                  {form.assignmentTime &&
-                    form.assignmentTime !== "00:00" &&
-                    !isAssignmentPending && (
-                      <HelpText>과제 시간이 설정되었어요!</HelpText>
-                    )}
-                </TimeGroup>
+
+                    <TimePickerWrapper>
+                      <CustomTimePicker
+                        value={isAssignmentPending ? new Date(2000, 0, 1, 0, 0, 0) : 
+                              (form.assignmentTime ? new Date(`2000-01-01T${form.assignmentTime}`) : null)}
+                        onChange={(date) => {
+                          if (date) {
+                            const hours = String(date.getHours()).padStart(2, '0');
+                            const minutes = String(date.getMinutes()).padStart(2, '0');
+                            const timeString = `${hours}:${minutes}`;
+                            handleAssignmentTimeChange(timeString);
+                          }
+                        }}
+                        disabled={isAssignmentPending}
+                        placeholder="과제 시간을 설정해주세요."
+                      />
+                    </TimePickerWrapper>
+                    {form.assignmentTime && !isAssignmentPending &&
+                   <HelpText>과제 시간이 설정되었어요!</HelpText>
+                   }
+                </TimeGroup> 
 
                 <TimeGroup>
                   <RadioButton
@@ -403,11 +425,8 @@ export default function Create() {
                     onClick={() => {
                       setIsAssignmentPending(!isAssignmentPending);
                       if (!isAssignmentPending) {
-                        setForm((prev) => ({
-                          ...prev,
-                          assignmentDays: [],
-                          assignmentTime: "00:00",
-                        })); // 시간도 초기화
+
+                        setForm(prev => ({ ...prev, assignmentDays: [], assignmentTime: '' }));
                       }
                     }}
                   >

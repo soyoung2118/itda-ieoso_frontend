@@ -51,8 +51,8 @@ export default function Setting() {
             difficulty: courseData.difficultyLevel?.toLowerCase()
           });
 
-          setIsAssignmentPending(!courseData.assignmentDueDay || courseData.assignmentDueTime === '00:00:00');
-          setIsLecturePending(courseData.lectureTime === '00:00:00');
+          setIsAssignmentPending(!courseData.assignmentDueDay || courseData.assignmentDueTime === '');
+          setIsLecturePending(courseData.lectureTime === '');
         }
       } catch (error) {
         console.error('Failed to fetch course data:', error);
@@ -135,6 +135,8 @@ export default function Setting() {
 
       if (settingResponse.data.success) {
         console.log(settingResponse.data);
+        navigate(`/class/${courseId}/overview/info`);
+        window.location.reload()
       } else {
         throw new Error('강의실 내용 수정에 실패했습니다');
       }
