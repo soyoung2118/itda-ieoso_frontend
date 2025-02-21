@@ -1,5 +1,10 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useLocation, useParams, useOutletContext } from "react-router-dom";
+import { useState, useEffect, useContext } from "react";
+import {
+  useNavigate,
+  useLocation,
+  useParams,
+  useOutletContext,
+} from "react-router-dom";
 import styled from "styled-components";
 import LogoSymbol from "../../img/logo/itda_logo_symbol.svg";
 import CurriculumSidebar from "../../ui/class/CurriculumSidebar";
@@ -13,6 +18,10 @@ import SelectedSection from "../../img/class/check/sel_sec.svg";
 import UnselectedSection from "../../img/class/check/sel_sec.svg";
 import DoneSection from "../../img/class/check/done_sec.svg";
 import EditButton from "../../ui/class/EditButton";
+import Close from "@mui/icons-material/Close";
+import api from "../../api/api";
+import { UsersContext } from "../../contexts/usersContext";
+import { getYouTubeThumbnail } from "../../ui/curriculum/EditableSection";
 import EntryCodeModal from "../../ui/class/EntryCodeModal";
 
 const Section = styled.div`
@@ -60,299 +69,382 @@ const SectionIcon = styled.img`
   margin-left: auto;
 `;
 
+export const formatDate = (isoString) => {
+  if (!isoString) return " ";
+  const date = new Date(isoString);
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
+  const hh = String(date.getHours()).padStart(2, "0");
+  const min = String(date.getMinutes()).padStart(2, "0");
+  const sec = String(date.getSeconds()).padStart(2, "0");
+  return `${yyyy}.${mm}.${dd} ${hh}:${min}:${sec}`;
+};
+
+export const formatLecturePeriod = (isoString) => {
+  if (!isoString) return " ";
+  const date = new Date(isoString);
+  const monthNames = [
+    "1월",
+    "2월",
+    "3월",
+    "4월",
+    "5월",
+    "6월",
+    "7월",
+    "8월",
+    "9월",
+    "10월",
+    "11월",
+    "12월",
+  ];
+  const month = monthNames[date.getMonth()];
+  const day = date.getDate();
+  return `${month} ${day}일`;
+};
+
 const Curriculum = () => {
   const navigate = useNavigate();
-  const { courseData, isCreator } = useOutletContext();
+
   const [showPopup, setShowPopup] = useState(false);
   const location = useLocation();
   const entrycode = location.state?.entrycode || null;
   const [isEntryCodeModalOpen, setIsEntryCodeModalOpen] = useState(false);
 
+  const { courseId, lectureId } = useParams();
+
+  const { user } = useContext(UsersContext);
+  const userId = user.userId;
+  const { courseData, isCreator } = useOutletContext();
+  const [curriculumData, setCurriculumData] = useState([]);
+  const [historyData, setHistoryData] = useState({
+    materials: [],
+    submissions: [],
+  });
+  const [activeLectureId, setActiveLectureId] = useState(
+    Number(lectureId) || 1
+  );
+  const [activeLecture, setActiveLecture] = useState(null);
+
   useEffect(() => {
-    if(entrycode) setIsEntryCodeModalOpen(true);
+    if (entrycode) setIsEntryCodeModalOpen(true);
   }, []);
 
-  const curriculumData = [
-    {
-      title: "1. 기초를 준비해요",
-      selected: true, // 선택 여부
-      done: true, // 완료 여부
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const curriculumRes = await api.get(
+          `/lectures/curriculum/${courseId}/${userId}`
+        );
+        const historyRes = await api.get(
+          `/lectures/history/${courseId}/${userId}`
+        );
 
-      subSections: [
-        {
-          title: "1. 꾸미고 싶은 타입을 정해서 다이어리를 골라봅시다",
-          done: true,
-          thumbnail: null, // 썸네일 기본값
-          author: "김잇다",
-          period: "2025-01-06 10:00 ~ 2025-01-12 23:59",
-          material: {
-            name: "오늘의 다이어리",
-            size: "3.1MB",
-            downloaded: true, // 다운로드 완료 여부
-          },
-          assignment: {
-            name: "1/6(월) 과제 제출",
-            deadline: "2025.01.06 15:00:00 - 2025.01.12 23:59",
-            submitted: false, // 제출 여부
-          },
-        },
-        {
-          title: "2. 필기구 소개",
-          done: false,
-          thumbnail: null,
-          author: "김잇다",
-          period: "2025-01-06 10:00 ~ 2025-01-12 23:59",
-          material: {
-            name: "오늘의 다이어리",
-            size: "3.1MB",
-            downloaded: true,
-          },
-          assignment: {
-            name: "1/6(월) 과제 제출",
-            deadline: "2025.01.06 15:00:00 - 2025.01.12 23:59",
-            submitted: false,
-          },
-        },
-      ],
-    },
-    {
-      title: "2. 한 달을 기록해요",
-      selected: false, // 선택 여부
-      done: false, // 완료 여부
+        if (curriculumRes.data.success) {
+          const lectures = curriculumRes.data.data || [];
+          setCurriculumData(lectures);
 
-      subSections: [],
-    },
-    {
-      title: "3. 한 주를 기록해요",
-      subSections: [],
-    },
-    {
-      title: "4. 하루를 꾸며요",
-      subSections: [],
-    },
-  ];
-  const { courseId } = useParams();
+          const defaultLecture =
+            lectures.find((lec) => lec.lectureId === Number(lectureId)) ||
+            lectures[0];
 
-  const [activeItem, setActiveItem] = useState(curriculumData[0]?.title);
-  const activeSection = curriculumData.find(
-    (section) => section.title === activeItem
-  );
+          setActiveLectureId(defaultLecture.lectureId);
+
+          setActiveLecture({
+            ...defaultLecture,
+            subSections: [
+              ...(defaultLecture.videos || []).map((v) => ({
+                ...v,
+                title: v.videoTitle,
+                id: v.contentOrderIndex,
+                url: v.videoUrl,
+                thumbnail: getYouTubeThumbnail(v.videoUrl),
+                checked: false,
+              })),
+              ...(defaultLecture.materials || []).map((m) => ({
+                ...m,
+                title: m.materialTitle,
+                id: m.contentOrderIndex,
+                url: m.materialFile,
+                checked: false,
+              })),
+              ...(defaultLecture.assignments || []).map((a) => ({
+                ...a,
+                title: a.assignmentTitle,
+                id: a.contentOrderIndex,
+                deadline: a.endDate,
+                checked: false,
+              })),
+            ].sort(
+              (a, b) => (a.contentOrderIndex || 0) - (b.contentOrderIndex || 0)
+            ),
+          });
+        }
+
+        if (historyRes.data.success) {
+          setHistoryData(historyRes.data.data);
+        }
+      } catch (error) {
+        console.error("커리큘럼 데이터 로딩 오류:", error);
+      }
+    }
+    fetchData();
+  }, [courseId, userId, lectureId]);
+
+  useEffect(() => {
+    if (!activeLecture || !historyData) return;
+
+    setActiveLecture((prev) => ({
+      ...prev,
+      subSections: prev.subSections.map((sub) => ({
+        ...sub,
+        checked:
+          sub.contentType === "material"
+            ? historyData.materials.some(
+                (m) => m.materialId === sub.id && m.materialHistoryStatus
+              )
+            : sub.contentType === "assignment"
+            ? historyData.submissions.some(
+                (a) =>
+                  a.assignmentId === sub.id &&
+                  a.submissionStatus === "SUBMITTED"
+              )
+            : false,
+      })),
+    }));
+  }, [historyData]);
 
   return (
-        <div style={{ display: "flex", marginTop: "1rem" }}>
-          <CurriculumSidebar
-            sections={curriculumData}
-            activeItem={activeItem}
-            setActiveItem={setActiveItem}
-            routes={{}}
-          />
-          <main
+    <div style={{ display: "flex", marginTop: "1rem" }}>
+      <CurriculumSidebar
+        sections={curriculumData}
+        activeItem={activeLectureId}
+        setActiveItem={setActiveLectureId}
+        edit={false}
+      />
+      <main
+        style={{
+          flex: 1,
+          padding: "2rem",
+          borderRadius: "8px",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "flex-end" }}>
+          <h1
             style={{
-              flex: 1,
-              padding: "2rem",
-              borderRadius: "8px",
+              fontSize: "2.3rem",
+              fontWeight: "bold",
+              color: "var(--main-color)",
+              margin: "0",
+              marginBottom: "-0.2rem",
             }}
           >
-            <div style={{ display: "flex", alignItems: "flex-end" }}>
-              <h1
-                style={{
-                  fontSize: "2.3rem",
-                  fontWeight: "bold",
-                  color: "var(--main-color)",
-                  margin: "0",
-                  marginBottom: "-0.2rem",
-                }}
-              >
-                1주차 학습
-              </h1>
+            {activeLecture?.lectureTitle}
+          </h1>
 
-              <p
-                style={{
-                  color: "#969696",
-                  fontSize: "1.2rem",
-                  marginLeft: "1rem",
-                  fontWeight: "540",
-                  margin: "0 1rem",
-                }}
-              >
-                [1월 6일 ~ 1월 12일]
-              </p>
-            </div>
+          <p
+            style={{
+              color: "#969696",
+              fontSize: "1.2rem",
+              marginLeft: "1rem",
+              fontWeight: "540",
+              margin: "0 1rem",
+            }}
+          >
+            {formatLecturePeriod(activeLecture?.startDate)} ~{" "}
+            {formatLecturePeriod(activeLecture?.endDate)}
+          </p>
+        </div>
 
-            <Section
-              style={{
-                backgroundColor: "var(--pink-color)",
-                padding: "0.15rem 1.5rem",
-              }}
-            >
-              <h1 style={{ fontSize: "1.6rem", fontWeight: "bolder" }}>
-                {activeSection.title}
-              </h1>
-              <SectionIcon
-                src={
-                  !activeSection.selected
-                    ? UnselectedSection
-                    : activeSection.done
-                    ? DoneSection
-                    : SelectedSection
-                }
-                style={{
-                  marginLeft: "auto",
-                  marginRight: "1.35rem",
-                  width: "1.8rem",
-                }}
-              />
-            </Section>
+        <Section
+          style={{
+            backgroundColor: "var(--pink-color)",
+            padding: "0.15rem 1.5rem",
+          }}
+        >
+          <h1 style={{ fontSize: "1.6rem", fontWeight: "bolder" }}>
+            {activeLecture?.lectureDescription}
+          </h1>
+          <SectionIcon
+            src={SelectedSection}
+            style={{
+              marginLeft: "auto",
+              marginRight: "1.35rem",
+              width: "1.8rem",
+            }}
+          />
+        </Section>
 
-            {activeSection.subSections.map((subSection, subIndex) => (
-              <div key={subIndex}>
-                <div>
-                  <Section style={{ display: "flex" }}>
-                    <VideoContainer>
+        {activeLecture?.subSections.map((sub) => (
+          <div key={sub.id}>
+            <div>
+              {sub.contentType === "video" && (
+                <Section style={{ display: "flex" }}>
+                  <VideoContainer>
+                    {sub.thumbnail ? (
                       <VideoThumbnail
-                        src={subSection.thumbnail || ClassThumbnail}
+                        src={sub.thumbnail}
+                        alt="YouTube 썸네일"
                       />
-                      <Icon
-                        src={PlayIcon}
+                    ) : (
+                      <div
                         style={{
-                          position: "absolute",
-                          top: "50%",
-                          left: "50%",
-                          transform: "translate(-50%, -50%)",
-                          width: "1.8rem",
-                          height: "auto",
-                          cursor: "pointer",
-                        }}
-                      />
-                    </VideoContainer>
-                    <div
-                      style={{
-                        marginLeft: "2rem",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "flex-start",
-                        justifyContent: "flex-start",
-                      }}
-                    >
-                      <CurriculumTitle>{subSection.title}</CurriculumTitle>
-                      <p
-                        style={{
-                          fontSize: "1.08rem",
-                          color: "#909090",
+                          width: "100%",
+                          height: "8rem",
                           display: "flex",
                           alignItems: "center",
-                          gap: "0.5rem",
+                          justifyContent: "center",
+                          backgroundColor: "#f0f0f0",
+                          borderRadius: "8px",
+                          color: "#909090",
+                          fontSize: "1rem",
                         }}
-                      >
-                        <span>{subSection.author}</span>
-                        <span
-                          style={{
-                            borderLeft: "1.5px solid #909090",
-                            height: "1rem",
-                          }}
-                        ></span>
-                        <span>{subSection.period}</span>
-                      </p>
-                    </div>
-                    <img
-                      src={subSection.done ? DoneIcon : UndoneIcon}
+                      />
+                    )}
+                    <Icon
+                      src={PlayIcon}
                       style={{
-                        marginLeft: "auto",
-                        marginRight: "1.6rem",
-                        width: "1.2rem",
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        width: "1.8rem",
+                        height: "auto",
+                        cursor: "pointer",
                       }}
                     />
-                  </Section>
-
-                  <Section
+                  </VideoContainer>
+                  <div
                     style={{
+                      marginLeft: "2rem",
                       display: "flex",
-                      alignItems: "center",
-                      gap: "1rem",
+                      flexDirection: "column",
+                      alignItems: "flex-start",
+                      justifyContent: "flex-start",
                     }}
                   >
-                    <img
-                      src={Material}
+                    <CurriculumTitle>{sub.title}</CurriculumTitle>
+                    <p
                       style={{
-                        width: "2.4rem",
-                        height: "50%",
-                        marginLeft: "1rem",
-                        marginRight: "1rem",
+                        fontSize: "1.08rem",
+                        color: "#909090",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem",
                       }}
-                    />
-                    <MaterialSection>
-                      <span style={{ marginRight: "0.6rem" }}>
-                        {subSection.material.name}
-                      </span>
+                    >
+                      <span>{activeLecture.instructorName}</span>
                       <span
                         style={{
-                          color: "var(--main-color)",
-                          fontSize: "0.9rem",
+                          borderLeft: "1.5px solid #909090",
+                          height: "1rem",
                         }}
-                      >
-                        {subSection.material.size}
+                      ></span>
+                      <span>
+                        {formatDate(sub?.startDate)} ~{" "}
+                        {formatDate(sub?.endDate)}
                       </span>
-                      <img
-                        src={
-                          subSection.material.downloaded ? DoneIcon : UndoneIcon
-                        }
-                        alt="download status"
-                        style={{ marginLeft: "auto", width: "1.2rem" }}
-                      />
-                    </MaterialSection>
-                  </Section>
-
-                  <Section
+                    </p>
+                  </div>
+                  <img
+                    src={sub.checked ? DoneIcon : UndoneIcon}
                     style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "1rem",
-                      marginBottom: "2rem",
+                      marginLeft: "auto",
+                      marginRight: "1.6rem",
+                      width: "1.2rem",
                     }}
-                  >
-                    <img
-                      src={Assignment}
-                      alt="assignment icon"
+                  />
+                </Section>
+              )}
+
+              {sub.contentType === "material" && (
+                <Section
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "1rem",
+                  }}
+                >
+                  <img
+                    src={Material}
+                    style={{
+                      width: "2.4rem",
+                      height: "50%",
+                      marginLeft: "1rem",
+                      marginRight: "1rem",
+                    }}
+                  />
+                  <MaterialSection>
+                    <span style={{ marginRight: "0.6rem" }}>{sub.title}</span>
+                    <span
                       style={{
-                        width: "2.4rem",
-                        height: "50%",
-                        marginLeft: "1rem",
-                        marginRight: "1rem",
+                        color: "var(--main-color)",
+                        fontSize: "0.9rem",
                       }}
+                    >
+                      3.1MB
+                    </span>
+                    <img
+                      src={sub.checked ? DoneIcon : UndoneIcon}
+                      alt="download status"
+                      style={{ marginLeft: "auto", width: "1.2rem" }}
                     />
-                    <MaterialSection>
-                      <span style={{ marginRight: "0.8rem" }}>
-                        {subSection.assignment.name}
-                      </span>
-                      <span
-                        style={{
-                          color: "var(--main-color)",
-                        }}
-                      >
-                        {subSection.assignment.deadline}
-                      </span>
-                      <img
-                        src={
-                          subSection.assignment.submitted
-                            ? DoneIcon
-                            : UndoneIcon
-                        }
-                        alt="submission status"
-                        style={{ marginLeft: "auto", width: "1.2rem" }}
-                      />
-                    </MaterialSection>
-                  </Section>
-                </div>
-              </div>
-            ))}
-          </main>
+                  </MaterialSection>
+                </Section>
+              )}
+
+              {sub.contentType === "assignment" && (
+                <Section
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "1rem",
+                    marginBottom: "2rem",
+                  }}
+                >
+                  <img
+                    src={Assignment}
+                    alt="assignment icon"
+                    style={{
+                      width: "2.4rem",
+                      height: "50%",
+                      marginLeft: "1rem",
+                      marginRight: "1rem",
+                    }}
+                  />
+                  <MaterialSection>
+                    <span style={{ marginRight: "0.8rem" }}>{sub.title}</span>
+                    <span
+                      style={{
+                        color: "var(--main-color)",
+                      }}
+                    >
+                      {formatDate(sub?.startDate)} ~ {formatDate(sub?.endDate)}
+                    </span>
+                    <img
+                      src={sub.checked ? DoneIcon : UndoneIcon}
+                      alt="submission status"
+                      style={{ marginLeft: "auto", width: "1.2rem" }}
+                    />
+                  </MaterialSection>
+                </Section>
+              )}
+            </div>
+          </div>
+        ))}
+      </main>
       {isCreator && (
-        <EditButton to={`/class/${courseId}/curriculum/edit`} edit={true} />
+        <EditButton
+          to={`/class/${courseId}/curriculum/${activeLectureId}/edit`}
+          edit={true}
+        />
       )}
+
 
       {isEntryCodeModalOpen && <EntryCodeModal entrycode={entrycode} onClose={() => setIsEntryCodeModalOpen(false)} />}
     </div>
   );
 };
+
 
 export default Curriculum;

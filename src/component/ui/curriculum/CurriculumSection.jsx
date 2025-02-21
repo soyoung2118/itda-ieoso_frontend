@@ -6,6 +6,8 @@ import Material from "../../img/icon/pdf.svg";
 import Assignment from "../../img/icon/docs.svg";
 import EditContainer from "../../ui/curriculum/EditContainer";
 import EditableSection from "./EditableSection";
+import { getYouTubeThumbnail } from "./EditableSection";
+import { formatDate } from "../../page/class/Curriculum";
 
 const Section = styled.div`
   display: flex;
@@ -52,46 +54,37 @@ const formatPeriod = (startDate, endDate) => {
 const CurriculumSection = ({
   subSection,
   index,
-  editTarget,
+  handleAdd,
+  handleDelete,
   handleSectionClick,
-  handleIconClick,
-  
+  editTarget,
+  updateSection,
 }) => {
   const isEditing = subSection.isEditing;
+  
 
   return (
-    <Section onClick={() => handleSectionClick(index, subSection.type)}>
+    <Section onClick={(event) => handleSectionClick(index, event)}>
       {isEditing ? (
         <div style={{ display: "flex", width: "100%", position: "relative" }}>
-          <div style={{ position: "relative" }}>
-            <EditContainer onIconClick={handleIconClick} index={index} />
-          </div>
+          <EditContainer handleAdd={handleAdd} index={index} />
+
           <EditableSection
             subSection={subSection}
-            type={subSection.type}
-            handleSave={(updatedTitle) => {
-              const updatedSections = curriculumData.map((section) =>
-                section.title === activeItem
-                  ? {
-                      ...section,
-                      subSections: section.subSections.map((s, i) =>
-                        i === index
-                          ? { ...s, title: updatedTitle, isEditing: false }
-                          : s
-                      ),
-                    }
-                  : section
-              );
-              setCurriculumData(updatedSections);
-            }}
+            index={index}
+            handleDelete={handleDelete}
+            // updateSection={updateSection}
+            className="editable-section"
           />
         </div>
       ) : (
         <>
-          {subSection.type === "video" && (
+          {subSection.contentType === "video" && (
             <>
               <VideoContainer>
-                <VideoThumbnail src={ClassThumbnail} />
+                <VideoThumbnail
+                  src={getYouTubeThumbnail(subSection.videoUrl)}
+                />
                 <img
                   src={PlayIcon}
                   alt="Play Icon"
@@ -119,14 +112,15 @@ const CurriculumSection = ({
                     }}
                   ></span>
                   <span>
-                    {formatPeriod(subSection.startDate, subSection.endDate)}
+                    {formatDate(subSection?.startDate)} ~{" "}
+                    {formatDate(subSection?.endDate)}
                   </span>
                 </p>
               </div>
             </>
           )}
 
-          {subSection.type === "material" && (
+          {subSection.contentType === "material" && (
             <>
               <img
                 src={Material}
@@ -138,7 +132,7 @@ const CurriculumSection = ({
               />
               <MaterialSection>
                 <span style={{ marginRight: "0.6rem" }}>
-                  {subSection.title ?? "자료 없음"}
+                  {subSection.materialTitle ?? "자료 없음"}
                 </span>
                 <span
                   style={{ color: "var(--main-color)", fontSize: "0.9rem" }}
@@ -149,7 +143,7 @@ const CurriculumSection = ({
             </>
           )}
 
-          {subSection.type === "assignment" && (
+          {subSection.contentType === "assignment" && (
             <>
               <img
                 src={Assignment}
@@ -162,10 +156,11 @@ const CurriculumSection = ({
               />
               <MaterialSection>
                 <span style={{ marginRight: "0.8rem" }}>
-                  {subSection.title ?? "과제 없음"}
+                  {subSection.assignmentTitle ?? "과제 없음"}
                 </span>
                 <span style={{ color: "var(--main-color)" }}>
-                  {formatPeriod(subSection.startDate, subSection.endDate)}
+                  {formatDate(subSection?.startDate)} ~{" "}
+                  {formatDate(subSection?.endDate)}
                 </span>
               </MaterialSection>
             </>
@@ -174,24 +169,6 @@ const CurriculumSection = ({
       )}
     </Section>
   );
-};
-
-CurriculumSection.propTypes = {
-  subSection: PropTypes.shape({
-    type: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    file: PropTypes.string,
-    videoUrl: PropTypes.string,
-    startDate: PropTypes.string,
-    endDate: PropTypes.string,
-  }).isRequired,
-  index: PropTypes.number.isRequired,
-  editTarget: PropTypes.shape({
-    index: PropTypes.number,
-    type: PropTypes.string,
-  }),
-  handleSectionClick: PropTypes.func.isRequired,
-  handleIconClick: PropTypes.func,
 };
 
 export default CurriculumSection;

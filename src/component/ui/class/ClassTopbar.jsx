@@ -46,7 +46,6 @@ const Dropdown = styled.div`
 const DropdownButton = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
   padding: 0.5rem 0rem;
   cursor: pointer;
   background-color: var(--white-color);
@@ -85,15 +84,17 @@ const MenuItem = styled.div`
   cursor: pointer;
   font-size: 1rem;
   border-radius: 12px;
-  background-color: ${({ selected }) => (selected ? "#F7F7F7" : "var(--white-color)")};
+  background-color: ${({ selected }) =>
+    selected ? "#F7F7F7" : "var(--white-color)"};
   color: ${({ selected }) => (selected ? "var(--black-color)" : "#474747")};
 
   &:hover {
-    background-color: #F7F7F7;
+    background-color: #f7f7f7;
   }
 
   .star-icon {
-    color: ${({ selected }) => (selected ? "var(--highlight-color)" : "var(--darkgrey-color)")};
+    color: ${({ selected }) =>
+      selected ? "var(--highlight-color)" : "var(--darkgrey-color)"};
     font-size: 1rem;
   }
 `;
@@ -101,17 +102,17 @@ const MenuItem = styled.div`
 const TabLinkContainer = styled.div`
   display: flex;
   gap: 0.5rem;
-  overflow-x: auto; 
-  overflow-y: hidden; 
-  white-space: nowrap; 
-  padding-bottom: 0.5rem; 
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  padding-bottom: 0.5rem;
 
   &::-webkit-scrollbar {
-    height: 2px; 
+    height: 2px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: var(--natural-color); 
+    background: var(--natural-color);
     border-radius: 10px;
   }
 
@@ -124,38 +125,32 @@ const TabLinkContainer = styled.div`
 `;
 
 const TabLink = styled(NavLink)`
-  width: 6rem;
+  width: clamp(3em, 7vw, 6rem);
   text-align: center;
-  padding: 5px 10px;
   padding: 5px 10px;
   text-decoration: none;
   color: var(--darkgrey-color);
   font-weight: bold;
-  font-size: 1.2rem;
   position: relative;
 
-  &.active {
+ &.active {
     color: var(--black-color);
+    border-bottom: 3px solid var(--black-color);
+    margin-bottom: -18px;
   }
 
-  &.active::after {
-    content: "";
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background-color: var(--black-color);
-  }
-
-  .scrolling &.active::after {
-    display: none;
+/* 화면이 768px보다 작아지면 고정 너비 해제 + 최소 너비만 지정 */
+  @media (max-width: 768px) {
+    font-size: 18px;
+    &.active {
+      margin-bottom: -21px;
+    }
   }
 `;
 
 const ClassTopbar = ({ onCourseChange, isCreator }) => {
   const { user } = useContext(UsersContext);
-  const { courseId } = useParams();
+  const { courseId, lectureId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const [classOptions, setClassOptions] = useState([]);
@@ -176,7 +171,9 @@ const ClassTopbar = ({ onCourseChange, isCreator }) => {
   useEffect(() => {
     const checkScrollable = () => {
       if (tabRef.current) {
-        setIsScrollable(tabRef.current.scrollWidth > tabRef.current.clientWidth);
+        setIsScrollable(
+          tabRef.current.scrollWidth > tabRef.current.clientWidth
+        );
       }
     };
 
@@ -199,38 +196,53 @@ const ClassTopbar = ({ onCourseChange, isCreator }) => {
   return (
     <Navbar>
       <Container style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-        <span className="material-symbols-outlined" style={{ fontSize: "1.8rem", cursor: "pointer" }} onClick={() => navigate("/class/list")}>
+        <span
+          className="material-symbols-outlined"
+          style={{ fontSize: "1.8rem", cursor: "pointer" }}
+          onClick={() => navigate("/class/list")}
+        >
           home
         </span>
         <VerticalLine />
         <Dropdown>
           <DropdownButton onClick={handleDropdownToggle}>
-            {classOptions.find((course) => String(course.courseId) === String(courseId))?.courseTitle || "강의실 선택"}
+            {classOptions.find(
+              (course) => String(course.courseId) === String(courseId)
+            )?.courseTitle || "강의실 선택"}
             <span style={{ marginLeft: "1rem" }}>▼</span>
           </DropdownButton>
           <DropdownMenu isOpen={isDropdownOpen}>
             <MenuTitle>강의실 목록</MenuTitle>
             {classOptions.map((course) => (
-            <MenuItem
-              key={course.courseId}
-              selected={String(courseId) === String(course.courseId)}
-              onClick={() => {
-                onCourseChange(course.courseId);
-                setIsDropdownOpen(false);
-              }}
-            >
-              <div>{course.courseTitle}</div>
-              {course.isCreator && <StarIcon className="star-icon" />}
-            </MenuItem>
+              <MenuItem
+                key={course.courseId}
+                selected={String(courseId) === String(course.courseId)}
+                onClick={() => {
+                  onCourseChange(course.courseId);
+                  setIsDropdownOpen(false);
+                }}
+              >
+                <div>{course.courseTitle}</div>
+                {course.isCreator && <StarIcon className="star-icon" />}
+              </MenuItem>
             ))}
           </DropdownMenu>
         </Dropdown>
       </Container>
-      <TabLinkContainer ref={tabRef} className={isScrollable ? "scrolling" : ""}>
-        <TabLink to={`/class/${courseId}/overview/info`} className={getActiveTab() === "overview" ? "active" : ""}>
+      <TabLinkContainer
+        ref={tabRef}
+        className={isScrollable ? "scrolling" : ""}
+      >
+        <TabLink
+          to={`/class/${courseId}/overview/info`}
+          className={getActiveTab() === "overview" ? "active" : ""}
+        >
           개요
         </TabLink>
-        <TabLink to={`/class/${courseId}/curriculum`} className={getActiveTab() === "curriculum" ? "active" : ""}>
+        <TabLink
+          to={`/class/${courseId}/curriculum/${lectureId || 1}`}
+          className={getActiveTab() === "curriculum" ? "active" : ""}
+        >
           커리큘럼
         </TabLink>
         {isCreator && (
