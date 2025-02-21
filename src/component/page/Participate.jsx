@@ -51,7 +51,6 @@ const Container = styled.div`
     align-items: center;
     justify-content: flex-start;
     background-color: #FFFFFF;
-    height: calc(100vh - 7vh);
     width: 100%;
     padding-top: 8rem;
 `;
