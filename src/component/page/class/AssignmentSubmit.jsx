@@ -324,8 +324,8 @@ const ClassAssignmentSubmit = () => {
                 />
             </RightSide>
 
-            { isSubmittedModalOpen && <AssignmentModal text="과제 제출이 완료되었습니다."  onClose={() => setIsSubmittedModalOpen(false)}/> }
-            { isReSubmittedModalOpen && <AssignmentModal text="과제 수정이 완료되었습니다."  onClose={() => setIsReSubmittedModalOpen(false)}/> }
+            { isSubmittedModalOpen && <AssignmentModal text="과제 제출이 완료되었습니다."  onClose={() => {setIsSubmittedModalOpen(false); window.location.reload();}}/> }
+            { isReSubmittedModalOpen && <AssignmentModal text="과제 수정이 완료되었습니다."  onClose={() => {setIsReSubmittedModalOpen(false); window.location.reload();}}/> }
         </Container>
         </Wrapper>
     );
