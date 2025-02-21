@@ -213,20 +213,33 @@ const ClassAssignmentSubmit = () => {
             console.error('파일을 찾을 수 없습니다.');
             return;
         }
+
+        console.log(fileToDownload);
     
         try {
             const response = await api.get("/files/download", {
                 params: { 
-                    fileUrl: fileToDownload.fileUrl 
+                    fileUrl: fileToDownload.fileUrl
                 },
             });
 
-            const fileUrl = response.data; // 백엔드에서 반환된 파일 URL
-            const link = document.createElement('a');
-            link.href = fileUrl;
-            link.download = 'filename.ext'; // 원하는 파일 이름과 확장자
-            link.click();    
-    
+            console.log('Response:', response);
+            console.log('Response data:', response.data);
+            
+            const url = window.URL.createObjectURL(response.data);
+            const link = document.createElement("a");
+            link.download = fileToDownload.name; // 원하는 파일명 설정 가능
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+
+            // const fileUrl = response.data; // 백엔드에서 반환된 파일 URL
+            // const link = document.createElement('a');
+            // link.href = fileUrl;
+            // link.download = fileToDownload.name; // 원하는 파일 이름과 확장자
+            // link.click();   
+
         } catch (error) {
             console.error("파일 처리 중 오류:", error);
         }

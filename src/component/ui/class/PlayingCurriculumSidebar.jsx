@@ -16,7 +16,7 @@ const PlayingCurriculumSidebar = ({
     const { courseId, lectureId, videoId, assignmentId } = useParams();
     const { user } = useContext(UsersContext);
     const [expandedItems, setExpandedItems] = useState(new Set([1]));
-    const [curriculumSidebarData, setCurriculumSidebarData] = useState([]);
+    const [list, setList] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -25,10 +25,14 @@ const PlayingCurriculumSidebar = ({
 
                 const curriculumResponse = await api.get(`/lectures/curriculum/${courseId}/${user.userId}`);
                 if (curriculumResponse.data.success) {
-                    const data = curriculumResponse.data.data;
-                    setCurriculumData(data);
-                    setCurriculumSidebarData(data);
-                    console.log(curriculumSidebarData);
+                    setCurriculumData(curriculumResponse.data.data);
+                    //console.log(curriculumData);
+                    const sortList = [];
+                    for(let data in curriculumData){
+                        sortList.push(data.assignment);
+                    }
+                    setList(sortList);
+                    console.log(list);
                 }
             } catch (error) {
                 console.error("데이터 로딩 오류:", error);
@@ -39,9 +43,9 @@ const PlayingCurriculumSidebar = ({
     }, [courseId, user, setCurriculumData]);
 
     useEffect(() => {
-        if (!curriculumSidebarData?.length || !lectureId) return;
+        if (!curriculumData?.length || !lectureId) return;
         
-        const foundLecture = curriculumSidebarData.find(
+        const foundLecture = curriculumData.find(
             lecture => lecture.lectureId === Number(lectureId)
         );
         
@@ -52,7 +56,7 @@ const PlayingCurriculumSidebar = ({
                 setExpandedItems(prev => new Set([...prev, foundLecture.lectureId]));
             }
         }
-    }, [curriculumSidebarData, lectureId, videoId, assignmentId, setCurrentLectureInfo]);
+    }, [curriculumData, lectureId, videoId, assignmentId, setCurrentLectureInfo]);
 
     const toggleItem = (itemId) => {
         setExpandedItems(prev => {
@@ -102,17 +106,17 @@ const PlayingCurriculumSidebar = ({
             
             <RightContainer>
                 <CurriculumList>
-                    {curriculumSidebarData.map((lecture) => (
+                    {curriculumData.map((lecture) => (
                         <div key={lecture.lectureId}>
                             <CurriculumItem>
-                                <ItemTitle>{lecture.lectureTitle}</ItemTitle>
-                                {lecture.videos.length > 0 && (
+                                <ItemTitle>{lecture.lectureDescription}</ItemTitle>
+                                {/* {lecture.videos.length > 0 && (
                                     <IconWrapper onClick={() => toggleItem(lecture.lectureId)}>
                                         <span className="material-icons">
                                             {expandedItems.has(lecture.lectureId) ? 'expand_more' : 'chevron_right'}
                                         </span>
                                     </IconWrapper>
-                                )}
+                                )} */}
                             </CurriculumItem>
                             {expandedItems.has(lecture.lectureId) && lecture.videos.map((video) => (
                                 <SubItem key={video.videoId} status={video.videoHistoryStatus}>

@@ -1,5 +1,5 @@
-import { useState, useContext, useRef } from "react";
-import { useParams, useOutletContext } from "react-router-dom";
+import { useEffect, useState, useContext, useRef } from "react";
+import { useParams, useOutletContext, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import ClassSidebar from "../../ui/class/ClassSidebar";
 import ClassThumbnail from "../../img/class/class_thumbnail.svg";
@@ -10,6 +10,7 @@ import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import api from "../../api/api";
 import { UsersContext } from "../../contexts/usersContext";
+import EntryCodeModal from "../../ui/class/EntryCodeModal";
 
 const IconRow = styled.div`
   display: flex;
@@ -126,6 +127,10 @@ const ClassOverview = () => {
   const { courseId } = useParams();
   const { user } = useContext(UsersContext);
 
+  const location = useLocation();
+  const entrycode = location.state?.entrycode || null;
+  const [isEntryCodeModalOpen, setIsEntryCodeModalOpen] = useState(false);
+
   const [sectionContent, setSectionContent] = useState(courseData.courseDescription || "");
   const [isEditing, setIsEditing] = useState(false);
   const [courseThumbnail, setCourseThumbnail] = useState(courseData.courseThumbnail || ClassThumbnail);
@@ -133,6 +138,10 @@ const ClassOverview = () => {
   const [files, setFiles] = useState([]);
 
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    if (entrycode) setIsEntryCodeModalOpen(true);
+  }, []);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -298,6 +307,8 @@ const ClassOverview = () => {
           />
         </StyledButton>
       )}
+
+      {isEntryCodeModalOpen && <EntryCodeModal entrycode={entrycode} onClose={() => setIsEntryCodeModalOpen(false)} />}
     </div>
   );
 };
