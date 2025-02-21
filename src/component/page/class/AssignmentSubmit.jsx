@@ -222,14 +222,20 @@ const ClassAssignmentSubmit = () => {
             });
             
             const presignedUrl = response.data;
-
             const fileResponse = await fetch(presignedUrl);
 
-            const contentType = response.headers["content-type"];
-            console.log("Content-Type:", contentType);  // 콘솔에 출력
-
             const arrayBuffer = await fileResponse.arrayBuffer();
-            const blob = new Blob([arrayBuffer], { type: fileToDownload.type === 'pdf' ? 'application/pdf' : fileToDownload.mimeType });
+
+            const fileExtension = fileToDownload.name.split('.').pop().toLowerCase();
+            let mimeType = 'application/octet-stream';
+
+            if (fileExtension === 'pdf') {
+                mimeType = 'application/pdf';
+            } else if (['jpg', 'jpeg', 'png'].includes(fileExtension)) {
+                mimeType = `image/${fileExtension}`;
+            }
+
+            const blob = new Blob([arrayBuffer], { type: mimeType });
         
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement("a");

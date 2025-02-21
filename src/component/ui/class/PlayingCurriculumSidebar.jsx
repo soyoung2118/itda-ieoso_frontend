@@ -76,28 +76,72 @@ const PlayingCurriculumSidebar = ({
 
     const getStatusIcon = (status) => {
         switch (status) {
-            case 'WATCHED':
-                return <span className="material-icons" style={{ color: '#474747', fontSize: '20px' }}>check_circle</span>;
-            case 'WATCHING':
-                return (
-                    <div style={{ display: 'flex', gap: '4px' }}>
-                        <span className="material-icons" style={{ color: '#C3C3C3', fontSize: '20px' }}>check_circle</span>
-                        <span className="material-icons" style={{ color: '#474747', fontSize: '20px' }}>play_circle</span>
-                    </div>
-                );
-            case 'NOT_WATCHED':
-                return <span className="material-icons" style={{ color: '#C3C3C3', fontSize: '20px' }}>check_circle</span>;
-            default:
-                return null;
+          case 'WATCHED':
+            return <span className="material-icons" style={{ color: '#474747', fontSize: '20px' }}>check_circle</span>;
+          case 'WATCHING':
+            return (
+              <div style={{ display: 'flex', gap: '4px' }}>
+                <span className="material-icons" style={{ color: '#C3C3C3', fontSize: '20px' }}>check_circle</span>
+                <span className="material-icons" style={{ color: '#474747', fontSize: '20px' }}>play_circle</span>
+              </div>
+            );
+          case 'NOT_WATCHED':
+            return <span className="material-icons" style={{ color: '#C3C3C3', fontSize: '20px' }}>check_circle</span>;
+          default:
+            return null;
         }
     };
 
     const handleVideoClick = (goLecture, goVideo) => {
-        navigate(`/playing/${courseId}/${goLecture}/${goVideo}`);
+      navigate(`/playing/${courseId}/${goLecture}/${goVideo}`);
     };
 
+    const handleMaterialClick = async (material) => {
+      const materialUrl = material.materialFile;
+  
+      try {
+          const response = await api.get("/files/download", {
+              params: { 
+                  fileUrl: materialUrl
+              },
+          });
+
+          const presignedUrl = response.data;
+          const fileResponse = await fetch(presignedUrl);
+
+          const arrayBuffer = await fileResponse.arrayBuffer();
+
+          const fileExtension = material.originalFilename.split('.').pop().toLowerCase();
+          let mimeType = 'application/octet-stream';
+
+          if (fileExtension === 'pdf') {
+              mimeType = 'application/pdf';
+          } else if (fileExtension === 'txt') {
+              mimeType = 'text/plain';
+          } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+              mimeType = `image/${fileExtension}`;
+          } else if (fileExtension === 'zip') {
+              mimeType = 'application/zip';
+          }
+
+          const blob = new Blob([arrayBuffer], { type: mimeType });
+  
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+  
+          a.download = material.originalFilename; 
+          a.click();
+  
+          window.URL.revokeObjectURL(url);
+  
+      } catch (error) {
+          console.error("파일 처리 중 오류:", error);
+      }
+  };
+
     const handleAssignmentClick = (goLecture, goAssignment) => {
-        navigate(`/assignment/submit/${courseId}/${goLecture}/${goAssignment}`);
+       navigate(`/assignment/submit/${courseId}/${goLecture}/${goAssignment}`);
     };
 
     const dateText = (time) => {
@@ -110,68 +154,68 @@ const PlayingCurriculumSidebar = ({
             <RightContainer>
                 <CurriculumList>
                 {curriculumData.map((lecture, index) => {
-                        const sortedContents = [...lecture.videos, ...lecture.materials, ...lecture.assignments]
-                            .sort((a, b) => a.contentOrderIndex - b.contentOrderIndex);
+                      const sortedContents = [...lecture.videos, ...lecture.materials, ...lecture.assignments]
+                          .sort((a, b) => a.contentOrderIndex - b.contentOrderIndex);
 
-                        return (
-                            <div key={lecture.lectureId}>
-                                <CurriculumItem>
-                                    <ItemTitle>{index + 1}. {lecture.lectureDescription}</ItemTitle>
-                                </CurriculumItem>
-                                  {lecture.lectureId && sortedContents.map((content) => (
-                                    <SubItem key={content.contentOrderId} status={content.contentType == 'video' ? content.videoHistoryStatus : null}>
-                                        <SubItemTitle>
-                                            {content.contentType === 'video' &&
-                                              <ContentItem onClick={() => handleVideoClick(lecture.lectureId, content.videoId)}>
-                                                <img
-                                                    className="material-icons"
-                                                    src={Video}
-                                                    alt="video icon"
-                                                    style={{
-                                                    width: "16px",
-                                                    marginRight: "4px",
-                                                    }}
-                                                />
-                                                <BlackText>{truncate(content.videoTitle, 25)}</BlackText>
-                                                {getStatusIcon(content.videoHistoryStatus)}
-                                              </ContentItem> 
-                                            }
-                                            {content.contentType === 'material' &&
-                                              <ContentItem>
-                                                <img
-                                                    className="material-icons"
-                                                    src={Material}
-                                                    alt="material icon"
-                                                    style={{
-                                                    width: "16px",
-                                                    marginRight: "4px",
-                                                    }}
-                                                />
-                                                <BlackText>{content.title}</BlackText>
-                                                <RedText>{content.size}</RedText>
-                                              </ContentItem>
-                                            }
-                                            {content.contentType === 'assignment' &&
-                                              <ContentItem onClick={() => handleAssignmentClick(lecture.lectureId, content.assignmentId)}>
-                                                <img
-                                                    className="material-icons"
-                                                    src={Assignment}
-                                                    alt="assignment icon"
-                                                    style={{
-                                                    width: "16px",
-                                                    marginRight: "4px",
-                                                    }}
-                                                />
-                                                <TextContainer>
-                                                <BlackText>{content.assignmentTitle}</BlackText>
-                                                <RedText>{dateText(content.startDate)} - {dateText(content.endDate)}</RedText>
-                                                </TextContainer>
-                                              </ContentItem>
-                                            }
-                                        </SubItemTitle>
-                                    </SubItem>
-                                ))}
-                            </div>
+                      return (
+                          <div key={lecture.lectureId}>
+                              <CurriculumItem>
+                                  <ItemTitle>{index + 1}. {lecture.lectureDescription}</ItemTitle>
+                              </CurriculumItem>
+                                {lecture.lectureId && sortedContents.map((content) => (
+                                  <SubItem key={content.contentOrderId} status={content.contentType == 'video' ? content.videoHistoryStatus : null}>
+                                      <SubItemTitle>
+                                          {content.contentType === 'video' &&
+                                            <ContentItem onClick={() => handleVideoClick(lecture.lectureId, content.videoId)}>
+                                              <img
+                                                  className="material-icons"
+                                                  src={Video}
+                                                  alt="video icon"
+                                                  style={{
+                                                  width: "16px",
+                                                  marginRight: "4px",
+                                                  }}
+                                              />
+                                              <BlackText>{truncate(content.videoTitle, 25)}</BlackText>
+                                              {getStatusIcon(content.videoHistoryStatus)}
+                                            </ContentItem> 
+                                          }
+                                          {content.contentType === 'material' &&
+                                            <ContentItem onClick={() => handleMaterialClick(content)}>
+                                              <img
+                                                  className="material-icons"
+                                                  src={Material}
+                                                  alt="material icon"
+                                                  style={{
+                                                  width: "16px",
+                                                  marginRight: "4px",
+                                                  }}
+                                              />
+                                              <BlackText>{content.originalFilename}</BlackText>
+                                              <RedText>{content.fileSize}</RedText>
+                                            </ContentItem>
+                                          }
+                                          {content.contentType === 'assignment' &&
+                                            <ContentItem onClick={() => handleAssignmentClick(lecture.lectureId, content.assignmentId)}>
+                                              <img
+                                                  className="material-icons"
+                                                  src={Assignment}
+                                                  alt="assignment icon"
+                                                  style={{
+                                                  width: "16px",
+                                                  marginRight: "4px",
+                                                  }}
+                                              />
+                                              <TextContainer>
+                                              <BlackText>{content.assignmentTitle}</BlackText>
+                                              <RedText>{dateText(content.startDate)} - {dateText(content.endDate)}</RedText>
+                                              </TextContainer>
+                                            </ContentItem>
+                                          }
+                                      </SubItemTitle>
+                                  </SubItem>
+                              ))}
+                          </div>
                         );
                     })}
                 </CurriculumList>
