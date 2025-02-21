@@ -1,21 +1,17 @@
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useEffect, useContext } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import TopBar from "../../ui/TopBar";
 import CurriculumSidebar from "../../ui/class/CurriculumSidebar";
 import ClassTopbar from "../../ui/class/ClassTopbar";
 import { PageLayout } from "../../ui/class/ClassLayout";
-import EditButton from "../../ui/class/EditButton";
 import EditableSection from "../../ui/curriculum/EditableSection";
 import CurriculumSection from "../../ui/curriculum/CurriculumSection";
 import api from "../../api/api";
-// import Delete from "../../img/class/edit/delete.svg";
-// import DateTimeEdit from "../../ui/curriculum/DateTimeEdit";
-// import ClassThumbnail from "../../img/class/class_thumbnail.svg";
-// import Assignment from "../../img/icon/docs.svg";
-// import Material from "../../img/icon/pdf.svg";
-// import PlayIcon from "../../img/class/play_icon.svg";
 import EditContainer from "../../ui/curriculum/EditContainer";
+import { UsersContext } from "../../contexts/usersContext";
+import { formatLecturePeriod } from "./Curriculum";
+import EditButton from "../../ui/class/EditButton";
 
 const SectionWrapper = styled.div`
   display: flex;
@@ -51,74 +47,22 @@ const DeleteButton = styled.img`
   cursor: pointer;
 `;
 
+export const toLocalDateTime = (isoString) => {
+  if (!isoString) return null;
+  return isoString.replace("T", " ") + ":00"; // "2025-02-22 11:00:00" 형태로 변환
+};
+
 const CurriculumEdit = () => {
   const { courseId } = useParams();
-  const [userId, setUserId] = useState(null);
+  const navigate = useNavigate();
+  const { user } = useContext(UsersContext);
+  const userId = user.userId;
   const [curriculumData, setCurriculumData] = useState([]);
   const [activeLectureId, setActiveLectureId] = useState(null);
   const [activeLecture, setActiveLecture] = useState(null);
-  // const [curriculumData, setCurriculumData] = useState(
-  //   dummyData[0]?.data.map((lecture) => ({
-  //     ...lecture,
-  //     subSections: [
-  //       ...lecture.videos.map((v) => ({ ...v, title: v.videoTitle, isEditing: false })),
-  //       ...lecture.materials.map((m) => ({ ...m, title: m.materialTitle, isEditing: false })),
-  //       ...lecture.assignments.map((a) => ({ ...a, title: a.assignmentTitle, isEditing: false })),
-  //     ].sort((a, b) => a.id - b.id),
-  //   })) || []
-  // );
-
-  // const [activeLecture, setActiveLecture] = useState(() => {
-  //   const initialLecture = dummyData[0]?.data[0]; // 첫 번째 강의 선택
-  //   return initialLecture
-  //     ? {
-  //         ...initialLecture,
-  //         subSections: [
-  //           ...(initialLecture.videos || []).map((v) => ({ ...v, title: v.videoTitle, isEditing: false })),
-  //           ...(initialLecture.materials || []).map((m) => ({ ...m, title: m.materialTitle, isEditing: false })),
-  //           ...(initialLecture.assignments || []).map((a) => ({ ...a, title: a.assignmentTitle, isEditing: false })),
-  //         ].sort((a, b) => a.id - b.id),
-  //       }
-  //     : { subSections: [] }; // 기본값 설정
-  // });
 
   const [editTarget, setEditTarget] = useState(null);
-  const [actionQueue, setActionQueue] = useState([]);
   const [activeSection, setActiveSection] = useState(null);
-
-  // userid 가져오기
-  useEffect(() => {
-    const getUserIdFromLocalStorage = () => {
-      const userData = localStorage.getItem("user");
-      if (!userData) return null;
-
-      try {
-        const parsedUser = JSON.parse(userData);
-        return parsedUser.userId;
-      } catch (error) {
-        console.error("로컬 스토리지 데이터 파싱 오류:", error);
-        return null;
-      }
-    };
-
-    const fetchedUserId = getUserIdFromLocalStorage();
-    if (fetchedUserId) {
-      setUserId(fetchedUserId);
-    }
-  }, []);
-
-  const defaultEditableSection = {
-    videoId: 1,
-    videoTitle: null,
-    videoUrl: "",
-    startDate: null,
-    endDate: null,
-    contentOrderId: 1,
-    contentType: "video",
-    contentOrderIndex: 1,
-    title: null,
-    isEditing: true,
-  };
 
   // 데이터 받아와서 초기화
   useEffect(() => {
@@ -138,21 +82,10 @@ const CurriculumEdit = () => {
         const lectures = response.data.data || []; // 데이터 없을 경우 빈 배열로 처리
         setCurriculumData(lectures);
 
-        let defaultLecture;
+        console.log("[DEBUG] curriculumData:", lectures);
 
-        defaultLecture =
+        const defaultLecture =
           lectures.find((lec) => lec.lectureId === 1) || lectures[0];
-
-        if (
-          !defaultLecture.subSections ||
-          defaultLecture.subSections.length === 0
-        ) {
-          defaultLecture.subSections = [defaultEditableSection];
-        }
-
-        console.log("[DEBUG] Before setting activeLecture:");
-        console.log("defaultLecture:", defaultLecture);
-        console.log("defaultLecture.subSections:", defaultLecture.subSections);
 
         setActiveLecture({
           ...defaultLecture,
@@ -188,160 +121,121 @@ const CurriculumEdit = () => {
     fetchCurriculum();
   }, [courseId, userId]);
 
-  // 강의 데이터가 없는 경우 기본 `EditableSection` 생성
-  const isEmptyLecture =
-    !activeLecture?.subSections || activeLecture.subSections.length === 0;
+  // const updateSubSection = (index, updatedData) => {
+  //   setActiveLecture((prev) => {
+  //     if (!prev) return prev;
 
-  const handleActionQueue = (action) => {
-    setActionQueue((prev) => [...prev, action]);
-  };
+  //     const updatedSubSections = prev.subSections.map((s, i) =>
+  //       i === index ? { ...s, ...updatedData, isEditing: true } : s
+  //     );
 
-  // 섹션 수정
-  const handleSectionClick = (index) => {
-    console.log(
-      `[DEBUG] handleSectionClick - Index: ${index}, Previous isEditing:`,
-      activeLecture.subSections[index]?.isEditing
-    );
-    setActiveLecture((prev) => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        subSections: prev.subSections.map((s, i) => ({
-          ...s,
-          isEditing: i === index ? !s.isEditing : false,
-        })),
-      };
-    });
-    setEditTarget((prev) =>
-      prev?.index === index
-        ? null
-        : { index, sectionIndex: activeLecture.lectureId }
-    );
-    handleActionQueue({ type: "edit", index });
-  };
+  //     console.log(
+  //       "[DEBUG] updateSubSection 실행됨, 최신 subSection:",
+  //       updatedSubSections[index]
+  //     );
+
+  //     return { ...prev, subSections: updatedSubSections };
+  //   });
+  // };
 
   // 섹션 추가
-  const handleIconClick = (type, index) => {
+  const handleAdd = async (type) => {
     if (!activeLecture) return;
-    const newId = activeLecture.subSections.length
-      ? Math.max(...activeLecture.subSections.map((s) => s.id)) + 1
-      : 1;
-    const newSubSection = {
-      id: newId,
-      type,
-      title: "새 항목",
-      isEditing: true,
-    };
-    setActiveLecture((prev) => ({
-      ...prev,
-      subSections: [
-        ...prev.subSections.map((s) => ({ ...s, isEditing: false })),
-        newSubSection,
-      ].sort((a, b) => a.id - b.id),
-    }));
-    setEditTarget({ index: newId - 1, sectionIndex: activeLecture.lectureId });
-    setActionQueue((prev) => [
-      ...prev,
-      { type: "add", section: newSubSection },
-    ]);
-  };
 
-  // 섹션 삭제
-  const handleDelete = (index, type, id) => {
-    if (!activeLecture) return;
-    setActiveLecture((prev) => ({
-      ...prev,
-      subSections: prev.subSections
-        .filter((_, i) => i !== index)
-        .map((s, i) => ({ ...s, id: i + 1 })),
-    }));
-    handleActionQueue({ type: "delete", id, sectionType: type });
-    // 삭제한 후 편집 상태 초기화
-    setEditTarget(null);
-  };
-
-  // 저장 버튼 클릭 시 API 요청
-  const handleSave = async () => {
     try {
-      for (const action of actionQueue) {
-        let url = "";
-        let method = "PATCH";
-        let data = {};
-
-        if (action.type === "edit") {
-          const subSection = activeLecture.subSections[action.index];
-          if (!subSection) continue;
-
-          // 새 데이터 구조 반영: contentOrderId, contentType
-          const { contentOrderId, contentType, contentData } = subSection;
-
-          if (contentType === "video") {
-            url = `/videos/${courseId}/${contentOrderId}/${userId}`;
-            data = {
-              videoTitle: contentData.videoTitle,
-              videoUrl: contentData.videoUrl,
-              startDate: contentData.startDate,
-              endDate: contentData.endDate,
-            };
-          } else if (contentType === "material") {
-            url = `/materials/${courseId}/${contentOrderId}/${userId}`;
-            method = "POST";
-            data = new FormData();
-            data.append("files", contentData.materialFile);
-            data.append("materialTitle", contentData.materialTitle);
-          } else if (contentType === "assignment") {
-            url = `/assignments/${courseId}/${contentOrderId}/${userId}`;
-            data = {
-              assignmentTitle: contentData.assignmentTitle,
-              assignmentDescription: contentData.assignmentDescription,
-              startDate: contentData.startDate,
-              endDate: contentData.endDate,
-            };
-          } else if (contentType === "lecture") {
-            url = `/lectures/${courseId}/${contentOrderId}/${userId}`;
-            data = {
-              lectureTitle: contentData.lectureTitle,
-              lectureDescription: contentData.lectureDescription,
-              startDate: contentData.startDate,
-              endDate: contentData.endDate,
-            };
-          }
-        }
-
-        // 삭제 처리
-        else if (action.type === "delete") {
-          if (action.sectionType === "video") {
-            url = `/videos/${courseId}/${action.id}/${userId}`;
-          } else if (action.sectionType === "material") {
-            url = `/materials/${courseId}/${action.id}/${userId}`;
-          } else if (action.sectionType === "assignment") {
-            url = `/assignments/${courseId}/${action.id}/${userId}`;
-          } else if (action.sectionType === "lecture") {
-            url = `/lectures/${courseId}/${action.id}/${userId}`;
-          }
-          method = "DELETE";
-        }
-
-        // API 요청 전송
-        if (url) {
-          if (method === "POST") {
-            await api.post(url, data, {
-              headers: { "Content-Type": "multipart/form-data" },
-            });
-          } else if (method === "DELETE") {
-            await api.delete(url);
-          } else {
-            await api.patch(url, data);
-          }
-        }
+      let url = "";
+      if (type === "video") {
+        url = `/videos/${courseId}/${activeLectureId}/${userId}`;
+      } else if (type === "material") {
+        url = `/materials/${courseId}/${activeLectureId}/${userId}`;
+      } else if (type === "assignment") {
+        url = `/assignments/${courseId}/${activeLectureId}/${userId}`;
       }
 
-      setActionQueue([]);
-      alert("변경 사항이 저장되었습니다.");
+      await api.post(url);
+      location.reload(); 
     } catch (error) {
-      console.error("저장 중 오류 발생:", error);
+      console.error("추가 실패:", error);
     }
   };
+
+  // 섹션 삭제 (즉시 API 호출)
+  const handleDelete = async (event, index) => {
+    if (event) event.stopPropagation();
+    if (!activeLecture) return;
+
+    const subSection = activeLecture.subSections[index];
+    let url = "";
+
+    if (subSection.contentType === "video") {
+      url = `/videos/${courseId}/${subSection.videoId}/${userId}`;
+    } else if (subSection.contentType === "material") {
+      url = `/materials/${courseId}/${subSection.materialId}/${userId}`;
+    } else if (subSection.contentType === "assignment") {
+      url = `/assignments/${courseId}/${subSection.assignmentId}/${userId}`;
+    }
+
+    try {
+      await api.delete(url);
+      location.reload(); // 삭제 후 새로 불러오기
+    } catch (error) {
+      console.error("삭제 실패:", error);
+    }
+  };
+
+  const handleSectionClick = (index, event) => {
+    event.stopPropagation(); // 이벤트 버블링 방지
+
+    const excludedTags = ["INPUT", "TEXTAREA", "BUTTON", "SELECT", "LABEL"];
+    if (excludedTags.includes(event.target.tagName)) {
+      console.log("[DEBUG] 입력 필드 클릭 감지 → handleSectionClick 실행 안함");
+      return;
+    }
+
+    if (event.target.closest(".datetime-edit")) {
+      console.log(
+        "[DEBUG] DateTimeEdit 내부 클릭 감지 → handleSectionClick 실행 안함"
+      );
+      return;
+    }
+
+    setActiveLecture((prev) => {
+      if (!prev) return prev;
+
+      const updatedSubSections = prev.subSections.map((s, i) =>
+        i === index
+          ? { ...s, isEditing: !s.isEditing }
+          : { ...s, isEditing: false }
+      );
+
+      return { ...prev, subSections: updatedSubSections };
+    });
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest(".editable-section")) {
+        console.log("[DEBUG] handleMainClick 실행됨 -> isEditing=false 처리");
+
+        setActiveLecture((prev) => {
+          if (!prev) return prev;
+
+          const updatedSubSections = prev.subSections.map((s) => ({
+            ...s,
+            isEditing: false,
+          }));
+
+          return { ...prev, subSections: updatedSubSections };
+        });
+      }
+    };
+
+    document.body.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.body.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div>
@@ -388,9 +282,8 @@ const CurriculumEdit = () => {
                   margin: "0.2rem 1rem",
                 }}
               >
-                {activeLecture?.startDate && activeLecture?.endDate
-                  ? `${activeLecture.startDate} ~ ${activeLecture.endDate}`
-                  : "[학습 기간 설정하기]"}
+                {formatLecturePeriod(activeLecture?.startDate)} ~{" "}
+                {formatLecturePeriod(activeLecture?.endDate)}
               </p>
             </Section>
             <Section
@@ -409,48 +302,42 @@ const CurriculumEdit = () => {
                 {activeLecture?.lectureDescription ?? "설명 없음"}
               </h1>
             </Section>
-
-            {isEmptyLecture ? (
-              <SectionWrapper>
-                <EditableSection subSection={defaultEditableSection} />
-              </SectionWrapper>
-            ) : (
-              activeLecture?.subSections.map((subSection, index) => (
-                <SectionWrapper key={subSection.id}>
+            <main>
+              {activeLecture?.subSections.map((subSection, index) => (
+                <SectionWrapper
+                  key={subSection.id}
+                  onClick={(event) => handleSectionClick(index, event)}
+                >
                   {subSection.isEditing && (
-                    <EditContainer
-                      onIconClick={handleIconClick}
-                      index={index}
-                    />
+                    <EditContainer handleAdd={handleAdd} index={index} />
                   )}
                   {subSection.isEditing ? (
                     <EditableSection
                       subSection={subSection}
-                      handleDelete={() =>
-                        handleDelete(index, subSection.id, subSection.type)
-                      }
+                      index={index}
+                      // updateSection={updateSubSection}
+                      className="editable-section"
+                      handleDelete={(event) => handleDelete(event, index)}
                     />
                   ) : (
                     <CurriculumSection
                       subSection={subSection}
                       index={index}
                       editTarget={editTarget}
-                      handleSectionClick={() => handleSectionClick(index)}
-                      handleDelete={() =>
-                        handleDelete(index, subSection.id, subSection.type)
-                      }
+                      handleDelete={(event) => handleDelete(event, index)}
+                      handleSectionClick={handleSectionClick}
+                      // updateSection={updateSubSection}
                     />
                   )}
                 </SectionWrapper>
-              ))
-            )}
+              ))}
+            </main>
           </main>
         </div>
       </PageLayout>
       <EditButton
-        onClick={handleSave}
-        to={`/class/${courseId}/curriculum`}
         edit={false}
+        to={`/class/${courseId}/curriculum/${activeLectureId}/`}
       />
     </div>
   );

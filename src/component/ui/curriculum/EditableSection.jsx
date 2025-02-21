@@ -1,5 +1,6 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import DateTimeEdit from "../../ui/curriculum/DateTimeEdit";
 import VideoIcon from "../../img/class/edit/video.svg";
@@ -7,6 +8,9 @@ import Material from "../../img/icon/pdf.svg";
 import Assignment from "../../img/icon/docs.svg";
 import Delete from "../../img/class/edit/delete.svg";
 import Upload from "../../img/class/edit/upload.svg";
+import { toLocalDateTime } from "../../page/class/CurriculumEdit";
+import api from "../../api/api";
+import { UsersContext } from "../../contexts/usersContext";
 
 const Section = styled.div`
   display: flex;
@@ -51,7 +55,7 @@ const TextArea = styled.textarea`
   font-size: 1.03rem;
   border: 2px solid #c3c3c3;
   border-radius: 7px;
-  color: #c3c3c3;
+  color: black;
   font-weight: bold;
   height: 7rem;
   text-align: start;
@@ -78,16 +82,28 @@ const GrayLine = styled.div`
   margin-bottom: 1.1rem;
 `;
 
-const getYouTubeThumbnail = (url) => {
-  const videoIdMatch = url.match(
-    /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/
-  );
-  return videoIdMatch
-    ? `https://img.youtube.com/vi/${videoIdMatch[1]}/0.jpg`
-    : null;
+export const getYouTubeThumbnail = (url) => {
+  try {
+    if (!url || typeof url !== "string") return null;
+
+    const videoIdMatch = url.match(
+      /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/
+    );
+    if (!videoIdMatch) return null;
+    return `https://img.youtube.com/vi/${videoIdMatch[1]}/0.jpg`;
+  } catch (error) {
+    console.error("유튜브 URL 처리 중 오류 발생:", error);
+    return null;
+  }
 };
 
-const EditableSection = ({ subSection, handleDelete, index }) => {
+const EditableSection = ({
+  subSection,
+  handleDelete,
+  index,
+  // updateSection,
+}) => {
+  const { courseId, lectureId } = useParams();
   const [title, setTitle] = useState(subSection?.title || "");
   const [videoUrl, setVideoUrl] = useState(subSection?.videoUrl || "");
   const [thumbnail, setThumbnail] = useState(getYouTubeThumbnail(videoUrl));
@@ -100,21 +116,97 @@ const EditableSection = ({ subSection, handleDelete, index }) => {
   const [assignmentDescription, setAssignmentDescription] = useState(
     subSection?.assignmentDescription || ""
   );
+  const { user } = useContext(UsersContext);
+  const userId = user.userId;
 
-  const handleVideoInput = () => {
+  const handleVideoInput = (e) => {
+    const newVideoUrl = e.target.value;
+    setVideoUrl(newVideoUrl);
+  };
+
+  const handleVideoConfirm = () => {
+    if (!videoUrl) {
+      alert("유튜브 URL을 입력하세요.");
+      return;
+    }
+
     const newThumbnail = getYouTubeThumbnail(videoUrl);
     if (newThumbnail) {
       setThumbnail(newThumbnail);
+      handleChange("videoUrl", videoUrl);
     } else {
       alert("올바른 유튜브 URL을 입력하세요.");
     }
   };
 
-  const handleFileUpload = (event) => {
+  const handleFileUpload = async (event) => {
     const file = event.target.files[0];
-    if (file) {
-      setUploadedFile(file.name);
+    if (!file) return;
+
+    setUploadedFile(file.name);
+
+    const formData = new FormData();
+    formData.append("files", file);
+
+    const materialId = Number(subSection.materialId);
+    const userIdNum = Number(userId);
+
+    try {
+      await api.patch(
+        `/materials/${courseId}/${materialId}/${userIdNum}?materialTitle=${encodeURIComponent(
+          subSection.materialTitle
+        )}`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+    } catch (error) {
+      console.error("파일 업로드 실패:", error);
     }
+  };
+
+  // 수정 API 요청을 즉시 실행하는 함수
+  const handleEdit = async (field, value) => {
+    if (!subSection) return;
+
+    let url = "";
+    let data = {};
+    const userIdNum = Number(userId);
+
+    if (subSection.contentType === "video") {
+      const videoId = Number(subSection.videoId);
+      url = `/videos/${courseId}/${videoId}/${userIdNum}`;
+      data = {
+        videoTitle: field === "title" ? value : title,
+        videoUrl: field === "videoUrl" ? value : videoUrl,
+      };
+    } else if (subSection.contentType === "material") {
+      const materialId = Number(subSection.materialId);
+      url = `/materials/${courseId}/${materialId}/${userIdNum}`;
+      data = { materialTitle: value };
+    } else if (subSection.contentType === "assignment") {
+      const assignmentId = Number(subSection.assignmentId);
+      url = `/assignments/${courseId}/${assignmentId}/${userIdNum}`;
+      data = {
+        assignmentTitle: field === "title" ? value : title,
+        assignmentDescription: field === "assignmentDescription" ? value : assignmentDescription,
+        
+      };
+    }
+
+    try {
+      await api.patch(url, data);
+    } catch (error) {
+      console.error("수정 실패:", error);
+    }
+  };
+
+  // 값 변경 시 즉시 API 요청 실행
+  const handleChange = (field, value) => {
+    if (field === "title") setTitle(value);
+    if (field === "videoUrl") setVideoUrl(value);
+    if (field === "assignmentDescription") setAssignmentDescription(value);
+
+    handleEdit(field, value);
   };
 
   return (
@@ -122,10 +214,7 @@ const EditableSection = ({ subSection, handleDelete, index }) => {
       <div style={{ width: "99%" }}>
         {subSection.contentType === "video" && (
           <div>
-            <DateTimeEdit
-              initialStartDate={subSection.startDate}
-              initialEndDate={subSection.endDate}
-            />
+            <DateTimeEdit initialStartDate={subSection.startDate ? new Date(subSection.startDate) : new Date() } />
             <div style={{ display: "flex" }}>
               <div style={{ alignSelf: "flex-start" }}>
                 <img
@@ -140,9 +229,9 @@ const EditableSection = ({ subSection, handleDelete, index }) => {
 
               <div style={{ display: "flex", width: "100%" }}>
                 <VideoThumbnail>
-                  {thumbnail ? (
+                  {getYouTubeThumbnail(subSection.videoUrl) ? (
                     <img
-                      src={thumbnail}
+                      src={getYouTubeThumbnail(subSection.videoUrl)}
                       alt="YouTube 썸네일"
                       style={{
                         width: "100%",
@@ -168,8 +257,8 @@ const EditableSection = ({ subSection, handleDelete, index }) => {
                 >
                   <div style={{ width: "100%" }}>
                     <Input
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
+                      value={title || ""}
+                      onChange={(e) => handleChange("title", e.target.value)}
                       placeholder="강의명을 작성해주세요."
                       style={{
                         border: "2px solid #c3c3c3",
@@ -182,17 +271,16 @@ const EditableSection = ({ subSection, handleDelete, index }) => {
                         boxSizing: "border-box",
                       }}
                     />
-
                   </div>
                   <div style={{ display: "flex" }}>
                     <Input
-                      value={videoUrl}
-                      onChange={(e) => setVideoUrl(e.target.value)}
+                      value={videoUrl || ""}
+                      onChange={handleVideoInput}
                       placeholder="유튜브 영상 링크를 입력해주세요. - https://youtu.be"
                       style={{
                         border: "2px solid #c3c3c3",
                         borderRadius: "7px",
-                        color: "#c3c3c3",
+                        color: "black",
                         padding: "15px",
                         fontSize: "16px",
                         fontWeight: "bold",
@@ -200,15 +288,9 @@ const EditableSection = ({ subSection, handleDelete, index }) => {
                         boxSizing: "border-box",
                       }}
                     />
-                    <style>
-                      {`
-                        input::placeholder {
-                          color: #c3c3c3;
-                        }
-                      `}
-                    </style>
+
                     <button
-                      onClick={handleVideoInput}
+                      onClick={handleVideoConfirm}
                       style={{
                         backgroundColor: "var(--main-color)",
                         color: "var(--white-color)",
@@ -232,6 +314,7 @@ const EditableSection = ({ subSection, handleDelete, index }) => {
 
         {subSection.contentType === "material" && (
           <div>
+            <DateTimeEdit initialStartDate={subSection.startDate ? new Date(subSection.startDate) : new Date() } />
             <div style={{ display: "flex" }}>
               <img
                 src={Material}
@@ -257,7 +340,7 @@ const EditableSection = ({ subSection, handleDelete, index }) => {
                     style={{ width: "1.2rem", marginRight: "1rem" }}
                   />
                   <span style={{ color: "#c3c3c3", fontWeight: "bold" }}>
-                    {uploadedFile || "파일 업로드"}
+                    {subSection.uploadedFile || "파일 업로드"}
                   </span>
                   <input
                     type="file"
@@ -272,10 +355,7 @@ const EditableSection = ({ subSection, handleDelete, index }) => {
 
         {subSection.contentType === "assignment" && (
           <div>
-            <DateTimeEdit
-              initialStartDate={subSection.startDate}
-              initialEndDate={subSection.endDate}
-            />
+            <DateTimeEdit initialEndDate={subSection.endDate ? new Date(subSection.endDate) : new Date() } />
             <div style={{ display: "flex", alignItems: "flex-start" }}>
               <img
                 src={Assignment}
@@ -288,12 +368,12 @@ const EditableSection = ({ subSection, handleDelete, index }) => {
               <div style={{ width: "100%" }}>
                 <Input
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={(e) => handleChange("title", e.target.value)}
                   placeholder="과제명을 작성해주세요."
                   style={{
                     border: "2px solid #c3c3c3",
                     borderRadius: "7px",
-                    color: "#c3c3c3",
+                    color: "black",
                     padding: "15px",
                     fontSize: "16px",
                     fontWeight: "bold",
@@ -305,8 +385,13 @@ const EditableSection = ({ subSection, handleDelete, index }) => {
                   }}
                 />
                 <TextArea
-                  value={assignmentDescription}
-                  onChange={(e) => setAssignmentDescription(e.target.value)}
+                  value={assignmentDescription || ""}
+                  onChange={(e) => {
+                    handleChange(
+                      "assignmentDescription",
+                      e.target.value
+                    );
+                  }}
                   placeholder="설명을 작성해주세요."
                 ></TextArea>
               </div>
@@ -343,11 +428,7 @@ const EditableSection = ({ subSection, handleDelete, index }) => {
               }}
               onClick={(e) => {
                 e.stopPropagation(); // 클릭 이벤트 버블링 방지
-                handleDelete(
-                  index,
-                  subSection.contentType,
-                  subSection.contentOrderId
-                );
+                handleDelete(e, index);
               }}
             />
           </div>

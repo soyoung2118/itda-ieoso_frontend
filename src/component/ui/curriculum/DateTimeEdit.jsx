@@ -61,18 +61,13 @@ const CustomInput = forwardRef(({ value, onClick, text }, ref) => {
 
 // DateTimeEdit 컴포넌트
 const DateTimeEdit = ({ initialStartDate, initialEndDate }) => {
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+  const [startDate, setStartDate] = useState(
+    initialStartDate ? new Date(initialStartDate) : null
+  );
+  const [endDate, setEndDate] = useState(
+    initialEndDate ? new Date(initialEndDate) : null
+  );
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    if (initialStartDate) {
-      setStartDate(new Date(initialStartDate));
-    }
-    if (initialEndDate) {
-      setEndDate(new Date(initialEndDate));
-    }
-  }, [initialStartDate, initialEndDate]);
 
   const handleStartDateChange = (date) => {
     setStartDate(date);
@@ -92,37 +87,43 @@ const DateTimeEdit = ({ initialStartDate, initialEndDate }) => {
   };
 
   return (
-    <DateTimeContainer>
-      <DateRow>
-        <img
-          src={DateTime}
-          style={{
-            width: "2.5rem",
-            marginLeft: "1rem",
-            marginRight: "1rem",
-            alignSelf: "center",
-          }}
-        />
-        {/* 시작일 */}
-        <DatePicker
-          selected={startDate}
-          onChange={handleStartDateChange}
-          showTimeSelect
-          dateFormat="yyyy년 MM월 dd일 HH:mm"
-          customInput={<CustomInput text="시작일" />}
-        />
+    <div className="datetime-edit">
+      <DateTimeContainer>
+        <DateRow>
+          <img
+            src={DateTime}
+            style={{
+              width: "2.5rem",
+              marginLeft: "1rem",
+              marginRight: "1rem",
+              alignSelf: "center",
+            }}
+          />
+          {/* 업로드일 */}
+          {initialStartDate && (
+            <DatePicker
+              selected={startDate}
+              onChange={handleStartDateChange}
+              showTimeSelect
+              dateFormat="yyyy년 MM월 dd일 HH:mm"
+              customInput={<CustomInput text="업로드일" />}
+            />
+          )}
 
-        {/* 마감일 */}
-        <DatePicker
-          selected={endDate}
-          onChange={handleEndDateChange}
-          showTimeSelect
-          minDate={startDate} // 마감일은 시작일 이후만 가능
-          dateFormat="yyyy년 MM월 dd일 HH:mm"
-          customInput={<CustomInput text="마감일" />}
-        />
-      </DateRow>
-    </DateTimeContainer>
+          {/* 마감일 */}
+          {initialEndDate && (
+            <DatePicker
+              selected={endDate}
+              onChange={handleEndDateChange}
+              showTimeSelect
+              minDate={startDate} // 마감일은 시작일 이후만 가능
+              dateFormat="yyyy년 MM월 dd일 HH:mm"
+              customInput={<CustomInput text="마감일" />}
+            />
+          )}
+        </DateRow>
+      </DateTimeContainer>
+    </div>
   );
 };
 

@@ -48,8 +48,8 @@ function App() {
             <Route path="overview/notice" element={<ClassNotice />} />
             <Route path="overview/notice/create" element={<NoticeCreate />} />
             <Route path="overview/notice/edit/:noticeId" element={<NoticeCreate />} />
-            <Route path="curriculum" element={<ClassCurriculum />} />
-            <Route path="curriculum/edit" element={<ClassCurriculumEdit />} />
+            <Route path="curriculum/:lectureId" element={<ClassCurriculum />} />
+            <Route path="curriculum/:lectureId/edit" element={<ClassCurriculumEdit />} />
             <Route path="admin/summary" element={<ClassSummary />} />
             <Route path="admin/students" element={<ClassStudents />} />
             <Route path="admin/setting" element={<Setting />} />

@@ -43,19 +43,19 @@ const HighlightLine = styled.div`
   z-index: 9;
 `;
 
-const EditContainer = ({ onIconClick, index }) => {
+const EditContainer = ({ handleAdd, index }) => {
   // 아이콘 데이터 배열
   const icons = [
-    { src: VideoIcon, alt: "Video", action: () => onIconClick("video", index) },
+    { src: VideoIcon, alt: "Video", action: () => handleAdd("video", index) },
     {
       src: MaterialIcon,
       alt: "Material",
-      action: () => onIconClick("material", index),
+      action: () => handleAdd("material", index),
     },
     {
       src: AssignmentIcon,
       alt: "Assignment",
-      action: () => onIconClick("assignment", index),
+      action: () => handleAdd("assignment", index),
     },
   ];
 

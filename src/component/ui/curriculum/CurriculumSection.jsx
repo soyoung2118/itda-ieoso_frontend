@@ -6,6 +6,8 @@ import Material from "../../img/icon/pdf.svg";
 import Assignment from "../../img/icon/docs.svg";
 import EditContainer from "../../ui/curriculum/EditContainer";
 import EditableSection from "./EditableSection";
+import { getYouTubeThumbnail } from "./EditableSection";
+import { formatDate } from "../../page/class/Curriculum";
 
 const Section = styled.div`
   display: flex;
@@ -52,28 +54,27 @@ const formatPeriod = (startDate, endDate) => {
 const CurriculumSection = ({
   subSection,
   index,
-  handleSectionClick,
-  handleIconClick,
+  handleAdd,
   handleDelete,
+  handleSectionClick,
   editTarget,
+  updateSection,
 }) => {
   const isEditing = subSection.isEditing;
-
-  console.log(
-    `[DEBUG] CurriculumSection - Index: ${index}, isEditing:`,
-    isEditing
-  );
+  
 
   return (
-    <Section onClick={() => handleSectionClick(index)}>
+    <Section onClick={(event) => handleSectionClick(index, event)}>
       {isEditing ? (
         <div style={{ display: "flex", width: "100%", position: "relative" }}>
-          <EditContainer onIconClick={handleIconClick} index={index} />
+          <EditContainer handleAdd={handleAdd} index={index} />
 
           <EditableSection
             subSection={subSection}
             index={index}
             handleDelete={handleDelete}
+            // updateSection={updateSection}
+            className="editable-section"
           />
         </div>
       ) : (
@@ -100,7 +101,7 @@ const CurriculumSection = ({
               </VideoContainer>
               <div style={{ marginLeft: "2rem" }}>
                 <CurriculumTitle>
-                  {subSection.videoTitle ?? "영상 제목 없음"}
+                  {subSection.title ?? "영상 제목 없음"}
                 </CurriculumTitle>
                 <p style={{ color: "#909090", display: "flex", gap: "0.5rem" }}>
                   <span>김잇다</span>
@@ -111,7 +112,8 @@ const CurriculumSection = ({
                     }}
                   ></span>
                   <span>
-                    {formatPeriod(subSection.startDate, subSection.endDate)}
+                    {formatDate(subSection?.startDate)} ~{" "}
+                    {formatDate(subSection?.endDate)}
                   </span>
                 </p>
               </div>
@@ -157,7 +159,8 @@ const CurriculumSection = ({
                   {subSection.assignmentTitle ?? "과제 없음"}
                 </span>
                 <span style={{ color: "var(--main-color)" }}>
-                  {formatPeriod(subSection.startDate, subSection.endDate)}
+                  {formatDate(subSection?.startDate)} ~{" "}
+                  {formatDate(subSection?.endDate)}
                 </span>
               </MaterialSection>
             </>
