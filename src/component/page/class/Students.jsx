@@ -61,7 +61,7 @@ const ClassStudents = () => {
   const AssignmentIconRenderer = ({ value }) => (
     <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
       <img src={assignmentIcon} alt="Assignment" width="16" height="16" />
-      <a href={`/${value}`} style={{ color: "red", textDecoration: "none" }}>
+      <a href={`/${value}`} style={{ color: "var(--main-color)", textDecoration: "none" }}>
         {value}
       </a>
     </span>
@@ -75,11 +75,12 @@ const ClassStudents = () => {
       headerComponentFramework: () => (
         <div
           style={{
-            backgroundColor: "#f0f0f0",
+            backgroundColor: "var(--main-color)",
             fontWeight: "bold",
             padding: "10px",
             textAlign: "center",
             borderRadius: "8px",
+            color: "var(--black-color)",
           }}
         >
           이름
@@ -100,8 +101,8 @@ const ClassStudents = () => {
               alignItems: "center",
               justifyContent: "center",
               gap: "5px",
-              backgroundColor: "rgb(228, 237, 250)",
-              borderRadius: "8px",
+              backgroundColor: "var(--main-color)",
+              color: "black",
             }}
           >
             <img
@@ -110,7 +111,7 @@ const ClassStudents = () => {
               style={{ width: "16px", height: "16px" }}
             />
             <span>{title}</span>
-            <small style={{ fontSize: "0.8rem", color: "gray" }}>
+            <small style={{ fontSize: "0.8rem", color: "var(--lightgray-color)" }}>
               {assignmentCreatedAt}
             </small>
           </div>
@@ -120,68 +121,78 @@ const ClassStudents = () => {
   ];
 
   return (
-        <main style={{ flex: 1, borderRadius: "8px" }}>
-          <AdminTopBar />
-          <div
+    <main style={{ flex: 1, borderRadius: "8px" }}>
+      <AdminTopBar />
+      <div style={{margin:"1vh 0vh"}}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "baseline",
+            marginLeft: "2.5vh"
+          }}
+        >
+          <h3
             style={{
-              display: "flex",
-              alignItems: "baseline",
+              fontSize: "23px",
+              fontWeight: "900",
+              color: "var(--black-color)",
             }}
           >
-            <h3
-              style={{
-                fontSize: "20px",
-                fontWeight: "900",
-                color: "var(--black-color)",
+            학생별 제출 현황
+          </h3>
+          <p
+            style={{
+              color: "var(--darkgrey-color)",
+              fontSize: "15px",
+              marginLeft: "1.5vh",
+              fontWeight: "500",
+            }}
+          >
+            {currentTime} 기준
+          </p>
+        </div>
+        <Section style={{ padding:"3vh 6vh" }}>
+          <div
+            className={`ag-theme-alpine ${myTheme}`}
+            style={{
+              "--ag-header-background-color": "var(--grey-color)",
+              "--ag-header-foreground-color": "black",
+              "--ag-odd-row-background-color": "var(--pink-color)",
+              "--ag-even-row-background-color": "white",
+              "--ag-row-hover-color": "var(--lightgrey-color)",
+              "--ag-font-size": "14px",
+              "--ag-border-radius": "8px",
+              height: "600px",
+              width: "100%",
+              margin: "20px 0",
+              borderRadius: "8px",
+              overflowX: "auto",
+            }}
+          >
+            <AgGridReact
+              modules={[ClientSideRowModelModule]}
+              rowData={rowData}
+              columnDefs={columnDefs}
+              defaultColDef={{
+                sortable: true,
+                filter: true,
+                resizable: true,
               }}
-            >
-              학생별 제출 현황
-            </h3>
-            <p
-              style={{
-                color: "var(--darkgrey-color)",
-                fontSize: "18px",
-                marginLeft: "18px",
-                fontWeight: "500",
-              }}
-            >
-              {currentTime} 기준
-            </p>
+              domLayout="autoHeight"
+              headerHeight={50}
+              rowHeight={60}
+              pagination={true}
+              paginationPageSize={500}
+              paginationPageSizeSelector={[200, 500, 1000]}
+              getRowStyle={(params) => ({
+                backgroundColor:
+                  params.node.rowIndex % 2 === 0 ? "#f9f9f9" : "#fff",
+              })}
+            />
           </div>
-          <Section style={{ padding: "2rem 3rem" }}>
-            <div
-              className={`ag-theme-alpine ${myTheme}`}
-              style={{
-                height: "600px",
-                width: "100%",
-                margin: "20px 0",
-                borderRadius: "8px",
-                overflowX: "auto",
-              }}
-            >
-              <AgGridReact
-                modules={[ClientSideRowModelModule]}
-                rowData={rowData}
-                columnDefs={columnDefs}
-                defaultColDef={{
-                  sortable: true,
-                  filter: true,
-                  resizable: true,
-                }}
-                domLayout="autoHeight"
-                headerHeight={50}
-                rowHeight={60}
-                pagination={true}
-                paginationPageSize={500}
-                paginationPageSizeSelector={[200, 500, 1000]}
-                getRowStyle={(params) => ({
-                  backgroundColor:
-                    params.node.rowIndex % 2 === 0 ? "#f9f9f9" : "#fff",
-                })}
-              />
-            </div>
-          </Section>
-        </main>
+        </Section>
+      </div>
+    </main>
   );
 };
 

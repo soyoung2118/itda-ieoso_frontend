@@ -9,7 +9,6 @@ import { UsersContext } from "../../contexts/usersContext";
 
 const Container = styled.div`
   width: 100%;
-  padding: 0 1rem;
 
   @media (max-width: 768px) {
     padding: 0 0.5rem;
@@ -17,10 +16,12 @@ const Container = styled.div`
 `;
 
 const Title = styled.h1`
-  font-size: 28px;
+  font-size: 27.5px;
   font-weight: 900;
   color: var(--black-color);
-  margin-bottom: 1rem;
+  margin-bottom: 1.8vh;
+  margin-left:2.5vh;
+
 
   @media (max-width: 768px) {
     font-size: 24px;
