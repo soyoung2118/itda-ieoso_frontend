@@ -52,7 +52,7 @@ export default function Setting() {
           });
 
           setIsAssignmentPending(!courseData.assignmentDueDay || courseData.assignmentDueTime === '');
-          setIsLecturePending(courseData.lectureTime === '');
+          setIsLecturePending(!courseData.lectureDay || courseData.lectureTime === '');
         }
       } catch (error) {
         console.error('Failed to fetch course data:', error);

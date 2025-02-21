@@ -22,7 +22,6 @@ import Close from "@mui/icons-material/Close";
 import api from "../../api/api";
 import { UsersContext } from "../../contexts/usersContext";
 import { getYouTubeThumbnail } from "../../ui/curriculum/EditableSection";
-import EntryCodeModal from "../../ui/class/EntryCodeModal";
 
 const Section = styled.div`
   display: flex;
@@ -105,12 +104,7 @@ export const formatLecturePeriod = (isoString) => {
 
 const Curriculum = () => {
   const navigate = useNavigate();
-
   const [showPopup, setShowPopup] = useState(false);
-  const location = useLocation();
-  const entrycode = location.state?.entrycode || null;
-  const [isEntryCodeModalOpen, setIsEntryCodeModalOpen] = useState(false);
-
   const { courseId, lectureId } = useParams();
 
   const { user } = useContext(UsersContext);
@@ -125,10 +119,6 @@ const Curriculum = () => {
     Number(lectureId) || 1
   );
   const [activeLecture, setActiveLecture] = useState(null);
-
-  useEffect(() => {
-    if (entrycode) setIsEntryCodeModalOpen(true);
-  }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -439,9 +429,6 @@ const Curriculum = () => {
           edit={true}
         />
       )}
-
-
-      {isEntryCodeModalOpen && <EntryCodeModal entrycode={entrycode} onClose={() => setIsEntryCodeModalOpen(false)} />}
     </div>
   );
 };
