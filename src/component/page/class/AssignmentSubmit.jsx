@@ -38,6 +38,11 @@ const ClassAssignmentSubmit = () => {
             return;
         }
 
+        if(files.length >= 4){
+            alert("파일은 3개까지만 업로드 가능합니다.");
+            return;
+        }
+
         try {
             let response;
 
@@ -57,8 +62,7 @@ const ClassAssignmentSubmit = () => {
             }
     
             switch(submissionStatus) {
-                case "NOT_SUBMITTED":
-                case "LATE": {
+                case "NOT_SUBMITTED": {
                     response = await api.put(
                         `/assignments/${assignmentId}/submissions/${submissionId}/${user.userId}`,
                         formData,
@@ -71,6 +75,7 @@ const ClassAssignmentSubmit = () => {
                     break;
                 }
                 
+                case "LATE":
                 case "SUBMITTED": {
                     if (existingFileUrls.length > 0) {
                         existingFileUrls.forEach(url => {
@@ -210,7 +215,7 @@ const ClassAssignmentSubmit = () => {
         
         const fileToDownload = files.find((file) => file.id === fileId);
         if (!fileToDownload) {
-            console.error('파일을 찾을 수 없습니다.');
+            console.log('파일을 찾을 수 없습니다.');
             return;
         }
     
@@ -259,7 +264,7 @@ const ClassAssignmentSubmit = () => {
             window.URL.revokeObjectURL(url);
     
         } catch (error) {
-            console.error("파일 처리 중 오류:", error);
+            alert("파일을 제출한 이후 다운로드를 시도해주세요.");
         }
     };
 

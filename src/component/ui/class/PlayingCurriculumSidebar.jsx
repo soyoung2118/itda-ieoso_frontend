@@ -101,10 +101,9 @@ const PlayingCurriculumSidebar = ({
             switch (status) {
                 case 'NOT_SUBMITTED':
                     return <span className="material-icons" style={{ color: '#C3C3C3', fontSize: '20px' }}>check_circle</span>;
+                case 'LATE':
                 case 'SUBMITTED':
                     return <span className="material-icons" style={{ color: '#474747', fontSize: '20px' }}>check_circle</span>;
-                case 'LATE':
-                    return <span className="material-icons" style={{ color: '#C3C3C3', fontSize: '20px' }}>check_circle</span>;
                 default:
                     return null;
             }
