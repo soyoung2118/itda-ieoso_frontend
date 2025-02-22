@@ -223,27 +223,41 @@ const ClassAssignmentSubmit = () => {
             
             const presignedUrl = response.data;
             const fileResponse = await fetch(presignedUrl);
-
+    
+            // 여기서 presignedUrl을 호출해서 받은 response에 대해 headers를 확인해보세요
+            const headers = fileResponse.headers;
+            const disposition = headers.get('content-disposition');
+            
+            // 파일명 추출 및 디코딩
+            let filename = fileToDownload.name;
+            if (disposition) {
+                const filenameRegex = /filename\*=UTF-8''([^;]*)/;
+                const matches = filenameRegex.exec(disposition);
+                if (matches && matches[1]) {
+                    filename = decodeURIComponent(matches[1]);
+                }
+            }
+    
             const arrayBuffer = await fileResponse.arrayBuffer();
-
-            const fileExtension = fileToDownload.name.split('.').pop().toLowerCase();
+            const fileExtension = filename.split('.').pop().toLowerCase();
             let mimeType = 'application/octet-stream';
-
+            console.log('Content-Disposition:', disposition);
+    
             if (fileExtension === 'pdf') {
                 mimeType = 'application/pdf';
             } else if (['jpg', 'jpeg', 'png'].includes(fileExtension)) {
                 mimeType = `image/${fileExtension}`;
             }
-
+    
             const blob = new Blob([arrayBuffer], { type: mimeType });
         
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = fileToDownload.name;
+            a.download = filename;  // 디코딩된 파일명 사용
             a.click();
             window.URL.revokeObjectURL(url);
-
+    
         } catch (error) {
             console.error("파일 처리 중 오류:", error);
         }
