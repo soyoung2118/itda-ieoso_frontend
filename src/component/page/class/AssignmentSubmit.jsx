@@ -275,7 +275,7 @@ const ClassAssignmentSubmit = () => {
             <LeftSide>
                 <TitleContainer>
                     <MainTitle>
-                        {currentLectureInfo?.lectureTitle || "강의를 선택해주세요"}
+                        {currentLectureInfo?.lectureDescription || "강의를 선택해주세요"}
                     </MainTitle>
                     
                     <ClickContainer onClick={handleNavigationCurriculum}>
