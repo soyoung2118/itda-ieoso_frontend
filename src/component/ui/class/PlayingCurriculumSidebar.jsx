@@ -22,6 +22,8 @@ const PlayingCurriculumSidebar = ({
     const { user } = useContext(UsersContext);
     const [expandedItems, setExpandedItems] = useState(new Set([1]));
     const [list, setList] = useState([]);
+    const [submissionStatusList, setSubmissionStatusList] = useState([]);
+    const [assignmentIdList, setAssignmentIdList] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -38,6 +40,29 @@ const PlayingCurriculumSidebar = ({
                     setList(sortList);
                     //console.log(curriculumData);
                 }
+
+                const historyResponse = await api.get(`/lectures/history/${courseId}/${user.userId}`);
+                //console.log(historyResponse.data.data.submissions);
+                
+                if (historyResponse.data.success) {
+                    const submissions = Array.isArray(historyResponse.data.data.submissions)
+                        ? historyResponse.data.data.submissions
+                        : [];
+                
+                    setAssignmentIdList(prev => [
+                        ...prev, 
+                        ...submissions.map(sub => sub.assignmentId)
+                    ]);
+                
+                    setSubmissionStatusList(prev => [
+                        ...prev, 
+                        ...submissions.map(sub => sub.submissionStatus)
+                    ]);
+                }                
+
+                console.log(assignmentIdList);
+                console.log(submissionStatusList);
+
             } catch (error) {
                 console.error("데이터 로딩 오류:", error);
             }
@@ -62,35 +87,30 @@ const PlayingCurriculumSidebar = ({
         }
     }, [curriculumData, lectureId, videoId, assignmentId, setCurrentLectureInfo]);
 
-    const toggleItem = (itemId) => {
-      setExpandedItems(prev => {
-        const newSet = new Set(prev);
-        newSet.has(itemId) ? newSet.delete(itemId) : newSet.add(itemId);
-        return newSet;
-      });
-    };
-
     const truncate = (str, n) => {
         return str?.length > n ? str.substr(0, n - 1) + "..." : str;
     };
 
-    const getStatusIcon = (status) => {
-        switch (status) {
-          case 'WATCHED':
-            return <span className="material-icons" style={{ color: '#474747', fontSize: '20px' }}>check_circle</span>;
-          case 'WATCHING':
-            return (
-              <div style={{ display: 'flex', gap: '4px' }}>
-                <span className="material-icons" style={{ color: '#C3C3C3', fontSize: '20px' }}>check_circle</span>
-                <span className="material-icons" style={{ color: '#474747', fontSize: '20px' }}>play_circle</span>
-              </div>
-            );
-          case 'NOT_WATCHED':
-            return <span className="material-icons" style={{ color: '#C3C3C3', fontSize: '20px' }}>check_circle</span>;
-          default:
-            return null;
+    const getStatusIcon = (type, id) => {
+        if(type === 'assignment'){
+            const index = assignmentIdList.findIndex((listid) => listid === id);
+        if (index === -1) return null;
+
+        const status = submissionStatusList[index];
+
+            switch (status) {
+                case 'NOT_SUBMITTED':
+                    return <span className="material-icons" style={{ color: '#C3C3C3', fontSize: '20px' }}>check_circle</span>;
+                case 'SUBMITTED':
+                    return <span className="material-icons" style={{ color: '#474747', fontSize: '20px' }}>check_circle</span>;
+                case 'LATE':
+                    return <span className="material-icons" style={{ color: '#C3C3C3', fontSize: '20px' }}>check_circle</span>;
+                default:
+                    return null;
+            }
         }
-    };
+        return;
+    }
 
     const handleVideoClick = (goLecture, goVideo) => {
       navigate(`/playing/${courseId}/${goLecture}/${goVideo}`);
@@ -177,7 +197,6 @@ const PlayingCurriculumSidebar = ({
                                                   }}
                                               />
                                               <BlackText>{truncate(content.videoTitle, 25)}</BlackText>
-                                              {getStatusIcon(content.videoHistoryStatus)}
                                             </ContentItem> 
                                           }
                                           {content.contentType === 'material' &&
@@ -210,6 +229,7 @@ const PlayingCurriculumSidebar = ({
                                               <BlackText>{content.assignmentTitle}</BlackText>
                                               <RedText>{dateText(content.startDate)} - {dateText(content.endDate)}</RedText>
                                               </TextContainer>
+                                              <IconContainer>{getStatusIcon(content.contentType, content.assignmentId)}</IconContainer>
                                             </ContentItem>
                                           }
                                       </SubItemTitle>
@@ -310,6 +330,10 @@ const SubItemTitle = styled.div`
     font-weight: ${props => props.status === 'WATCHING' ? 800 : 400}
 `;
 const TextContainer = styled.div`
+`
+
+const IconContainer = styled.div`
+    margin-left: auto;
 `
 
 const BlackText = styled.div`
