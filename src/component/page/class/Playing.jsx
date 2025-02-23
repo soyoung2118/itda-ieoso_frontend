@@ -36,12 +36,12 @@ const ClassPlaying = () => {
                 <LeftSide>
                     <TitleContainer>
                         <MainTitle>
-                            <span>{currentLectureInfo.lectureTitle || "강의를 선택해주세요"}</span>
+                            <span>{currentLectureInfo.lectureDescription || "강의를 선택해주세요"}</span>
                         </MainTitle>
                         
                         <ClickContainer onClick={handleNavigationCurriculum}>
                             <SubTitle>
-                                {currentLectureInfo.lectureDescription || "강의를 선택해주세요"}
+                                {currentVideoInfo.videoTitle || "강의를 선택해주세요"}
                             </SubTitle>
                             <ArrowForwardIosIcon style={{ width: '13px', marginLeft: '15px' }}/>
                         </ClickContainer>
@@ -65,7 +65,7 @@ const Container = styled.div`
 
 const LeftSide = styled.div`
     width: 70vw;
-    height: 100%;
+    flex: 1;
     padding: 0px 37px;
 `;
 

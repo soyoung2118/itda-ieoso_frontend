@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import YouTube from "react-youtube";
 
 const VideoPlaying = ({ videoUrl }) => {
-  if (!videoUrl) return null;
+  if (!videoUrl || videoUrl === "영상 링크 첨부") return null;
 
   let videoKey;
 

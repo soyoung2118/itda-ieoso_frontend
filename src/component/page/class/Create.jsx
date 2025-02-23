@@ -239,6 +239,7 @@ const handleAssignmentTimeChange = (timeString) => {
                     startDate: date
                   }));
                 }}
+                minDate={new Date()}
                 customInput={<CustomInput />}
                 dateFormat="yyyy-MM-dd"
                 popperProps={{
