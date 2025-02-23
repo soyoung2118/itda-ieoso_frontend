@@ -11,7 +11,7 @@ import { formatDate } from "../../page/class/Curriculum";
 
 const Section = styled.div`
   display: flex;
-  padding: 1.3rem 1.5rem;
+  padding: 2.1vh 2.6vh;
   border-radius: 12px;
   margin: 1rem 0rem;
   background-color: #ffffff;
@@ -29,12 +29,14 @@ const CurriculumTitle = styled.h3`
 
 const VideoContainer = styled.div`
   position: relative;
-  width: 14.5rem;
+  width: 24vh;
+  height: 17vh;
   border-radius: 8px;
 `;
 
 const VideoThumbnail = styled.img`
   width: 100%;
+  height:100%;
   border-radius: 8px;
 `;
 
@@ -42,7 +44,7 @@ const MaterialSection = styled.div`
   display: flex;
   background-color: var(--lightgrey-color);
   width: 100%;
-  padding: 1.2rem 1.5rem;
+  padding: 2.2vh 2.6vh;
   border-radius: 8px;
   font-size: 1.07rem;
 `;
@@ -61,7 +63,6 @@ const CurriculumSection = ({
   updateSection,
 }) => {
   const isEditing = subSection.isEditing;
-  
 
   return (
     <Section onClick={(event) => handleSectionClick(index, event)}>
@@ -73,7 +74,6 @@ const CurriculumSection = ({
             subSection={subSection}
             index={index}
             handleDelete={handleDelete}
-            // updateSection={updateSection}
             className="editable-section"
           />
         </div>
@@ -131,14 +131,25 @@ const CurriculumSection = ({
                 }}
               />
               <MaterialSection>
-                <span style={{ marginRight: "0.6rem" }}>
-                  {subSection.materialTitle ?? "자료 없음"}
-                </span>
-                <span
-                  style={{ color: "var(--main-color)", fontSize: "0.9rem" }}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "baseline",
+                    gap: "0.5vh",
+                  }}
                 >
-                  3.1MB
-                </span>
+                  <span style={{ marginRight: "0.6rem" }}>
+                    {subSection.originalFilename ?? "자료 없음"}
+                  </span>
+                  <span
+                    style={{
+                      color: "var(--main-color)",
+                      fontSize: "0.9rem",
+                    }}
+                  >
+                    {subSection.fileSize ?? " "}
+                  </span>
+                </div>
               </MaterialSection>
             </>
           )}
