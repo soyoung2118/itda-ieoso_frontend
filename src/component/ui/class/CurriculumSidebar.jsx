@@ -137,7 +137,7 @@ const CurriculumSidebar = ({
           })),
           ...(section.materials || []).map((m) => ({
             ...m,
-            title: m.materialTitle,
+            title: m.originalFilename,
             contentType: "material",
             id: m.contentOrderId,
           })),
@@ -158,7 +158,7 @@ const CurriculumSidebar = ({
               onClick={() => handleItemClick(section.lectureId)}
             >
               {`${lectureIndex + 1}. ${section.lectureTitle}`}
-              {!edit && (
+              {!edit && !isCreator && (
                 <SectionIcon
                   src={
                     !section.selected
@@ -199,7 +199,7 @@ const CurriculumSidebar = ({
                       <TruncatedText width="10rem">
                         {getSubSectionTitle(subSection)}
                       </TruncatedText>
-                      {!edit && (
+                      {!edit && !isCreator && (
                         <img
                           src={Check}
                           style={{ marginLeft: "auto", marginRight: "1.3rem" }}
