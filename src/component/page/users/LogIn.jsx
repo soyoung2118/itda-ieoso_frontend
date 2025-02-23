@@ -22,7 +22,6 @@ export default function LogIn() {
     //const [isChecked, setIsChecked] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState(null);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -45,15 +44,18 @@ export default function LogIn() {
             window.location.href = '/class/list';
         } catch (error) {
             console.error('로그인 실패:', error);
-            setError(error.response?.data?.message || '로그인 중 오류가 발생했습니다.');
 
             // 로그인 API에서 발생한 에러일 경우
             if (error.config && error.config.url.includes('/login')) {
-                alert(error.response?.data?.message || '로그인 중 오류가 발생했습니다.');
+                if (error.response?.status === 401) {
+                    alert('이메일 또는 비밀번호가 잘못되었습니다.');
+                } else {
+                    alert(error.response?.data?.message || '로그인 중 오류가 발생했습니다.');
+                }
             } else {
                 // 다른 API 호출에서 발생한 에러일 경우
-                alert('다른 API 호출 중 오류가 발생했습니다.');
-                window.location.href = '/error'; // 예시로 에러 페이지로 이동
+                alert('다른 API 호출 중 오류가 발생했습니다. 메인 페이지로 이동합니다.');
+                window.location.href = '/';
             }
         }
     };

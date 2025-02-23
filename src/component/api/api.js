@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-
 // Axios 인스턴스 생성
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -35,10 +34,11 @@ api.interceptors.response.use(
     if (error.response) {
       // 401 에러 (인증 실패 시 로그인 페이지로 리다이렉트)
       if (error.response.status === 401) {
-        alert('로그인이 필요합니다.');
-        localStorage.removeItem('token'); // 토큰 삭제
-        window.location.href = '/'; // 페이지 강제 이동
-
+        // 로그인 시도에서 발생한 401 에러는 리다이렉트하지 않음
+        if (!error.config.url.includes('/login')) {
+          localStorage.removeItem('token'); // 토큰 삭제
+          window.location.href = '/'; // 페이지 강제 이동
+        }
       }
 
       // 기타 에러 처리
