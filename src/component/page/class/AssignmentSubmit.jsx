@@ -38,6 +38,11 @@ const ClassAssignmentSubmit = () => {
             return;
         }
 
+        if(files.length >= 4){
+            alert("파일은 3개까지만 업로드 가능합니다.");
+            return;
+        }
+
         try {
             let response;
 
@@ -57,8 +62,7 @@ const ClassAssignmentSubmit = () => {
             }
     
             switch(submissionStatus) {
-                case "NOT_SUBMITTED":
-                case "LATE": {
+                case "NOT_SUBMITTED": {
                     response = await api.put(
                         `/assignments/${assignmentId}/submissions/${submissionId}/${user.userId}`,
                         formData,
@@ -71,6 +75,7 @@ const ClassAssignmentSubmit = () => {
                     break;
                 }
                 
+                case "LATE":
                 case "SUBMITTED": {
                     if (existingFileUrls.length > 0) {
                         existingFileUrls.forEach(url => {
@@ -113,7 +118,7 @@ const ClassAssignmentSubmit = () => {
     };
 
     const handleNavigationCurriculum = () => {
-        navigate(`/class/${courseId}/curriculum`);
+        navigate(`/class/${courseId}/curriculum/${lectureId}`);
     };
 
     useEffect(() => {
@@ -210,11 +215,9 @@ const ClassAssignmentSubmit = () => {
         
         const fileToDownload = files.find((file) => file.id === fileId);
         if (!fileToDownload) {
-            console.error('파일을 찾을 수 없습니다.');
+            console.log('파일을 찾을 수 없습니다.');
             return;
         }
-
-        console.log(fileToDownload);
     
         try {
             const response = await api.get("/files/download", {
@@ -222,44 +225,64 @@ const ClassAssignmentSubmit = () => {
                     fileUrl: fileToDownload.fileUrl
                 },
             });
-
-            console.log('Response:', response);
-            console.log('Response data:', response.data);
             
-            const url = window.URL.createObjectURL(response.data);
-            const link = document.createElement("a");
-            link.download = fileToDownload.name; // 원하는 파일명 설정 가능
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-
-            // const fileUrl = response.data; // 백엔드에서 반환된 파일 URL
-            // const link = document.createElement('a');
-            // link.href = fileUrl;
-            // link.download = fileToDownload.name; // 원하는 파일 이름과 확장자
-            // link.click();   
-
+            const presignedUrl = response.data;
+            const fileResponse = await fetch(presignedUrl);
+    
+            // 여기서 presignedUrl을 호출해서 받은 response에 대해 headers를 확인해보세요
+            const headers = fileResponse.headers;
+            const disposition = headers.get('content-disposition');
+            
+            // 파일명 추출 및 디코딩
+            let filename = fileToDownload.name;
+            if (disposition) {
+                const filenameRegex = /filename\*=UTF-8''([^;]*)/;
+                const matches = filenameRegex.exec(disposition);
+                if (matches && matches[1]) {
+                    filename = decodeURIComponent(matches[1]);
+                }
+            }
+    
+            const arrayBuffer = await fileResponse.arrayBuffer();
+            const fileExtension = filename.split('.').pop().toLowerCase();
+            let mimeType = 'application/octet-stream';
+            console.log('Content-Disposition:', disposition);
+    
+            if (fileExtension === 'pdf') {
+                mimeType = 'application/pdf';
+            } else if (['jpg', 'jpeg', 'png'].includes(fileExtension)) {
+                mimeType = `image/${fileExtension}`;
+            }
+    
+            const blob = new Blob([arrayBuffer], { type: mimeType });
+        
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = filename;  // 디코딩된 파일명 사용
+            a.click();
+            window.URL.revokeObjectURL(url);
+    
         } catch (error) {
-            console.error("파일 처리 중 오류:", error);
+            alert("파일을 제출한 이후 다운로드를 시도해주세요.");
         }
     };
 
     return (
-        <>
+        <Wrapper>
         <TopBar />
         <Container>
             <LeftSide>
-            <TitleContainer>
+                <TitleContainer>
                     <MainTitle>
-                        {currentLectureInfo?.lectureTitle || "강의를 선택해주세요"}
+                        {currentLectureInfo?.lectureDescription || "강의를 선택해주세요"}
                     </MainTitle>
                     
                     <ClickContainer onClick={handleNavigationCurriculum}>
                         <ArrowForwardIosIcon style={{ width: '13px', marginLeft: '15px' }}/>
                     </ClickContainer>
                 </TitleContainer>
-
+                
                 <WhiteBoxComponent>
                     <NoticeTitleContainer>
                         <FormTitle style={{marginTop: '0px'}}>
@@ -314,26 +337,38 @@ const ClassAssignmentSubmit = () => {
             </LeftSide>
 
             <RightSide>
-                <PlayingCurriculumSidebar curriculumData={curriculumData} setCurriculumData={setCurriculumData} currentLectureInfo={currentLectureInfo} setCurrentLectureInfo={setCurrentLectureInfo}/>
+                <PlayingCurriculumSidebar
+                    curriculumData={curriculumData} setCurriculumData={setCurriculumData}
+                    currentLectureInfo={currentLectureInfo} setCurrentLectureInfo={setCurrentLectureInfo}
+                />
             </RightSide>
 
-            { isSubmittedModalOpen && <AssignmentModal text="과제 제출이 완료되었습니다."  onClose={() => setIsSubmittedModalOpen(false)}/> }
-            { isReSubmittedModalOpen && <AssignmentModal text="과제 수정이 완료되었습니다."  onClose={() => setIsReSubmittedModalOpen(false)}/> }
+            { isSubmittedModalOpen && <AssignmentModal text="과제 제출이 완료되었습니다."  onClose={() => {setIsSubmittedModalOpen(false); window.location.reload();}}/> }
+            { isReSubmittedModalOpen && <AssignmentModal text="과제 수정이 완료되었습니다."  onClose={() => {setIsReSubmittedModalOpen(false); window.location.reload();}}/> }
         </Container>
-        </>
+        </Wrapper>
     );
 };
 
+const Wrapper = styled.div`
+    height: 100vh;
+`
+
 const Container = styled.div`
     display: flex;
-    overflow: hidden;
+    height: 100%,
     background-color: #F6F7F9;
 `;
 
 const LeftSide = styled.div`
     width: 70vw;
-    height: 100%;
+    flex: 1;
     padding: 0px 37px;
+    height: calc(92vh - 16px);
+    overflow-y: scroll;
+    &::-webkit-scrollbar {
+        display: none;
+    }
 `;
 
 const FormTitle = styled.div`
