@@ -39,7 +39,6 @@ const ScrollableTableContainer = styled.div`
   }
 `;
 
-
 const Table = styled.table`
   width: auto;
   border-collapse: collapse;
@@ -48,15 +47,14 @@ const Table = styled.table`
   th,
   td {
     padding: 0.7rem 2.8rem;
-    width:3rem;
+    width: 3rem;
     border-bottom: 1px solid #cdcdcd;
   }
 
   th {
     font-size: 1.2rem;
-    
+
     white-space: nowrap;
-    
   }
 
   td {
@@ -70,8 +68,6 @@ const Table = styled.table`
     padding-left: 0rem !important;
     padding-right: 10rem;
   }
-
- 
 `;
 
 const ProfileContainer = styled.div`
@@ -106,7 +102,9 @@ const StudentProgressTable = ({ assignments }) => {
           submissions: [],
         });
       }
-      studentsMap.get(student.userId).submissions.push(student.status === "SUBMITTED");
+      studentsMap
+        .get(student.userId)
+        .submissions.push(student.status === "SUBMITTED");
     });
   });
   const students = Array.from(studentsMap.values());
@@ -118,13 +116,18 @@ const StudentProgressTable = ({ assignments }) => {
   const scrollLeft = useRef(0);
 
   const handleScroll = () => {
-    const scrollWidth = tableRef.current.scrollWidth - tableRef.current.clientWidth;
+    const scrollWidth =
+      tableRef.current.scrollWidth - tableRef.current.clientWidth;
     const scrollbarWidth = scrollbarThumbRef.current.parentElement.offsetWidth;
 
-    const thumbWidth = (tableRef.current.clientWidth / tableRef.current.scrollWidth) * scrollbarWidth;
+    const thumbWidth =
+      (tableRef.current.clientWidth / tableRef.current.scrollWidth) *
+      scrollbarWidth;
     scrollbarThumbRef.current.style.width = `${thumbWidth}px`;
 
-    const thumbPosition = (tableRef.current.scrollLeft / scrollWidth) * (scrollbarWidth - thumbWidth);
+    const thumbPosition =
+      (tableRef.current.scrollLeft / scrollWidth) *
+      (scrollbarWidth - thumbWidth);
     scrollbarThumbRef.current.style.transform = `translateX(${thumbPosition}px)`;
   };
 
@@ -138,10 +141,13 @@ const StudentProgressTable = ({ assignments }) => {
   const handleMouseMove = (e) => {
     if (!isDragging.current) return;
     const dx = e.clientX - startX.current;
-    const scrollWidth = tableRef.current.scrollWidth - tableRef.current.clientWidth;
+    const scrollWidth =
+      tableRef.current.scrollWidth - tableRef.current.clientWidth;
     const scrollbarWidth = scrollbarThumbRef.current.parentElement.offsetWidth;
 
-    const thumbWidth = (tableRef.current.clientWidth / tableRef.current.scrollWidth) * scrollbarWidth;
+    const thumbWidth =
+      (tableRef.current.clientWidth / tableRef.current.scrollWidth) *
+      scrollbarWidth;
     const moveRatio = scrollWidth / (scrollbarWidth - thumbWidth);
     tableRef.current.scrollLeft = scrollLeft.current + dx * moveRatio;
   };
@@ -168,46 +174,43 @@ const StudentProgressTable = ({ assignments }) => {
 
   return (
     <ScrollableTableContainer>
-      <span
-        style={{ fontSize: "1.7rem", fontWeight: "550" }}
-      >
-        학생별 제출 현황
-      </span>
       <div
         ref={tableRef}
         onScroll={handleScroll}
         style={{ overflowX: "auto", position: "relative" }}
       >
-      <Table>
-        <thead>
-          <tr>
-            <th>이름</th>
-            {assignments.map((assignment) => (
-              <th key={assignment.assignmentId}>{assignment.assignmentTitle}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {students.map((student, index) => (
-            <tr key={index}>
-              <td>
-                <ProfileContainer>
-                  <ProfileImage src={student.profile} alt="프로필" />
-                  {student.name}
-                </ProfileContainer>
-              </td>
-              {student.submissions.map((submitted, idx) => (
-                <td key={idx}>
-                  <CheckMarkIcon
-                    src={submitted ? Done : Undone}
-                    alt={submitted ? "제출 완료" : "미제출"}
-                  />
-                </td>
+        <Table>
+          <thead>
+            <tr>
+              <th>이름</th>
+              {assignments.map((assignment) => (
+                <th key={assignment.assignmentId}>
+                  {assignment.assignmentTitle}
+                </th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {students.map((student, index) => (
+              <tr key={index}>
+                <td>
+                  <ProfileContainer>
+                    <ProfileImage src={student.profile} alt="프로필" />
+                    {student.name}
+                  </ProfileContainer>
+                </td>
+                {student.submissions.map((submitted, idx) => (
+                  <td key={idx}>
+                    <CheckMarkIcon
+                      src={submitted ? Done : Undone}
+                      alt={submitted ? "제출 완료" : "미제출"}
+                    />
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </Table>
       </div>
       <div className="custom-scrollbar">
         <div

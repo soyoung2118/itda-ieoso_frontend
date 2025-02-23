@@ -29,6 +29,7 @@ const Section = styled.div`
   border-radius: 14px;
   margin: 1.15rem 0rem;
   background-color: #ffffff;
+  cursor: pointer;
 `;
 
 const CurriculumTitle = styled.h3`
@@ -109,7 +110,7 @@ const Curriculum = () => {
 
   const { user } = useContext(UsersContext);
   const userId = user.userId;
-  const { courseData, isCreator } = useOutletContext();
+  const { courseData } = useOutletContext();
   const [curriculumData, setCurriculumData] = useState([]);
   const [historyData, setHistoryData] = useState({
     materials: [],
@@ -119,6 +120,10 @@ const Curriculum = () => {
     Number(lectureId) || 1
   );
   const [activeLecture, setActiveLecture] = useState(null);
+
+  const context = useOutletContext();
+  const isCreator = context?.isCreator || false;
+
 
   useEffect(() => {
     async function fetchData() {
@@ -153,7 +158,7 @@ const Curriculum = () => {
               })),
               ...(defaultLecture.materials || []).map((m) => ({
                 ...m,
-                title: m.materialTitle,
+                title: m.originalFilename,
                 id: m.contentOrderIndex,
                 url: m.materialFile,
                 checked: false,
@@ -183,26 +188,86 @@ const Curriculum = () => {
 
   useEffect(() => {
     if (!activeLecture || !historyData) return;
-
-    setActiveLecture((prev) => ({
-      ...prev,
-      subSections: prev.subSections.map((sub) => ({
-        ...sub,
-        checked:
-          sub.contentType === "material"
-            ? historyData.materials.some(
-                (m) => m.materialId === sub.id && m.materialHistoryStatus
-              )
-            : sub.contentType === "assignment"
-            ? historyData.submissions.some(
-                (a) =>
-                  a.assignmentId === sub.id &&
-                  a.submissionStatus === "SUBMITTED"
-              )
-            : false,
-      })),
-    }));
+  
+    // ✅ 변경 사항이 없으면 업데이트하지 않도록 최적화
+    const updatedSubSections = activeLecture.subSections.map((sub) => {
+      let isChecked = false;
+  
+      if (sub.contentType === "material") {
+        const materialHistory = historyData.materials.find(
+          (m) => m.materialId === sub.materialId
+        );
+        isChecked = materialHistory?.materialHistoryStatus || false;
+      } else if (sub.contentType === "assignment") {
+        const assignmentHistory = historyData.submissions.find(
+          (a) => a.assignmentId === sub.assignmentId
+        );
+        isChecked = assignmentHistory?.submissionStatus === "SUBMITTED";
+      }
+  
+      return { ...sub, checked: isChecked };
+    });
+  
+    if (JSON.stringify(activeLecture.subSections) !== JSON.stringify(updatedSubSections)) {
+      setActiveLecture((prev) => ({ ...prev, subSections: updatedSubSections }));
+    }
   }, [historyData]);
+  
+  const handleSectionClick = (sub) => {
+    if (sub.contentType === "video") {
+      navigate(`/playing/${courseId}/${activeLectureId}/${sub.videoId}`);
+    } else if (sub.contentType === "assignment") {
+      navigate(
+        `/assignment/submit/${courseId}/${activeLectureId}/${sub.assignmentId}`
+      );
+    }
+  };
+
+  const handleMaterialClick = async (material) => {
+    const materialUrl = material.materialFile;
+
+    try {
+      const response = await api.get("/files/download", {
+        params: {
+          fileUrl: materialUrl,
+        },
+      });
+
+      const presignedUrl = response.data;
+      const fileResponse = await fetch(presignedUrl);
+
+      const arrayBuffer = await fileResponse.arrayBuffer();
+
+      const fileExtension = material.originalFilename
+        .split(".")
+        .pop()
+        .toLowerCase();
+      let mimeType = "application/octet-stream";
+
+      if (fileExtension === "pdf") {
+        mimeType = "application/pdf";
+      } else if (fileExtension === "txt") {
+        mimeType = "text/plain";
+      } else if (["jpg", "jpeg", "png", "gif"].includes(fileExtension)) {
+        mimeType = `image/${fileExtension}`;
+      } else if (fileExtension === "zip") {
+        mimeType = "application/zip";
+      }
+
+      const blob = new Blob([arrayBuffer], { type: mimeType });
+
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+
+      a.download = material.originalFilename;
+      a.click();
+
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("파일 처리 중 오류:", error);
+    }
+  };
 
   return (
     <div style={{ display: "flex", marginTop: "1rem" }}>
@@ -255,21 +320,26 @@ const Curriculum = () => {
           <h1 style={{ fontSize: "1.6rem", fontWeight: "bolder" }}>
             {activeLecture?.lectureDescription}
           </h1>
-          <SectionIcon
-            src={SelectedSection}
-            style={{
-              marginLeft: "auto",
-              marginRight: "1.35rem",
-              width: "1.8rem",
-            }}
-          />
+          {!isCreator && (
+            <SectionIcon
+              src={SelectedSection}
+              style={{
+                marginLeft: "auto",
+                marginRight: "1.35rem",
+                width: "1.8rem",
+              }}
+            />
+          )}
         </Section>
 
         {activeLecture?.subSections.map((sub) => (
           <div key={sub.id}>
             <div>
               {sub.contentType === "video" && (
-                <Section style={{ display: "flex" }}>
+                <Section
+                  style={{ display: "flex" }}
+                  onClick={() => handleSectionClick(sub)}
+                >
                   <VideoContainer>
                     {sub.thumbnail ? (
                       <VideoThumbnail
@@ -336,14 +406,16 @@ const Curriculum = () => {
                       </span>
                     </p>
                   </div>
-                  <img
-                    src={sub.checked ? DoneIcon : UndoneIcon}
-                    style={{
-                      marginLeft: "auto",
-                      marginRight: "1.6rem",
-                      width: "1.2rem",
-                    }}
-                  />
+                  {!isCreator && (
+                    <img
+                      src={sub.checked ? DoneIcon : UndoneIcon}
+                      style={{
+                        marginLeft: "auto",
+                        marginRight: "1.6rem",
+                        width: "1.2rem",
+                      }}
+                    />
+                  )}
                 </Section>
               )}
 
@@ -365,20 +437,40 @@ const Curriculum = () => {
                     }}
                   />
                   <MaterialSection>
-                    <span style={{ marginRight: "0.6rem" }}>{sub.title}</span>
-                    <span
+                    <div
                       style={{
-                        color: "var(--main-color)",
-                        fontSize: "0.9rem",
+                        display: "flex",
+                        alignItems: "baseline",
+                        gap: "0.5vh",
                       }}
                     >
-                      3.1MB
-                    </span>
-                    <img
-                      src={sub.checked ? DoneIcon : UndoneIcon}
-                      alt="download status"
-                      style={{ marginLeft: "auto", width: "1.2rem" }}
-                    />
+                      <span
+                        style={{
+                          marginRight: "0.6rem",
+                          cursor: "pointer",
+                          display: "inline-block",
+                        }}
+                        onClick={() => handleMaterialClick(sub)}
+                      >
+                        {sub.title}
+                      </span>
+                      <span
+                        style={{
+                          color: "var(--main-color)",
+                          fontSize: "0.9rem",
+                        }}
+                      >
+                        {sub.fileSize || ""}
+                      </span>
+                    </div>
+
+                    {!isCreator && (
+                      <img
+                        src={sub.checked ? DoneIcon : UndoneIcon}
+                        alt="download status"
+                        style={{ marginLeft: "auto", width: "1.2rem" }}
+                      />
+                    )}
                   </MaterialSection>
                 </Section>
               )}
@@ -391,6 +483,7 @@ const Curriculum = () => {
                     gap: "1rem",
                     marginBottom: "2rem",
                   }}
+                  onClick={() => handleSectionClick(sub)}
                 >
                   <img
                     src={Assignment}
@@ -411,11 +504,13 @@ const Curriculum = () => {
                     >
                       {formatDate(sub?.startDate)} ~ {formatDate(sub?.endDate)}
                     </span>
-                    <img
-                      src={sub.checked ? DoneIcon : UndoneIcon}
-                      alt="submission status"
-                      style={{ marginLeft: "auto", width: "1.2rem" }}
-                    />
+                    {!isCreator && (
+                      <img
+                        src={sub.checked ? DoneIcon : UndoneIcon}
+                        alt="submission status"
+                        style={{ marginLeft: "auto", width: "1.2rem" }}
+                      />
+                    )}
                   </MaterialSection>
                 </Section>
               )}
@@ -432,6 +527,5 @@ const Curriculum = () => {
     </div>
   );
 };
-
 
 export default Curriculum;
