@@ -105,7 +105,7 @@ const StudentProgressTable = ({ assignments }) => {
       }
       studentsMap
         .get(student.userId)
-        .submissions.push(student.status === "SUBMITTED");
+        .submissions.push(student.status); // 상태를 그대로 저장
     });
   });
   const students = Array.from(studentsMap.values());
@@ -225,7 +225,6 @@ const StudentProgressTable = ({ assignments }) => {
                     </td>
                   );
                 })}
-
               </tr>
             ))}
           </tbody>
