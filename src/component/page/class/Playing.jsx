@@ -102,18 +102,4 @@ const SubTitle = styled.div`
     font-weight: 400;
 `;
 
-const ResourceItem = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 0;
-    font-size: 13px;
-    color: #474747;
-    cursor: pointer;
-
-    &:hover {
-        text-decoration: underline;
-    }
-`;
-
 export default ClassPlaying;
