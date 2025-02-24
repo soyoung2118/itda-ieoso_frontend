@@ -268,7 +268,7 @@ const Curriculum = () => {
         },
       });
 
-      const presignedUrl = response.data;
+      const presignedUrl = response.data.data;
       const fileResponse = await fetch(presignedUrl);
       const arrayBuffer = await fileResponse.arrayBuffer();
 
