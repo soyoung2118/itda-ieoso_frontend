@@ -13,17 +13,14 @@ const PlayingCurriculumSidebar = ({
     setCurriculumData, 
     currentLectureInfo, 
     setCurrentLectureInfo,
-    sections = [],
-    activeItem,
-    setActiveItem,
 }) => {
     const navigate = useNavigate();
     const { courseId, lectureId, videoId, assignmentId } = useParams();
     const { user } = useContext(UsersContext);
-    const [expandedItems, setExpandedItems] = useState(new Set([1]));
-    const [list, setList] = useState([]);
     const [submissionStatusList, setSubmissionStatusList] = useState([]);
     const [assignmentIdList, setAssignmentIdList] = useState([]);
+    const [selectedContentId, setSelectedContentId] = useState(null);
+    const [selectedType, setSelectedType] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -33,16 +30,9 @@ const PlayingCurriculumSidebar = ({
                 const curriculumResponse = await api.get(`/lectures/curriculum/${courseId}/${user.userId}`);
                 if (curriculumResponse.data.success) {
                     setCurriculumData(curriculumResponse.data.data);
-                    const sortList = [];
-                    for(let data in curriculumData){
-                        sortList.push(data.assignment);
-                    }
-                    setList(sortList);
-                    //console.log(curriculumData);
                 }
 
                 const historyResponse = await api.get(`/lectures/history/${courseId}/${user.userId}`);
-                //console.log(historyResponse.data.data.submissions);
                 
                 if (historyResponse.data.success) {
                     const submissions = Array.isArray(historyResponse.data.data.submissions)
@@ -58,10 +48,7 @@ const PlayingCurriculumSidebar = ({
                         ...prev, 
                         ...submissions.map(sub => sub.submissionStatus)
                     ]);
-                }                
-
-                console.log(assignmentIdList);
-                console.log(submissionStatusList);
+                }
 
             } catch (error) {
                 console.error("데이터 로딩 오류:", error);
@@ -80,10 +67,6 @@ const PlayingCurriculumSidebar = ({
         
         if (foundLecture) {
             setCurrentLectureInfo(foundLecture);
-            
-            if (videoId || assignmentId) {
-                setExpandedItems(prev => new Set([...prev, foundLecture.lectureId]));
-            }
         }
     }, [curriculumData, lectureId, videoId, assignmentId, setCurrentLectureInfo]);
 
@@ -92,30 +75,33 @@ const PlayingCurriculumSidebar = ({
     };
 
     const getStatusIcon = (type, id) => {
-        if(type === 'assignment'){
+        if (type === 'assignment') {
             const index = assignmentIdList.findIndex((listid) => listid === id);
-        if (index === -1) return null;
-
-        const status = submissionStatusList[index];
-
+            if (index === -1) return null;
+    
+            const status = submissionStatusList[index];
             switch (status) {
                 case 'NOT_SUBMITTED':
-                    return <span className="material-icons" style={{ color: '#C3C3C3', fontSize: '20px' }}>check_circle</span>;
+                    return <span key={id} className="material-icons" style={{ color: '#C3C3C3', fontSize: '20px' }}>check_circle</span>;
                 case 'LATE':
                 case 'SUBMITTED':
-                    return <span className="material-icons" style={{ color: '#474747', fontSize: '20px' }}>check_circle</span>;
+                    return <span key={id} className="material-icons" style={{ color: '#474747', fontSize: '20px' }}>check_circle</span>;
                 default:
                     return null;
             }
         }
-        return;
+        return null;
     }
 
     const handleVideoClick = (goLecture, goVideo) => {
+        setSelectedContentId(goVideo);
+        setSelectedType("video");
       navigate(`/playing/${courseId}/${goLecture}/${goVideo}`);
     };
 
     const handleMaterialClick = async (material) => {
+        setSelectedContentId(material.materialId);
+        setSelectedType("material");
       const materialUrl = material.materialFile;
   
       try {
@@ -160,7 +146,9 @@ const PlayingCurriculumSidebar = ({
   };
 
     const handleAssignmentClick = (goLecture, goAssignment) => {
-       navigate(`/assignment/submit/${courseId}/${goLecture}/${goAssignment}`);
+        setSelectedContentId(goAssignment);
+        setSelectedType("assignment");
+        navigate(`/assignment/submit/${courseId}/${goLecture}/${goAssignment}`);
     };
 
     const dateText = (time) => {
@@ -181,8 +169,17 @@ const PlayingCurriculumSidebar = ({
                               <CurriculumItem>
                                   <ItemTitle>{index + 1}. {lecture.lectureDescription}</ItemTitle>
                               </CurriculumItem>
-                                {lecture.lectureId && sortedContents.map((content) => (
-                                  <SubItem key={content.contentOrderId} status={content.contentType == 'video' ? content.videoHistoryStatus : null}>
+                                {lecture.lectureId && sortedContents.map((content) => {
+                                    const isSelected =
+                                        (selectedType === "video" && Number(content.videoId) === Number(selectedContentId)) ||
+                                        (selectedType === "material" && Number(content.materialId) === Number(selectedContentId)) ||
+                                        (selectedType === "assignment" && Number(content.assignmentId) === Number(selectedContentId));
+
+                                    return (
+                                        <SubItem 
+                                            $now={isSelected} 
+                                            key={content.contentOrderId} 
+                                            status={content.contentType === 'video' ? content.videoHistoryStatus : null}>
                                       <SubItemTitle>
                                           {content.contentType === 'video' &&
                                             <ContentItem onClick={() => handleVideoClick(lecture.lectureId, content.videoId)}>
@@ -233,7 +230,8 @@ const PlayingCurriculumSidebar = ({
                                           }
                                       </SubItemTitle>
                                   </SubItem>
-                              ))}
+                                );
+                            })}
                           </div>
                         );
                     })}
@@ -301,14 +299,7 @@ const SubItem = styled.div`
     display: flex;
     flex-direction: column;
     padding: 15px 14px;
-    background-color: ${props => props.status === 'WATCHING' ? '#F8F8F8' : 'transparent'};
-`;
-
-const SubItemHeader = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
+    background-color: ${props => props.now ? '#F8F8F8' : 'transparent'};
 `;
 
 const ContentItem = styled.div`
@@ -317,10 +308,6 @@ const ContentItem = styled.div`
     gap: 6px;
     padding: 2px 0;
     cursor: pointer;
-
-    &:hover {
-        text-decoration: underline;
-    }
 `;
 
 const SubItemTitle = styled.div`
