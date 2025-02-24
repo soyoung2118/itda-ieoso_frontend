@@ -29,6 +29,7 @@ const ClassAssignmentSubmit = () => {
 
     const [isSubmittedModalOpen, setIsSubmittedModalOpen] = useState(false);
     const [isReSubmittedModalOpen, setIsReSubmittedModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
     const handleSubmit = async () => {
         if (!user) return;
@@ -116,6 +117,13 @@ const ClassAssignmentSubmit = () => {
             console.error("과제 제출 오류:", error);
         }
     };
+
+    const handleDelete = async () => {
+        const deleteResponse = await api.put(`/assignments/${assignmentId}/submissions/delete/${submissionId}/${user.userId}`);
+        if(deleteResponse.data.success){
+            setIsDeleteModalOpen(true);
+        }
+    }
 
     const handleNavigationCurriculum = () => {
         navigate(`/class/${courseId}/curriculum/${lectureId}`);
@@ -305,7 +313,7 @@ const ClassAssignmentSubmit = () => {
                             />
                         </EditorContainer>
                     </Box>
-
+                    
                     <Box>
                         <FormTitle>파일 업로드하기</FormTitle>
                         <DragZone setFiles={setFiles}/>
@@ -330,6 +338,10 @@ const ClassAssignmentSubmit = () => {
                         ))
                     )}
                     </ImageItemContainer>
+
+                    {submissionStatus !== 'NOT_SUBMITTED' &&
+                        <SubmitButton onClick={handleDelete} style={{backgroundColor: "#E2E2E2"}}>삭제하기</SubmitButton> }
+
                     {submissionStatus === 'LATE' ?
                         (<SubmitButton onClick={handleSubmit}>수정하기</SubmitButton> ) 
                         : (<SubmitButton onClick={handleSubmit}>제출하기</SubmitButton> ) }
@@ -345,6 +357,7 @@ const ClassAssignmentSubmit = () => {
 
             { isSubmittedModalOpen && <AssignmentModal text="과제 제출이 완료되었습니다."  onClose={() => {setIsSubmittedModalOpen(false); window.location.reload();}}/> }
             { isReSubmittedModalOpen && <AssignmentModal text="과제 수정이 완료되었습니다."  onClose={() => {setIsReSubmittedModalOpen(false); window.location.reload();}}/> }
+            { isDeleteModalOpen && <AssignmentModal text="과제 삭제가 완료되었습니다."  onClose={() => {setIsDeleteModalOpen(false); window.location.reload();}}/> }
         </Container>
         </Wrapper>
     );
@@ -499,10 +512,6 @@ const SubmitButton = styled.button`
     font-weight: 500;
     cursor: pointer;
     margin-right: 10px;
-
-    &:hover {
-        background-color: #E53935;
-    }
 `;
 
 export default ClassAssignmentSubmit;
