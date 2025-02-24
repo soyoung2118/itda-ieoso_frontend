@@ -200,7 +200,6 @@ export const Step = styled.div`
   border: 2px solid ${props => (props.active || props.completed ? '#474747' : '#C3C3C3')};
   font-weight: bold;
   position: relative;
-  z-index: 2;
 
   &:after {
     content: '${props => props.label}';

@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import PropTypes from 'prop-types';
 import TopBar from "../../ui/TopBar";
 import logoImage from "../../img/logo/itda_logo_symbol.svg";
-import { Checkbox, FormControlLabel, IconButton } from '@mui/material';
 import {
     Container,
     LogoImage,
@@ -13,106 +11,14 @@ import {
     Progress,
     Label,
     Step,
-    Terms,
-    Term,
-    ResponsiveLabel,
     SignUpInput,
-    CustomCheckboxCircle,
-    CustomCheckboxTransparent,
     NextButton,
     InputContainer,
     WelcomeMessage
 } from "../../../style/Styles";
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { signup, checkEmail } from '../../api/usersApi';
+import TermsAgreement from './Terms';
 
-
-const TERMS = {
-  service: '[필수] itda 서비스 이용약관에 동의합니다.',
-  privacy: '[필수] itda 개인정보 수집 및 이용약관에 동의합니다.',
-  marketing: '[선택] itda의 마케팅 정보 수신에 동의합니다.'
-};
-
-function TermsAgreement({ isChecked, termsChecked, handleCheckAll, handleIndividualCheck, handleDocumentOpen }) {
-  return (
-    <Terms>
-      <Term>
-        <FormControlLabel
-          control={
-            <Checkbox
-              icon={CustomCheckboxCircle(false)}
-              checkedIcon={CustomCheckboxCircle(true)}
-              checked={isChecked}
-              onChange={handleCheckAll}
-            />
-          }
-          label={<ResponsiveLabel>전체 동의</ResponsiveLabel>}
-        />
-      </Term>
-      <div style={{borderBottom: '1px solid #CDCDCD', margin: '10px 0' }}></div>
-      <Term>
-        <FormControlLabel
-          control={
-            <Checkbox
-              icon={CustomCheckboxTransparent(false)}
-              checkedIcon={CustomCheckboxTransparent(true)}
-              checked={termsChecked.service}
-              onChange={() => handleIndividualCheck('service')}
-            />
-          }
-          label={<ResponsiveLabel>{TERMS.service}</ResponsiveLabel>}
-        />
-        <IconButton onClick={() => handleDocumentOpen('service')}>
-          <ArrowForwardIosIcon style={{ fontSize: '15px' }} />
-        </IconButton>
-      </Term>
-      <Term>
-        <FormControlLabel
-          control={
-            <Checkbox
-              icon={CustomCheckboxTransparent(false)}
-              checkedIcon={CustomCheckboxTransparent(true)}
-              checked={termsChecked.privacy}
-              onChange={() => handleIndividualCheck('privacy')}
-            />
-          }
-          label={<ResponsiveLabel>{TERMS.privacy}</ResponsiveLabel>}
-        />
-        <IconButton onClick={() => handleDocumentOpen('privacy')}>
-          <ArrowForwardIosIcon style={{ fontSize: '15px' }} />
-        </IconButton>
-      </Term>
-      <Term>
-        <FormControlLabel
-          control={
-            <Checkbox
-              icon={CustomCheckboxTransparent(false)}
-              checkedIcon={CustomCheckboxTransparent(true)}
-              checked={termsChecked.marketing}
-              onChange={() => handleIndividualCheck('marketing')}
-            />
-          }
-          label={<ResponsiveLabel>{TERMS.marketing}</ResponsiveLabel>}
-        />
-        <IconButton onClick={() => handleDocumentOpen('marketing')}>
-          <ArrowForwardIosIcon style={{ fontSize: '15px' }} />
-        </IconButton>
-      </Term>
-    </Terms>
-  );
-}
-
-TermsAgreement.propTypes = {
-  isChecked: PropTypes.bool.isRequired,
-  termsChecked: PropTypes.shape({
-    service: PropTypes.bool.isRequired,
-    privacy: PropTypes.bool.isRequired,
-    marketing: PropTypes.bool.isRequired,
-  }).isRequired,
-  handleCheckAll: PropTypes.func.isRequired,
-  handleIndividualCheck: PropTypes.func.isRequired,
-  handleDocumentOpen: PropTypes.func.isRequired,
-};
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -162,10 +68,6 @@ export default function SignUp() {
     setTermsChecked(updatedTermsChecked);
     const allChecked = Object.values(updatedTermsChecked).every(value => value);
     setIsChecked(allChecked);
-  };
-
-  const handleDocumentOpen = (term) => {
-    console.log(`${term} 문서 출력`);
   };
 
   const handleCombinedClick = async (e) => {
@@ -247,9 +149,9 @@ export default function SignUp() {
         <LogoImage src={logoImage} alt="logo" />
         <LogoText>회원가입</LogoText>
         <Progress>
-          <Step active={step === 1} completed={step > 1} label="약관동의">1</Step>
-          <Step active={step === 2} completed={step > 2} label="아이디 설정">2</Step>
-          <Step active={step === 3} completed={step > 3} label="비밀번호 설정">3</Step>
+          <Step active={step === 1 ? "true" : "false"} completed={step > 1 ? "true" : "false"} label="약관동의">1</Step>
+          <Step active={step === 2 ? "true" : "false"} completed={step > 2 ? "true" : "false"} label="아이디 설정">2</Step>
+          <Step active={step === 3 ? "true" : "false"} completed={step > 3 ? "true" : "false"} label="비밀번호 설정">3</Step>
         </Progress>
         <SignUpContainer>
           {step === 1 && (
@@ -261,7 +163,6 @@ export default function SignUp() {
                   termsChecked={termsChecked}
                   handleCheckAll={handleCheckAll}
                   handleIndividualCheck={handleIndividualCheck}
-                  handleDocumentOpen={handleDocumentOpen}
                 />
               </div>
               <NextButton onClick={handleNext}>
