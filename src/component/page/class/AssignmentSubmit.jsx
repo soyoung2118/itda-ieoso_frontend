@@ -5,10 +5,10 @@ import TopBar from '../../ui/TopBar';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import api from "../../api/api";
 import PlayingCurriculumSidebar from '../../ui/class/PlayingCurriculumSidebar';
-import DragZone from "../../ui/DragZone";
-import CloseIcon from '@mui/icons-material/Close';
 import { UsersContext } from '../../contexts/usersContext';
 import AssignmentModal from "../../ui/class/AssignmentModal";
+import AssignmentSubmitBox from '../../ui/class/AssignmentSubmitBox';
+import AssignmentShowBox from '../../ui/class/AssignmentShowBox';
 
 const ClassAssignmentSubmit = () => {
     const navigate = useNavigate();
@@ -30,100 +30,7 @@ const ClassAssignmentSubmit = () => {
     const [isSubmittedModalOpen, setIsSubmittedModalOpen] = useState(false);
     const [isReSubmittedModalOpen, setIsReSubmittedModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
-    const handleSubmit = async () => {
-        if (!user) return;
-
-        if(!content && files.length === 0) {
-            alert("제출할 것이 없습니다.");
-            return;
-        }
-
-        if(files.length >= 4){
-            alert("파일은 3개까지만 업로드 가능합니다.");
-            return;
-        }
-
-        try {
-            let response;
-
-            const newFiles = files.filter(file => !file.fileUrl);
-            const existingFileUrls = files
-                .filter(file => file.fileUrl)
-                .map(file => file.fileUrl);
-            const deleteFileUrls = [...deletedFiles];
-    
-            const formData = new FormData();
-            formData.append("textContent", content);
-
-            if (newFiles.length > 0) {
-                newFiles.forEach((file) => {
-                    formData.append("files", file.object);
-                });
-            }
-    
-            switch(submissionStatus) {
-                case "NOT_SUBMITTED": {
-                    response = await api.put(
-                        `/assignments/${assignmentId}/submissions/${submissionId}/${user.userId}`,
-                        formData,
-                        {
-                            headers: {
-                                'Content-Type': 'multipart/form-data'
-                            }
-                        }
-                    );
-                    break;
-                }
-                
-                case "LATE":
-                case "SUBMITTED": {
-                    if (existingFileUrls.length > 0) {
-                        existingFileUrls.forEach(url => {
-                            formData.append("existingFileUrls", url);
-                        });
-                    }
-                    
-                    if (deleteFileUrls.length > 0) {
-                        deleteFileUrls.forEach(url => {
-                            formData.append("deleteFileUrls", url);
-                        });
-                    }
-    
-                    response = await api.put(
-                        `/assignments/${assignmentId}/submissions/${submissionId}/${user.userId}`,
-                        formData,
-                        {
-                            headers: {
-                                'Content-Type': 'multipart/form-data'
-                            }
-                        }
-                    );
-                    break;
-                }
-            }
-            if (response.data.success) {
-                const statusResponse = await api.get(
-                    `/assignments/${assignmentId}/submissions/${submissionId}/${user.userId}`
-                );
-    
-                if (statusResponse.data.success) {
-                    submissionStatus === "NOT_SUBMITTED"
-                        ? setIsSubmittedModalOpen(true)
-                        : setIsReSubmittedModalOpen(true);
-                }
-            }
-        } catch (error) {
-            console.error("과제 제출 오류:", error);
-        }
-    };
-
-    const handleDelete = async () => {
-        const deleteResponse = await api.put(`/assignments/${assignmentId}/submissions/delete/${submissionId}/${user.userId}`);
-        if(deleteResponse.data.success){
-            setIsDeleteModalOpen(true);
-        }
-    }
+    const [canEdit, setCanEdit] = useState(false);
 
     const handleNavigationCurriculum = () => {
         navigate(`/class/${courseId}/curriculum/${lectureId}`);
@@ -142,6 +49,7 @@ const ClassAssignmentSubmit = () => {
                     if (submission) {
                         setSubmissionId(submission.submissionId);
                         setSubmissionStatus(submission.submissionStatus);
+                        console.log(submissionStatus);
                     } else {
                         setSubmissionId(null);
                         setSubmissionStatus("NOT_SUBMITTED");
@@ -195,86 +103,6 @@ const ClassAssignmentSubmit = () => {
             setCurrentAssignmentInfo(foundAssignment);
         }
     }, [currentLectureInfo, assignmentId]);
-    
-    const DeleteImageHandle = (e, fileId) => {
-        e.preventDefault();
-    
-        const fileToDelete = files.find((file) => file.id === fileId);
-    
-        if (!fileToDelete) {
-            console.warn("삭제할 파일을 찾을 수 없습니다.");
-            return;
-        }
-    
-        if (fileToDelete.object?.preview) {
-            URL.revokeObjectURL(fileToDelete.object.preview);
-        }
-    
-        const updatedFiles = files.filter((file) => file.id !== fileId);
-        setFiles(updatedFiles);
-        
-        if (fileToDelete.fileUrl) {
-            setDeletedFiles((prev) => [...prev, fileToDelete.fileUrl]);
-        }
-    };
-    
-    const OnClickImage = async (e, fileId) => {
-        e.preventDefault();
-        
-        const fileToDownload = files.find((file) => file.id === fileId);
-        if (!fileToDownload) {
-            console.log('파일을 찾을 수 없습니다.');
-            return;
-        }
-    
-        try {
-            const response = await api.get("/files/download", {
-                params: { 
-                    fileUrl: fileToDownload.fileUrl
-                },
-            });
-            
-            const presignedUrl = response.data;
-            const fileResponse = await fetch(presignedUrl);
-    
-            // 여기서 presignedUrl을 호출해서 받은 response에 대해 headers를 확인해보세요
-            const headers = fileResponse.headers;
-            const disposition = headers.get('content-disposition');
-            
-            // 파일명 추출 및 디코딩
-            let filename = fileToDownload.name;
-            if (disposition) {
-                const filenameRegex = /filename\*=UTF-8''([^;]*)/;
-                const matches = filenameRegex.exec(disposition);
-                if (matches && matches[1]) {
-                    filename = decodeURIComponent(matches[1]);
-                }
-            }
-    
-            const arrayBuffer = await fileResponse.arrayBuffer();
-            const fileExtension = filename.split('.').pop().toLowerCase();
-            let mimeType = 'application/octet-stream';
-            console.log('Content-Disposition:', disposition);
-    
-            if (fileExtension === 'pdf') {
-                mimeType = 'application/pdf';
-            } else if (['jpg', 'jpeg', 'png'].includes(fileExtension)) {
-                mimeType = `image/${fileExtension}`;
-            }
-    
-            const blob = new Blob([arrayBuffer], { type: mimeType });
-        
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = filename;  // 디코딩된 파일명 사용
-            a.click();
-            window.URL.revokeObjectURL(url);
-    
-        } catch (error) {
-            alert("파일을 제출한 이후 다운로드를 시도해주세요.");
-        }
-    };
 
     return (
         <Wrapper>
@@ -302,50 +130,28 @@ const ClassAssignmentSubmit = () => {
                     </NoticeContentContainer>
                 </WhiteBoxComponent>
 
-                <WhiteBoxComponent style={{height: '70vh'}}>
-                    <Box>
-                        <FormTitle>내용</FormTitle>
-                        <EditorContainer>
-                            <TextArea
-                                placeholder="내용을 입력하세요" 
-                                value={content || ''}
-                                onChange={(e) => setContent(e.target.value)}
-                            />
-                        </EditorContainer>
-                    </Box>
-                    
-                    <Box>
-                        <FormTitle>파일 업로드하기</FormTitle>
-                        <DragZone setFiles={setFiles}/>
-                    </Box>
-
-                    <ImageItemContainer>
-                    {files.length > 0 && (
-                        files.map((file) => (
-                            <ImageItem 
-                                key={file.fileUrl} 
-                                $textWidth={file.name?.length ? file.name.length * 10 : 100}
-                                title={file.fileName}
-                            >
-                                <ImageText title={file.fileName} onClick={(e) => OnClickImage(e, file.id)}>{file.name}</ImageText>
-                                <CloseIcon 
-                                    onClick={(e) => {
-                                        DeleteImageHandle(e, file.id);
-                                    }} 
-                                    style={{width: '15px', cursor: 'pointer'}}
-                                />
-                            </ImageItem>
-                        ))
-                    )}
-                    </ImageItemContainer>
-
-                    {submissionStatus !== 'NOT_SUBMITTED' &&
-                        <SubmitButton onClick={handleDelete} style={{backgroundColor: "#E2E2E2"}}>삭제하기</SubmitButton> }
-
-                    {submissionStatus === 'LATE' ?
-                        (<SubmitButton onClick={handleSubmit}>수정하기</SubmitButton> ) 
-                        : (<SubmitButton onClick={handleSubmit}>제출하기</SubmitButton> ) }
-                </WhiteBoxComponent>
+                {(submissionStatus === 'NOT_SUBMITTED' || canEdit) ? (
+                    <AssignmentSubmitBox
+                        canEdit={canEdit}
+                        setCanEdit={setCanEdit}
+                        content={content}
+                        setContent={setContent}
+                        files={files}
+                        setFiles={setFiles}
+                        submissionId={submissionId}
+                        submissionStatus={submissionStatus}
+                        setIsSubmittedModalOpen={setIsSubmittedModalOpen}
+                        setIsReSubmittedModalOpen={setIsReSubmittedModalOpen}
+                    />
+                ) : (
+                    <AssignmentShowBox
+                        setCanEdit={setCanEdit}
+                        content={content}
+                        files={files}
+                        submissionId={submissionId}
+                        setIsDeleteModalOpen={setIsDeleteModalOpen}
+                    />
+                )}
             </LeftSide>
 
             <RightSide>
@@ -397,11 +203,6 @@ const WhiteBoxComponent = styled.div`
     height: 30vh;
     margin-bottom: 50px;
     padding: 10px;
-`
-
-const Box = styled.div`
-    height: 25vh;
-    gap: 10px;
 `
 
 const NoticeTitleContainer = styled.div`
@@ -471,6 +272,8 @@ const TextArea = styled.textarea`
     &:focus {
         outline: none;
     }
+
+    background-color: $submissionStatus === 'NOT_SUBMITTED' ? #FFFFFF : '#F6F7F9';
 `;
 
 const ImageItemContainer = styled.div`
@@ -480,14 +283,15 @@ const ImageItemContainer = styled.div`
     gap: 10px;
     margin: 10px;
     padding-bottom: 5px;
+    background-color: #F6F7F9;
+    border-radius: 10px;
+    height: 40px;
 `;
 
 const ImageItem = styled.div`
     display: flex;
     align-items: center;
     background-color: #F6F7F9;
-    min-width: fit-content;
-    max-width: 150px;
     padding: 5px;
     justify-content: space-between;
     border-radius: 8px;
