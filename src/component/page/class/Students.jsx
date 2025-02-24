@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import AdminTopBar from "../../ui/class/AdminTopBar";
 import { Section } from "../../ui/class/ClassLayout";
 import { AgGridReact } from "ag-grid-react";
@@ -7,10 +8,14 @@ import "ag-grid-community/styles/ag-theme-alpine.css";
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 import { themeQuartz } from "ag-grid-community";
 import assignmentIcon from "../../img/admin/student_assignment.svg";
+import api from "../../api/api";
 
 const ClassStudents = () => {
+  const { courseId } = useParams();
   const [currentTime, setCurrentTime] = useState("");
-  const [assignmentCreatedAt, setAssignmentCreatedAt] = useState("2025.01.01");
+  const [rowData, setRowData] = useState([]);
+  const [columnDefs, setColumnDefs] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const updateTime = () => {
@@ -31,104 +36,190 @@ const ClassStudents = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const [rowData] = useState([
-    {
-      name: "김잇다",
-      assignment1: "김잇다.pdf",
-      assignment2: "김잇다.jpg",
-      assignment3: "김잇다.docx",
-      assignment4: "김잇다.pptx",
-      assignment5: "김잇다.png",
-    },
-    {
-      name: "홍길동",
-      assignment1: "홍길동.pdf",
-      assignment2: "홍길동.jpg",
-      assignment3: "홍길동.docx",
-      assignment4: "홍길동.pptx",
-      assignment5: "홍길동.png",
-    },
-  ]);
+  useEffect(() => {
+    const fetchAssignments = async () => {
+      try {
+        const response = await api.get(
+          `/statistics/courses/${courseId}/assignments/submissions`
+        );
+
+        if (response.data.success) {
+          processAssignmentData(response.data.data);
+        } else {
+          console.error("API 응답 오류:", response.data.message);
+        }
+      } catch (error) {
+        console.error("과제 데이터를 불러오는 중 오류 발생:", error);
+      }
+    };
+
+    fetchAssignments();
+  }, [courseId]);
+
+  const processAssignmentData = (assignments) => {
+    const groupedData = {}; // 학생별 데이터 저장
+    const assignmentMap = {}; // assignmentId -> assignmentTitle 매핑
+
+    assignments.forEach((assignment) => {
+      assignmentMap[assignment.assignmentId] = assignment.assignmentTitle;
+
+      assignment.studentResults.forEach((result) => {
+        // 학생(userId) 기준으로 그룹핑
+        if (!groupedData[result.userId]) {
+          groupedData[result.userId] = {
+            name: result.studentName,
+            userId: result.userId,
+          };
+        }
+
+        // assignmentId만 사용하여 구분
+        groupedData[result.userId][assignment.assignmentId] = {
+          files: result.files || [],
+          textContent: result.textContent || null,
+        };
+      });
+    });
+
+
+    setRowData(Object.values(groupedData));
+
+    // 컬럼 정의 수정 (assignmentId를 field로 사용)
+    const assignmentIds = assignments.map((a) => a.assignmentId);
+    setColumnDefs([
+      {
+        headerName: "이름",
+        field: "name",
+        width: 120,
+        cellRenderer: StudentNameRenderer,
+        cellStyle: { whiteSpace: "normal" }, // 자동 줄바꿈 허용
+        autoHeight: true,
+      },
+      ...assignmentIds.map((id) => ({
+        headerName: assignmentMap[id], // UI에는 assignmentTitle 표시
+        field: id.toString(), // assignmentId를 field로 사용
+        cellRenderer: AssignmentIconRenderer,
+        cellStyle: { whiteSpace: "normal" }, // 자동 줄바꿈 허용
+        autoHeight: true,
+      })),
+    ]);
+  };
+
+  const getRowHeight = (params) => {
+    let maxLines = 1; // 기본 한 줄
+
+    Object.values(params.data).forEach((cellData) => {
+      if (cellData && cellData.files) {
+        maxLines = Math.max(
+          maxLines,
+          cellData.files.length + (cellData.textContent ? 1 : 0)
+        );
+      }
+    });
+
+    return 20 + maxLines * 10; // 기본 40px + (라인 수에 따라 높이 증가)
+  };
+
+  const StudentNameRenderer = ({ data }) => {
+    return (
+      <div
+        style={{
+          padding: "1.7vh 0vh",
+        }}
+      >
+        <span
+          style={{ color: "black", cursor: "pointer" }}
+          onClick={() =>
+            navigate(`/class/${courseId}/admin/students/${data.userId}`)
+          }
+        >
+          {data.name}
+        </span>
+      </div>
+    );
+  };
+
+  // 파일 제출 여부에 따라 렌더링
+  const AssignmentIconRenderer = ({ value }) => {
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "0vh",
+          padding: "1.7vh 0vh",
+        }}
+      >
+        {/* 파일 제출 */}
+        {value.files.length > 0 &&
+          value.files.map((file, index) => (
+            <a
+              key={index}
+              href={file.fileUrl}
+              download
+              style={{
+                color: "var(--main-color)",
+                textDecoration: "none",
+                display: "flex",
+                alignItems: "center",
+                gap: "1vh",
+              }}
+            >
+              <img
+                src={assignmentIcon}
+                alt="Assignment"
+                width="30"
+                height="30"
+              />
+              {file.fileName}
+            </a>
+          ))}
+
+        {/* 텍스트 제출 */}
+        {value.textContent && value.textContent !== "null" ? (
+          <div
+            style={{
+              maxWidth: "100%",
+            }}
+          >
+            <TruncatedText content={value.textContent} />
+          </div>
+        ) : null}
+      </div>
+    );
+  };
+
+  const TruncatedText = ({ content }) => {
+    return (
+      <div
+        style={{
+          display: "block",
+          maxWidth: "100%",
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+        }}
+        title={content} // 마우스 호버 시 전체 텍스트 표시
+      >
+        {content}
+      </div>
+    );
+  };
 
   const myTheme = themeQuartz.withParams({
     spacing: 2,
-    foregroundColor: "rgb(14, 68, 145)",
     backgroundColor: "rgb(241, 247, 255)",
     headerBackgroundColor: "rgb(228, 237, 250)",
-    rowHoverColor: "rgb(216, 226, 255)",
   });
-
-  const AssignmentIconRenderer = ({ value }) => (
-    <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-      <img src={assignmentIcon} alt="Assignment" width="16" height="16" />
-      <a href={`/${value}`} style={{ color: "var(--main-color)", textDecoration: "none" }}>
-        {value}
-      </a>
-    </span>
-  );
-
-  const columnDefs = [
-    {
-      headerName: "이름",
-      field: "name",
-      width: 120,
-      headerComponentFramework: () => (
-        <div
-          style={{
-            backgroundColor: "var(--main-color)",
-            fontWeight: "bold",
-            padding: "10px",
-            textAlign: "center",
-            borderRadius: "8px",
-            color: "var(--black-color)",
-          }}
-        >
-          이름
-        </div>
-      ),
-    },
-    ...["과제 1", "과제 2", "과제 3", "과제 4", "과제 5"].map(
-      (title, index) => ({
-        headerName: title,
-        field: `assignment${index + 1}`,
-        cellRenderer: AssignmentIconRenderer,
-        headerComponentFramework: () => (
-          <div
-            style={{
-              fontWeight: "bold",
-              padding: "10px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "5px",
-              backgroundColor: "var(--main-color)",
-              color: "black",
-            }}
-          >
-            <img
-              src={assignmentIcon}
-              alt="과제"
-              style={{ width: "16px", height: "16px" }}
-            />
-            <span>{title}</span>
-            <small style={{ fontSize: "0.8rem", color: "var(--lightgray-color)" }}>
-              {assignmentCreatedAt}
-            </small>
-          </div>
-        ),
-      })
-    ),
-  ];
 
   return (
     <main style={{ flex: 1, borderRadius: "8px" }}>
       <AdminTopBar />
-      <div style={{margin:"1vh 0vh"}}>
+      <div style={{ margin: "1vh 0vh" }}>
         <div
           style={{
             display: "flex",
             alignItems: "baseline",
-            marginLeft: "2.5vh"
+            marginLeft: "2.5vh",
           }}
         >
           <h3
@@ -151,18 +242,40 @@ const ClassStudents = () => {
             {currentTime} 기준
           </p>
         </div>
-        <Section style={{ padding:"3vh 6vh" }}>
+        <Section style={{ padding: "3vh 6vh" }}>
+          <style>
+            {`
+              .ag-theme-alpine .ag-header-cell,
+              .ag-theme-alpine .ag-cell {
+                border-right: 1px solid #d1d1d1; 
+              }
+
+              .ag-theme-alpine .ag-row {
+                border-bottom: 1px solid #d1d1d1;
+              }
+
+              .ag-theme-alpine .ag-header {
+                border-bottom: 2px solid #d1d1d1; 
+              }
+
+              .ag-theme-alpine .ag-root {
+                border: 1px solid #d1d1d1; 
+              }
+
+              .ag-header-cell-left {
+                text-align: left;
+                padding-left: 10px;
+              }
+            `}
+          </style>
           <div
             className={`ag-theme-alpine ${myTheme}`}
             style={{
               "--ag-header-background-color": "var(--grey-color)",
               "--ag-header-foreground-color": "black",
-              "--ag-odd-row-background-color": "var(--pink-color)",
-              "--ag-even-row-background-color": "white",
               "--ag-row-hover-color": "var(--lightgrey-color)",
-              "--ag-font-size": "14px",
-              "--ag-border-radius": "8px",
-              height: "600px",
+              "--ag-font-size": "1.63vh",
+              "--ag-border-radius": "13px",
               width: "100%",
               margin: "20px 0",
               borderRadius: "8px",
@@ -175,19 +288,14 @@ const ClassStudents = () => {
               columnDefs={columnDefs}
               defaultColDef={{
                 sortable: true,
-                filter: true,
                 resizable: true,
               }}
               domLayout="autoHeight"
-              headerHeight={50}
-              rowHeight={60}
+              getRowHeight={getRowHeight}
               pagination={true}
               paginationPageSize={500}
               paginationPageSizeSelector={[200, 500, 1000]}
-              getRowStyle={(params) => ({
-                backgroundColor:
-                  params.node.rowIndex % 2 === 0 ? "#f9f9f9" : "#fff",
-              })}
+              suppressPaginationPanel={true}
             />
           </div>
         </Section>

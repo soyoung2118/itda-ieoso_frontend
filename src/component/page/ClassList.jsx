@@ -8,6 +8,7 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import EventIcon from '@mui/icons-material/Event';
 import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
 import PersonIcon from '@mui/icons-material/Person';
+import ClassThumbnail from "../img/class/class_thumbnail.svg";
 import api from "../api/api";
 import { UsersContext } from "../contexts/usersContext";
 
@@ -77,7 +78,10 @@ export default function Class() {
                         key={lecture.courseId}
                         onClick={() => handleLectureClick(lecture.courseId)}
                     >
-                        <LectureImage src={lecture.courseThumbnail} alt="Lecture" />
+                        <LectureImage 
+                            src={lecture.courseThumbnail || ClassThumbnail} 
+                            alt="Lecture" 
+                        />
                         <LectureInfo>
                             <LectureTitle>{lecture.courseTitle}</LectureTitle>
                             <LectureDetail>

@@ -12,7 +12,7 @@ import { useParams, useOutletContext, useNavigate } from "react-router-dom";
 import { UsersContext } from "../../contexts/usersContext";
 
 const SidebarContainer = styled.aside`
-  width: 28vh;
+  width: clamp(8rem, 15.5vw, 25rem);
   height: 90vh;
   background-color: white;
   border-radius: 12px;
@@ -137,7 +137,7 @@ const CurriculumSidebar = ({
           })),
           ...(section.materials || []).map((m) => ({
             ...m,
-            title: m.materialTitle,
+            title: m.originalFilename,
             contentType: "material",
             id: m.contentOrderId,
           })),
@@ -158,7 +158,7 @@ const CurriculumSidebar = ({
               onClick={() => handleItemClick(section.lectureId)}
             >
               {`${lectureIndex + 1}. ${section.lectureTitle}`}
-              {!edit && (
+              {!edit && !isCreator && (
                 <SectionIcon
                   src={
                     !section.selected
@@ -199,7 +199,7 @@ const CurriculumSidebar = ({
                       <TruncatedText width="10rem">
                         {getSubSectionTitle(subSection)}
                       </TruncatedText>
-                      {!edit && (
+                      {!edit && !isCreator && (
                         <img
                           src={Check}
                           style={{ marginLeft: "auto", marginRight: "1.3rem" }}
