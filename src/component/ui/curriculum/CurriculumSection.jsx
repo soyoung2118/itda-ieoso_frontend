@@ -36,7 +36,7 @@ const VideoContainer = styled.div`
 
 const VideoThumbnail = styled.img`
   width: 100%;
-  height:100%;
+  height: 100%;
   border-radius: 8px;
 `;
 
@@ -54,6 +54,7 @@ const formatPeriod = (startDate, endDate) => {
 };
 
 const CurriculumSection = ({
+  lecture,
   subSection,
   index,
   handleAdd,
@@ -103,15 +104,32 @@ const CurriculumSection = ({
                 <CurriculumTitle>
                   {subSection.title ?? "영상 제목 없음"}
                 </CurriculumTitle>
-                <p style={{ color: "#909090", display: "flex", gap: "0.5rem" }}>
-                  <span>김잇다</span>
+
+                <p
+                  style={{
+                    fontSize: "clamp(0.85rem, 1vw, 1.08rem)",
+                    color: "#909090",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "1vh",
+                  }}
+                >
+                  <div style={{ whiteSpace: "nowrap" }}>
+                    <span>{lecture.instructorName}</span>
+                    <span
+                      style={{
+                        borderLeft: "1.5px solid #909090",
+                        height: "1rem",
+                        marginLeft: "1vh",
+                      }}
+                    ></span>
+                  </div>
+
                   <span
                     style={{
-                      borderLeft: "1.5px solid #909090",
-                      height: "1rem",
+                      whiteSpace: "nowrap",
                     }}
-                  ></span>
-                  <span>
+                  >
                     {formatDate(subSection?.startDate)} ~{" "}
                     {formatDate(subSection?.endDate)}
                   </span>
@@ -165,11 +183,31 @@ const CurriculumSection = ({
                   marginRight: "3rem",
                 }}
               />
-              <MaterialSection>
-                <span style={{ marginRight: "0.8rem" }}>
+              <MaterialSection
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap", 
+                  alignItems: "baseline",
+                }}
+              >
+                <span
+                  style={{
+                    flexShrink: 1, 
+                    whiteSpace: "nowrap", 
+                    overflow: "hidden",
+                    marginRight: "0.8rem",
+                  }}
+                >
                   {subSection.assignmentTitle ?? "과제 없음"}
                 </span>
-                <span style={{ color: "var(--main-color)" }}>
+                <span
+                  style={{
+                    color: "var(--main-color)",
+                    marginTop: "0.3rem", 
+                    whiteSpace: "nowrap",
+                    flexShrink: 0,
+                  }}
+                >
                   {formatDate(subSection?.startDate)} ~{" "}
                   {formatDate(subSection?.endDate)}
                 </span>
