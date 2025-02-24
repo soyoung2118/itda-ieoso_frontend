@@ -144,6 +144,7 @@ const AssignmentSubmitBox = ({
                         placeholder="내용을 입력하세요"
                         value={content || ''}
                         onChange={(e) => setContent(e.target.value)}
+                        wrap:hard
                     />
                 </EditorContainer>
             </Box>
@@ -226,7 +227,6 @@ const ImageItemContainer = styled.div`
     overflow-x: auto;
     gap: 10px;
     margin: 10px;
-    padding-bottom: 5px;
     background-color: #F6F7F9;
     border-radius: 8px;
     height: 40px;

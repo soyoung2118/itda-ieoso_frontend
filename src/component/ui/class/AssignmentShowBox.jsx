@@ -127,12 +127,16 @@ const Wrapper = styled.div`
 
 const EditorContainer = styled.div`
     border-radius: 8px;
-    overflow: hidden;
+    overflow: auto;
     margin-top: 10px;
     height: 18vh;
     margin: 10px;
     background-color: #F6F7F9;
     padding: 10px;
+    white-space: pre;
+    &::-webkit-scrollbar {
+        display: none;
+    }
 `;
 
 const ImageItemContainer = styled.div`
@@ -142,7 +146,6 @@ const ImageItemContainer = styled.div`
     overflow-x: auto;
     gap: 10px;
     margin: 10px;
-    padding-bottom: 5px;
     background-color: #F6F7F9;
     border-radius: 8px;
     height: 40px;
