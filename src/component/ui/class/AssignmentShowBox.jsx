@@ -10,6 +10,7 @@ const AssignmentShowBox = ({content, files, setCanEdit, submissionId, setIsDelet
 
     useEffect(() => {
         setCanEdit(false);
+        console.log(files);
     }, [assignmentId]);
 
     const handleDelete = async () => {
@@ -87,7 +88,7 @@ const AssignmentShowBox = ({content, files, setCanEdit, submissionId, setIsDelet
                     {content}
                 </EditorContainer>
             </Box>
-            <Box>
+            <Box style={{marginTop: '20px'}}>
                 <FormTitle>파일</FormTitle>
                     {files && files.map((file) => (
                         <ImageItemContainer>
@@ -95,7 +96,8 @@ const AssignmentShowBox = ({content, files, setCanEdit, submissionId, setIsDelet
                             key={file.fileUrl} 
                             title={file.fileName}
                         >
-                            <ImageText title={file.fileName} onClick={(e) => OnClickImage(e, file.id)}>{file.name}</ImageText>
+                            <ImageTitle title={file.fileName} onClick={(e) => OnClickImage(e, file.id)}>{file.name}</ImageTitle>
+                            <ImageDate>{file.size}</ImageDate>
                         </ImageItem>
                         </ImageItemContainer>
                     ))}
@@ -127,6 +129,7 @@ const Wrapper = styled.div`
 
 const EditorContainer = styled.div`
     border-radius: 8px;
+    font-size: 14px;
     overflow: auto;
     margin-top: 10px;
     height: 18vh;
@@ -141,6 +144,7 @@ const EditorContainer = styled.div`
 
 const ImageItemContainer = styled.div`
     display: flex;
+    justify-content: center;
     flex-direction: column;
     flex-wrap: nowrap;
     overflow-x: auto;
@@ -158,14 +162,22 @@ const ImageItem = styled.div`
     padding: 5px;
     justify-content: space-between;
     border-radius: 8px;
+    white-space: nowrap;
     text-overflow: ellipsis;
 `;
 
-const ImageText = styled.div`
+const ImageTitle = styled.div`
+    color: #FF4747;
+    font-size: 14px;
+    text-decoration: underline;
     margin-right: 3px;
-    white-space: nowrap;
-    text-overflow: ellipsis;
     cursor: pointer;
+`;
+
+const ImageDate = styled.div`
+    color: #C3C3C3;
+    font-size: 12px;
+    margin-right: 5px;
 `;
 
 const SubmitButton = styled.button`

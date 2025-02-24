@@ -104,6 +104,14 @@ const ClassAssignmentSubmit = () => {
         }
     }, [currentLectureInfo, assignmentId]);
 
+    useEffect(() => {
+        if (submissionStatus === 'NOT_SUBMITTED') {
+            setCanEdit(true);
+        } else {
+            setCanEdit(false);
+        }
+    }, [assignmentId, submissionStatus]);
+
     return (
         <Wrapper>
         <TopBar />
@@ -149,6 +157,7 @@ const ClassAssignmentSubmit = () => {
                         content={content}
                         files={files}
                         submissionId={submissionId}
+                        submissionStatus={submissionStatus}
                         setIsDeleteModalOpen={setIsDeleteModalOpen}
                     />
                 )}

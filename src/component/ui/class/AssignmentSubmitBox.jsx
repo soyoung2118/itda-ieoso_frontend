@@ -148,7 +148,7 @@ const AssignmentSubmitBox = ({
                     />
                 </EditorContainer>
             </Box>
-            <Box>
+            <Box style={{marginTop: '20px'}}>
                 <FormTitle>파일 업로드하기</FormTitle>
                 <DragZone setFiles={setFiles}/>
 
