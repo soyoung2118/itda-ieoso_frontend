@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { UsersProvider } from "./component/contexts/usersContext.jsx";
 
-import MainPage from "./component/page/MainPage.jsx";
+import LandingPage from "./component/page/LandingPage.jsx";
 import LogIn from "./component/page/users/LogIn.jsx";
 import SignUp from "./component/page/users/SignUp.jsx";
 import ClassList from "./component/page/ClassList.jsx";
@@ -28,7 +28,7 @@ function App() {
       <BrowserRouter>
         <UsersProvider>
           <Routes>
-            <Route path="/" element={<MainPage />} />
+            <Route path="/" element={<LandingPage />} />
 
             {/* 로그인 페이지 */}
             <Route path="/login" element={<LogIn />} />
