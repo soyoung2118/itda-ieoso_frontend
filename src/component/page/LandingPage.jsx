@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 import TopBar from "../ui/TopBar";
-import logoImage from "../img/logo/itda_logo_symbol.svg";
-import logoName from "../img/logo/itda_logo_name.svg";
+import backgroundImage from "../img/landing/landing1.svg";
+import landingTable from "../img/landing/landing2.svg";
+import itdaLogoWhite from "../img/landing/itda_logo_white.svg";
 import studentIcon from "../img/landing/student_icon.svg";
 import pencilIcon from "../img/landing/pencil_icon.svg";
 import levelIcon from "../img/landing/level_icon.svg";
@@ -13,50 +14,74 @@ import googlePlay from "../img/landing/googleplay.svg";
 import appStore from "../img/landing/appstore.svg";
 
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import TermsModal from './users/TermsModal';
+import { UsersContext } from '../contexts/usersContext';
 
 const MainContainer = styled.div`
     text-align: center;
+    background-color: #ffffff;
 `;
 
 //itda 설명 컨테이너
 const ExplainContainer = styled.header`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
+    background-image: url(${backgroundImage});
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: top;
+    padding: 10vh 0 5vh;
+    color: #333;
     background-color: #ffffff;
-    padding: 15vh 0 10vh 0;
+    h2 {
+        font-size: 48px;
+        font-weight: bold;
+    }
 `;
 
-const Logo = styled.img`
-    width: 125px;
+const TableImage = styled.img`
+    width: 100%;
+    margin-top: -10vh;
+    position: relative;
 `;
 
 const Highlight = styled.span`
-    color: red;
+    color: var(--main-color);
 `;
 
 const StartButton = styled.button`
-    text-align: center;
-    margin-top: 20px;
-    padding: 10px 30px;
-    color: #000000;
-    font-size: 16px;
-    border: 1px solid rgb(0, 0, 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 40px;
+    padding: 15px 40px;
+    background-color: var(--main-color);
+    color: #ffffff;
+    font-size: 20px;
+    border: none;
     border-radius: 50px;
-    background-color: transparent;
     cursor: pointer;
+
+    img {
+        margin-right: 10px;
+    }
 `;
 
 const Features = styled.section`
     display: flex;
     justify-content: space-around;
-    margin-top: 40px;
-    gap: 20px;
-    padding: 0 10vw;
+    align-items: center;
+    text-align: center;
+    gap: 30px;
+    background-color: #F6F7F9;
+    padding: 5vh 10vw;
     @media (max-width: 768px) {
         flex-direction: column;
         align-items: center;
-        padding: 0 15vw;
+        padding: 5vh 15vw;
     }
 `;
 
@@ -68,7 +93,7 @@ const FeatureCard = styled.div`
     background-color: #FFFFFF;
     padding: 15px 20px;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    //box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: left;
     position: relative;
     margin-bottom: 25px;
@@ -101,12 +126,16 @@ const FeatureImage = styled.img`
     object-fit: contain;
 `;
 
-const ExplainBottomContainer = styled.div`
+const BaseContainer = styled.div`
     justify-content: center;
     align-items: center;
-    margin-top: 70px;
     padding: 3vh 2vw;
     background-color: #FFFFFF;
+`;
+
+const ExplainBottomImage = styled.img`
+    width: 100%;
+    margin: 20px 0px;
 `;
 
 const ActionButtonContainer = styled.div`
@@ -132,6 +161,11 @@ const ActionButton = styled.div`
     cursor: pointer;
     box-sizing: border-box;
     position: relative;
+
+    @media (max-width: 768px) {
+        width: 100%;
+        white-space: pre-wrap;
+    }
 `;
 
 const ButtonText = styled.span`
@@ -153,9 +187,8 @@ const ArrowIcon = styled.img`
 const AppDownloadContainer = styled.div`
     display: flex;
     align-items: center;
-    margin-left: 20px;
     gap: 20px;
-    margin-top: 20px;
+    margin: 40px 0px 20px 30px;
 `;
 
 const AppDownloadLinks = styled.div`
@@ -172,6 +205,8 @@ const AppDownloadLink = styled.a`
     background-color: #F6F7F9;
     padding: 10px 20px;
     border-radius: 50px;
+    pointer-events: none; // 일단 링크 연겳 방지
+    cursor: default;
 `;
 
 const AppLogo = styled.img`
@@ -183,6 +218,10 @@ const AppDescription = styled.div`
     font-size: 1rem;
     font-weight: 700;
     color: #333;
+    
+    @media (max-width: 768px) {
+        white-space: pre-wrap;
+    }
 `;
 
 const Footer = styled.footer`
@@ -190,11 +229,22 @@ const Footer = styled.footer`
     justify-content: space-between;
     align-items: flex-start;
     padding: 0 30px 80px ;
+    background-color: #FFFFFF;
 `;
 
 const FooterLinks = styled.div`
     display: flex;
     align-items: center;
+`;
+
+const FooterLink = styled.a`
+    margin: 0 10px;
+    text-decoration: none;
+    color: black;
+    font-size: 0.9rem;
+    font-weight: 500;
+    pointer-events: none; // 일단 링크 연겳 방지
+    cursor: default;
 `;
 
 const FooterSection = styled.div`
@@ -209,12 +259,13 @@ const FooterInfoContainer = styled.div`
     gap: 10px;
 `;
 
-const FooterLink = styled.a`
+const FooterTerms = styled.a`
     margin: 0 10px;
     text-decoration: none;
     color: black;
     font-size: 0.9rem;
     font-weight: 500;
+    cursor: pointer;
 `;
 
 const FooterInfo = styled.p`
@@ -223,17 +274,25 @@ const FooterInfo = styled.p`
     color: #AAAAAA;
 `;
 
-function renderActionButtons(navigate) {
+function renderActionButtons(navigate, isLoggedIn) {
     const buttons = [
         { text: "강의실 바로가기", src: arrowIcon, path: "/class/list" },
         { text: "내 대시보드 바로가기", src: arrowIcon, path: "/dashboard" },
         { text: "내 강의실 생성하기", src: arrowIcon, path: "/class/create" },
     ];
 
+    const handleClick = (path) => {
+        if (isLoggedIn) {
+            navigate(path);
+        } else {
+            alert('로그인 후 사용해주세요.');
+        }
+    };
+
     return (
         <ActionButtonContainer>
             {buttons.map((button, index) => (
-                <ActionButton key={index} onClick={() => navigate(button.path)}>
+                <ActionButton key={index} onClick={() => handleClick(button.path)}>
                     <ButtonText>{button.text}</ButtonText>
                     <ArrowIcon src={button.src} alt="arrow icon" />
                 </ActionButton>
@@ -246,6 +305,7 @@ export default function LandingPage() {
     const navigate = useNavigate();
     const [modalOpen, setModalOpen] = useState(false);
     const [modalContent, setModalContent] = useState({ title: '', content: '' });
+    const { isUser: isLoggedIn } = useContext(UsersContext);
 
     const handleOpenModal = (type) => {
         let content;
@@ -296,16 +356,19 @@ export default function LandingPage() {
         <TopBar />
         <MainContainer>
           <ExplainContainer>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Logo src={logoImage} alt="itda logo" style={{ width: "50px", marginTop: "-60px" }} />
-              <Logo src={logoName} alt="itda logo" style={{ width: "125px", height: "auto" }} />
-            </div>
-              <h2 style={{ fontSize: "24px", fontWeight: "bold", marginTop: "20px" }}>
-                계속하고 싶은 학습의 비밀
-                <br />
-                지금 <Highlight>‘이어서’</Highlight> 하세요!
-              </h2>
-              <StartButton onClick={() => navigate('/login')}>시작하기</StartButton>
+                <div style={{ fontSize: "48px", fontWeight: 500 }}>쉬운 챌린지 운영,</div>
+                <h2 style={{ fontSize: "48px", fontWeight: "bold", margin: "10px" }}>
+                    지금 <Highlight>‘itda’</Highlight>에서 시작하세요!
+                </h2>
+                <div style={{ fontSize: "16px", marginTop: "10px"}}>
+                    <strong>3분만에</strong> 강의실 개설,
+                        <strong>한 눈에 확인</strong> 하는 과제 제출 현황
+                </div>
+                <StartButton onClick={() => navigate('/login')}>
+                    <img src={itdaLogoWhite} alt="itda logo" style={{ width: "24px" }} />
+                        무료로 시작하기
+                    </StartButton>
+                <TableImage src={landingTable} alt="itda logo" style={{ width: "75%", margin: "60px 0px 40px" }} />
           </ExplainContainer>
           <Features>
             {Object.values(explain).map((feature, index) => (
@@ -316,10 +379,12 @@ export default function LandingPage() {
               </FeatureCard>
             ))}
           </Features>
-          <ExplainBottomContainer>
-          <img src={explain1} alt="itda logo" style={{ width: "100%", margin: "20px 0px" }} />
-          <img src={explain2} alt="itda logo" style={{ width: "100%" }} />
-            {renderActionButtons(navigate)}
+          <BaseContainer>
+            <ExplainBottomImage src={explain1} alt="itda logo" style={{ width: "100%", margin: "20px 0px" }} />
+          </BaseContainer>
+            <ExplainBottomImage src={explain2} alt="itda logo" style={{ width: "100%" }} />
+        <BaseContainer>
+            {renderActionButtons(navigate, isLoggedIn)}
             <AppDownloadContainer>
             <AppLogo src={itdalogoRed} alt="itda logo" />
             <div>
@@ -337,7 +402,8 @@ export default function LandingPage() {
                 </AppDownloadLink>
               </AppDownloadLinks>
             </div>
-            </AppDownloadContainer>
+                    </AppDownloadContainer>
+            </BaseContainer>
           <hr style={{ width: "100%", margin: "40px 0px", border: "1px solid #CDCDC" }} />
           <Footer>
             <FooterLinks>
@@ -346,8 +412,8 @@ export default function LandingPage() {
             </FooterLinks>
             <FooterSection>
               <div>
-              <FooterLink href="#" onClick={() => handleOpenModal('service')}>이용약관</FooterLink>
-              <FooterLink href="#" onClick={() => handleOpenModal('privacy')}>개인정보처리방침</FooterLink>
+              <FooterTerms onClick={() => handleOpenModal('service')}>이용약관</FooterTerms>
+              <FooterTerms onClick={() => handleOpenModal('privacy')}>개인정보처리방침</FooterTerms>
               </div>
               <FooterInfoContainer>
                 <FooterInfo>CEO: 김효정</FooterInfo>
@@ -355,7 +421,6 @@ export default function LandingPage() {
               </FooterInfoContainer>
             </FooterSection>
             </Footer>
-             </ExplainBottomContainer>
         </MainContainer>
         {modalOpen && (
           <TermsModal 

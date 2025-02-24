@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import Modal from "react-modal";
 import styled from "styled-components";
-import { useEffect } from 'react';
 
 const ModalContainer = styled.div`
   background-color: white;
@@ -78,15 +77,6 @@ const StyledList = styled.ul`
 `;
 
 const TermsModal = ({ title, content, onClose }) => {
-  useEffect(() => {
-    // 모달이 열릴 때 스크롤 방지
-    document.body.style.overflow = 'hidden';
-    return () => {
-      // 모달이 닫힐 때 스크롤 복원
-      document.body.style.overflow = 'auto';
-    };
-  }, []);
-
   return (
     <Modal
       isOpen={true}
@@ -95,7 +85,7 @@ const TermsModal = ({ title, content, onClose }) => {
         overlay: {
           backgroundColor: 'rgba(0, 0, 0, 0.5)',
           display: 'flex',
-          alignItems: 'flex-end',
+          alignItems: 'center',
           justifyContent: 'center',
         },
         content: {
@@ -104,7 +94,6 @@ const TermsModal = ({ title, content, onClose }) => {
           border: 'none',
           overflow: 'hidden',
           borderRadius: '10px',
-          marginBottom: '0',
         },
       }}
     >
