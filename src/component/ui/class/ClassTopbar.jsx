@@ -36,11 +36,46 @@ const VerticalLine = styled.div`
   background-color: #cdcdcd;
 `;
 
-const Dropdown = styled.div`
-  position: relative;
-  display: inline-block;
+const ClassTitleContainer = styled.div`
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 0.5rem;
+
+
+
+  .course-title{
+    font-size: 1.3rem;
+    font-weight: bold;
+  }
+
+  @media (max-width: 768px) {
+    .course-title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 7ch;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .course-title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 3ch;
+    }
+  }
+`;
+
+const DropdownContainer = styled.div`
+  position: fixed;
+  top: 175px;
+  left: 120px;
   font-weight: bold;
-  min-width: 7rem;
+  min-width: 5rem;
+  width: 10rem;
+  z-index: 1000;
 `;
 
 const DropdownButton = styled.div`
@@ -101,27 +136,9 @@ const MenuItem = styled.div`
 
 const TabLinkContainer = styled.div`
   display: flex;
-  gap: 0.5rem;
-  overflow-x: auto;
-  overflow-y: hidden;
+  justify-content: flex-end;
+  gap: clamp(1rem, 2vw, 2rem);
   white-space: nowrap;
-  padding-bottom: 0.5rem;
-
-  &::-webkit-scrollbar {
-    height: 2px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: var(--natural-color);
-    border-radius: 10px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  scrollbar-width: thin;
-  scrollbar-color: var(--natural-color) transparent;
 `;
 
 const TabLink = styled(NavLink)`
@@ -204,13 +221,19 @@ const ClassTopbar = ({ onCourseChange, isCreator }) => {
           home
         </span>
         <VerticalLine />
-        <Dropdown>
-          <DropdownButton onClick={handleDropdownToggle}>
+        <ClassTitleContainer onClick={handleDropdownToggle}>
+          <span className="course-title">
             {classOptions.find(
               (course) => String(course.courseId) === String(courseId)
             )?.courseTitle || "강의실 선택"}
-            <span style={{ marginLeft: "1rem" }}>▼</span>
+          </span>
+          <DropdownButton>
+            <span>▼</span>
           </DropdownButton>
+        </ClassTitleContainer>
+      </Container>
+      {isDropdownOpen && (
+        <DropdownContainer>
           <DropdownMenu isOpen={isDropdownOpen}>
             <MenuTitle>강의실 목록</MenuTitle>
             {classOptions.map((course) => (
@@ -227,8 +250,8 @@ const ClassTopbar = ({ onCourseChange, isCreator }) => {
               </MenuItem>
             ))}
           </DropdownMenu>
-        </Dropdown>
-      </Container>
+        </DropdownContainer>
+      )}
       <TabLinkContainer
         ref={tabRef}
         className={isScrollable ? "scrolling" : ""}
