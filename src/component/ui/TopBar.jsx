@@ -60,7 +60,7 @@ export default function TopBar() {
 const Wrapper = styled.div`
   display: flex;
   min-height: 70px;
-  height: 8vh;
+  height: 7vh;
   align-items: center;
   justify-content: space-between;
   padding: 1px 10px 1px 25px;
