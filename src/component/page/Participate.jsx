@@ -51,8 +51,9 @@ const Container = styled.div`
     align-items: center;
     background-color: #FFFFFF;
     width: 100%;
-    height: calc(92vh - 16px);
-    justify-content: center;
+    height: 100vh;
+    justify-content: flex-start;
+    padding-top: 15vh;
 `;
 
 export const Logo = styled.div`
