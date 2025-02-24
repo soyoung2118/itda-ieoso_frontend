@@ -21,8 +21,8 @@ const StyledInput = styled.input`
   border: 2px solid var(--neutralgrey-color);
   border-radius: 10px;
   padding: 12px 15px;
-  font-size: 1.3rem;
-  margin-bottom: 2rem;
+  font-size: 19px;
+  margin-bottom: 2.8vh;
   margin-top: 0.7rem;
   font-family: Pretendard, sans-serif;
 `;
@@ -32,7 +32,7 @@ const StyledTextarea = styled.textarea`
   border: 2px solid var(--neutralgrey-color);
   border-radius: 10px;
   padding: 12px 15px;
-  font-size: 1.25rem;
+  font-size: 19px;
   margin-bottom: 1rem;
   margin-top: 0.7rem;
   font-family: Pretendard, sans-serif;
@@ -62,7 +62,7 @@ const StyledButton = styled.button`
   border: none;
   border-radius: 8px;
   padding: 10px 30px;
-  font-size: 1.25rem;
+  font-size: 18px;
   font-weight: bold;
   cursor: pointer;
   display: block;
@@ -178,7 +178,7 @@ const NoticeCreateForm = () => {
               <form onSubmit={handleSubmit}>
                 <label
                   htmlFor="title"
-                  style={{ fontSize: "1.35em", fontWeight: "600" }}
+                  style={{ fontSize: "21px", fontWeight: "600" }}
                 >
                   제목
                 </label>
@@ -191,7 +191,7 @@ const NoticeCreateForm = () => {
                 />
                 <label
                   htmlFor="content"
-                  style={{ fontSize: "1.35rem", fontWeight: "600" }}
+                  style={{ fontSize: "21px", fontWeight: "600" }}
                 >
                   내용
                 </label>

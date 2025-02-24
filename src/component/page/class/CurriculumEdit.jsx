@@ -406,7 +406,7 @@ const CurriculumEdit = () => {
                   letterSpacing: "-1px",
                 }}
               >
-                {activeLecture?.lectureDescription|| "설명 없음"}
+                {activeLecture?.lectureDescription || "설명 없음"}
               </h1>
             )}
           </Section>
@@ -449,6 +449,7 @@ const CurriculumEdit = () => {
                             />
                           ) : (
                             <CurriculumSection
+                              lecture={activeLecture}
                               subSection={subSection}
                               index={index}
                               editTarget={editTarget}

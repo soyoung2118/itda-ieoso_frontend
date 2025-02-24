@@ -12,7 +12,7 @@ import { useParams, useOutletContext, useNavigate } from "react-router-dom";
 import { UsersContext } from "../../contexts/usersContext";
 
 const SidebarContainer = styled.aside`
-  width: 28vh;
+  width: clamp(8rem, 15.5vw, 25rem);
   height: 90vh;
   background-color: white;
   border-radius: 12px;

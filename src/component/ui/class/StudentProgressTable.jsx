@@ -3,6 +3,7 @@ import styled from "styled-components";
 import Profile from "../../img/class/profile.svg";
 import Done from "../../img/class/check/progress_done.svg";
 import Undone from "../../img/class/check/progress_undone.svg";
+import LateSubmission from "../../img/class/check/late_submission.svg";
 
 const ScrollableTableContainer = styled.div`
   width: 100%;
@@ -199,14 +200,32 @@ const StudentProgressTable = ({ assignments }) => {
                     {student.name}
                   </ProfileContainer>
                 </td>
-                {student.submissions.map((submitted, idx) => (
+                {/* {student.submissions.map((submitted, idx) => (
                   <td key={idx}>
                     <CheckMarkIcon
                       src={submitted ? Done : Undone}
                       alt={submitted ? "제출 완료" : "미제출"}
                     />
                   </td>
-                ))}
+                ))} */}
+                {student.submissions.map((status, idx) => {
+                  let iconSrc;
+                  if (status === "SUBMITTED") {
+                    iconSrc = Done;
+                  } else if (status === "NOT_SUBMITTED") {
+                    iconSrc = Undone;
+                  } else if (status === "LATE") {
+                    iconSrc = LateSubmission;
+                  } else {
+                    iconSrc = Undone; // 기본값 처리
+                  }
+                  return (
+                    <td key={idx}>
+                      <CheckMarkIcon src={iconSrc} alt={status} />
+                    </td>
+                  );
+                })}
+
               </tr>
             ))}
           </tbody>
