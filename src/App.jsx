@@ -16,7 +16,7 @@ import ClassNotice from "./component/page/class/Notice.jsx";
 import NoticeCreate from "./component/page/class/NoticeCreate.jsx";
 import ClassCurriculum from "./component/page/class/Curriculum.jsx";
 import ClassCurriculumEdit from "./component/page/class/CurriculumEdit.jsx";
-import Dashboard from "./component/page/Dashboard.jsx";
+import Dashboard from "./component/page/dashboard/Dashboard.jsx";
 
 import ClassPlaying from "./component/page/class/Playing.jsx";
 import ClassAssignmentSubmit from "./component/page/class/AssignmentSubmit.jsx";
