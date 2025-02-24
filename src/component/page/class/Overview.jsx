@@ -207,6 +207,7 @@ const ClassOverview = () => {
 
       if (response.status === 200) {
         console.log("수정 사항이 저장되었습니다.");
+        window.location.reload(); //일단 이렇게 해둠 사용자 경험 때문에 수정 필요
       } else {
         console.log("수정 사항 저장에 실패했습니다.");
       }
