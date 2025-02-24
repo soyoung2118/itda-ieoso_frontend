@@ -15,7 +15,7 @@ import Assignment from "../../img/icon/docs.svg";
 import Material from "../../img/icon/pdf.svg";
 import PlayIcon from "../../img/class/play_icon.svg";
 import SelectedSection from "../../img/class/check/sel_sec.svg";
-import UnselectedSection from "../../img/class/check/sel_sec.svg";
+import UnselectedSection from "../../img/class/check/unsel_sec.svg";
 import DoneSection from "../../img/class/check/done_sec.svg";
 import EditButton from "../../ui/class/EditButton";
 import Close from "@mui/icons-material/Close";
@@ -123,6 +123,7 @@ const Curriculum = () => {
 
   const context = useOutletContext();
   const isCreator = context?.isCreator || false;
+  const [allCompleted, setAllCompleted] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -218,6 +219,36 @@ const Curriculum = () => {
     }
   }, [historyData]);
 
+  // 과제 제출 및 자료 다운 여부
+  useEffect(() => {
+    if (!activeLecture || !historyData) return;
+
+    // 현재 강의의 materials와 assignments 가져오기
+    const lectureMaterials = activeLecture?.materials || [];
+    const lectureAssignments = activeLecture?.assignments || [];
+
+    // 모든 materials가 true인지 확인
+    const allMaterialsCompleted = lectureMaterials.every((material) =>
+      historyData.materials.some(
+        (history) =>
+          history.materialId === material.materialId &&
+          history.materialHistoryStatus
+      )
+    );
+
+    // 모든 assignments가 SUBMITTED인지 확인
+    const allAssignmentsSubmitted = lectureAssignments.every((assignment) =>
+      historyData.submissions.some(
+        (history) =>
+          history.assignmentId === assignment.assignmentId &&
+          history.submissionStatus === "SUBMITTED"
+      )
+    );
+
+    // 모든 과제와 자료가 완료되었는지 여부 업데이트
+    setAllCompleted(allMaterialsCompleted && allAssignmentsSubmitted);
+  }, [historyData, activeLecture]);
+
   const handleSectionClick = (sub) => {
     if (sub.contentType === "video") {
       navigate(`/playing/${courseId}/${activeLectureId}/${sub.videoId}`);
@@ -311,14 +342,16 @@ const Curriculum = () => {
               margin: "0 1rem",
             }}
           >
-            {formatLecturePeriod(activeLecture?.startDate)} ~{" "}
-            {formatLecturePeriod(activeLecture?.endDate)}
+            [{formatLecturePeriod(activeLecture?.startDate)} ~{" "}
+            {formatLecturePeriod(activeLecture?.endDate)}]
           </p>
         </div>
 
         <Section
           style={{
-            backgroundColor: "var(--pink-color)",
+            backgroundColor: allCompleted
+              ? "var(--pink-color)"
+              : "var(--grey-color)",
             padding: "0.15rem 1.5rem",
           }}
         >
@@ -327,7 +360,7 @@ const Curriculum = () => {
           </h1>
           {!isCreator && (
             <SectionIcon
-              src={SelectedSection}
+              src={allCompleted ? SelectedSection : UnselectedSection}
               style={{
                 marginLeft: "auto",
                 marginRight: "1.35rem",
