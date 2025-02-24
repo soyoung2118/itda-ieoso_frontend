@@ -45,7 +45,7 @@ const ClassStudents = () => {
         if (response.data.success) {
           const assignments = response.data.data;
 
-          // 🔹 학생 목록 추출 (중복 제거)
+          // 학생 목록 추출 (중복 제거)
           const studentMap = new Map();
           assignments.forEach((assignment) => {
             assignment.studentResults.forEach((result) => {
@@ -59,7 +59,7 @@ const ClassStudents = () => {
             [...studentMap].map(([userId, name]) => ({ userId, name }))
           );
 
-          // 🔹 특정 studentId의 과제 제출 내역 필터링
+          // 특정 studentId의 과제 제출 내역 필터링
           const studentAssignments = assignments.flatMap((assignment) =>
             assignment.studentResults
               .filter((result) => result.userId.toString() === studentId)
@@ -91,6 +91,43 @@ const ClassStudents = () => {
 
     fetchAssignments();
   }, [courseId, studentId]);
+
+  const handleDownload = async (file) => {
+    try {
+      const response = await api.get("/files/download", {
+        params: { fileUrl: file.fileUrl },
+      });
+
+      const presignedUrl = response.data;
+      const fileResponse = await fetch(presignedUrl);
+      const arrayBuffer = await fileResponse.arrayBuffer();
+
+      const fileExtension = file.fileName.split(".").pop().toLowerCase();
+      let mimeType = "application/octet-stream";
+
+      if (fileExtension === "pdf") {
+        mimeType = "application/pdf";
+      } else if (fileExtension === "txt") {
+        mimeType = "text/plain";
+      } else if (["jpg", "jpeg", "png", "gif"].includes(fileExtension)) {
+        mimeType = `image/${fileExtension}`;
+      } else if (fileExtension === "zip") {
+        mimeType = "application/zip";
+      }
+
+      const blob = new Blob([arrayBuffer], { type: mimeType });
+
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = file.fileName;
+      a.click();
+
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("파일 다운로드 중 오류 발생:", error);
+    }
+  };
 
   return (
     <main style={{ flex: 1, borderRadius: "8px" }}>
@@ -124,9 +161,9 @@ const ClassStudents = () => {
           </p>
           {/* 제출 현황 보기 버튼 */}
           <button
-            onClick={() => navigate("/class/${courseId}/admin/students")}
+            onClick={() => navigate(`/class/${courseId}/admin/students`)}
             style={{
-              padding: "1.5vh 3.3h",
+              padding: "1.5vh 3vh",
               backgroundColor: "var(--main-color)",
               color: "white",
               fontSize: "15px",
@@ -141,11 +178,11 @@ const ClassStudents = () => {
           </button>
         </div>
 
-        <div style={{ display: "flex", margin: "1vh 0vh" }}>
+        <div style={{ display: "flex", margin: "2vh 0vh" }}>
           {/*  Sidebar (학생 목록) */}
           <aside
             style={{
-              width: "23vh",
+              width: "13%",
               backgroundColor: "white",
               padding: "2.5vh 1.8vh",
               overflowY: "auto",
@@ -162,7 +199,7 @@ const ClassStudents = () => {
                 }
                 style={{
                   padding: "1.15vh 2.6vh",
-                  fontSize: "17px",
+                  fontSize: "16px",
                   marginBottom: "5px",
                   cursor: "pointer",
                   borderRadius: "10px",
@@ -178,7 +215,7 @@ const ClassStudents = () => {
             ))}
           </aside>
 
-          <div style={{ flex: 1, padding: "0vh 6vh", marginBottom: "5vh" }}>
+          <div style={{ flex: 1, paddingLeft: "6vh", marginBottom: "5vh" }}>
             {studentData ? (
               <div>
                 {studentData.submissions.map((submission, idx) => (
@@ -193,7 +230,7 @@ const ClassStudents = () => {
                       marginBottom: "3vh",
                     }}
                   >
-                    {/* 🔹 과제 제목 + 제출 날짜 + 파일 (한 줄 배치) */}
+                    {/* 과제 제목 + 제출 날짜 + 파일 (한 줄 배치) */}
                     <div
                       style={{
                         display: "flex",
@@ -227,23 +264,24 @@ const ClassStudents = () => {
                       </div>
 
                       {/* 제출 파일 */}
-                      <div style={{ display: "flex", gap: "10px" }}>
+                      <div style={{ display: "flex", gap: "2vh" }}>
                         {submission.files.length > 0 ? (
                           submission.files.map((file, fileIdx) => (
                             <a
                               key={fileIdx}
-                              href={file.fileUrl}
-                              download
+                              onClick={() => handleDownload(file)}
                               style={{
                                 color: "var(--main-color)",
                                 textDecoration: "underline",
                                 fontSize: "16px",
+                                cursor: "pointer",
                               }}
                             >
                               {file.fileName}
                             </a>
                           ))
-                        ) : (
+                        ) : submission.textContent &&
+                          submission.textContent !== "null" ? null : (
                           <p
                             style={{
                               color: "var(--main-color)",
@@ -261,8 +299,8 @@ const ClassStudents = () => {
                       submission.textContent !== "null" && (
                         <div
                           style={{
-                            marginTop: "10px",
-                            padding: "15px",
+                            marginTop: "1.5vh",
+                            padding: "2.5vh 3.5vh",
                             backgroundColor: "#F6F7F9",
                             borderRadius: "8px",
                             whiteSpace: "pre-wrap",

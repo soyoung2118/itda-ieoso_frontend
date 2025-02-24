@@ -15,7 +15,7 @@ import Assignment from "../../img/icon/docs.svg";
 import Material from "../../img/icon/pdf.svg";
 import PlayIcon from "../../img/class/play_icon.svg";
 import SelectedSection from "../../img/class/check/sel_sec.svg";
-import UnselectedSection from "../../img/class/check/sel_sec.svg";
+import UnselectedSection from "../../img/class/check/unsel_sec.svg";
 import DoneSection from "../../img/class/check/done_sec.svg";
 import EditButton from "../../ui/class/EditButton";
 import Close from "@mui/icons-material/Close";
@@ -123,7 +123,7 @@ const Curriculum = () => {
 
   const context = useOutletContext();
   const isCreator = context?.isCreator || false;
-
+  const [allCompleted, setAllCompleted] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -188,11 +188,11 @@ const Curriculum = () => {
 
   useEffect(() => {
     if (!activeLecture || !historyData) return;
-  
-    // ✅ 변경 사항이 없으면 업데이트하지 않도록 최적화
+
+    // 변경 사항이 없으면 업데이트하지 않도록 최적화
     const updatedSubSections = activeLecture.subSections.map((sub) => {
       let isChecked = false;
-  
+
       if (sub.contentType === "material") {
         const materialHistory = historyData.materials.find(
           (m) => m.materialId === sub.materialId
@@ -204,15 +204,51 @@ const Curriculum = () => {
         );
         isChecked = assignmentHistory?.submissionStatus === "SUBMITTED";
       }
-  
+
       return { ...sub, checked: isChecked };
     });
-  
-    if (JSON.stringify(activeLecture.subSections) !== JSON.stringify(updatedSubSections)) {
-      setActiveLecture((prev) => ({ ...prev, subSections: updatedSubSections }));
+
+    if (
+      JSON.stringify(activeLecture.subSections) !==
+      JSON.stringify(updatedSubSections)
+    ) {
+      setActiveLecture((prev) => ({
+        ...prev,
+        subSections: updatedSubSections,
+      }));
     }
   }, [historyData]);
-  
+
+  // 과제 제출 및 자료 다운 여부
+  useEffect(() => {
+    if (!activeLecture || !historyData) return;
+
+    // 현재 강의의 materials와 assignments 가져오기
+    const lectureMaterials = activeLecture?.materials || [];
+    const lectureAssignments = activeLecture?.assignments || [];
+
+    // 모든 materials가 true인지 확인
+    const allMaterialsCompleted = lectureMaterials.every((material) =>
+      historyData.materials.some(
+        (history) =>
+          history.materialId === material.materialId &&
+          history.materialHistoryStatus
+      )
+    );
+
+    // 모든 assignments가 SUBMITTED인지 확인
+    const allAssignmentsSubmitted = lectureAssignments.every((assignment) =>
+      historyData.submissions.some(
+        (history) =>
+          history.assignmentId === assignment.assignmentId &&
+          history.submissionStatus === "SUBMITTED"
+      )
+    );
+
+    // 모든 과제와 자료가 완료되었는지 여부 업데이트
+    setAllCompleted(allMaterialsCompleted && allAssignmentsSubmitted);
+  }, [historyData, activeLecture]);
+
   const handleSectionClick = (sub) => {
     if (sub.contentType === "video") {
       navigate(`/playing/${courseId}/${activeLectureId}/${sub.videoId}`);
@@ -306,14 +342,16 @@ const Curriculum = () => {
               margin: "0 1rem",
             }}
           >
-            {formatLecturePeriod(activeLecture?.startDate)} ~{" "}
-            {formatLecturePeriod(activeLecture?.endDate)}
+            [{formatLecturePeriod(activeLecture?.startDate)} ~{" "}
+            {formatLecturePeriod(activeLecture?.endDate)}]
           </p>
         </div>
 
         <Section
           style={{
-            backgroundColor: "var(--pink-color)",
+            backgroundColor: allCompleted
+              ? "var(--pink-color)"
+              : "var(--grey-color)",
             padding: "0.15rem 1.5rem",
           }}
         >
@@ -322,7 +360,7 @@ const Curriculum = () => {
           </h1>
           {!isCreator && (
             <SectionIcon
-              src={SelectedSection}
+              src={allCompleted ? SelectedSection : UnselectedSection}
               style={{
                 marginLeft: "auto",
                 marginRight: "1.35rem",
@@ -386,21 +424,29 @@ const Curriculum = () => {
                     <CurriculumTitle>{sub.title}</CurriculumTitle>
                     <p
                       style={{
-                        fontSize: "1.08rem",
+                        fontSize: "clamp(0.85rem, 1vw, 1.08rem)",
                         color: "#909090",
                         display: "flex",
                         alignItems: "center",
-                        gap: "0.5rem",
+                        gap: "1vh",
                       }}
                     >
-                      <span>{activeLecture.instructorName}</span>
+                      <div style={{ whiteSpace: "nowrap" }}>
+                        <span>{activeLecture.instructorName}</span>
+                        <span
+                          style={{
+                            borderLeft: "1.5px solid #909090",
+                            height: "1rem",
+                            marginLeft: "1vh",
+                          }}
+                        ></span>
+                      </div>
+
                       <span
                         style={{
-                          borderLeft: "1.5px solid #909090",
-                          height: "1rem",
+                          whiteSpace: "nowrap",
                         }}
-                      ></span>
-                      <span>
+                      >
                         {formatDate(sub?.startDate)} ~{" "}
                         {formatDate(sub?.endDate)}
                       </span>
@@ -495,22 +541,33 @@ const Curriculum = () => {
                       marginRight: "1rem",
                     }}
                   />
-                  <MaterialSection>
-                    <span style={{ marginRight: "0.8rem" }}>{sub.title}</span>
+                  <MaterialSection
+                    style={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      alignItems: "baseline",
+                    }}
+                  >
+                    <span
+                      style={{
+                        flexShrink: 1,
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        marginRight: "0.8rem",
+                      }}
+                    >
+                      {sub.title ?? "과제 없음"}
+                    </span>
                     <span
                       style={{
                         color: "var(--main-color)",
+                        marginTop: "0.3rem",
+                        whiteSpace: "nowrap",
+                        flexShrink: 0,
                       }}
                     >
                       {formatDate(sub?.startDate)} ~ {formatDate(sub?.endDate)}
                     </span>
-                    {!isCreator && (
-                      <img
-                        src={sub.checked ? DoneIcon : UndoneIcon}
-                        alt="submission status"
-                        style={{ marginLeft: "auto", width: "1.2rem" }}
-                      />
-                    )}
                   </MaterialSection>
                 </Section>
               )}
