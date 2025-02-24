@@ -1,7 +1,6 @@
 import React,{ useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { getLectureIcon } from './Dashboard';
 
 function WeeklyCalendar({ currentWeek, setSelectedDate, lectures }) {
   const [selectedDay, setSelectedDay] = useState(new Date().getDate());
@@ -55,7 +54,6 @@ function WeeklyCalendar({ currentWeek, setSelectedDate, lectures }) {
           <DateTodo>
             {(tasks[date.getDate()] || []).map((task, i) => (
               <React.Fragment key={i}>
-                {getLectureIcon(task.completed)}
                 <TodoCircle completed={task.completed} />
               </React.Fragment>
             ))}
@@ -87,34 +85,29 @@ const CalendarContainer = styled.div`
 
 const DateBox = styled.div`
   flex: 1;
-  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   border-radius: 5px;
   font-size: 16px;
+  gap: 10px;
   cursor: pointer;
-  padding-top: 10px;
-  gap: 6px;
 `;
 
 const DayLabel = styled.div`
   font-size: 14px;
-  margin-bottom: 5px;
 `;
 
 const DateNumber = styled.div`
   color: #000;
   background-color: ${({ isSelected }) => (isSelected ? '#FFD1D1' : 'transparent')};
   border-radius: 50%;
-  padding: 6px;
+  width: 35px;
+  height: 35px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
-  margin-bottom: 5px;
 `;
 
 const DateTodo = styled.div`
@@ -122,15 +115,14 @@ const DateTodo = styled.div`
   justify-content: center;
   align-items: center;
   gap: 5px;
-  margin-top: 5px;
+  height: 10px;
 `;
 
 const TodoCircle = styled.div`
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   background-color: ${({ completed }) => (completed ? '#FF4747' : '#DEDEDE')};
   border-radius: 50%;
-  margin: 2px;
 `;
 
 export default WeeklyCalendar;
