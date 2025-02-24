@@ -19,6 +19,21 @@ const SidebarContainer = styled.aside`
   padding: 1rem;
   margin-top: 2rem;
   letter-spacing: -0.5px;
+
+  @media (max-width: 1024px) {
+    width: 14vh;
+    font-size: 13px;
+  }
+
+  @media (max-width: 768px) {
+    width: 15vh;
+    padding: 0.3vh 1vh;
+  }
+
+  @media (max-width: 480px) {
+    width: 26vh;
+    padding: 1vh 2vh;
+  }
 `;
 
 const ListSection = styled.div`
@@ -40,6 +55,21 @@ const SectionHeader = styled.div`
   margin-bottom: 0rem;
   border-radius: 9px;
   cursor: pointer;
+
+  @media (max-width: 1024px) {
+    font-size: 15px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14.5px;
+    padding: 0vh 0.7vh;
+    height: 5vh;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 12.5px;
+    padding: 0.2vh 1.8vh;
+  }
 `;
 
 const ListItem = styled.li`
@@ -52,6 +82,18 @@ const ListItem = styled.li`
   font-size: 0.95rem;
   font-weight: semi-bold;
   position: relative;
+
+  @media (max-width: 1024px) {
+    font-size: 13px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 13px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 12.3px;
+  }
 `;
 
 const SubsectionContainer = styled.div`
@@ -84,10 +126,23 @@ const TruncatedText = styled.span`
 
 const SectionIcon = styled.img`
   margin-left: auto;
+  width: 2.4vh;
+  @media (max-width: 1024px) {
+    width: 19px;
+  }
+  @media (max-width: 480px) {
+    width: 15px;
+  }
 `;
 
 const Icon = styled.img`
-  width: 1.23rem;
+  width: 1.4rem;
+  @media (max-width: 1024px) {
+    width: 18px;
+  }
+  @media (max-width: 480px) {
+    width: 15.5px;
+  }
 `;
 
 const getIconByType = (type) => {
@@ -167,9 +222,6 @@ const CurriculumSidebar = ({
                       ? DoneSection
                       : SelectedSection
                   }
-                  style={{
-                    width: "1.5rem",
-                  }}
                 />
               )}
             </SectionHeader>
@@ -192,17 +244,14 @@ const CurriculumSidebar = ({
                         marginBottom: "10px",
                       }}
                     >
-                      <Icon
-                        src={getIconByType(subSection.contentType)}
-                        style={{ width: "1.4rem" }}
-                      />
+                      <Icon src={getIconByType(subSection.contentType)} />
                       <TruncatedText width="10rem">
                         {getSubSectionTitle(subSection)}
                       </TruncatedText>
                       {!edit && !isCreator && (
                         <img
                           src={Check}
-                          style={{ marginLeft: "auto", marginRight: "1.3rem" }}
+                          style={{ marginLeft: "auto", marginRight: "2.5vh" }}
                         />
                       )}
                     </ListItem>
