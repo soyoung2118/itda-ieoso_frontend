@@ -2,34 +2,57 @@ import { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import styled from "styled-components";
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
-import { UsersContext } from "../../contexts/usersContext";
 import TopBar from "../../ui/TopBar";
 import WeeklyCalendar from "./WeekCalendar";
 import Sidebar from "./Sidebar";
 import TaskList from "./TaskList";
+import { UsersContext } from "../../contexts/usersContext";
 import { getDashboard } from '../../api/dashboardApi';
 
 export default function DashBoard() {
   const { user } = useContext(UsersContext);
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [lectures, setLectures] = useState([]);
+  const [lectures, setLectures] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
       if (!user) return;
-      const weekDates = getWeekDates(new Date(currentWeek));
-      const allLectures = {};
+
+      const getStartOfWeek = (date) => {
+        const startOfWeek = new Date(date);
+        startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+        return startOfWeek;
+      };
+
+      const currentStartOfWeek = getStartOfWeek(currentWeek);
+      const allLectures = { ...lectures };
 
       try {
-        for (const date of weekDates) {
-          const formattedDate = date.toISOString().split('T')[0];
-          const data = await getDashboard(user.userId, formattedDate);
-          if (data.success) {
-            allLectures[formattedDate] = data.data;
-          }
-        }
+        // 현재 주의 데이터 우선적으로 가져오기
+        const weekDates = getWeekDates(currentStartOfWeek);
+        const fetchWeekData = async (dates) => {
+          await Promise.all(dates.map(async (date) => {
+            const formattedDate = date.toISOString().split('T')[0];
+            if (!allLectures[formattedDate]) {
+              const data = await getDashboard(user.userId, formattedDate);
+              if (data.success) {
+                allLectures[formattedDate] = data.data;
+              }
+            }
+          }));
+        };
+
+        await fetchWeekData(weekDates);
         setLectures(allLectures);
+
+        // 이전 주와 다음 주의 데이터 비동기적으로 가져오기
+        const prevStartOfWeek = getStartOfWeek(new Date(currentWeek.setDate(currentWeek.getDate() - 7)));
+        const nextStartOfWeek = getStartOfWeek(new Date(currentWeek.setDate(currentWeek.getDate() + 7)));
+
+        fetchWeekData(getWeekDates(prevStartOfWeek));
+        fetchWeekData(getWeekDates(nextStartOfWeek));
+
       } catch (error) {
         console.error("데이터 가져오기 실패:", error);
       }
@@ -38,7 +61,6 @@ export default function DashBoard() {
     fetchData();
   }, [user, currentWeek]);
 
-  // user 객체가 null인지 확인
   if (!user) {
     return <div>사용자 정보가 없습니다.</div>;
   }
@@ -61,8 +83,10 @@ export default function DashBoard() {
   };
 
   const weekDates = getWeekDates(new Date(currentWeek));
-
-  const selectedDateLectures = lectures[selectedDate.toISOString().split('T')[0]] || [];
+  const selectedDateLectures = weekDates.map(date => {
+    const formattedDate = date.toISOString().split('T')[0];
+    return lectures[formattedDate] || [];
+  }).flat();
 
   return (
     <>
