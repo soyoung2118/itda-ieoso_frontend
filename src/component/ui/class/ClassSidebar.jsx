@@ -36,9 +36,6 @@ const ClassSidebar = () => {
 
   const activeIndex = routes.findIndex((route) => location.pathname.startsWith(route));
   const activeItem = activeIndex !== -1 ? items[activeIndex] : null;
-  console.log("현재 경로:", location.pathname);
-  console.log("매칭된 activeIndex:", activeIndex);
-  console.log("매칭된 activeItem:", activeItem);
 
   return (
     <SidebarContainer>
