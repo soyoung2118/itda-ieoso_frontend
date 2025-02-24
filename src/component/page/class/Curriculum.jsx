@@ -260,18 +260,16 @@ const Curriculum = () => {
   };
 
   const handleMaterialClick = async (material) => {
-    const materialUrl = material.materialFile;
-
     try {
-      const response = await api.get("/files/download", {
+      const response = await api.get("/materials/download", {
         params: {
-          fileUrl: materialUrl,
+          fileUrl: material.materialFile,
+          materialId: material.materialId,
         },
       });
 
       const presignedUrl = response.data;
       const fileResponse = await fetch(presignedUrl);
-
       const arrayBuffer = await fileResponse.arrayBuffer();
 
       const fileExtension = material.originalFilename
@@ -291,11 +289,9 @@ const Curriculum = () => {
       }
 
       const blob = new Blob([arrayBuffer], { type: mimeType });
-
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-
       a.download = material.originalFilename;
       a.click();
 
@@ -360,7 +356,7 @@ const Curriculum = () => {
           </h1>
           {!isCreator && (
             <SectionIcon
-              src={allCompleted ? SelectedSection : UnselectedSection}
+              src={allCompleted ? DoneSection : UnselectedSection}
               style={{
                 marginLeft: "auto",
                 marginRight: "1.35rem",
@@ -568,6 +564,13 @@ const Curriculum = () => {
                     >
                       {formatDate(sub?.startDate)} ~ {formatDate(sub?.endDate)}
                     </span>
+                    {!isCreator && (
+                      <img
+                        src={sub.checked ? DoneIcon : UndoneIcon}
+                        alt="submission status"
+                        style={{ marginLeft: "auto", width: "1.2rem" }}
+                      />
+                    )}
                   </MaterialSection>
                 </Section>
               )}
