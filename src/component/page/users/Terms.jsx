@@ -194,12 +194,6 @@ const ModalHeader = styled.div`
   margin-bottom: 20px;
 `;
 
-// const Container = styled.div`
-//   flex-direction: column;
-//   height: 100%;
-//   padding: 60px 30px 30px 30px;
-// `;
-
 const TermsTitle = styled.h2`
   margin: 0;
 `;
@@ -218,17 +212,6 @@ const TermsContent = styled.div`
   line-height: 1.5;
   flex-grow: 1;
 `;
-
-// const ConfirmButton = styled.button`
-//   background-color: #FF4747;
-//   color: white;
-//   border: none;
-//   border-radius: 5px;
-//   padding: 20px 20px;
-//   cursor: pointer;
-//   width: 100%;
-//   margin-top: auto;
-// `;
 
 const TermsModal = ({ title, content, onClose }) => {
   return (
@@ -252,16 +235,7 @@ const TermsModal = ({ title, content, onClose }) => {
       }}
     >
       <ModalContainer>
-        <CloseButton onClick={onClose}>&times;</CloseButton>{/*
-        <Container>
-        <ModalHeader>
-          <TermsTitle>{title}</TermsTitle>
-        </ModalHeader>
-        <TermsContent>
-          <TermsList text={content} delimiter="\n\n" />
-          </TermsContent>
-        </Container>
-        <ConfirmButton onClick={onClose}>동의하기</ConfirmButton>*/}
+        <CloseButton onClick={onClose}>&times;</CloseButton>
         <ModalHeader>
           <TermsTitle>{title}</TermsTitle>
         </ModalHeader>
