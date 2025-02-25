@@ -5,6 +5,7 @@ import { UsersContext } from "../contexts/usersContext";
 import TopBar from "../ui/TopBar";
 import ClassTopbar from "../ui/class/ClassTopbar";
 import { PageLayout } from "../ui/class/ClassLayout";  
+
 export default function Class() {
   const { courseId: paramCourseId } = useParams(); 
   const navigate = useNavigate();
@@ -24,7 +25,13 @@ export default function Class() {
         const response = await api.get(`/courses/${selectedCourseId}`);
         if (response.data.success) {
           setCourseData(response.data.data);
-          setIsCreator(response.data.data.user?.userId === user.userId);
+          const isCreator = response.data.data.user?.userId === user.userId;
+          setIsCreator(isCreator);
+
+          if (!isCreator && window.location.pathname.includes('/admin/')) {
+            alert('개설자가 아닙니다. 강의 목록으로 이동합니다.');
+            navigate('/class/list');
+          }
         }
       } catch (error) {
         console.error("강의 정보 가져오기 오류:", error);
