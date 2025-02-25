@@ -88,6 +88,11 @@ const handleAssignmentTimeChange = (timeString) => {
       return;
     }
 
+    if ((form.durationWeeks % 1)) {
+      alert('커리큘럼 주차는 정수로 입력해주세요.');
+      return;
+    }
+
     if (form.durationWeeks < 1 || form.durationWeeks > 12) {
       alert('커리큘럼 주차는 1~12주차까지 입력 가능해요.');
       return;
@@ -172,7 +177,7 @@ const handleAssignmentTimeChange = (timeString) => {
         value={value}
         placeholder="커리큘럼 시작을 설정해주세요."
         readOnly
-        style={{width: '439px'}}
+        style={{width: '329px'}}
       />
       <CalendarIcon>
         <img src={Calendar} style={{width: 18}} alt="캘린더" />
@@ -196,10 +201,11 @@ const handleAssignmentTimeChange = (timeString) => {
               <FormInput
                 type="text"
                 name="coursename"
+                maxlength='30'
                 placeholder="30자 이내로 설정해주세요."
                 value={form.coursename}
                 onChange={handleFormChange}
-                style={{width: '100%'}}
+                style={{width: '329px'}}
                 autoComplete='off'
               />
             </FormItem>
@@ -256,11 +262,14 @@ const handleAssignmentTimeChange = (timeString) => {
               <CuliculumGroup>
                 <FormInput
                   type="number"
+                  min="1"
+                  max="12"
                   name="durationWeeks"
                   placeholder="숫자를 입력해주세요"
                   value={form.durationWeeks}
                   onChange={handleFormChange}
                   style={{width: '165px'}}
+                  
                 />
                 <Label style={{marginTop: '0px', marginLeft: '5px'}}>주</Label>
               </CuliculumGroup>
@@ -423,8 +432,8 @@ const RadioButton = styled.button`
   border: none;
   border-radius: 10px;
   font-size: 15px;
-  background-color: ${props => props.active ? '#FF4747' : '#F6F6F6'};
-  color: ${props => props.active ? '#FFFFFF' : '#909090'};
+  background-color: ${props => props.active ? '#F6F6F6' : '#FF4747'};
+  color: ${props => props.active ? '#909090' : '#FFFFFF'};
 `;
 
 const LevelButton = styled.button`
@@ -452,10 +461,14 @@ const CreateButton = styled.button`
 `;
 
 const Container = styled.div`
-  margin: 31px;
+  margin: 41px 61px;
   padding: 24px 30px;
   background-color: white;
   border-radius: 20px;
+
+  @media (max-width: 600px) {
+    margin: 31px;
+  }
 `;
 
 const Section = styled.div`
@@ -567,6 +580,10 @@ const CalendarIcon = styled.span`
 const TimeGroup = styled.div`
   display: flex;
   flex-direction: column;
+
+  @media (max-width: 800px) { 
+    width: 70%;
+  }
 `;
 
 const TimePickerWrapper = styled.div`
@@ -585,4 +602,10 @@ const CuliculumGroup = styled.div`
 const HalfGroup = styled.div`
   display: flex;
   flex-direction: row;
+  gap: 10px;
+
+  @media (max-width: 800px) { 
+    flex-direction: column;
+    gap: 15px;
+  }
 `;
