@@ -350,7 +350,7 @@ const CurriculumEdit = () => {
             <h1
               style={{
                 fontSize: "2rem",
-                fontWeight: "900",
+                fontWeight: "700",
                 color: "var(--white-color)",
                 margin: "0",
               }}
@@ -387,7 +387,7 @@ const CurriculumEdit = () => {
                 autoFocus
                 style={{
                   fontSize: "1.555rem",
-                  fontWeight: "bolder",
+                  fontWeight: "650",
                   letterSpacing: "-1px",
                   width: "100%",
                   backgroundColor: "white",
@@ -402,7 +402,7 @@ const CurriculumEdit = () => {
               <h1
                 style={{
                   fontSize: "1.555rem",
-                  fontWeight: "bolder",
+                  fontWeight: "650",
                   letterSpacing: "-1px",
                 }}
               >

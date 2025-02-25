@@ -34,7 +34,7 @@ const Section = styled.div`
 
 const CurriculumTitle = styled.h3`
   font-size: 1.65rem;
-  font-weight: 900;
+  font-weight: 700;
   margin-bottom: -0.3rem;
   margin-top: 0.5rem;
   letter-spacing: -1px;
@@ -320,7 +320,7 @@ const Curriculum = () => {
           <h1
             style={{
               fontSize: "2.3rem",
-              fontWeight: "bold",
+              fontWeight: "700",
               color: "var(--main-color)",
               margin: "0",
               marginBottom: "-0.2rem",
@@ -334,7 +334,7 @@ const Curriculum = () => {
               color: "#969696",
               fontSize: "1.2rem",
               marginLeft: "1rem",
-              fontWeight: "540",
+              fontWeight: "510",
               margin: "0 1rem",
             }}
           >
@@ -433,7 +433,8 @@ const Curriculum = () => {
                           style={{
                             borderLeft: "1.5px solid #909090",
                             height: "1rem",
-                            marginLeft: "1vh",
+                            marginLeft: "1.3vh",
+                            marginRight: "0.5vh"
                           }}
                         ></span>
                       </div>
