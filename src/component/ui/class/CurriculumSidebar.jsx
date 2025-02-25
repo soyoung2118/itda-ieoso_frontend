@@ -12,7 +12,7 @@ import { useParams, useOutletContext, useNavigate } from "react-router-dom";
 import { UsersContext } from "../../contexts/usersContext";
 
 const SidebarContainer = styled.aside`
-  width: clamp(8rem, 15.5vw, 25rem);
+  width: clamp(8rem, 14vw, 25rem);
   height: 90vh;
   background-color: white;
   border-radius: 12px;
@@ -43,8 +43,8 @@ const ListSection = styled.div`
 `;
 
 const SectionHeader = styled.div`
-  font-weight: 900;
-  font-size: 1.1rem;
+  font-weight: 700;
+  font-size: 1.12rem;
   color: var(--black-color);
   padding: 0rem 1rem;
   height: 3rem;
@@ -79,8 +79,8 @@ const ListItem = styled.li`
   padding-left: 1rem;
   border-radius: 0.5rem;
   cursor: pointer;
-  font-size: 0.95rem;
-  font-weight: semi-bold;
+  font-size: 0.99rem;
+  font-weight: 500;
   position: relative;
 
   @media (max-width: 1024px) {
@@ -206,6 +206,13 @@ const CurriculumSidebar = ({
           (a, b) => (a.contentOrderIndex || 0) - (b.contentOrderIndex || 0)
         );
 
+        // 학생들에게 보일 섹션 / 교육자에게 보일 섹션 필터링
+        const filteredSubSections = isCreator
+          ? subSections
+          : subSections.filter((sub) =>
+              Object.values(sub).every((value) => value !== null)
+            );
+
         return (
           <ListSection key={section.lectureId}>
             <SectionHeader
@@ -227,7 +234,7 @@ const CurriculumSidebar = ({
             </SectionHeader>
             {activeItem === section.lectureId && (
               <ul style={{ listStyle: "none", padding: 0 }}>
-                {subSections.map((subSection) => (
+                {filteredSubSections?.map((subSection) => (
                   <div
                     key={subSection.id}
                     style={{ marginLeft: "0", marginBottom: "10px" }}

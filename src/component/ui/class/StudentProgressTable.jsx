@@ -47,7 +47,7 @@ const Table = styled.table`
 
   th,
   td {
-    padding: 0.7rem 2.8rem;
+    padding: 0.7rem 6vh;
     width: 3rem;
     border-bottom: 1px solid #cdcdcd;
   }
@@ -56,6 +56,10 @@ const Table = styled.table`
     font-size: 1.2rem;
 
     white-space: nowrap;
+  }
+
+  th:first-child{
+    text-align: left;
   }
 
   td {
@@ -67,7 +71,7 @@ const Table = styled.table`
   td:first-child {
     text-align: left !important;
     padding-left: 0rem !important;
-    padding-right: 10rem;
+    padding-right: 15vh;
   }
 `;
 

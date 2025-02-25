@@ -80,7 +80,6 @@ const ClassStudents = () => {
       });
     });
 
-
     setRowData(Object.values(groupedData));
 
     // 컬럼 정의 수정 (assignmentId를 field로 사용)
@@ -162,6 +161,7 @@ const ClassStudents = () => {
                 alignItems: "center",
                 gap: "1vh",
               }}
+              title={file.fileName}
             >
               <img
                 src={assignmentIcon}
@@ -169,7 +169,16 @@ const ClassStudents = () => {
                 width="30"
                 height="30"
               />
-              {file.fileName}
+              <span
+                style={{
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  display: "block",
+                }}
+              >
+                {file.fileName}
+              </span>
             </a>
           ))}
 
@@ -223,8 +232,8 @@ const ClassStudents = () => {
         >
           <h3
             style={{
-              fontSize: "23px",
-              fontWeight: "900",
+              fontSize: "24px",
+              fontWeight: "700",
               color: "var(--black-color)",
             }}
           >
@@ -272,7 +281,7 @@ const ClassStudents = () => {
             style={{
               "--ag-header-background-color": "var(--grey-color)",
               "--ag-header-foreground-color": "black",
-              "--ag-row-hover-color": "var(--lightgrey-color)",
+              "--ag-row-hover-color": "var(--white-color)",
               "--ag-font-size": "1.63vh",
               "--ag-border-radius": "13px",
               width: "100%",

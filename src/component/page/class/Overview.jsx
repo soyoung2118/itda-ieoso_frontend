@@ -25,13 +25,14 @@ const IconRow = styled.div`
   }
 
   span {
-    font-size: 1.2rem;
+    font-size: 15px;
     font-weight: 500;
   }
 `;
 
 const Content = styled.div`
   width: 100%;
+  border-radius: ${({ isEditing }) => (isEditing ? "0px" : "12px")};
   min-height: 50vh;
   height: auto;
   background-color: #FFFFFF;
@@ -62,7 +63,7 @@ const StyledQuill = styled(ReactQuill)`
   }
 `;
 
-const StyledButton = styled.button`
+const StyledButton = styled.a`
   position: fixed;
   bottom: 2rem;
   right: 2rem;
@@ -95,6 +96,12 @@ const ImageContainer = styled.div`
     pointer-events: none;
   }
 `;
+
+const Title = styled.div`
+  font-size: 26px;
+  font-weight: 800;
+  text-align: left;
+`
 
 const EditableSectionContent = ({ content, onChange, isEditing }) => {
   const modules = {
@@ -220,6 +227,13 @@ const ClassOverview = () => {
     return <div>로딩 중...</div>;
   }
 
+  const changeDifficultly = (difficulty) => {
+    if(difficulty === 'HARD') return '상'
+    if(difficulty === 'MEDIUM') return '중'
+    if(difficulty === 'EASY') return '하'
+    return null
+  }
+
   return (
     <div style={{ display: "flex", marginTop: "1rem" }}>
       <ClassSidebar style={{ marginRight: "2rem" }} />
@@ -244,14 +258,7 @@ const ClassOverview = () => {
           />
         </ImageContainer>
         <Section style={{ marginTop: "2rem" }}>
-          <span
-            style={{
-              fontSize: "2rem",
-              fontWeight: "900",
-            }}
-          >
-            {courseData.courseTitle}
-          </span>
+          <Title>{courseData.courseTitle}</Title>
           <IconRow style={{ marginTop: "2rem" }}>
             <span className="material-symbols-outlined">event</span>
             <span>
@@ -270,19 +277,14 @@ const ClassOverview = () => {
             <span className="material-symbols-outlined">person</span>
             <span>{courseData.instructorName}</span>
           </IconRow>
+          <IconRow style={{gap: '0rem'}}>
+            <span className="material-symbols-outlined">star</span>
+            <span style={{margin: '0rem 0.3rem 0rem 1rem'}}>강의 난이도</span>
+            <span style={{marginLeft: 0, fontWeight: 800}}>{changeDifficultly(courseData.difficultyLevel)}</span>
+          </IconRow>
         </Section>
 
-        <h1
-          style={{
-            fontSize: "1.8rem",
-            fontWeight: "bold",
-            margin: "2rem 1rem",
-            textAlign: "left",
-          }}
-        >
-          강의 소개
-        </h1>
-
+        <Title style={{margin: '10px 5px'}}>강의 소개</Title>
         <Content isEditing={isEditing}>
           <EditableSectionContent
             content={sectionContent}

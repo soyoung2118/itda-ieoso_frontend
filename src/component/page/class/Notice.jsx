@@ -9,9 +9,10 @@
   import PropTypes from "prop-types";
 
   const Title = styled.h1`
-    font-size: 2rem;
+    font-size: 26px;
     font-weight: bold;
     margin-top: 0rem;
+    margin-bottom: 0px;
   `;
 
   const ContentHeader = styled.div`
@@ -25,7 +26,6 @@
     display: flex;
     flex-direction: column;
     color: var(--black-color);
-    padding: 1.3rem;
     min-width: 175px;
   `;
 
@@ -34,6 +34,7 @@
     flex-direction: column;
     justify-content: center;
     gap: 0rem;
+    width: 80%;
   `;
 
   const NoticeItem = styled.div`
@@ -100,6 +101,7 @@
     transition: max-height 0.3s ease-out;
     overflow: hidden;
     position: relative;
+    white-space: pre;
     
     .button-container {
       position: absolute;
@@ -207,7 +209,7 @@
     return (
       <ModalOverlay>
         <ModalContent>
-          <h2>공지 사항 삭제</h2>
+          <h2>공지사항 삭제</h2>
           <span>공지글을 삭제하시겠습니까? <br /> 한 번 삭제한 글은 복구할 수 없습니다.</span>
           <div className="button-container">
             <button className="close-button" onClick={onClose}>닫기</button>
@@ -338,7 +340,7 @@
             <main
               style={{
                 flex: 1,
-                padding: "1.5rem 1rem",
+                padding: "1.5rem 0rem",
                 borderRadius: "8px",
               }}
             >

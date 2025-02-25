@@ -145,8 +145,8 @@ const ClassSummary = () => {
             >
               <h3
                 style={{
-                  fontSize: "23px",
-                  fontWeight: "900",
+                  fontSize: "26px",
+                  fontWeight: "700",
                   color: "var(--black-color)",
                 }}
               >

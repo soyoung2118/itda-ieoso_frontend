@@ -22,7 +22,7 @@ const Section = styled.div`
 
 const CurriculumTitle = styled.h3`
   font-size: 1.63rem;
-  font-weight: 900;
+  font-weight: 700;
   margin-bottom: -0.3rem;
   margin-top: 0.5rem;
 `;
@@ -60,6 +60,7 @@ const CurriculumSection = ({
   handleAdd,
   handleDelete,
   handleSectionClick,
+  onDateChange,
   editTarget,
   updateSection,
 }) => {
@@ -76,6 +77,7 @@ const CurriculumSection = ({
             index={index}
             handleDelete={handleDelete}
             className="editable-section"
+            onDateChange={onDateChange}
           />
         </div>
       ) : (

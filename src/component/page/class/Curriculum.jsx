@@ -34,7 +34,7 @@ const Section = styled.div`
 
 const CurriculumTitle = styled.h3`
   font-size: 1.65rem;
-  font-weight: 900;
+  font-weight: 700;
   margin-bottom: -0.3rem;
   margin-top: 0.5rem;
   letter-spacing: -1px;
@@ -250,6 +250,10 @@ const Curriculum = () => {
   }, [historyData, activeLecture]);
 
   const handleSectionClick = (sub) => {
+    if (isCreator && sub.contentType === "assignment") {
+      return;
+    }
+
     if (sub.contentType === "video") {
       navigate(`/playing/${courseId}/${activeLectureId}/${sub.videoId}`);
     } else if (sub.contentType === "assignment") {
@@ -301,6 +305,13 @@ const Curriculum = () => {
     }
   };
 
+  // 학생들에게 보일 섹션 / 교육자에게 보일 섹션 필터
+  const filteredSubSections = isCreator
+    ? activeLecture?.subSections 
+    : activeLecture?.subSections.filter((sub) =>
+        Object.values(sub).every((value) => value !== null)
+      );
+
   return (
     <div style={{ display: "flex", marginTop: "1rem" }}>
       <CurriculumSidebar
@@ -320,7 +331,7 @@ const Curriculum = () => {
           <h1
             style={{
               fontSize: "2.3rem",
-              fontWeight: "bold",
+              fontWeight: "700",
               color: "var(--main-color)",
               margin: "0",
               marginBottom: "-0.2rem",
@@ -334,7 +345,7 @@ const Curriculum = () => {
               color: "#969696",
               fontSize: "1.2rem",
               marginLeft: "1rem",
-              fontWeight: "540",
+              fontWeight: "510",
               margin: "0 1rem",
             }}
           >
@@ -366,7 +377,7 @@ const Curriculum = () => {
           )}
         </Section>
 
-        {activeLecture?.subSections.map((sub) => (
+        {filteredSubSections?.map((sub) => (
           <div key={sub.id}>
             <div>
               {sub.contentType === "video" && (
@@ -433,7 +444,8 @@ const Curriculum = () => {
                           style={{
                             borderLeft: "1.5px solid #909090",
                             height: "1rem",
-                            marginLeft: "1vh",
+                            marginLeft: "1.3vh",
+                            marginRight: "0.5vh",
                           }}
                         ></span>
                       </div>

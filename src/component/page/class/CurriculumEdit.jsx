@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import TopBar from "../../ui/TopBar";
@@ -74,6 +74,11 @@ const CurriculumEdit = () => {
     activeLecture?.lectureDescription || ""
   );
 
+  const activeLectureRef = useRef(null);
+  useEffect(() => {
+    activeLectureRef.current = activeLecture; // 최신 값을 저장
+  }, [activeLecture]);
+
   // 데이터 받아와서 초기화
   useEffect(() => {
     if (!userId) return;
@@ -130,7 +135,7 @@ const CurriculumEdit = () => {
     fetchCurriculum();
   }, [courseId, userId, lectureId]);
 
-  // 챕터 설명 수정정
+  // 챕터 설명 수정
   const handleDescriptionClick = () => {
     setIsEditingDescription(true);
   };
@@ -246,6 +251,8 @@ const CurriculumEdit = () => {
 
     setActiveLecture((prev) => {
       if (!prev) return prev;
+      const clickedSection = prev.subSections[index];
+      console.log("[DEBUG] 클릭된 섹션 정보:", clickedSection);
 
       const updatedSubSections = prev.subSections.map((s, i) =>
         i === index
@@ -268,6 +275,19 @@ const CurriculumEdit = () => {
           "[DEBUG] 강의 설명 클릭 감지 -> handleMainClick 실행 안 함"
         );
         return;
+      }
+
+      const editingSection = activeLectureRef.current?.subSections.find(
+        (s) => s.isEditing
+      );
+
+      console.log("[DEBUG] 현재 편집 중인 섹션:", editingSection);
+
+      if (editingSection) {
+        if (!editingSection.startDate || !editingSection.endDate) {
+          alert("날짜를 선택해야 저장됩니다!");
+          return;
+        }
       }
 
       if (isEditingDescription) {
@@ -323,6 +343,18 @@ const CurriculumEdit = () => {
     };
   }, [isEditingDescription, lectureDescription]);
 
+  const handleSubSectionDateChange = (index, field, newDate) => {
+    setActiveLecture((prev) => {
+      if (!prev) return prev;
+
+      const updatedSubSections = prev.subSections.map((s, i) =>
+        i === index ? { ...s, [field]: newDate } : s
+      );
+
+      return { ...prev, subSections: updatedSubSections };
+    });
+  };
+
   return (
     <div>
       <div style={{ display: "flex", marginTop: "1rem" }}>
@@ -350,7 +382,7 @@ const CurriculumEdit = () => {
             <h1
               style={{
                 fontSize: "2rem",
-                fontWeight: "900",
+                fontWeight: "700",
                 color: "var(--white-color)",
                 margin: "0",
               }}
@@ -387,7 +419,7 @@ const CurriculumEdit = () => {
                 autoFocus
                 style={{
                   fontSize: "1.555rem",
-                  fontWeight: "bolder",
+                  fontWeight: "650",
                   letterSpacing: "-1px",
                   width: "100%",
                   backgroundColor: "white",
@@ -402,7 +434,7 @@ const CurriculumEdit = () => {
               <h1
                 style={{
                   fontSize: "1.555rem",
-                  fontWeight: "bolder",
+                  fontWeight: "650",
                   letterSpacing: "-1px",
                 }}
               >
@@ -443,9 +475,12 @@ const CurriculumEdit = () => {
                               subSection={subSection}
                               index={index}
                               className="editable-section"
+                              lectureStartDate={activeLecture?.startDate}
+                              lectureEndDate={activeLecture?.endDate}
                               handleDelete={(event) =>
                                 handleDelete(event, index)
                               }
+                              onDateChange={handleSubSectionDateChange} 
                             />
                           ) : (
                             <CurriculumSection
@@ -457,6 +492,7 @@ const CurriculumEdit = () => {
                                 handleDelete(event, index)
                               }
                               handleSectionClick={handleSectionClick}
+                              onDateChange={handleSubSectionDateChange} 
                             />
                           )}
                         </SectionWrapper>
