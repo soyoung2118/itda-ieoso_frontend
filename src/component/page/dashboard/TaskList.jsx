@@ -12,15 +12,26 @@ function TaskList({ userId, selectedDate }) {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const formattedDate = selectedDate.toISOString().split('T')[0];
+        const formattedDate = selectedDate.toLocaleDateString('en-CA');        
         const data = await getDashboard(userId, formattedDate);
+
         if (data.success) {
-          const filteredTasks = data.data.filter(task => {
-            const hasContent = (Array.isArray(task.assignmentDtos) && task.assignmentDtos.length > 0) ||
-                               (Array.isArray(task.materialDtos) && task.materialDtos.length > 0) ||
-                               (Array.isArray(task.videoDtos) && task.videoDtos.length > 0);
-            return hasContent;
-          });
+          const filteredTasks = data.data.reduce((acc, task) => {
+            const hasContent = (Array.isArray(task.assignmentDtos) && task.assignmentDtos.some(assignment => {
+              const assignmentEndDate = new Date(assignment.endDate).toLocaleDateString('en-CA');
+              return assignmentEndDate === formattedDate;
+            })) ||
+            (Array.isArray(task.materialDtos) && task.materialDtos.some(material => {
+              const materialStartDate = new Date(material.startDate).toLocaleDateString('en-CA');
+              return materialStartDate === formattedDate;
+            })) ||
+            (Array.isArray(task.videoDtos) && task.videoDtos.some(video => {
+              const videoStartDate = new Date(video.startDate).toLocaleDateString('en-CA');
+              return videoStartDate === formattedDate;
+            }));
+            if (hasContent) acc.push(task);
+            return acc;
+          }, []);
           setTasks(filteredTasks);
         }
       } catch (error) {
@@ -31,32 +42,43 @@ function TaskList({ userId, selectedDate }) {
     fetchTasks();
   }, [userId, selectedDate]);
 
-  const getTasksByType = (lecture) => {
+  const getTasksByType = (lecture, formattedDate) => {
     const tasks = [];
+
     if (lecture.videoDtos) {
-      //videoHistoryStatus가 구현된 후 적용 해야하는 코드
-      //tasks.push(...lecture.videoDtos.map(video => ({ ...video, type: 'video', title: video.videoTitle, submissionStatus: video.videoHistoryStatus === 'WATCHED' })));
-      tasks.push(...lecture.videoDtos.map(video => ({ ...video, type: 'video', title: video.videoTitle, submissionStatus: true })));
+      tasks.push(...lecture.videoDtos.filter(video => {
+        const videoStartDate = new Date(video.startDate).toLocaleDateString('en-CA');
+        return videoStartDate === formattedDate;
+      }).map(video => ({ ...video, type: 'video', title: video.videoTitle, submissionStatus: true })));
     }
     if (lecture.materialDtos) {
-      tasks.push(...lecture.materialDtos.map(material => ({ ...material, type: 'material', title: material.materialTitle, submissionStatus: material.materialHistoryStatus })));
+      tasks.push(...lecture.materialDtos.filter(material => {
+        const materialStartDate = new Date(material.startDate).toLocaleDateString('en-CA');
+        return materialStartDate === formattedDate;
+      }).map(material => ({ ...material, type: 'material', title: material.originalFilename, submissionStatus: material.materialHistoryStatus })));
     }
     if (lecture.assignmentDtos) {
-      tasks.push(...lecture.assignmentDtos.map(assignment => ({ ...assignment, type: 'assignment', title: assignment.assignmentTitle, submissionStatus: assignment.submissionStatus === 'SUBMITTED' })));
+      tasks.push(...lecture.assignmentDtos.filter(assignment => {
+
+        const assignmentEndDate = new Date(assignment.endDate).toLocaleDateString('en-CA');
+        return assignmentEndDate === formattedDate;
+      }).map(assignment => ({ ...assignment, type: 'assignment', title: assignment.assignmentTitle, submissionStatus: assignment.submissionStatus === 'SUBMITTED' })));
     }
     return tasks;
   };
 
   return (
     <TaskContainer>
-      <TaskHeader date={selectedDate.toLocaleDateString()} />
+      <TaskHeader date={selectedDate.toLocaleDateString()} title="이 날의 할 일" />
       <TaskListContainer>
         {tasks.map((lecture, index) => {
-          const lectureTasks = getTasksByType(lecture);
+          const formattedDate = selectedDate.toLocaleDateString('en-CA');
+          const lectureTasks = getTasksByType(lecture, formattedDate);
           if (lectureTasks.length > 0) {
             return (
               <div key={lecture.id || index}>
                 <TaskSection title={lecture.courseTitle || '제목 없음'} tasks={lectureTasks} />
+                {lectureTasks.length === 0 && <div>할 일이 없습니다</div>}
                 {index < tasks.length - 1 && <hr style={{ border: '1px solid #E0E0E0', width: '92%' }} />}
               </div>
             );
@@ -73,10 +95,14 @@ TaskList.propTypes = {
   selectedDate: PropTypes.instanceOf(Date).isRequired,
 };
 
-function TaskHeader({ date }) {
+function TaskHeader({ date, title }) {
+  // const dateObj = new Date(date);
+  // const formattedDate = `${dateObj.getMonth() + 1}월 ${dateObj.getDate()}일`;
+  // const title = `${formattedDate} 할 일`;
+
   return (
     <HeaderContainer>
-      <HeaderTitle>오늘의 할 일</HeaderTitle>
+      <HeaderTitle>{title}</HeaderTitle>
       <TaskDate>{date}</TaskDate>
     </HeaderContainer>
   );
@@ -84,6 +110,7 @@ function TaskHeader({ date }) {
 
 TaskHeader.propTypes = {
   date: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
 };
 
 function TaskSection({ title, tasks }) {
@@ -106,16 +133,18 @@ function TaskSection({ title, tasks }) {
       {tasks.map((task) => (
         <TaskItem key={task.title}>
           {getIcon(task.type)} {task.title}
-          <button style={{ 
-            marginLeft: 'auto', 
-            background: 'none', 
-            border: 'none', 
-            cursor: 'pointer', 
-            borderRadius: '50%', 
-            padding: '5px' 
-          }}>
-            {CustomCheckboxCircle(task.submissionStatus)}
-          </button>
+          {task.type !== 'video' && (
+            <button style={{ 
+              marginLeft: 'auto', 
+              background: 'none', 
+              border: 'none', 
+              cursor: 'pointer', 
+              borderRadius: '50%', 
+              padding: '5px' 
+            }}>
+              {CustomCheckboxCircle(task.submissionStatus)}
+            </button>
+          )}
         </TaskItem>
       ))}
     </SectionContainer>

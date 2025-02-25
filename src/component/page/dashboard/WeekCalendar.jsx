@@ -1,12 +1,14 @@
-import React,{ useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 function WeeklyCalendar({ currentWeek, setSelectedDate, lectures }) {
   const [selectedDay, setSelectedDay] = useState(new Date().getDate());
+  const [tasks, setTasks] = useState({});
 
   const getWeekDates = (date) => {
-    const startOfWeek = new Date(date.setDate(date.getDate() - date.getDay()));
+    const startOfWeek = new Date(date);
+    startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
     return Array.from({ length: 7 }, (_, i) => {
       const day = new Date(startOfWeek);
       day.setDate(startOfWeek.getDate() + i);
@@ -17,26 +19,41 @@ function WeeklyCalendar({ currentWeek, setSelectedDate, lectures }) {
   const weekDates = getWeekDates(new Date(currentWeek));
   const days = ['일', '월', '화', '수', '목', '금', '토'];
 
-  // 각 날짜에 해당하는 할 일 데이터
-  const tasks = weekDates.reduce((acc, date) => {
-    const formattedDate = date.toISOString().split('T')[0];
-    const dayTasks = (lectures[formattedDate] || []).filter(lecture => {
-      const hasContent = (Array.isArray(lecture.assignmentDtos) && lecture.assignmentDtos.length > 0) ||
-                         (Array.isArray(lecture.materialDtos) && lecture.materialDtos.length > 0) ||
-                         (Array.isArray(lecture.videoDtos) && lecture.videoDtos.length > 0);
-      return hasContent;
-    }).map(lecture => {
-      const allTasksSubmitted = 
-        (lecture.assignmentDtos || []).every(task => task.submissionStatus === 'SUBMITTED') &&
-        (lecture.materialDtos || []).every(task => task.submissionStatus === true) &&
-        (lecture.videoDtos || []).every(() => true);
-      return {
-        completed: allTasksSubmitted,
-      };
-    });
-    acc[date.getDate()] = dayTasks;
-    return acc;
-  }, {});
+  useEffect(() => {
+    const newTasks = weekDates.reduce((acc, date) => {
+      const formattedDate = date.toLocaleDateString('en-CA');
+      const dayLectures = lectures[formattedDate] || [];
+      
+      const dayTasks = dayLectures.filter(lecture => {
+        const hasContent = (Array.isArray(lecture.assignmentDtos) && lecture.assignmentDtos.some(assignment => {
+          const assignmentEndDate = new Date(assignment.endDate).toLocaleDateString('en-CA');
+          return assignmentEndDate === formattedDate;
+        })) ||
+        (Array.isArray(lecture.materialDtos) && lecture.materialDtos.some(material => {
+          const materialStartDate = new Date(material.startDate).toLocaleDateString('en-CA');
+          return materialStartDate === formattedDate;
+        })) ||
+        (Array.isArray(lecture.videoDtos) && lecture.videoDtos.some(video => {
+          const videoStartDate = new Date(video.startDate).toLocaleDateString('en-CA');
+          return videoStartDate === formattedDate;
+        }));
+        return hasContent;
+      }).map(lecture => {
+        const allTasksCompleted = 
+          (lecture.assignmentDtos || []).every(task => task.submissionStatus === 'SUBMITTED') &&
+          (lecture.materialDtos || []).every(task => task.materialHistoryStatus === true) &&
+          (lecture.videoDtos || []).every(() => true); // video는 기본적으로 true로 간주
+        return {
+          completed: allTasksCompleted,
+        };
+      });
+
+      acc[date.getDate()] = dayTasks;
+      return acc;
+    }, {});
+
+    setTasks(newTasks);
+  }, [lectures, currentWeek, selectedDay]);
 
   return (
     <CalendarContainer>
@@ -67,7 +84,7 @@ function WeeklyCalendar({ currentWeek, setSelectedDate, lectures }) {
 WeeklyCalendar.propTypes = {
   currentWeek: PropTypes.instanceOf(Date).isRequired,
   setSelectedDate: PropTypes.func.isRequired,
-  lectures: PropTypes.array.isRequired,
+  lectures: PropTypes.object.isRequired,
 };
 
 const CalendarContainer = styled.div`
