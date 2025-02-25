@@ -68,7 +68,7 @@ export default function Class() {
                     <NoLecturesMessage>
                         <img src={LogoGray} alt="LogoGray" width="40" height="40" />
                         <br />
-                        현재 생성된 강의실이 없습니다 :
+                        현재 생성된 강의실이 없습니다 &#58;&#40;
                         <br />
                         + 버튼을 눌러 강의실을 생성해보세요!
                     </NoLecturesMessage>
