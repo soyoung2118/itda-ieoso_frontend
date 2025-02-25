@@ -23,7 +23,7 @@ const AssignmentShowBox = ({content, files, setCanEdit, submissionId, setIsDelet
     const changeMode = async () => {
         setCanEdit(true);
     }
-    
+
     const OnClickImage = async (e, fileId) => {
         e.preventDefault();
         
@@ -40,43 +40,33 @@ const AssignmentShowBox = ({content, files, setCanEdit, submissionId, setIsDelet
                 },
             });
             
-            const presignedUrl = response.data;
+            const presignedUrl = response.data.data;
             const fileResponse = await fetch(presignedUrl);
-    
-            const headers = fileResponse.headers;
-            const disposition = headers.get('content-disposition');
-
-            let filename = fileToDownload.name;
-            if (disposition) {
-                const filenameRegex = /filename\*=UTF-8''([^;]*)/;
-                const matches = filenameRegex.exec(disposition);
-                if (matches && matches[1]) {
-                    filename = decodeURIComponent(matches[1]);
-                }
-            }
-    
             const arrayBuffer = await fileResponse.arrayBuffer();
-            const fileExtension = filename.split('.').pop().toLowerCase();
-            let mimeType = 'application/octet-stream';
-            console.log('Content-Disposition:', disposition);
-    
-            if (fileExtension === 'pdf') {
-                mimeType = 'application/pdf';
-            } else if (['jpg', 'jpeg', 'png'].includes(fileExtension)) {
-                mimeType = `image/${fileExtension}`;
+
+            const fileExtension = fileToDownload.name
+            .split(".")
+            .pop()
+            .toLowerCase();
+            let mimeType = "application/octet-stream";
+
+            if (fileExtension === "pdf") {
+            mimeType = "application/pdf";
+            } else if (["jpg", "jpeg", "png"].includes(fileExtension)) {
+            mimeType = `image/${fileExtension}`;
             }
-    
+
             const blob = new Blob([arrayBuffer], { type: mimeType });
-        
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = filename;
+            a.download = fileToDownload.name;
             a.click();
+
             window.URL.revokeObjectURL(url);
-    
         } catch (error) {
             alert("파일을 제출한 이후 다운로드를 시도해주세요.");
+            console.log(error);
         }
     };
 
