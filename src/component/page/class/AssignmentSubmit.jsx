@@ -134,7 +134,7 @@ const ClassAssignmentSubmit = () => {
                         </FormTitle>
                     </NoticeTitleContainer>
                     <NoticeContentContainer>
-                        <span>{currentAssignmentInfo?.assignmentContent || "과제 설명"}</span>
+                        {currentAssignmentInfo?.assignmentDescription || "과제 설명"}
                     </NoticeContentContainer>
                 </WhiteBoxComponent>
 
