@@ -98,7 +98,7 @@ const ClassStudents = () => {
         params: { fileUrl: file.fileUrl },
       });
 
-      const presignedUrl = response.data;
+      const presignedUrl = response.data.data;
       const fileResponse = await fetch(presignedUrl);
       const arrayBuffer = await fileResponse.arrayBuffer();
 
