@@ -285,7 +285,7 @@ const CurriculumEdit = () => {
 
       if (editingSection) {
         if (!editingSection.startDate || !editingSection.endDate) {
-          alert("날짜를 선택해야 저장됩니다!");
+          alert("날짜를 선택해주세요!");
           return;
         }
       }
