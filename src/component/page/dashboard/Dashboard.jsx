@@ -125,10 +125,10 @@ export default function DashBoard() {
           </div>
           <WeekButton>
             <button onClick={prevWeek} style={{ transform: 'scale(0.8)' }}>
-              <ChevronLeft />
+              <ChevronLeft style={{ fontSize: '30px' }} />
             </button>
             <button onClick={nextWeek} style={{ transform: 'scale(0.8)' }}>
-              <ChevronRight />
+              <ChevronRight style={{ fontSize: '30px' }} />
             </button>
           </WeekButton>
         </WeekRange>
@@ -159,7 +159,7 @@ const WeekButton = styled.div`
   display: flex;
   gap: 10px;
   button {
-    background: #FF4747;
+    background: #C3C3C3;
     border: none;
     border-radius: 100%;
     color: #fff;
