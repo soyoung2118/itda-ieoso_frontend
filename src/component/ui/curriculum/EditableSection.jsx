@@ -103,6 +103,7 @@ const EditableSection = ({
   index,
   lectureStartDate,
   lectureEndDate,
+  onDateChange,
 }) => {
   const { courseId, lectureId } = useParams();
   const [title, setTitle] = useState(subSection?.title || "");
@@ -117,12 +118,14 @@ const EditableSection = ({
   const [startDate, setStartDate] = useState(
     subSection?.startDate
       ? new Date(subSection.startDate)
-      : new Date(lectureStartDate)
+      // : new Date(lectureStartDate)
+      : null
   );
   const [endDate, setEndDate] = useState(
     subSection?.endDate
       ? new Date(subSection.endDate)
-      : new Date(lectureEndDate)
+      // : new Date(lectureEndDate)
+      : null
   );
   const [assignmentDescription, setAssignmentDescription] = useState(
     subSection?.assignmentDescription || ""
@@ -230,6 +233,16 @@ const EditableSection = ({
     handleEdit(field, value);
   };
 
+  const handleDateChange = (date, field) => {
+    if (field === "startDate") {
+      setStartDate(date);
+    } else if (field === "endDate") {
+      setEndDate(date);
+    }
+    onDateChange?.(index, field, date); // ✅ 상위(`CurriculumEdit`)에도 변경된 값 전달
+  };
+
+
   return (
     <Section>
       <div style={{ width: "99%" }}>
@@ -243,7 +256,7 @@ const EditableSection = ({
               subSection={subSection}
               lectureStartDate={lectureStartDate}
               lectureEndDate={lectureEndDate}
-              onDateChange={(date) => setStartDate(date)} // 날짜 상태만 업데이트
+              onDateChange={(date) => handleDateChange(date, "startDate")}// 날짜 상태만 업데이트
             />
             <div style={{ display: "flex" }}>
               <div style={{ alignSelf: "flex-start" }}>
@@ -352,7 +365,7 @@ const EditableSection = ({
               subSection={subSection}
               lectureStartDate={lectureStartDate}
               lectureEndDate={lectureEndDate}
-              onDateChange={(date) => setStartDate(date)} // 날짜 상태만 업데이트
+              onDateChange={(date) => handleDateChange(date, "startDate")} // 날짜 상태만 업데이트
             />
             <div style={{ display: "flex" }}>
               <img
@@ -403,7 +416,7 @@ const EditableSection = ({
               subSection={subSection}
               lectureStartDate={lectureStartDate}
               lectureEndDate={lectureEndDate}
-              onDateChange={(date) => setEndDate(date)} // 날짜 상태만 업데이트
+              onDateChange={(date) => handleDateChange(date, "endDate")}// 날짜 상태만 업데이트
             />
             <div style={{ display: "flex", alignItems: "flex-start" }}>
               <img

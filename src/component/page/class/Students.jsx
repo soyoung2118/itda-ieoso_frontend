@@ -281,7 +281,7 @@ const ClassStudents = () => {
             style={{
               "--ag-header-background-color": "var(--grey-color)",
               "--ag-header-foreground-color": "black",
-              "--ag-row-hover-color": "var(--lightgrey-color)",
+              "--ag-row-hover-color": "var(--white-color)",
               "--ag-font-size": "1.63vh",
               "--ag-border-radius": "13px",
               width: "100%",
