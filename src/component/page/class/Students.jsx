@@ -154,7 +154,6 @@ const ClassStudents = () => {
           value.files.map((file, index) => (
             <a
               key={index}
-              href={file.fileUrl}
               download
               style={{
                 color: "var(--main-color)",
