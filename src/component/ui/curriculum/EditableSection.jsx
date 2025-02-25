@@ -63,6 +63,12 @@ const TextArea = styled.textarea`
   resize: none;
   overflow: auto;
   padding: 1.5vh 1.55vh;
+
+  &:focus {
+    outline: none;
+    border: 2px solid #c3c3c3; /* 기존 border 유지 */
+  }
+
 `;
 
 const MaterialSection = styled.div`

@@ -21,18 +21,18 @@ const SidebarContainer = styled.aside`
   letter-spacing: -0.5px;
 
   @media (max-width: 1024px) {
-    width: 14vh;
+    width:20vh;
     font-size: 13px;
   }
 
   @media (max-width: 768px) {
-    width: 15vh;
-    padding: 0.3vh 1vh;
+    width: 20vh;
+    padding: 0.5vh 2vh;
   }
 
   @media (max-width: 480px) {
-    width: 26vh;
-    padding: 1vh 2vh;
+    width: 18vh;
+    padding: 0vh 1.2vh;
   }
 `;
 
@@ -40,6 +40,10 @@ const ListSection = styled.div`
   margin-bottom: -2vh;
   padding: 0.7rem 0rem;
   transition: background-color 0.3s ease;
+
+  @media (max-width: 480px) {
+    padding: 0.8vh 1.2vh;
+  }
 `;
 
 const SectionHeader = styled.div`
@@ -57,18 +61,20 @@ const SectionHeader = styled.div`
   cursor: pointer;
 
   @media (max-width: 1024px) {
-    font-size: 15px;
+    font-size: 16px;
+    height: 4.5vh;
   }
 
   @media (max-width: 768px) {
     font-size: 14.5px;
-    padding: 0vh 0.7vh;
+    padding: 0vh 1.3vh;
     height: 5vh;
   }
 
   @media (max-width: 480px) {
-    font-size: 12.5px;
-    padding: 0.2vh 1.8vh;
+    font-size: 11px;
+    padding: 0.3vh 1vh;
+     height: 4.7vh;
   }
 `;
 
@@ -78,7 +84,6 @@ const ListItem = styled.li`
   gap: 0.5rem;
   padding-left: 1rem;
   border-radius: 0.5rem;
-  cursor: pointer;
   font-size: 0.99rem;
   font-weight: 500;
   position: relative;
@@ -92,7 +97,9 @@ const ListItem = styled.li`
   }
 
   @media (max-width: 480px) {
-    font-size: 12.3px;
+    font-size:9.5px;
+      padding-left: 2vh;
+
   }
 `;
 
@@ -131,7 +138,7 @@ const SectionIcon = styled.img`
     width: 19px;
   }
   @media (max-width: 480px) {
-    width: 15px;
+    width: 11px;
   }
 `;
 
@@ -141,7 +148,7 @@ const Icon = styled.img`
     width: 18px;
   }
   @media (max-width: 480px) {
-    width: 15.5px;
+    width: 12.5px;
   }
 `;
 
@@ -241,7 +248,6 @@ const CurriculumSidebar = ({
                   >
                     <ListItem
                       active={activeItem === subSection.id}
-                      onClick={() => handleItemClick(subSection.id)}
                       style={{
                         marginLeft:
                           subSection.contentType === "material" ||

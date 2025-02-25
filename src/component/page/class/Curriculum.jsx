@@ -30,6 +30,8 @@ const Section = styled.div`
   margin: 1.15rem 0rem;
   background-color: #ffffff;
   cursor: pointer;
+  width: 100%;
+  max-width: 100%;
 `;
 
 const CurriculumTitle = styled.h3`
@@ -38,12 +40,45 @@ const CurriculumTitle = styled.h3`
   margin-bottom: -0.3rem;
   margin-top: 0.5rem;
   letter-spacing: -1px;
+
+  @media (max-width: 1024px) {
+    font-size: 23px;
+    height: 4.5vh;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14.5px;
+    padding: 0vh 1.3vh;
+    height: 5vh;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 11px;
+    padding: 0.3vh 1vh;
+    height: 4.7vh;
+  }
 `;
 
 const VideoContainer = styled.div`
   position: relative;
   width: 14.5rem;
   border-radius: 8px;
+
+  @media (max-width: 1024px) {
+    width: 24vh;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14.5px;
+    padding: 0vh 1.3vh;
+    height: 5vh;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 11px;
+    padding: 0.3vh 1vh;
+    height: 4.7vh;
+  }
 `;
 
 const VideoThumbnail = styled.img`
@@ -63,11 +98,65 @@ const MaterialSection = styled.div`
 const Icon = styled.img`
   width: 1.4rem;
   height: 1.4rem;
+
+  @media (max-width: 1024px) {
+    width: 15vh;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14.5px;
+    padding: 0vh 1.3vh;
+    height: 5vh;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 11px;
+    padding: 0.3vh 1vh;
+    height: 4.7vh;
+  }
 `;
 
 const SectionIcon = styled.img`
   margin-left: auto;
+
+  @media (max-width: 1024px) {
+    width: 15vh !important;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14.5px;
+    padding: 0vh 1.3vh;
+    height: 5vh;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 11px;
+    padding: 0.3vh 1vh;
+    height: 4.7vh;
+  }
 `;
+
+const LectureTitle = styled.h1`
+  font-size: 2.3rem;
+  font-weight: 700;
+  color: var(--main-color);
+  margin: 0;
+  margin-bottom: -0.2rem;
+
+  @media (max-width: 1024px) {
+    font-size: 30px;
+  }
+`;
+
+const LectureDescription = styled.span`
+  font-size: 1.6rem;
+  font-weight: bolder;
+
+  @media (max-width: 1024px) {
+    font-size: 22px;
+  }
+`
+
 
 export const formatDate = (isoString) => {
   if (!isoString) return " ";
@@ -255,6 +344,17 @@ const Curriculum = () => {
     }
 
     if (sub.contentType === "video") {
+      const now = new Date();
+      const startDate = new Date(sub.startDate);
+      const endDate = new Date(sub.endDate);
+
+      if (now < startDate || now > endDate) {
+        alert(
+          `이 콘텐츠는 ${startDate.toLocaleDateString()} ~ ${endDate.toLocaleDateString()}까지만 접근 가능합니다.`
+        );
+        return;
+      }
+
       navigate(`/playing/${courseId}/${activeLectureId}/${sub.videoId}`);
     } else if (sub.contentType === "assignment") {
       navigate(
@@ -264,6 +364,17 @@ const Curriculum = () => {
   };
 
   const handleMaterialClick = async (material) => {
+    const now = new Date();
+    const startDate = new Date(material.startDate);
+    const endDate = new Date(material.endDate);
+
+    if (now < startDate || now > endDate) {
+      alert(
+        `이 자료는 ${startDate.toLocaleDateString()} ~ ${endDate.toLocaleDateString()}까지지만 다운로드 가능합합니다.`
+      );
+      return;
+    }
+
     try {
       const response = await api.get("/materials/download", {
         params: {
@@ -307,7 +418,7 @@ const Curriculum = () => {
 
   // 학생들에게 보일 섹션 / 교육자에게 보일 섹션 필터
   const filteredSubSections = isCreator
-    ? activeLecture?.subSections 
+    ? activeLecture?.subSections
     : activeLecture?.subSections.filter((sub) =>
         Object.values(sub).every((value) => value !== null)
       );
@@ -328,17 +439,7 @@ const Curriculum = () => {
         }}
       >
         <div style={{ display: "flex", alignItems: "flex-end" }}>
-          <h1
-            style={{
-              fontSize: "2.3rem",
-              fontWeight: "700",
-              color: "var(--main-color)",
-              margin: "0",
-              marginBottom: "-0.2rem",
-            }}
-          >
-            {activeLecture?.lectureTitle}
-          </h1>
+          <LectureTitle>{activeLecture?.lectureTitle}</LectureTitle>
 
           <p
             style={{
@@ -359,12 +460,12 @@ const Curriculum = () => {
             backgroundColor: allCompleted
               ? "var(--pink-color)"
               : "var(--grey-color)",
-            padding: "0.15rem 1.5rem",
+            padding: "1.5vh 1.5rem",
           }}
         >
-          <h1 style={{ fontSize: "1.6rem", fontWeight: "bolder" }}>
+          <LectureDescription >
             {activeLecture?.lectureDescription}
-          </h1>
+          </LectureDescription>
           {!isCreator && (
             <SectionIcon
               src={allCompleted ? DoneSection : UnselectedSection}
@@ -438,7 +539,12 @@ const Curriculum = () => {
                         gap: "1vh",
                       }}
                     >
-                      <div style={{ whiteSpace: "nowrap" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
                         <span>{activeLecture.instructorName}</span>
                         <span
                           style={{
@@ -453,6 +559,7 @@ const Curriculum = () => {
                       <span
                         style={{
                           whiteSpace: "nowrap",
+                          flexShrink: 0, //  강제로 같은 줄 유지
                         }}
                       >
                         {formatDate(sub?.startDate)} ~{" "}
@@ -484,7 +591,7 @@ const Curriculum = () => {
                   <img
                     src={Material}
                     style={{
-                      width: "2.4rem",
+                      width: "4.3vh",
                       height: "50%",
                       marginLeft: "1rem",
                       marginRight: "1rem",
@@ -543,7 +650,7 @@ const Curriculum = () => {
                     src={Assignment}
                     alt="assignment icon"
                     style={{
-                      width: "2.4rem",
+                      width: "4.3vh",
                       height: "50%",
                       marginLeft: "1rem",
                       marginRight: "1rem",
