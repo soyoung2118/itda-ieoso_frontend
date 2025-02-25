@@ -250,6 +250,10 @@ const Curriculum = () => {
   }, [historyData, activeLecture]);
 
   const handleSectionClick = (sub) => {
+    if (isCreator && sub.contentType === "assignment") {
+      return;
+    }
+
     if (sub.contentType === "video") {
       navigate(`/playing/${courseId}/${activeLectureId}/${sub.videoId}`);
     } else if (sub.contentType === "assignment") {
@@ -300,6 +304,13 @@ const Curriculum = () => {
       console.error("파일 처리 중 오류:", error);
     }
   };
+
+  // 학생들에게 보일 섹션 / 교육자에게 보일 섹션 필터
+  const filteredSubSections = isCreator
+    ? activeLecture?.subSections 
+    : activeLecture?.subSections.filter((sub) =>
+        Object.values(sub).every((value) => value !== null)
+      );
 
   return (
     <div style={{ display: "flex", marginTop: "1rem" }}>
@@ -366,7 +377,7 @@ const Curriculum = () => {
           )}
         </Section>
 
-        {activeLecture?.subSections.map((sub) => (
+        {filteredSubSections?.map((sub) => (
           <div key={sub.id}>
             <div>
               {sub.contentType === "video" && (
@@ -434,7 +445,7 @@ const Curriculum = () => {
                             borderLeft: "1.5px solid #909090",
                             height: "1rem",
                             marginLeft: "1.3vh",
-                            marginRight: "0.5vh"
+                            marginRight: "0.5vh",
                           }}
                         ></span>
                       </div>

@@ -206,6 +206,13 @@ const CurriculumSidebar = ({
           (a, b) => (a.contentOrderIndex || 0) - (b.contentOrderIndex || 0)
         );
 
+        // 학생들에게 보일 섹션 / 교육자에게 보일 섹션 필터링
+        const filteredSubSections = isCreator
+          ? subSections
+          : subSections.filter((sub) =>
+              Object.values(sub).every((value) => value !== null)
+            );
+
         return (
           <ListSection key={section.lectureId}>
             <SectionHeader
@@ -227,7 +234,7 @@ const CurriculumSidebar = ({
             </SectionHeader>
             {activeItem === section.lectureId && (
               <ul style={{ listStyle: "none", padding: 0 }}>
-                {subSections.map((subSection) => (
+                {filteredSubSections?.map((subSection) => (
                   <div
                     key={subSection.id}
                     style={{ marginLeft: "0", marginBottom: "10px" }}

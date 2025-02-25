@@ -60,6 +60,7 @@ const CurriculumSection = ({
   handleAdd,
   handleDelete,
   handleSectionClick,
+  onDateChange,
   editTarget,
   updateSection,
 }) => {
@@ -76,6 +77,7 @@ const CurriculumSection = ({
             index={index}
             handleDelete={handleDelete}
             className="editable-section"
+            onDateChange={onDateChange}
           />
         </div>
       ) : (
