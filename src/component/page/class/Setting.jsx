@@ -353,6 +353,7 @@ const RadioButton = styled.button`
   font-size: 13px;
   background-color: #FF4747;
   color: #FFFFFF;
+  cursor: pointer;
 `;
 
 const PendingButton = styled.button`
