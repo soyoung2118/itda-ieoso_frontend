@@ -26,7 +26,7 @@ const ClassPlaying = () => {
     }, [currentLectureInfo, videoId]);
 
     const handleNavigationCurriculum = () => {
-        navigate(`/class/${courseId}/curriculum`);
+        navigate(`/class/${courseId}/curriculum/${lectureId}`);
     };
 
     return (
