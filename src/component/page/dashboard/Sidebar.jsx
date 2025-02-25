@@ -10,19 +10,29 @@ function Sidebar({ userId, selectedDate }) {
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
-        const formattedDate = selectedDate.toISOString().split('T')[0];
+        const formattedDate = selectedDate.toLocaleDateString('en-CA');
         const data = await getDashboard(userId, formattedDate);
+
         if (data.success) {
-          const filteredLectures = data.data.filter(lecture => {
-            const hasContent = (Array.isArray(lecture.assignmentDtos) && lecture.assignmentDtos.length > 0) ||
-                               (Array.isArray(lecture.materialDtos) && lecture.materialDtos.length > 0) ||
-                               (Array.isArray(lecture.videoDtos) && lecture.videoDtos.length > 0);
+          const filteredLectures = data.data.filter(task => {
+            const hasContent = (Array.isArray(task.assignmentDtos) && task.assignmentDtos.some(assignment => {
+              const assignmentEndDate = new Date(assignment.endDate).toLocaleDateString('en-CA');
+              return assignmentEndDate === formattedDate;
+            })) ||
+            (Array.isArray(task.materialDtos) && task.materialDtos.some(material => {
+              const materialStartDate = new Date(material.startDate).toLocaleDateString('en-CA');
+              return materialStartDate === formattedDate;
+            })) ||
+            (Array.isArray(task.videoDtos) && task.videoDtos.some(video => {
+              const videoStartDate = new Date(video.startDate).toLocaleDateString('en-CA');
+              return videoStartDate === formattedDate;
+            }));
             return hasContent;
           });
           setLectures(filteredLectures);
         }
       } catch (error) {
-        console.error("Dashboard API 호출 에러:", error);
+        console.error("Sidebar API 호출 에러:", error);
       }
     };
 
@@ -33,13 +43,17 @@ function Sidebar({ userId, selectedDate }) {
     <SidebarContainer>
       {lectures.length > 0 ? (
         lectures.map(lecture => {
-          const allTasksSubmitted = 
-            (lecture.assignmentDtos || []).every(task => task.submissionStatus === 'SUBMITTED') &&
-            (lecture.materialDtos || []).every(task => task.submissionStatus === true) &&
-            (lecture.videoDtos || []).every(() => true);
+          const hasActiveStatus = 
+            (lecture.assignmentDtos || []).some(task => task.submissionStatus === 'SUBMITTED') ||
+            (lecture.materialDtos || []).some(task => task.materialHistoryStatus === true) ||
+            (lecture.videoDtos || []).length > 0;
+
+          const hasNotSubmitted = 
+            (lecture.assignmentDtos || []).some(task => task.submissionStatus === 'NOT_SUBMITTED');
+
           return (
             <MenuItem key={lecture.courseId}>
-              {getLectureIcon(allTasksSubmitted ? 'SUBMITTED' : 'NOT_SUBMITTED')}
+              {getLectureIcon(hasActiveStatus && !hasNotSubmitted ? 'SUBMITTED' : 'NOT_SUBMITTED')}
               {lecture.courseTitle}
             </MenuItem>
           );

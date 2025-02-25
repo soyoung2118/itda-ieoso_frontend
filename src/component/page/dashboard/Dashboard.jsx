@@ -1,5 +1,4 @@
 import { useState, useEffect, useContext } from 'react';
-import PropTypes from 'prop-types';
 import styled from "styled-components";
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import TopBar from "../../ui/TopBar";
@@ -14,26 +13,33 @@ export default function DashBoard() {
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [lectures, setLectures] = useState({});
+  const [filteredLectures, setFilteredLectures] = useState([]);
+
+  const getCurrentWeekDates = (date) => {
+    const startOfWeek = new Date(date);
+    const dayOfWeek = startOfWeek.getDay(); 
+    startOfWeek.setDate(startOfWeek.getDate() - dayOfWeek); 
+
+    return Array.from({ length: 7 }, (_, i) => {
+      const day = new Date(startOfWeek);
+      day.setDate(startOfWeek.getDate() + i);
+      return day.toISOString().split("T")[0];
+    });
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       if (!user) return;
 
-      const getStartOfWeek = (date) => {
-        const startOfWeek = new Date(date);
-        startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
-        return startOfWeek;
-      };
-
-      const currentStartOfWeek = getStartOfWeek(currentWeek);
       const allLectures = { ...lectures };
 
       try {
-        // 현재 주의 데이터 우선적으로 가져오기
-        const weekDates = getWeekDates(currentStartOfWeek);
+        const weekDates = getCurrentWeekDates(currentWeek);
+        console.log("Week Dates:", weekDates); 
+
         const fetchWeekData = async (dates) => {
           await Promise.all(dates.map(async (date) => {
-            const formattedDate = date.toISOString().split('T')[0];
+            const formattedDate = date;
             if (!allLectures[formattedDate]) {
               const data = await getDashboard(user.userId, formattedDate);
               if (data.success) {
@@ -44,14 +50,32 @@ export default function DashBoard() {
         };
 
         await fetchWeekData(weekDates);
+        console.log("All Lectures:", allLectures);
         setLectures(allLectures);
 
-        // 이전 주와 다음 주의 데이터 비동기적으로 가져오기
-        const prevStartOfWeek = getStartOfWeek(new Date(currentWeek.setDate(currentWeek.getDate() - 7)));
-        const nextStartOfWeek = getStartOfWeek(new Date(currentWeek.setDate(currentWeek.getDate() + 7)));
+        const formattedDate = selectedDate.toLocaleDateString('en-CA');
 
-        fetchWeekData(getWeekDates(prevStartOfWeek));
-        fetchWeekData(getWeekDates(nextStartOfWeek));
+        const filtered = weekDates.map(date => {
+          const dateStr = date;
+          return (allLectures[dateStr] || []).filter(lecture => {
+            const hasContent = (Array.isArray(lecture.assignmentDtos) && lecture.assignmentDtos.some(assignment => {
+              const assignmentEndDate = new Date(assignment.endDate).toISOString().split('T')[0];
+              return assignmentEndDate === formattedDate;
+            })) ||
+            (Array.isArray(lecture.materialDtos) && lecture.materialDtos.some(material => {
+              const materialStartDate = new Date(material.startDate).toISOString().split('T')[0];
+              return formattedDate >= materialStartDate;
+            })) ||
+            (Array.isArray(lecture.videoDtos) && lecture.videoDtos.some(video => {
+              const videoStartDate = new Date(video.startDate).toISOString().split('T')[0];
+              return formattedDate >= videoStartDate;
+            }));
+            return hasContent;
+          });
+        }).flat();
+
+        console.log("Filtered Lectures:", filtered); // 필터링된 강의 데이터 확인
+        setFilteredLectures(filtered);
 
       } catch (error) {
         console.error("데이터 가져오기 실패:", error);
@@ -59,14 +83,16 @@ export default function DashBoard() {
     };
 
     fetchData();
-  }, [user, currentWeek]);
+  }, [user, currentWeek, selectedDate]);
 
   if (!user) {
     return <div>사용자 정보가 없습니다.</div>;
   }
 
+  // 주간 날짜 배열 가져오기 (일요일을 기준으로)
   const getWeekDates = (date) => {
-    const startOfWeek = new Date(date.setDate(date.getDate() - date.getDay()));
+    const startOfWeek = new Date(date);
+    startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay()); // 일요일
     return Array.from({ length: 7 }, (_, i) => {
       const day = new Date(startOfWeek);
       day.setDate(startOfWeek.getDate() + i);
@@ -75,50 +101,50 @@ export default function DashBoard() {
   };
 
   const nextWeek = () => {
-    setCurrentWeek(new Date(currentWeek.setDate(currentWeek.getDate() + 7)));
+    const next = new Date(currentWeek);
+    next.setDate(currentWeek.getDate() + 7);
+    setCurrentWeek(next);
   };
 
   const prevWeek = () => {
-    setCurrentWeek(new Date(currentWeek.setDate(currentWeek.getDate() - 7)));
+    const prev = new Date(currentWeek);
+    prev.setDate(currentWeek.getDate() - 7);
+    setCurrentWeek(prev);
   };
 
   const weekDates = getWeekDates(new Date(currentWeek));
-  const selectedDateLectures = weekDates.map(date => {
-    const formattedDate = date.toISOString().split('T')[0];
-    return lectures[formattedDate] || [];
-  }).flat();
 
   return (
     <>
-    <TopBar />
-    <Container>
+      <TopBar />
+      <Container>
         <WeekRange>
-          <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-            <div style={{fontSize: '26px', fontWeight: 'bold', color: '#000'}}>이번 주 강의표</div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ fontSize: '26px', fontWeight: 'bold', color: '#000' }}>이번 주 강의표</div>
             <div style={{ fontSize: '16px', color: '#888', marginLeft: '10px', paddingTop: '5px' }}>{weekDates[0].toLocaleDateString()} - {weekDates[6].toLocaleDateString()}</div>
           </div>
-        <WeekButton>
-          <button onClick={prevWeek} style={{transform: 'scale(0.8)'}}>
-            <ChevronLeft />
-          </button>
-          <button onClick={nextWeek} style={{transform: 'scale(0.8)'}}>
-            <ChevronRight /> 
-          </button>
-        </WeekButton>
-      </WeekRange>
+          <WeekButton>
+            <button onClick={prevWeek} style={{ transform: 'scale(0.8)' }}>
+              <ChevronLeft />
+            </button>
+            <button onClick={nextWeek} style={{ transform: 'scale(0.8)' }}>
+              <ChevronRight />
+            </button>
+          </WeekButton>
+        </WeekRange>
         <WeeklyCalendar currentWeek={currentWeek} setSelectedDate={setSelectedDate} lectures={lectures} />
         <ToDoContainer>
-          <Sidebar userId={user.userId} selectedDate={selectedDate} lectures={selectedDateLectures} />
-          <TaskList userId={user.userId} selectedDate={selectedDate} lectures={selectedDateLectures} />
+          <Sidebar userId={String(user.userId)} selectedDate={selectedDate} lectures={filteredLectures} />
+          <TaskList userId={String(user.userId)} selectedDate={selectedDate} lectures={filteredLectures} />
         </ToDoContainer>
-    </Container>
+      </Container>
     </>
   );
 }
 
-//헤더 밑 
+// 헤더 밑 
 const Container = styled.div`
-    padding: 20px 30px;
+  padding: 20px 30px;
 `;
 
 const WeekRange = styled.div`
@@ -150,38 +176,6 @@ const ToDoContainer = styled.div`
   margin-top: 30px;
 `;
 
-function TaskHeader({ selectedDate }) {
-  return (
-    <HeaderContainer>
-      <HeaderTitle>오늘의 할 일</HeaderTitle>
-      <TaskDate>{selectedDate}</TaskDate>
-    </HeaderContainer>
-  );
-}
-
-const HeaderContainer = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-  padding: 5px;
-  background-color: rgb(255, 255, 255);
-  border-radius: 10px;
-`;
-
-const HeaderTitle = styled.h2`
-  font-size: 20px;
-  padding-left: 10px;
-`;
-
-const TaskDate = styled.div`  font-size: 14px;
-  color: #ff4747;
-  margin: 3px 10px 0 10px;
-`;
-
-TaskHeader.propTypes = {
-  selectedDate: PropTypes.string.isRequired,
-};
-
 function getLectureIcon(submissionStatus) {
   return submissionStatus === 'SUBMITTED' ? (
     <span className="activeicon"></span>
@@ -191,4 +185,3 @@ function getLectureIcon(submissionStatus) {
 }
 
 export { getLectureIcon };
-
