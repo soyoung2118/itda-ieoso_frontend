@@ -23,7 +23,7 @@ export default function TopBar() {
         <Wrapper>
             <img 
                 src={Logo} 
-                style={{ width: "126px", height: "33px" }} 
+                style={{ width: "126px", height: "33px",cursor: "pointer" }} 
                 alt="itda logo" 
                 onClick={isUser ? () => navigate('/class/list') : () => navigate('/')}
             />
