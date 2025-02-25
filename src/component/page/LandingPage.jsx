@@ -243,8 +243,8 @@ const FooterLink = styled.a`
     color: black;
     font-size: 0.9rem;
     font-weight: 500;
-    pointer-events: none; // 일단 링크 연겳 방지
-    cursor: default;
+    //pointer-events: none; // 일단 링크 연겳 방지
+    cursor: pointer;
 `;
 
 const FooterSection = styled.div`
@@ -407,8 +407,8 @@ export default function LandingPage() {
           <hr style={{ width: "100%", margin: "40px 0px", border: "1px solid #CDCDC" }} />
           <Footer>
             <FooterLinks>
-              <FooterLink href="#">Instagram</FooterLink>
-              <FooterLink href="#">Youtube</FooterLink>
+              <FooterLink href="https://www.instagram.com/eduitda?igsh=NDV3bWk0dTkzbmMz">Instagram</FooterLink>
+              <FooterLink href="#" style={{ pointerEvents: 'none', cursor: 'default' }}>Youtube</FooterLink>
             </FooterLinks>
             <FooterSection>
               <div>
