@@ -32,6 +32,7 @@ const IconRow = styled.div`
 
 const Content = styled.div`
   width: 100%;
+  border-radius: 12px;
   min-height: 50vh;
   height: auto;
   background-color: #FFFFFF;
