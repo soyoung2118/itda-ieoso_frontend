@@ -32,7 +32,6 @@ function TaskList({ userId, selectedDate }) {
             if (hasContent) acc.push(task);
             return acc;
           }, []);
-          console.log('Filtered Tasks:', filteredTasks);
           setTasks(filteredTasks);
         }
       } catch (error) {

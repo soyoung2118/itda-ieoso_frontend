@@ -35,7 +35,6 @@ export default function DashBoard() {
 
       try {
         const weekDates = getCurrentWeekDates(currentWeek);
-        console.log("Week Dates:", weekDates); 
 
         const fetchWeekData = async (dates) => {
           await Promise.all(dates.map(async (date) => {
@@ -50,7 +49,6 @@ export default function DashBoard() {
         };
 
         await fetchWeekData(weekDates);
-        console.log("All Lectures:", allLectures);
         setLectures(allLectures);
 
         const formattedDate = selectedDate.toLocaleDateString('en-CA');
@@ -74,7 +72,6 @@ export default function DashBoard() {
           });
         }).flat();
 
-        console.log("Filtered Lectures:", filtered); // 필터링된 강의 데이터 확인
         setFilteredLectures(filtered);
 
       } catch (error) {
