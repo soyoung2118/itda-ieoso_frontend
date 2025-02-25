@@ -21,7 +21,7 @@ const StyledInput = styled.input`
   border: 2px solid var(--neutralgrey-color);
   border-radius: 10px;
   padding: 12px 15px;
-  font-size: 19px;
+  font-size: 14px;
   margin-bottom: 2.8vh;
   margin-top: 0.7rem;
   font-family: Pretendard, sans-serif;
@@ -32,10 +32,9 @@ const StyledTextarea = styled.textarea`
   border: 2px solid var(--neutralgrey-color);
   border-radius: 10px;
   padding: 12px 15px;
-  font-size: 19px;
+  font-size: 14px;
   margin-bottom: 1rem;
   margin-top: 0.7rem;
-  font-family: Pretendard, sans-serif;
   resize: none;
 
   &:focus {
