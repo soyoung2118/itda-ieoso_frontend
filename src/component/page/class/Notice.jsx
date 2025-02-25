@@ -100,6 +100,7 @@
     transition: max-height 0.3s ease-out;
     overflow: hidden;
     position: relative;
+    white-space: pre;
     
     .button-container {
       position: absolute;

@@ -201,6 +201,7 @@ const NoticeCreateForm = () => {
                   onChange={(e) => setContent(e.target.value)}
                   rows="15"
                   required
+                  wrap:hard
               ></StyledTextarea>
               <ButtonContainer>
                 {noticeId && (
