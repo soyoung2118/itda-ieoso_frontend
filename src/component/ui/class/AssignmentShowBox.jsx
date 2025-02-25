@@ -140,6 +140,7 @@ const ImageItemContainer = styled.div`
     overflow-x: auto;
     gap: 10px;
     margin: 10px;
+    padding: 0px 10px;
     background-color: #F6F7F9;
     border-radius: 8px;
     height: 40px;

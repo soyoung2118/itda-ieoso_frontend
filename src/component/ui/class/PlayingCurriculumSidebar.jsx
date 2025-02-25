@@ -19,6 +19,8 @@ const PlayingCurriculumSidebar = ({
     const { user } = useContext(UsersContext);
     const [submissionStatusList, setSubmissionStatusList] = useState([]);
     const [assignmentIdList, setAssignmentIdList] = useState([]);
+    const [materialStatusList, setMaterialStatusList] = useState([]);
+    const [materialIdList, setMaterialIdList] = useState([]);
     const [selectedContentId, setSelectedContentId] = useState(null);
     const [selectedType, setSelectedType] = useState(null);
 
@@ -38,6 +40,10 @@ const PlayingCurriculumSidebar = ({
                     const submissions = Array.isArray(historyResponse.data.data.submissions)
                         ? historyResponse.data.data.submissions
                         : [];
+
+                    const materials = Array.isArray(historyResponse.data.data.materials)
+                        ? historyResponse.data.data.materials
+                        : [];
                 
                     setAssignmentIdList(prev => [
                         ...prev, 
@@ -48,6 +54,17 @@ const PlayingCurriculumSidebar = ({
                         ...prev, 
                         ...submissions.map(sub => sub.submissionStatus)
                     ]);
+                    
+                    setMaterialIdList(prev => [
+                        ...prev, 
+                        ...materials.map(sub => sub.materialId)
+                    ]);
+                
+                    setMaterialStatusList(prev => [
+                        ...prev, 
+                        ...materials.map(sub => sub.materialHistoryStatus)
+                    ]);
+
                 }
 
             } catch (error) {
@@ -90,6 +107,20 @@ const PlayingCurriculumSidebar = ({
                     return null;
             }
         }
+        else if(type === 'material') {
+            const index = materialIdList.findIndex((listid) => listid === id);
+            if (index === -1) return null;
+    
+            const status = materialStatusList[index];
+            switch (status) {
+                case true:
+                    return <span key={id} className="material-icons" style={{ color: '#474747', fontSize: '20px' }}>check_circle</span>;
+                case false:
+                    return <span key={id} className="material-icons" style={{ color: '#C3C3C3', fontSize: '20px' }}>check_circle</span>;
+                default:
+                    return null;
+            }
+        }
         return null;
     }
 
@@ -102,47 +133,50 @@ const PlayingCurriculumSidebar = ({
     const handleMaterialClick = async (material) => {
         setSelectedContentId(material.materialId);
         setSelectedType("material");
-      const materialUrl = material.materialFile;
-  
-      try {
-          const response = await api.get("/files/download", {
-              params: { 
-                  fileUrl: materialUrl
-              },
-          });
 
-          const presignedUrl = response.data;
-          const fileResponse = await fetch(presignedUrl);
+        try{
+            const response = await api.get("/materials/download", {
+            params: {
+                fileUrl: material.materialFile,
+                materialId: material.materialId,
+            },
+            });
 
-          const arrayBuffer = await fileResponse.arrayBuffer();
+            console.log(response.data.data);
 
-          const fileExtension = material.originalFilename.split('.').pop().toLowerCase();
-          let mimeType = 'application/octet-stream';
+            const presignedUrl = response.data.data;
+            const fileResponse = await fetch(presignedUrl);
+            const arrayBuffer = await fileResponse.arrayBuffer();
 
-          if (fileExtension === 'pdf') {
-              mimeType = 'application/pdf';
-          } else if (fileExtension === 'txt') {
-              mimeType = 'text/plain';
-          } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
-              mimeType = `image/${fileExtension}`;
-          } else if (fileExtension === 'zip') {
-              mimeType = 'application/zip';
-          }
+            const fileExtension = material.originalFilename
+            .split(".")
+            .pop()
+            .toLowerCase();
+            let mimeType = "application/octet-stream";
 
-          const blob = new Blob([arrayBuffer], { type: mimeType });
-  
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-  
-          a.download = material.originalFilename; 
-          a.click();
-  
-          window.URL.revokeObjectURL(url);
-  
-      } catch (error) {
-          console.error("파일 처리 중 오류:", error);
-      }
+            if (fileExtension === "pdf") {
+            mimeType = "application/pdf";
+            } else if (fileExtension === "txt") {
+            mimeType = "text/plain";
+            } else if (["jpg", "jpeg", "png", "gif"].includes(fileExtension)) {
+            mimeType = `image/${fileExtension}`;
+            } else if (fileExtension === "zip") {
+            mimeType = "application/zip";
+            } else if (fileExtension === "svg") {
+            mimeType = "image/svg+xml";
+            }
+
+            const blob = new Blob([arrayBuffer], { type: mimeType });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = material.originalFilename;
+            a.click();
+
+            window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("파일 처리 중 오류:", error);
+    }
   };
 
     const handleAssignmentClick = (goLecture, goAssignment) => {
@@ -206,8 +240,12 @@ const PlayingCurriculumSidebar = ({
                                                   marginRight: "4px",
                                                   }}
                                               />
-                                              <BlackText>{content.originalFilename}</BlackText>
-                                              <RedText>{content.fileSize}</RedText>
+                                              <TextContainer>
+                                                {/* <BlackText>{truncate(content.originalFilename, 20)}</BlackText> */}
+                                                <BlackText>{content.originalFilename}</BlackText>
+                                                <RedText>{content.fileSize}</RedText>
+                                              </TextContainer>
+                                              <IconContainer>{getStatusIcon(content.contentType, content.materialId)}</IconContainer>
                                             </ContentItem>
                                           }
                                           {content.contentType === 'assignment' &&
@@ -316,6 +354,10 @@ const SubItemTitle = styled.div`
     font-weight: ${props => props.status === 'WATCHING' ? 800 : 400}
 `;
 const TextContainer = styled.div`
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 `
 
 const IconContainer = styled.div`
@@ -330,7 +372,5 @@ const BlackText = styled.div`
 const RedText = styled.div`
   font-size: 11px;
   color: #FF4747;
-  white-space: no-wrap;
-  text-overflow: ellipsis;
 `
 export default PlayingCurriculumSidebar;
