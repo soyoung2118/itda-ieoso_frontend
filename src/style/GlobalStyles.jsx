@@ -15,13 +15,16 @@ const GlobalStyle = createGlobalStyle`
 
     body {
         margin: 0;
-        font-family: Pretendard, Pretendard-Bold, Pretendard-ExtraBold, Pretendard-Light, Pretendard-Medium, Pretendard-SemiBold, Pretendard-Thin, sans-serif;
+        font-family: "Pretendard", sans-serif;
         background-color: #F6F7F9;
-        
     }
 
     input {
         outline: none;
+    }
+
+    button, textarea {
+        font-family: "Pretendard", sans-serif;
     }
 `
 

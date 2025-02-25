@@ -5,9 +5,6 @@ import TopBar from "../ui/TopBar";
 import LogoGray from "../img/logo/itda_logo_gray.svg";
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import EventIcon from '@mui/icons-material/Event';
-import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
-import PersonIcon from '@mui/icons-material/Person';
 import ClassThumbnail from "../img/class/class_thumbnail.svg";
 import api from "../api/api";
 import { UsersContext } from "../contexts/usersContext";
@@ -43,6 +40,13 @@ export default function Class() {
             ? lectures
             : lectures.filter((lecture) => lecture.user.userId === user.userId);
     const lecturesCount = lecturesToDisplay.length;
+
+    const changeDifficultly = (difficulty) => {
+        if(difficulty === 'HARD') return '상'
+        if(difficulty === 'MEDIUM') return '중'
+        if(difficulty === 'EASY') return '하'
+        return null
+    }
 
     return (
       <>
@@ -86,7 +90,7 @@ export default function Class() {
                             <LectureTitle>{lecture.courseTitle}</LectureTitle>
                             <LectureDetail>
                                 <IconRow>
-                                    <EventIcon />
+                                    <span className="material-symbols-outlined">event</span>
                                     <span>
                                         {lecture.startDate
                                             ? `${lecture.startDate} 시작`
@@ -94,7 +98,7 @@ export default function Class() {
                                     </span>
                                 </IconRow>
                                 <IconRow>
-                                    <VideoLibraryIcon />
+                                <span className="material-symbols-outlined">video_library</span>
                                     <span>
                                         {lecture.durationWeeks > 0
                                             ? `${lecture.durationWeeks}주 커리큘럼`
@@ -102,8 +106,13 @@ export default function Class() {
                                     </span>
                                 </IconRow>
                                 <IconRow>
-                                    <PersonIcon />
+                                <span className="material-symbols-outlined">person</span>
                                     <span>{lecture.instructorName}</span>
+                                </IconRow>
+                                <IconRow style={{gap: '0rem'}}>
+                                    <span className="material-symbols-outlined">star</span>
+                                    <span style={{margin: '0rem 0.3rem 0rem 1rem'}}>강의 난이도</span>
+                                    <span style={{marginLeft: 0, fontWeight: 800}}>{changeDifficultly(lecture.difficultyLevel)}</span>
                                 </IconRow>
                             </LectureDetail>
                         </LectureInfo>
@@ -144,10 +153,7 @@ const Container = styled.div`
 
 const Sidebar = styled.div`
     width: 15%;
-    min-width: 75px;
-    max-width: 175px;
     height: 60vh;
-
     margin: 30px 20px;
     background-color: #fff;
     padding: 20px;
@@ -167,7 +173,7 @@ const MenuItem = styled.div`
 
 const Content = styled.div`
     flex: 1;
-    padding: 10px;
+    padding: 20px;
 `;
 
 const LectureCard = styled.div`
@@ -175,7 +181,7 @@ const LectureCard = styled.div`
     display: flex;
     flex-direction: column;
     background-color: #fff;
-    margin: 10px 30px 10px 0;
+    margin: 10px 30px 20px 0;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -205,7 +211,7 @@ const LectureInfo = styled.div`
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: space-around;
 `;
 
 const LectureDetail = styled.div`
@@ -216,6 +222,7 @@ const LectureDetail = styled.div`
 const LectureTitle = styled.h3`
     margin: 0;
     font-size: 24px;
+    margin-bottom: 12px;
 `;
 
 const IconRow = styled.div`
@@ -225,6 +232,11 @@ const IconRow = styled.div`
     margin-top: 0.5rem;
     color: var(--darkgrey-color);
 
+    .material-symbols-outlined {
+        font-size: 1.5rem;
+        vertical-align: middle;
+    }
+
     span {
         font-size: 1rem;
         font-weight: 500;
@@ -233,10 +245,11 @@ const IconRow = styled.div`
 
 const AddButton = styled.button`
     position: fixed;
-    bottom: 45px;
-    right: 45px;
-    width: 60px;
+    bottom: 2rem;
+    right: 2rem;
+    width: 3.8rem;
     height: 60px;
+    padding-bottom: 15px;
     background-color: ${(props) =>
         props["data-showpopup"] ? "#000" : "var(--main-color)"};
     color: #fff;
