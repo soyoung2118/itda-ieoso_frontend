@@ -26,7 +26,6 @@
     display: flex;
     flex-direction: column;
     color: var(--black-color);
-    padding: 1.3rem;
     min-width: 175px;
   `;
 
@@ -210,7 +209,7 @@
     return (
       <ModalOverlay>
         <ModalContent>
-          <h2>공지 사항 삭제</h2>
+          <h2>공지사항 삭제</h2>
           <span>공지글을 삭제하시겠습니까? <br /> 한 번 삭제한 글은 복구할 수 없습니다.</span>
           <div className="button-container">
             <button className="close-button" onClick={onClose}>닫기</button>

@@ -5,6 +5,7 @@ import Container from "../../ui/Container";
 import ClassSidebar from "../../ui/class/ClassSidebar";
 import api from "../../api/api";
 import { UsersContext } from "../../contexts/usersContext";
+import PropTypes from "prop-types";
 
 const NoticeTitle = styled.h3`
   font-size: 26px;
@@ -69,7 +70,7 @@ const StyledButton = styled.button`
   margin-bottom: 1rem;
 
   @media (max-width: 600px) {
-    font-size: 1.1rem;
+    font-size: 16px;
     padding: 10px 18px;
   }
 `;
@@ -80,13 +81,13 @@ const CancelButton = styled.button`
   border: none;
   border-radius: 8px;
   padding: 10px 30px;
-  font-size: 1.25rem;
+  font-size: 18px;
   font-weight: bold;
   cursor: pointer;
   margin-bottom: 1rem;
 
   @media (max-width: 600px) {
-    font-size: 1.1rem;
+    font-size: 16px;
     padding: 10px 18px;
   }
 `;
@@ -101,17 +102,90 @@ const Text = styled.div`
   color: var(--main-color);
 `
 
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`;
+
+const ModalContent = styled.div`
+background-color: white;
+padding: 40px 80px;
+border-radius: 8px;
+text-align: center;
+width: 50%;
+max-width: 300px;
+font-size: 1rem;
+
+.button-container {
+  display: flex;
+  margin-top: 2rem;
+  gap: 2rem;
+  justify-content: center;
+}
+
+.close-button {
+  background-color: #C3C3C3;
+  color: var(--white-color);
+  border: none;
+  border-radius: 15px;
+  padding: 10px 32px;
+  font-size: 1rem;
+}
+
+.delete-button {
+  background-color: var(--main-color);
+  color: white;
+  border: none;
+  border-radius: 15px;
+  padding: 15px 32px;
+  font-size: 1rem;
+}
+`;
+
+const NoticeCreateModal = ({ isOpen, onClose, isEditMode }) => {
+  NoticeCreateModal.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
+    isEditMode: PropTypes.bool.isRequired,
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <ModalOverlay>
+      <ModalContent>
+        <h2>{isEditMode ? "공지사항 수정" : "공지사항 등록"}</h2>
+        <span>{isEditMode ? "공지사항이 수정되었습니다." : "공지사항이 게시되었습니다."}</span>
+        <div className="button-container">
+          <button className="close-button" onClick={onClose}>닫기</button>
+        </div>
+      </ModalContent>
+    </ModalOverlay>
+  );
+};
+
 const NoticeCreateForm = () => {
   const { courseId, noticeId } = useParams();
   const { user } = useContext(UsersContext);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   let [inputCount, setInputCount] = useState(title.length);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   useEffect(() => {
     if (noticeId && user && user.userId) {
       // 수정 모드: 공지사항 데이터를 불러와서 폼에 채워 넣음
+      setIsEditMode(true);
       const fetchNoticeData = async () => {
         try {
           const response = await api.get(`/announcements/${courseId}/${user.userId}/${noticeId}`);
@@ -131,6 +205,7 @@ const NoticeCreateForm = () => {
       // 생성 모드: 빈 폼을 보여줌
       setTitle("");
       setContent("");
+      setIsEditMode(false);
     }
   }, [courseId, noticeId, user]);
 
@@ -163,10 +238,7 @@ const NoticeCreateForm = () => {
       }
 
       if (response.data.success) {
-        alert(noticeId ? "공지사항이 수정되었습니다." : "공지사항이 게시되었습니다.");
-        setTitle("");
-        setContent("");
-        navigate(`/class/${courseId}/overview/notice`);
+        setIsCreateModalOpen(true); // 모달 열기
       } else {
         alert(`공지 ${noticeId ? "수정" : "작성"} 실패: ${response.data.message}`);
       }
@@ -174,6 +246,11 @@ const NoticeCreateForm = () => {
       console.error(`공지 ${noticeId ? "수정" : "작성"} 오류:`, error);
       alert(`공지사항을 ${noticeId ? "수정" : "작성"}하는 중 오류가 발생했습니다.`);
     }
+  };
+
+  const handleCloseModal = () => {
+    setIsCreateModalOpen(false);
+    navigate(`/class/${courseId}/overview/notice`);
   };
 
   const handleCancel = () => {
@@ -228,9 +305,7 @@ const NoticeCreateForm = () => {
               ></StyledTextarea>
               <ButtonContainer>
                 {noticeId && (
-                  <CancelButton type="button" onClick={handleCancel}>
-                    취소하기
-                  </CancelButton>
+                  <CancelButton type="button" onClick={handleCancel}>취소하기</CancelButton>
                 )}
                 <StyledButton type="submit">게시하기</StyledButton>
               </ButtonContainer>
@@ -238,6 +313,7 @@ const NoticeCreateForm = () => {
             </Container>
           </main>
         </div>
+        <NoticeCreateModal isOpen={isCreateModalOpen} onClose={handleCloseModal} isEditMode={isEditMode} />
     </div>
   );
 };
