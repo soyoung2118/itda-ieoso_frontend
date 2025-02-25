@@ -7,8 +7,8 @@ import api from "../../api/api";
 import { UsersContext } from "../../contexts/usersContext";
 
 const NoticeTitle = styled.h3`
-  font-size: 2rem;
-  font-weight: 700;
+  font-size: 26px;
+  font-weight: 800;
   color: var(--black-color);
   margin-bottom: 1rem;
   margin-left: 1rem;
@@ -91,12 +91,23 @@ const CancelButton = styled.button`
   }
 `;
 
+const CountContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+`
+
+const Text = styled.div`
+  font-size: 13px;
+  color: var(--main-color);
+`
+
 const NoticeCreateForm = () => {
   const { courseId, noticeId } = useParams();
   const { user } = useContext(UsersContext);
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  let [inputCount, setInputCount] = useState(title.length);
 
   useEffect(() => {
     if (noticeId && user && user.userId) {
@@ -122,6 +133,10 @@ const NoticeCreateForm = () => {
       setContent("");
     }
   }, [courseId, noticeId, user]);
+
+  useEffect(() => {
+    setInputCount(title.length);
+  }, [title]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -165,6 +180,10 @@ const NoticeCreateForm = () => {
     navigate(`/class/${courseId}/overview/notice`);
   };
 
+  const onInputHandler = (e) => {
+    setInputCount(e.target.value.length);
+  };
+
   return (
     <div>
         <div style={{ display: "flex", marginTop: "1rem" }}>
@@ -177,20 +196,25 @@ const NoticeCreateForm = () => {
               <form onSubmit={handleSubmit}>
                 <label
                   htmlFor="title"
-                  style={{ fontSize: "21px", fontWeight: "600" }}
+                  style={{ fontSize: "18px", fontWeight: "600" }}
                 >
                   제목
                 </label>
+                <CountContainer>
+                  <Text>{inputCount}</Text>
+                  <Text>/30 자</Text>
+                </CountContainer>
                 <StyledInput
                   id="title"
                   type="text"
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  maxLength="30"
+                  onChange={(e) => {setTitle(e.target.value); onInputHandler(e);}}
                   required
                 />
                 <label
                   htmlFor="content"
-                  style={{ fontSize: "21px", fontWeight: "600" }}
+                  style={{ fontSize: "18px", fontWeight: "600" }}
                 >
                   내용
                 </label>

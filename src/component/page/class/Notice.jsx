@@ -9,9 +9,10 @@
   import PropTypes from "prop-types";
 
   const Title = styled.h1`
-    font-size: 2rem;
+    font-size: 26px;
     font-weight: bold;
     margin-top: 0rem;
+    margin-bottom: 0px;
   `;
 
   const ContentHeader = styled.div`
@@ -34,6 +35,7 @@
     flex-direction: column;
     justify-content: center;
     gap: 0rem;
+    width: 80%;
   `;
 
   const NoticeItem = styled.div`
@@ -339,7 +341,7 @@
             <main
               style={{
                 flex: 1,
-                padding: "1.5rem 1rem",
+                padding: "1.5rem 0rem",
                 borderRadius: "8px",
               }}
             >

@@ -3,9 +3,7 @@ import PropTypes from "prop-types";
 import { useLocation, useNavigate, useParams } from "react-router-dom"; // react-router-dom 추가
 
 const SidebarContainer = styled.aside`
-  min-width: 75px;
-  width: 15%;
-  max-width: 175px;
+  width: clamp(7rem, 15.5vw, 25rem);
   height: 30rem;
   background-color: white;
   border-radius: 0.5rem;
@@ -16,6 +14,7 @@ const SidebarContainer = styled.aside`
 
 const ListItem = styled.li`
   font-weight: bold;
+  font-size: 18px;
   padding: 0.7rem 1rem;
   margin-bottom: 0.5rem;
   border-radius: 0.5rem;
