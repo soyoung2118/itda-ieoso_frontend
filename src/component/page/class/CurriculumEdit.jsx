@@ -443,6 +443,8 @@ const CurriculumEdit = () => {
                               subSection={subSection}
                               index={index}
                               className="editable-section"
+                              lectureStartDate={activeLecture?.startDate} 
+                              lectureEndDate={activeLecture?.endDate}
                               handleDelete={(event) =>
                                 handleDelete(event, index)
                               }

@@ -68,6 +68,8 @@ const DateTimeEdit = ({
   userId,
   subSection,
   onDateChange,
+  lectureStartDate,
+  lectureEndDate,
 }) => {
   const [date, setDate] = useState(initialDate ? initialDate : new Date());
 
@@ -99,7 +101,6 @@ const DateTimeEdit = ({
     }
 
     try {
-      console.log(`📢 API 호출: ${url}`, data);
       await api.patch(url, data);
     } catch (error) {
       console.error("날짜 업데이트 실패:", error);
@@ -108,6 +109,14 @@ const DateTimeEdit = ({
 
   // 날짜 변경 → API 전송 + 부모 상태 업데이트
   const handleDateChange = (newDate) => {
+    if (
+      newDate < new Date(lectureStartDate) ||
+      newDate > new Date(lectureEndDate)
+    ) {
+      alert("강의 기간 내에서만 선택할 수 있습니다.");
+      return;
+    }
+
     setDate(newDate);
     updateDateAPI(field, newDate);
     onDateChange?.(newDate); // 부모에서 상태 업데이트
@@ -128,9 +137,11 @@ const DateTimeEdit = ({
           />
           <DatePicker
             selected={date}
-            onChange={handleDateChange} 
+            onChange={handleDateChange}
             showTimeSelect
             dateFormat="yyyy년 MM월 dd일 HH:mm"
+            minDate={new Date(lectureStartDate)}
+            maxDate={new Date(lectureEndDate)}
             customInput={
               <CustomInput
                 text={field === "startDate" ? "업로드일" : "마감일"}
