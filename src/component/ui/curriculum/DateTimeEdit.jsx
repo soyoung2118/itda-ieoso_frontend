@@ -54,6 +54,7 @@ const CustomInput = forwardRef(({ value, onClick, text }, ref) => {
         onClick(e);
       }}
       ref={ref}
+      style={{ color: value ? "black" : "#c3c3c3" }}
     >
       <span>{value || text}</span>
       <Icon src={Calendar} alt="Calendar Icon" />
