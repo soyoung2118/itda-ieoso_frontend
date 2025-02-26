@@ -383,21 +383,29 @@ const Curriculum = () => {
     if (isCreator && sub.contentType === "assignment") {
       return;
     }
+    const now = new Date();
+    const startDate = new Date(sub.startDate);
+    const endDate = new Date(sub.endDate);
 
     if (sub.contentType === "video") {
-      const now = new Date();
-      const startDate = new Date(sub.startDate);
-      const endDate = new Date(sub.endDate);
-
-      if (now < startDate || now > endDate) {
+      if (
+        now.getTime() < startDate.getTime() ||
+        now.getTime() > endDate.getTime()
+      ) {
         alert(
-          `이 콘텐츠는 ${startDate.toLocaleDateString()} ~ ${endDate.toLocaleDateString()}까지만 접근 가능합니다.`
+          `이 콘텐츠는 ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()}까지만 접근 가능합니다.`
         );
         return;
       }
 
       navigate(`/playing/${courseId}/${activeLectureId}/${sub.videoId}`);
     } else if (sub.contentType === "assignment") {
+      if (now.getTime() < startDate.getTime()) {
+        alert(
+          `이 과제는 ${startDate.toLocaleString()} 이후에 제출할 수 있습니다.`
+        );
+        return;
+      }
       navigate(
         `/assignment/submit/${courseId}/${activeLectureId}/${sub.assignmentId}`
       );
@@ -409,9 +417,12 @@ const Curriculum = () => {
     const startDate = new Date(material.startDate);
     const endDate = new Date(material.endDate);
 
-    if (now < startDate || now > endDate) {
+    if (
+      now.getTime() < startDate.getTime() ||
+      now.getTime() > endDate.getTime()
+    ) {
       alert(
-        `이 자료는 ${startDate.toLocaleDateString()} ~ ${endDate.toLocaleDateString()}까지지만 다운로드 가능합합니다.`
+        `이 자료는 ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()}까지만 다운로드 가능합니다.`
       );
       return;
     }

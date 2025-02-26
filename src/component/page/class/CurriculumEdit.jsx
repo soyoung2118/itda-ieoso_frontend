@@ -51,7 +51,7 @@ const DeleteButton = styled.img`
 
 export const toLocalDateTime = (isoString) => {
   if (!isoString) return null;
-  return isoString.replace("T", " ") + ":00"; // "2025-02-22 11:00:00" 형태로 변환
+  return isoString.replace("T", " ") + ":00"; 
 };
 
 const CurriculumEdit = () => {
@@ -295,6 +295,7 @@ const CurriculumEdit = () => {
           alert("날짜를 선택해주세요!");
           return;
         }
+        
       }
 
       if (isEditingDescription) {
