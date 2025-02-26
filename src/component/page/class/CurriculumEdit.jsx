@@ -94,7 +94,10 @@ const CurriculumEdit = () => {
           return;
         }
 
-        const lectures = response.data.data || []; // 데이터 없을 경우 빈 배열로 처리
+        const { curriculumResponses, instructorName } =
+          response.data.data || {};
+        const lectures = curriculumResponses || [];
+
         setCurriculumData(lectures);
 
         console.log("[DEBUG] curriculumData:", lectures);
@@ -124,7 +127,11 @@ const CurriculumEdit = () => {
         );
 
         console.log("After", defaultLecture);
-        setActiveLecture({ ...defaultLecture, subSections: sortedSubSections });
+        setActiveLecture({
+          ...defaultLecture,
+          instructorName,
+          subSections: sortedSubSections,
+        });
         setSubSections(sortedSubSections);
         setActiveLectureId(defaultLecture.lectureId);
       } catch (error) {
@@ -480,7 +487,7 @@ const CurriculumEdit = () => {
                               handleDelete={(event) =>
                                 handleDelete(event, index)
                               }
-                              onDateChange={handleSubSectionDateChange} 
+                              onDateChange={handleSubSectionDateChange}
                             />
                           ) : (
                             <CurriculumSection
@@ -492,7 +499,7 @@ const CurriculumEdit = () => {
                                 handleDelete(event, index)
                               }
                               handleSectionClick={handleSectionClick}
-                              onDateChange={handleSubSectionDateChange} 
+                              onDateChange={handleSubSectionDateChange}
                             />
                           )}
                         </SectionWrapper>
