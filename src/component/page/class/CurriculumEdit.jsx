@@ -51,7 +51,7 @@ const DeleteButton = styled.img`
 
 export const toLocalDateTime = (isoString) => {
   if (!isoString) return null;
-  return isoString.replace("T", " ") + ":00"; 
+  return isoString.replace("T", " ") + ":00";
 };
 
 const CurriculumEdit = () => {
@@ -73,6 +73,8 @@ const CurriculumEdit = () => {
   const [lectureDescription, setLectureDescription] = useState(
     activeLecture?.lectureDescription || ""
   );
+
+  const [movedItem, setMovedItem] = useState(null);
 
   const activeLectureRef = useRef(null);
   useEffect(() => {
@@ -147,16 +149,17 @@ const CurriculumEdit = () => {
     setIsEditingDescription(true);
   };
 
-  // 섹션 순서 수정 관련 함수
-  const handleDragUpdate = (update) => {
+  // 드래그 시작 시 이동할 아이템을 고정
+  const handleDragStart = (start) => {
+    console.log("[DEBUG] Drag Started:", start);
+    const draggedItem = subSections.find(
+      (item) => item.contentOrderId === start.draggableId
+    );
+    if (draggedItem) {
+      console.log("[DEBUG] Moved Item Set:", draggedItem);
+      setMovedItem(draggedItem);
+    }
     setIsDragging(true);
-    if (!update.destination) return;
-
-    const tempSubSections = Array.from(subSections);
-    const [movedItem] = tempSubSections.splice(update.source.index, 1);
-    tempSubSections.splice(update.destination.index, 0, movedItem);
-
-    setSubSections(tempSubSections);
   };
 
   const handleDragEnd = async (result) => {
@@ -165,14 +168,28 @@ const CurriculumEdit = () => {
     }
     const sourceIndex = result.source.index;
     const destinationIndex = result.destination.index;
+    const tempSubSections = [...subSections];
 
-    const movedItem = subSections[sourceIndex];
-    const targetItem = subSections[destinationIndex];
+    const [movedItem] = tempSubSections.splice(sourceIndex, 1);
 
-    if (!movedItem || !targetItem) return;
+    tempSubSections.splice(destinationIndex, 0, movedItem);
+
+    let targetItem = null;
+
+    if (destinationIndex > sourceIndex) {
+      // 아래로 이동하는 경우
+      targetItem =
+        destinationIndex > 0 ? tempSubSections[destinationIndex - 1] : null;
+    } else {
+      // 위로 이동하는 경우
+      targetItem =
+        destinationIndex < tempSubSections.length - 1
+          ? tempSubSections[destinationIndex + 1]
+          : null;
+    }
 
     const contentOrderId = movedItem.contentOrderId;
-    const targetContentOrderId = targetItem.contentOrderId;
+    const targetContentOrderId = targetItem ? targetItem.contentOrderId : null;
 
     try {
       await api.put(`/contentorders/${courseId}/${activeLectureId}/reorder`, {
@@ -295,7 +312,6 @@ const CurriculumEdit = () => {
           alert("날짜를 선택해주세요!");
           return;
         }
-        
       }
 
       if (isEditingDescription) {
@@ -349,7 +365,7 @@ const CurriculumEdit = () => {
     return () => {
       document.body.removeEventListener("click", handleClickOutside);
     };
-  }, [isEditingDescription, lectureDescription]);
+  }, [isEditingDescription, lectureDescription, isDragging]);
 
   const handleSubSectionDateChange = (index, field, newDate) => {
     setActiveLecture((prev) => {
@@ -451,7 +467,8 @@ const CurriculumEdit = () => {
             )}
           </Section>
           <DragDropContext
-            onDragUpdate={handleDragUpdate}
+            onDragStart={handleDragStart}
+            // onDragUpdate={handleDragUpdate}
             onDragEnd={handleDragEnd}
           >
             <Droppable droppableId="curriculum">
