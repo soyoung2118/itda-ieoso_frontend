@@ -30,9 +30,23 @@ const PlayingCurriculumSidebar = ({
                 if (!courseId || !user) return;
 
                 const curriculumResponse = await api.get(`/lectures/curriculum/${courseId}/${user.userId}`);
-                if (curriculumResponse.data.success) {
-                    setCurriculumData(curriculumResponse.data.data);
-                }
+                const cleanedData = {
+                    ...curriculumResponse.data.data,
+                    curriculumResponses: curriculumResponse.data.data.curriculumResponses?.map(lecture => ({
+                        ...lecture,
+                        videos: lecture.videos?.filter(video => 
+                            Object.values(video).every(value => value !== null)
+                        ) || [],
+                        assignments: lecture.assignments?.filter(assignment => 
+                            Object.values(assignment).every(value => value !== null)
+                        ) || [],
+                        materials: lecture.materials?.filter(material => 
+                            Object.values(material).every(value => value !== null)
+                        ) || []
+                    })) || []
+                };
+            
+                setCurriculumData(cleanedData.curriculumResponses);               
 
                 const historyResponse = await api.get(`/lectures/history/${courseId}/${user.userId}`);
                 
@@ -124,13 +138,34 @@ const PlayingCurriculumSidebar = ({
         return null;
     }
 
-    const handleVideoClick = (goLecture, goVideo) => {
+    const handleVideoClick = (goLecture, goVideo, content) => {
+        const now = new Date();
+        const startDate = new Date(content.startDate);
+        const endDate = new Date(content.endDate);
+
+        if (now.getTime() < startDate.getTime() || now.getTime() > endDate.getTime()) {
+            alert(
+                `이 콘텐츠는 ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()} 까지만 접근 가능합니다.`
+            );
+            return;
+        }
         setSelectedContentId(goVideo);
         setSelectedType("video");
-      navigate(`/playing/${courseId}/${goLecture}/${goVideo}`);
+        navigate(`/playing/${courseId}/${goLecture}/${goVideo}`);
     };
 
     const handleMaterialClick = async (material) => {
+        const now = new Date();
+        const startDate = new Date(material.startDate);
+        const endDate = new Date(material.endDate);
+
+        if (now.getTime() < startDate.getTime() || now.getTime() > endDate.getTime()) {
+            alert(
+                `이 자료는 ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()}까지만 다운로드 가능합니다.`
+            );
+            return;
+        }
+
         setSelectedContentId(material.materialId);
         setSelectedType("material");
 
@@ -179,7 +214,18 @@ const PlayingCurriculumSidebar = ({
     }
   };
 
-    const handleAssignmentClick = (goLecture, goAssignment) => {
+    const handleAssignmentClick = (goLecture, goAssignment, assignment) => {
+        const now = new Date();
+        const startDate = new Date(assignment.startDate);
+        const endDate = new Date(assignment.endDate);
+
+        if (now.getTime() < startDate.getTime() || now.getTime() > endDate.getTime()) {
+            alert(
+                `이 콘텐츠는 ${startDate.toLocaleString()} 부터 접근 가능합니다.`
+            );
+            return;
+        }
+
         setSelectedContentId(goAssignment);
         setSelectedType("assignment");
         navigate(`/assignment/submit/${courseId}/${goLecture}/${goAssignment}`);
@@ -216,7 +262,7 @@ const PlayingCurriculumSidebar = ({
                                             status={content.contentType === 'video' ? content.videoHistoryStatus : null}>
                                       <SubItemTitle>
                                           {content.contentType === 'video' &&
-                                            <ContentItem onClick={() => handleVideoClick(lecture.lectureId, content.videoId)}>
+                                            <ContentItem onClick={() => handleVideoClick(lecture.lectureId, content.videoId, content)}>
                                               <img
                                                   className="material-icons"
                                                   src={Video}
@@ -226,7 +272,10 @@ const PlayingCurriculumSidebar = ({
                                                   marginRight: "4px",
                                                   }}
                                               />
-                                              <BlackText>{truncate(content.videoTitle, 25)}</BlackText>
+                                              <TextContainer>
+                                                <BlackText>{truncate(content.videoTitle, 25)}</BlackText>
+                                                <RedText>{dateText(content.startDate)} - {dateText(content.endDate)}</RedText>
+                                              </TextContainer>
                                             </ContentItem> 
                                           }
                                           {content.contentType === 'material' &&
@@ -242,14 +291,17 @@ const PlayingCurriculumSidebar = ({
                                               />
                                               <TextContainer>
                                                 {/* <BlackText>{truncate(content.originalFilename, 20)}</BlackText> */}
-                                                <BlackText>{content.originalFilename}</BlackText>
-                                                <RedText>{content.fileSize}</RedText>
+                                                <RowContainer>
+                                                    <BlackText style={{marginRight: '5px'}}>{content.originalFilename}</BlackText>
+                                                    <GreyText>{content.fileSize}</GreyText>
+                                                </RowContainer>
+                                                <RedText>{dateText(content.startDate)} - {dateText(content.endDate)}</RedText>
                                               </TextContainer>
                                               <IconContainer>{getStatusIcon(content.contentType, content.materialId)}</IconContainer>
                                             </ContentItem>
                                           }
                                           {content.contentType === 'assignment' &&
-                                            <ContentItem onClick={() => handleAssignmentClick(lecture.lectureId, content.assignmentId)}>
+                                            <ContentItem onClick={() => handleAssignmentClick(lecture.lectureId, content.assignmentId, content)}>
                                               <img
                                                   className="material-icons"
                                                   src={Assignment}
@@ -360,6 +412,11 @@ const TextContainer = styled.div`
     white-space: nowrap;
 `
 
+const RowContainer = styled.div`
+    display: flex;
+    align-items: center;
+`
+
 const IconContainer = styled.div`
     margin-left: auto;
 `
@@ -372,5 +429,10 @@ const BlackText = styled.div`
 const RedText = styled.div`
   font-size: 11px;
   color: #FF4747;
+`
+
+const GreyText = styled.div`
+    font-size: 11px;
+    color: #909090;
 `
 export default PlayingCurriculumSidebar;
