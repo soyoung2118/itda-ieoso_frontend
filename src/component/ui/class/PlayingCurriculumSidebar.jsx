@@ -138,13 +138,34 @@ const PlayingCurriculumSidebar = ({
         return null;
     }
 
-    const handleVideoClick = (goLecture, goVideo) => {
+    const handleVideoClick = (goLecture, goVideo, content) => {
+        const now = new Date();
+        const startDate = new Date(content.startDate);
+        const endDate = new Date(content.endDate);
+
+        if (now < startDate || now > endDate) {
+            alert(
+                `이 콘텐츠는 ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()} 까지만 접근 가능합니다.`
+            );
+            return;
+        }
         setSelectedContentId(goVideo);
         setSelectedType("video");
-      navigate(`/playing/${courseId}/${goLecture}/${goVideo}`);
+        navigate(`/playing/${courseId}/${goLecture}/${goVideo}`);
     };
 
     const handleMaterialClick = async (material) => {
+        const now = new Date();
+        const startDate = new Date(material.startDate);
+        const endDate = new Date(material.endDate);
+
+        if (now < startDate || now > endDate) {
+            alert(
+                `이 자료는 ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()}까지만 다운로드 가능합니다.`
+            );
+            return;
+        }
+
         setSelectedContentId(material.materialId);
         setSelectedType("material");
 
@@ -193,7 +214,18 @@ const PlayingCurriculumSidebar = ({
     }
   };
 
-    const handleAssignmentClick = (goLecture, goAssignment) => {
+    const handleAssignmentClick = (goLecture, goAssignment, assignment) => {
+        const now = new Date();
+        const startDate = new Date(assignment.startDate);
+        const endDate = new Date(assignment.endDate);
+
+        if (now < startDate || now > endDate) {
+            alert(
+                `이 콘텐츠는 ${startDate.toLocaleString()} 부터 접근 가능합니다.`
+            );
+            return;
+        }
+
         setSelectedContentId(goAssignment);
         setSelectedType("assignment");
         navigate(`/assignment/submit/${courseId}/${goLecture}/${goAssignment}`);
@@ -230,7 +262,7 @@ const PlayingCurriculumSidebar = ({
                                             status={content.contentType === 'video' ? content.videoHistoryStatus : null}>
                                       <SubItemTitle>
                                           {content.contentType === 'video' &&
-                                            <ContentItem onClick={() => handleVideoClick(lecture.lectureId, content.videoId)}>
+                                            <ContentItem onClick={() => handleVideoClick(lecture.lectureId, content.videoId, content)}>
                                               <img
                                                   className="material-icons"
                                                   src={Video}
@@ -269,7 +301,7 @@ const PlayingCurriculumSidebar = ({
                                             </ContentItem>
                                           }
                                           {content.contentType === 'assignment' &&
-                                            <ContentItem onClick={() => handleAssignmentClick(lecture.lectureId, content.assignmentId)}>
+                                            <ContentItem onClick={() => handleAssignmentClick(lecture.lectureId, content.assignmentId, content)}>
                                               <img
                                                   className="material-icons"
                                                   src={Assignment}
