@@ -37,7 +37,7 @@ function WeeklyCalendar({ currentWeek, setSelectedDate, lectures, userId }) {
   const getIconColor = (iconType) => {
     switch (iconType) {
       case 'MY_LECTURE':
-        return 'var(--green-color)';
+        return 'var(--guide-green-color)';
       case 'DONE':
         return 'var(--main-color)';
       case 'NOT_DONE':

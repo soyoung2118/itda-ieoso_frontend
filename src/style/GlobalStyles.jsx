@@ -4,7 +4,6 @@ const GlobalStyle = createGlobalStyle`
     :root {
         --main-color: #FF4747;
         --pink-color: #FFD1D1;
-        --green-color: #65BF7F;
         --white-color: #FFFFFF;
         --black-color: #000000;
         --darkgrey-color: #767676;
@@ -12,6 +11,9 @@ const GlobalStyle = createGlobalStyle`
         --lightgrey-color: #F6F7F9;
         --grey-color: #E6E6E6;
         --neutralgrey-color: #CDCDCD;
+        --guide-green-color: #65BF7F;
+        --guide-gray-color: #909090;
+        --guide-red-color: #FF5A5A;
     }
 
     body {
