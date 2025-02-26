@@ -66,6 +66,7 @@ const StyledQuill = styled(ReactQuill)`
 
 const StyledButton = styled.a`
   position: fixed;
+  justify-content: center;
   bottom: 2rem;
   right: 2rem;
   width: 3.8rem;
@@ -76,12 +77,18 @@ const StyledButton = styled.a`
 
 const ImageContainer = styled.div`
   position: relative;
-  text-align: center;
-  margin-bottom: 0rem;
+  width: 100%;
+  max-width: 1080px;
+  padding-top: 56.25%;
 
   img {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: contain;
+    object-position: top;
     border-radius: 8px;
     cursor: pointer;
   }
@@ -136,7 +143,7 @@ EditableSectionContent.propTypes = {
 
 const ClassOverview = () => {
   const context = useOutletContext();
-  const { courseData, setCourseData } = context;
+  const { courseData } = context;
   const isCreator = context?.isCreator || false;
   const { courseId } = useParams();
   const { user } = useContext(UsersContext);
