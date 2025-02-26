@@ -15,128 +15,103 @@ export default function DashBoard() {
   const [lectures, setLectures] = useState({});
   const [filteredLectures, setFilteredLectures] = useState([]);
 
-  const getCurrentWeekDates = (date) => {
+  useEffect(() => {
+    fetchData();
+  }, [user?.userId, currentWeek]); 
+  
+const getCurrentWeekDates = (date) => {
     const startOfWeek = new Date(date);
-    const dayOfWeek = startOfWeek.getDay(); 
-    startOfWeek.setDate(startOfWeek.getDate() - dayOfWeek); 
+    const dayOfWeek = startOfWeek.getDay();
+  const firstDay = new Date(startOfWeek.setDate(startOfWeek.getDate() - dayOfWeek + 1));
 
     return Array.from({ length: 7 }, (_, i) => {
-      const day = new Date(startOfWeek);
-      day.setDate(startOfWeek.getDate() + i);
+      const day = new Date(firstDay);
+      day.setDate(firstDay.getDate() + i);
+    
       return day.toISOString().split("T")[0];
     });
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!user) return;
+const fetchData = async () => {
+  if (!user) return;
 
-      const allLectures = { ...lectures };
+  try {
+    const weekDates = getCurrentWeekDates(currentWeek);
+    const newLectures = { ...lectures };
 
-      try {
-        const weekDates = getCurrentWeekDates(currentWeek);
-
-        const fetchWeekData = async (dates) => {
-          await Promise.all(dates.map(async (date) => {
-            const formattedDate = date;
-            if (!allLectures[formattedDate]) {
-              const data = await getDashboard(user.userId, formattedDate);
-              if (data.success) {
-                allLectures[formattedDate] = data.data;
-              }
-            }
-          }));
-        };
-
-        await fetchWeekData(weekDates);
-        setLectures(allLectures);
-
-        const formattedDate = selectedDate.toLocaleDateString('en-CA');
-
-        const filtered = weekDates.map(date => {
-          const dateStr = date;
-          return (allLectures[dateStr] || []).filter(lecture => {
-            const hasContent = (Array.isArray(lecture.assignmentDtos) && lecture.assignmentDtos.some(assignment => {
-              const assignmentEndDate = new Date(assignment.endDate).toISOString().split('T')[0];
-              return assignmentEndDate === formattedDate;
-            })) ||
-            (Array.isArray(lecture.materialDtos) && lecture.materialDtos.some(material => {
-              const materialStartDate = new Date(material.startDate).toISOString().split('T')[0];
-              return formattedDate >= materialStartDate;
-            })) ||
-            (Array.isArray(lecture.videoDtos) && lecture.videoDtos.some(video => {
-              const videoStartDate = new Date(video.startDate).toISOString().split('T')[0];
-              return formattedDate >= videoStartDate;
-            }));
-            return hasContent;
-          });
-        }).flat();
-
-        setFilteredLectures(filtered);
-
-      } catch (error) {
-        console.error("데이터 가져오기 실패:", error);
+    const responses = await Promise.all(weekDates.map(async (date) => {
+      if (!newLectures[date]) {
+        const data = await getDashboard(user.userId, date);
+        return { date, data };
       }
-    };
+      return { date, data: newLectures[date] };
+    }));
 
-    fetchData();
-  }, [user, currentWeek, selectedDate]);
+    responses.forEach(({ date, data }) => {
+      if (data.success) {
+        newLectures[date] = data.data;
+      }
+    });
+
+    setLectures(newLectures);
+  } catch (error) {
+    console.error("데이터 가져오기 실패:", error);
+  }
+};
+
 
   if (!user) {
     return <div>사용자 정보가 없습니다.</div>;
   }
 
-  // 주간 날짜 배열 가져오기 (일요일을 기준으로)
-  const getWeekDates = (date) => {
-    const startOfWeek = new Date(date);
-    startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay()); // 일요일
-    return Array.from({ length: 7 }, (_, i) => {
-      const day = new Date(startOfWeek);
-      day.setDate(startOfWeek.getDate() + i);
-      return day;
-    });
-  };
+const getWeekDates = (date) => {
+  return getCurrentWeekDates(date).map(dateStr => new Date(dateStr));
+};
 
-  const nextWeek = () => {
-    const next = new Date(currentWeek);
-    next.setDate(currentWeek.getDate() + 7);
-    setCurrentWeek(next);
-  };
+const nextWeek = () => setCurrentWeek(prev => new Date(prev.getFullYear(), prev.getMonth(), prev.getDate() + 7));
+const prevWeek = () => setCurrentWeek(prev => new Date(prev.getFullYear(), prev.getMonth(), prev.getDate() - 7));
 
-  const prevWeek = () => {
-    const prev = new Date(currentWeek);
-    prev.setDate(currentWeek.getDate() - 7);
-    setCurrentWeek(prev);
-  };
+const weekDates = getWeekDates(new Date(currentWeek));
 
-  const weekDates = getWeekDates(new Date(currentWeek));
-
-  return (
-    <>
-      <TopBar />
-      <Container>
-        <WeekRange>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ fontSize: '26px', fontWeight: 'bold', color: '#000' }}>이번 주 강의표</div>
-            <div style={{ fontSize: '16px', color: '#888', marginLeft: '10px', paddingTop: '5px' }}>{weekDates[0].toLocaleDateString()} - {weekDates[6].toLocaleDateString()}</div>
+const weeklyLectures = weekDates.reduce((acc, date) => {
+  const dateStr = date.toISOString().split("T")[0];
+  if (lectures[dateStr]) {
+    acc[dateStr] = lectures[dateStr];
+  }
+  return acc;
+}, {});
+  
+return (
+  <>
+    <TopBar />
+    <Container>
+      <WeekRange>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ fontSize: '26px', fontWeight: 'bold', color: '#000' }}>이번 주 강의표</div>
+          <div style={{ fontSize: '16px', color: '#888', marginLeft: '10px', paddingTop: '5px' }}>
+            {weekDates[0].toLocaleDateString()} - {weekDates[6].toLocaleDateString()}
           </div>
-          <WeekButton>
-            <button onClick={prevWeek} style={{ transform: 'scale(0.8)' }}>
-              <ChevronLeft style={{ fontSize: '30px' }} />
-            </button>
-            <button onClick={nextWeek} style={{ transform: 'scale(0.8)' }}>
-              <ChevronRight style={{ fontSize: '30px' }} />
-            </button>
-          </WeekButton>
-        </WeekRange>
-        <WeeklyCalendar currentWeek={currentWeek} setSelectedDate={setSelectedDate} lectures={lectures} />
-        <ToDoContainer>
-          <Sidebar userId={String(user.userId)} selectedDate={selectedDate} lectures={filteredLectures} />
-          <TaskList userId={String(user.userId)} selectedDate={selectedDate} lectures={filteredLectures} />
-        </ToDoContainer>
-      </Container>
-    </>
-  );
+        </div>
+        <WeekButton>
+          <button onClick={prevWeek} style={{ transform: 'scale(0.8)' }}>
+            <ChevronLeft style={{ fontSize: '30px' }} />
+          </button>
+          <button onClick={nextWeek} style={{ transform: 'scale(0.8)' }}>
+            <ChevronRight style={{ fontSize: '30px' }} />
+          </button>
+        </WeekButton>
+      </WeekRange>
+      
+      {/* WeekCalendar에 필터링된 강의 데이터 전달 */}
+      <WeeklyCalendar currentWeek={currentWeek} setSelectedDate={setSelectedDate} lectures={weeklyLectures} userId={String(user.userId)} />
+
+      <ToDoContainer>
+        <Sidebar userId={String(user.userId)} selectedDate={selectedDate} lectures={filteredLectures} />
+        <TaskList userId={String(user.userId)} selectedDate={selectedDate} lectures={filteredLectures} />
+      </ToDoContainer>
+    </Container>
+  </>
+);
 }
 
 // 헤더 밑 
@@ -172,13 +147,3 @@ const ToDoContainer = styled.div`
   display: flex;
   margin-top: 30px;
 `;
-
-function getLectureIcon(submissionStatus) {
-  return submissionStatus === 'SUBMITTED' ? (
-    <span className="activeicon"></span>
-  ) : (
-    <span className="unactiveicon"></span>
-  );
-}
-
-export { getLectureIcon };
