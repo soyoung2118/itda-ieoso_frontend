@@ -137,7 +137,7 @@ const MenuItem = styled.div`
       display: inline-block;
       width: 12px;
       height: 12px;
-      background: var(--green-color);
+      background: var(--guide-green-color);
       border-radius: 50%;
       text-align: center;
       line-height: 12px;

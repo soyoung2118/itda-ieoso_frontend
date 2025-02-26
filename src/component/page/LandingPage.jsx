@@ -28,12 +28,14 @@ const ExplainContainer = styled.header`
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     text-align: center;
     background-image: url(${backgroundImage});
-    background-size: 100%;
+    background-size: cover;
     background-repeat: no-repeat;
-    background-position: top;
-    padding: 10vh 0 5vh;
+    background-position: center;
+    margin: 0 auto;
+    height: calc(100vh - 7vh);
     color: #333;
     background-color: #ffffff;
     h2 {
@@ -152,8 +154,7 @@ const ActionButton = styled.div`
     justify-content: space-between;
     width: 100%;
     min-height: 50px;
-    height: 85px;
-    padding: 10px;
+    padding: 50px;
     margin: 10px;
     background-color: #f5f5f5;
     border: 1px solid #ddd;
@@ -172,16 +173,16 @@ const ButtonText = styled.span`
     position: absolute;
     top: 20px;
     left: 15px;
-    font-size: 1rem;
+    font-size: 1.2rem;
     font-weight: 500;
 `;
 
 const ArrowIcon = styled.img`
     position: absolute;
-    bottom: 20px;
-    right: 20px;
-    width: 20px;
-    height: 20px;
+    bottom: 22px;
+    right: 22px;
+    width: 22px;
+    height: 22px;
 `;
 
 const AppDownloadContainer = styled.div`
@@ -356,20 +357,20 @@ export default function LandingPage() {
         <TopBar />
         <MainContainer>
           <ExplainContainer>
-                <div style={{ fontSize: "48px", fontWeight: 500 }}>쉬운 챌린지 운영,</div>
-                <h2 style={{ fontSize: "48px", fontWeight: "bold", margin: "10px" }}>
+                <div style={{ fontSize: "3.2rem", fontWeight: 500 }}>쉬운 챌린지 운영,</div>
+                <h2 style={{ fontSize: "3.2rem", fontWeight: "bold", margin: "10px" }}>
                     지금 <Highlight>‘itda’</Highlight>에서 시작하세요!
                 </h2>
-                <div style={{ fontSize: "16px", marginTop: "10px"}}>
+                <div style={{ fontSize: "1.4rem", marginTop: "10px"}}>
                     <strong>3분만에</strong> 강의실 개설,
                         <strong>한 눈에 확인</strong> 하는 과제 제출 현황
                 </div>
-                <StartButton onClick={() => navigate('/login')}>
+                <StartButton onClick={() => navigate(isLoggedIn ? '/class/list' : '/login')}>
                     <img src={itdaLogoWhite} alt="itda logo" style={{ width: "24px" }} />
-                        무료로 시작하기
-                    </StartButton>
-                <TableImage src={landingTable} alt="itda logo" style={{ width: "75%", margin: "60px 0px 40px" }} />
-          </ExplainContainer>
+                    {isLoggedIn ? '강의실 바로가기' : '무료로 시작하기'}
+                </StartButton>
+            </ExplainContainer>
+            <TableImage src={landingTable} alt="itda logo" style={{ width: "75%", margin: "60px 0px 40px" }} />
           <Features>
             {Object.values(explain).map((feature, index) => (
               <FeatureCard key={index}>

@@ -312,7 +312,7 @@ const handleAssignmentTimeChange = (timeString) => {
                       />
                       </TimePickerWrapper>
                       {form.lectureTime && !isLecturePending && 
-                        <HelpText>강의 시간이 설정되었어요!</HelpText>
+                        <HelpText style={{color: 'var(--guide-green-color)'}}>강의 시간이 설정되었어요!</HelpText>
                       }
                 </TimeGroup>
 
@@ -370,7 +370,7 @@ const handleAssignmentTimeChange = (timeString) => {
                       />
                     </TimePickerWrapper>
                     {form.assignmentTime && !isAssignmentPending &&
-                   <HelpText>과제 시간이 설정되었어요!</HelpText>
+                   <HelpText style={{color: 'var(--guide-green-color)'}}>과제 시간이 설정되었어요!</HelpText>
                    }
                 </TimeGroup> 
 
@@ -410,9 +410,9 @@ const handleAssignmentTimeChange = (timeString) => {
                 ))}
               </ButtonGroup>
             </RowContainer>
-              {form.difficulty === 'easy' && <HelpText>입문자를 위한 쉬운 개념 강의!</HelpText> }
-              {form.difficulty === 'medium' && <HelpText>개념을 응용하고 실전 활용 능력을 키우는 강의!</HelpText> }
-              {form.difficulty === 'hard' && <HelpText>실무에 적용할 수 있는 전문 강의!</HelpText> }
+              {form.difficulty === 'easy' && <HelpText style={{color: 'var(--guide-gray-color)'}}>입문자를 위한 쉬운 개념 강의!</HelpText> }
+              {form.difficulty === 'medium' && <HelpText style={{color: 'var(--guide-gray-color)'}}>개념을 응용하고 실전 활용 능력을 키우는 강의!</HelpText> }
+              {form.difficulty === 'hard' && <HelpText style={{color: 'var(--guide-gray-color)'}}>실무에 적용할 수 있는 전문 강의!</HelpText> }
             </FormItem>
           </FormGroup>
         </Section>

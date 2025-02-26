@@ -9,7 +9,7 @@ const SidebarContainer = styled.aside`
   border-radius: 0.5rem;
   padding: 1rem;
   margin-right: 2.5rem;
-  margin-top:0.5rem;
+  margin-top:0.4rem;
 `;
 
 const ListItem = styled.li`

@@ -175,7 +175,7 @@ const AdminTopBar = ({ activeTab }) => {
   const navigate = useNavigate();
   // 모달 관련 상태
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
+  
   const handleDeleteLecture = async (courseId) => {
     console.log('Deleting course with ID:', courseId);
     try {
@@ -184,7 +184,11 @@ const AdminTopBar = ({ activeTab }) => {
     } catch (error) {
         console.error('강의실 삭제 중 오류 발생:', error);
     }
-};
+  };
+  
+  const handleShareAlert = async () => {
+    alert('공유 기능은 아직 준비중입니다 :)');
+  };
 
   return (
     <Container>
@@ -224,6 +228,7 @@ const AdminTopBar = ({ activeTab }) => {
             className="material-icons" 
             src={Share} 
             alt="share icon" 
+            onClick={handleShareAlert}
           />
         </IconContainer>
       </NavbarContent>

@@ -198,6 +198,7 @@ const LectureImage = styled.img`
     min-height: 200px;
     height: auto;
     margin-bottom: 20px;
+    object-fit: contain;
 
     @media (min-width: 600px) {
         width: 200px; // 데스크탑에서 이미지 크기 조정

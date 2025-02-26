@@ -156,7 +156,7 @@ export default function SignUp() {
         <SignUpContainer>
           {step === 1 && (
             <>
-              <p>※ itda 계정을 만들기 위해 약관에 동의해주세요.</p>
+              <p style={{color: 'var(--guide-gray-color)'}}>※ itda 계정을 만들기 위해 약관에 동의해주세요.</p>
               <div style={{minWidth: '250px', width: '100%', margin: '0 auto' }}>
                 <TermsAgreement
                   isChecked={isChecked}
@@ -193,7 +193,7 @@ export default function SignUp() {
                   <div style={{
                     fontSize: '0.8rem',
                     marginLeft: '0.4rem',
-                    color: emailCheckResult.includes('사용 가능한') ? 'green' : '#FF4747',
+                    color: emailCheckResult.includes('사용 가능한') ? 'var(--guide-green-color)' : '#FF4747',
                     width: '100%',
                     margin: '-1rem 0 2rem 0'
                   }}>
