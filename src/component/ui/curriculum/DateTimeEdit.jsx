@@ -1,6 +1,7 @@
 import { useState, forwardRef, useEffect } from "react";
 import styled from "styled-components";
 import DatePicker from "react-datepicker";
+import { ko } from "date-fns/locale";
 import "react-datepicker/dist/react-datepicker.css";
 import DateTime from "../../img/class/edit/datetime.svg";
 import Calendar from "../../img/class/edit/calendar.svg";
@@ -149,11 +150,14 @@ const DateTimeEdit = ({
             dateFormat="yyyy년 MM월 dd일 HH:mm"
             minDate={new Date(lectureStartDate)}
             maxDate={new Date(lectureEndDate)}
+            locale={ko}
             customInput={
               <CustomInput
                 text={field === "startDate" ? "업로드일" : "마감일"}
               />
             }
+            timeIntervals={15}
+            timeCaption="시간"
           />
         </DateRow>
       </DateTimeContainer>

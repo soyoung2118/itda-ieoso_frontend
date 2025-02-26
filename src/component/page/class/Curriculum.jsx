@@ -155,8 +155,7 @@ const LectureDescription = styled.span`
   @media (max-width: 1024px) {
     font-size: 22px;
   }
-`
-
+`;
 
 export const formatDate = (isoString) => {
   if (!isoString) return " ";
@@ -225,7 +224,18 @@ const Curriculum = () => {
         );
 
         if (curriculumRes.data.success) {
-          const lectures = curriculumRes.data.data || [];
+          // const lectures = curriculumRes.data.data || [];
+          // const lectures = curriculumRes.data.data?.curriculumResponses || [];
+
+          // setCurriculumData(lectures);
+
+          // const defaultLecture =
+          //   lectures.find((lec) => lec.lectureId === Number(lectureId)) ||
+          //   lectures[0];
+
+          const { curriculumResponses, instructorName } =
+            curriculumRes.data.data || {};
+          const lectures = curriculumResponses || [];
           setCurriculumData(lectures);
 
           const defaultLecture =
@@ -236,6 +246,7 @@ const Curriculum = () => {
 
           setActiveLecture({
             ...defaultLecture,
+            instructorName,
             subSections: [
               ...(defaultLecture.videos || []).map((v) => ({
                 ...v,
@@ -264,7 +275,6 @@ const Curriculum = () => {
             ),
           });
         }
-
         if (historyRes.data.success) {
           setHistoryData(historyRes.data.data);
         }
@@ -460,10 +470,10 @@ const Curriculum = () => {
             backgroundColor: allCompleted
               ? "var(--pink-color)"
               : "var(--grey-color)",
-            padding: "1.5vh 1.5rem",
+            padding: "2vh 2.5vh",
           }}
         >
-          <LectureDescription >
+          <LectureDescription>
             {activeLecture?.lectureDescription}
           </LectureDescription>
           {!isCreator && (
@@ -532,7 +542,7 @@ const Curriculum = () => {
                     <CurriculumTitle>{sub.title}</CurriculumTitle>
                     <p
                       style={{
-                        fontSize: "clamp(0.85rem, 1vw, 1.08rem)",
+                        fontSize: "17.3px",
                         color: "#909090",
                         display: "flex",
                         alignItems: "center",
