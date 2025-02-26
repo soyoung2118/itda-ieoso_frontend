@@ -158,12 +158,12 @@ export const SignUpInput = styled.input`
 export const SignUpLink = styled.div`
     margin-top: 1rem;
     font-size: 0.9rem;
-    color: #CDCDCD;
+    color: var(--guide-gray-color);
     text-align: center;
 
     a {
         margin-left: 0.5rem;
-        color: #FF4747;
+        color: var(--main-color);
         text-decoration: underline;
     }
 `;

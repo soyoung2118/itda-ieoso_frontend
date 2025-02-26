@@ -193,7 +193,7 @@ export default function SignUp() {
                   <div style={{
                     fontSize: '0.8rem',
                     marginLeft: '0.4rem',
-                    color: emailCheckResult.includes('사용 가능한') ? 'var(--guide-green-color)' : '#FF4747',
+                    color: emailCheckResult.includes('사용 가능한') ? 'var(--guide-green-color)' : 'var(--guide-red-color)',
                     width: '100%',
                     margin: '-1rem 0 2rem 0'
                   }}>
@@ -213,7 +213,7 @@ export default function SignUp() {
                 <div style={{
                   fontSize: '0.8rem',
                   marginLeft: '0.4rem',
-                  color: password.length > 0 && !validatePassword(password) ? '#FF4747' : '#000000',
+                  color: password.length > 0 && !validatePassword(password) ? 'var(--guide-red-color)' : 'var(--guide-gray-color)',
                   width: '100%',
                   margin: '-1rem 0 2rem 0'
                 }}>
@@ -237,7 +237,7 @@ export default function SignUp() {
                   <div style={{
                     fontSize: '0.8rem',
                     marginLeft: '0.4rem',
-                    color: '#FF4747',
+                    color: 'var(--guide-red-color)',
                     width: '100%',
                     margin: '-1rem 0 2rem 0'
                   }}>
