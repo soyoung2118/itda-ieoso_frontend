@@ -8,8 +8,8 @@ import Modal from 'react-modal'
 Modal.setAppElement('#root')
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  <>
     <GlobalStyles />
     <App />
-  </StrictMode>,
+  </>,
 )
