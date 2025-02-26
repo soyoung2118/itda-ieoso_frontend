@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-function WeeklyCalendar({ currentWeek, setSelectedDate, lectures }) {
+function WeeklyCalendar({ currentWeek, setSelectedDate, lectures, userId }) {
   const [selectedDay, setSelectedDay] = useState(new Date().getDate());
   const [tasks, setTasks] = useState({});
 
   const getWeekDates = (date) => {
     const startOfWeek = new Date(date);
-    startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+    startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay()); // 주의 첫 번째 날(일요일)로 설정
     return Array.from({ length: 7 }, (_, i) => {
       const day = new Date(startOfWeek);
       day.setDate(startOfWeek.getDate() + i);
@@ -19,41 +19,72 @@ function WeeklyCalendar({ currentWeek, setSelectedDate, lectures }) {
   const weekDates = getWeekDates(new Date(currentWeek));
   const days = ['일', '월', '화', '수', '목', '금', '토'];
 
+  const getIconType = (lecture, formattedDate) => {
+    const isOwnLecture = String(userId) === String(lecture.creatorId);
+    if (isOwnLecture) return 'MY_LECTURE';
+
+    const hasSubmittedAssignment = (lecture.assignmentDtos || []).some(task => 
+      task.submissionStatus === 'SUBMITTED' && new Date(task.endDate).toLocaleDateString('en-CA') === formattedDate
+    );
+
+    const hasActiveMaterial = (lecture.materialDtos || []).some(material => 
+      material.materialHistoryStatus === true && new Date(material.startDate).toLocaleDateString('en-CA') === formattedDate
+    );
+
+    return hasSubmittedAssignment || hasActiveMaterial ? 'DONE' : 'NOT_DONE';
+  };
+
+  const getIconColor = (iconType) => {
+    switch (iconType) {
+      case 'MY_LECTURE':
+        return 'var(--green-color)';
+      case 'DONE':
+        return 'var(--main-color)';
+      case 'NOT_DONE':
+        return '#DEDEDE';
+      default:
+        return null;
+    }
+  };
+
   useEffect(() => {
     const newTasks = weekDates.reduce((acc, date) => {
       const formattedDate = date.toLocaleDateString('en-CA');
       const dayLectures = lectures[formattedDate] || [];
-      
+
       const dayTasks = dayLectures.filter(lecture => {
+        const isOwnLecture = String(userId) === String(lecture.creatorId);
+
         const hasContent = (Array.isArray(lecture.assignmentDtos) && lecture.assignmentDtos.some(assignment => {
           const assignmentEndDate = new Date(assignment.endDate).toLocaleDateString('en-CA');
-          return assignmentEndDate === formattedDate;
+          return assignmentEndDate === formattedDate && (isOwnLecture || !Object.values(assignment).includes(null));
         })) ||
         (Array.isArray(lecture.materialDtos) && lecture.materialDtos.some(material => {
           const materialStartDate = new Date(material.startDate).toLocaleDateString('en-CA');
-          return materialStartDate === formattedDate;
+          return materialStartDate === formattedDate && (isOwnLecture || !Object.values(material).includes(null));
         })) ||
         (Array.isArray(lecture.videoDtos) && lecture.videoDtos.some(video => {
           const videoStartDate = new Date(video.startDate).toLocaleDateString('en-CA');
-          return videoStartDate === formattedDate;
+          return videoStartDate === formattedDate && (isOwnLecture || !Object.values(video).includes(null));
         }));
+        
         return hasContent;
       }).map(lecture => {
-        const allTasksCompleted = 
-          (lecture.assignmentDtos || []).every(task => task.submissionStatus === 'SUBMITTED') &&
-          (lecture.materialDtos || []).every(task => task.materialHistoryStatus === true) &&
-          (lecture.videoDtos || []).every(() => true); // video는 기본적으로 true로 간주
+        const iconType = getIconType(lecture, formattedDate);
         return {
-          completed: allTasksCompleted,
+          courseId: lecture.courseId,
+          iconColor: getIconColor(iconType),
         };
       });
 
-      acc[date.getDate()] = dayTasks;
+      if (dayTasks.length > 0) {
+        acc[date.getDate()] = dayTasks;
+      }
       return acc;
     }, {});
 
     setTasks(newTasks);
-  }, [lectures, currentWeek, selectedDay]);
+  }, [lectures, currentWeek, selectedDay, userId]);
 
   return (
     <CalendarContainer>
@@ -71,7 +102,7 @@ function WeeklyCalendar({ currentWeek, setSelectedDate, lectures }) {
           <DateTodo>
             {(tasks[date.getDate()] || []).map((task, i) => (
               <React.Fragment key={i}>
-                <TodoCircle completed={task.completed} />
+                <TodoCircle style={{ backgroundColor: task.iconColor }} />
               </React.Fragment>
             ))}
           </DateTodo>
@@ -85,6 +116,7 @@ WeeklyCalendar.propTypes = {
   currentWeek: PropTypes.instanceOf(Date).isRequired,
   setSelectedDate: PropTypes.func.isRequired,
   lectures: PropTypes.object.isRequired,
+  userId: PropTypes.string.isRequired,
 };
 
 const CalendarContainer = styled.div`

@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { getDashboard } from '../../api/dashboardApi';
-import { getLectureIcon } from './Dashboard';
 
 function Sidebar({ userId, selectedDate }) {
   const [lectures, setLectures] = useState([]);
@@ -15,21 +14,26 @@ function Sidebar({ userId, selectedDate }) {
 
         if (data.success) {
           const filteredLectures = data.data.filter(task => {
+            const isOwnLecture = String(userId) === String(task.creatorId);
+
             const hasContent = (Array.isArray(task.assignmentDtos) && task.assignmentDtos.some(assignment => {
               const assignmentEndDate = new Date(assignment.endDate).toLocaleDateString('en-CA');
-              return assignmentEndDate === formattedDate;
+              return assignmentEndDate === formattedDate && (isOwnLecture || !Object.values(assignment).includes(null));
             })) ||
             (Array.isArray(task.materialDtos) && task.materialDtos.some(material => {
               const materialStartDate = new Date(material.startDate).toLocaleDateString('en-CA');
-              return materialStartDate === formattedDate;
+              return materialStartDate === formattedDate && (isOwnLecture || !Object.values(material).includes(null));
             })) ||
             (Array.isArray(task.videoDtos) && task.videoDtos.some(video => {
               const videoStartDate = new Date(video.startDate).toLocaleDateString('en-CA');
-              return videoStartDate === formattedDate;
+              return videoStartDate === formattedDate && (isOwnLecture || !Object.values(video).includes(null));
             }));
             return hasContent;
           });
+
           setLectures(filteredLectures);
+        } else {
+          console.log("Data fetch was not successful.");
         }
       } catch (error) {
         console.error("Sidebar API 호출 에러:", error);
@@ -39,21 +43,39 @@ function Sidebar({ userId, selectedDate }) {
     fetchDashboard();
   }, [userId, selectedDate]);
 
+  const getIconType = (isOwnLecture, hasActiveStatus) => {
+    if (isOwnLecture) return 'MY_LECTURE';
+    return hasActiveStatus ? 'SUBMITTED' : 'NOT_SUBMITTED';
+  };
+
+  const getLectureIcon = (iconType) => {
+    switch (iconType) {
+      case 'MY_LECTURE':
+        return <div className="mylectureicon"></div>;
+      case 'SUBMITTED':
+        return <div className="activeicon"></div>;
+      case 'NOT_SUBMITTED':
+        return <div className="unactiveicon"></div>;
+      default:
+        return null;
+    }
+  };
+
   return (
     <SidebarContainer>
       {lectures.length > 0 ? (
         lectures.map(lecture => {
-          const hasActiveStatus = 
-            (lecture.assignmentDtos || []).some(task => task.submissionStatus === 'SUBMITTED') ||
-            (lecture.materialDtos || []).some(task => task.materialHistoryStatus === true) ||
-            (lecture.videoDtos || []).length > 0;
+          const isOwnLecture = String(userId) === String(lecture.creatorId);
 
-          const hasNotSubmitted = 
-            (lecture.assignmentDtos || []).some(task => task.submissionStatus === 'NOT_SUBMITTED');
+          const hasActiveStatus = 
+            (lecture.assignmentDtos || []).some(task => {
+              const assignmentEndDate = new Date(task.endDate).toLocaleDateString('en-CA');
+              return assignmentEndDate === selectedDate.toLocaleDateString('en-CA') && task.submissionStatus === 'SUBMITTED';
+            });
 
           return (
             <MenuItem key={lecture.courseId}>
-              {getLectureIcon(hasActiveStatus && !hasNotSubmitted ? 'SUBMITTED' : 'NOT_SUBMITTED')}
+              {getLectureIcon(getIconType(isOwnLecture, hasActiveStatus))}
               {lecture.courseTitle}
             </MenuItem>
           );
@@ -106,6 +128,16 @@ const MenuItem = styled.div`
       width: 12px;
       height: 12px;
       background: #D9D9D9;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 12px;
+    }
+    .mylectureicon {
+      margin-right: 10px;
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      background: var(--green-color);
       border-radius: 50%;
       text-align: center;
       line-height: 12px;
