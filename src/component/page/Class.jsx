@@ -48,7 +48,7 @@ export default function Class() {
     navigate(`/class/${newCourseId}/overview/info`);
   };
 
-  if (loading) return <div>로딩 중...</div>;
+  if (loading) return <div></div>;
   if (!courseData) return <div>강의 정보를 불러올 수 없습니다.</div>;
 
   return (

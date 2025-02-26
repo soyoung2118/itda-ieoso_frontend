@@ -11,6 +11,7 @@ import "react-quill-new/dist/quill.snow.css";
 import api from "../../api/api";
 import { UsersContext } from "../../contexts/usersContext";
 import EntryCodeModal from "../../ui/class/EntryCodeModal";
+import PropTypes from 'prop-types';
 
 const IconRow = styled.div`
   display: flex;
@@ -127,9 +128,15 @@ const EditableSectionContent = ({ content, onChange, isEditing }) => {
   );
 };
 
+EditableSectionContent.propTypes = {
+  content: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  isEditing: PropTypes.bool.isRequired,
+};
+
 const ClassOverview = () => {
   const context = useOutletContext();
-  const courseData = context?.courseData || {};
+  const { courseData, setCourseData } = context;
   const isCreator = context?.isCreator || false;
   const { courseId } = useParams();
   const { user } = useContext(UsersContext);
@@ -137,35 +144,51 @@ const ClassOverview = () => {
   const location = useLocation();
   const entrycode = location.state?.entrycode || null;
   const [isEntryCodeModalOpen, setIsEntryCodeModalOpen] = useState(false);
-
-  const [sectionContent, setSectionContent] = useState(courseData.courseDescription || "");
+  const [sectionContent, setSectionContent] = useState("");
+  const [courseThumbnail, setCourseThumbnail] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [courseThumbnail, setCourseThumbnail] = useState(courseData.courseThumbnail || ClassThumbnail);
   const [newThumbnail, setNewThumbnail] = useState(null);
   const [files, setFiles] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const fileInputRef = useRef(null);
 
   useEffect(() => {
+    const fetchCourseData = async () => {
+      try {
+        const response = await api.get(`/courses/${courseId}`);
+        if (response.status === 200) {
+          const data = response.data.data;
+          setSectionContent(data.courseDescription);
+          setCourseThumbnail(data.courseThumbnail);
+        }
+      } catch (error) {
+        console.error("데이터 가져오기 오류:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourseData();
+  }, [courseId]);
+
+  useEffect(() => {
     if (entrycode) setIsEntryCodeModalOpen(true);
-  }, []);
+  }, [entrycode]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // FileReader 사용 예시: 파일의 Base64 데이터를 콘솔에 출력
       const reader = new FileReader();
       reader.onload = () => {
         console.log("Base64 인코딩된 파일 데이터:", reader.result);
       };
       reader.readAsDataURL(file);
 
-      // Blob URL 생성하여 미리보기 이미지로 사용
       const imageUrl = URL.createObjectURL(file);
       setNewThumbnail(imageUrl);
       setFiles([file]);
     } else {
-      // 파일이 선택되지 않았을 경우 기본 썸네일로 설정
       setNewThumbnail(null);
     }
   };
@@ -182,14 +205,8 @@ const ClassOverview = () => {
     const formData = new FormData();
     formData.append('textContent', sectionContent);
 
-    // 파일 객체가 있을 경우 FormData에 첨부
     if (files && files.length > 0) {
       formData.append('courseThumbnail', files[0]);
-    }
-
-    // FormData 내용을 콘솔에 확인
-    for (let [key, value] of formData.entries()) {
-      console.log(key, value);
     }
 
     try {
@@ -203,18 +220,12 @@ const ClassOverview = () => {
         }
       );
 
-      // 파일이 첨부된 경우 화면 업데이트
-      if (files && files.length > 0) {
-        const imageUrl = URL.createObjectURL(files[0]);
-        setCourseThumbnail(imageUrl);
-        setNewThumbnail(null);
-        setFiles([]);
-      }
-      setIsEditing(false);
-
       if (response.status === 200) {
         console.log("수정 사항이 저장되었습니다.");
-        window.location.reload(); //일단 이렇게 해둠 사용자 경험 때문에 수정 필요
+        const updatedData = response.data.data;
+        setSectionContent(updatedData.courseDescription);
+        setCourseThumbnail(updatedData.courseThumbnail);
+        setIsEditing(false);
       } else {
         console.log("수정 사항 저장에 실패했습니다.");
       }
@@ -223,8 +234,8 @@ const ClassOverview = () => {
     }
   };
 
-  if (!courseData) {
-    return <div>로딩 중...</div>;
+  if (loading) {
+    return <div></div>;
   }
 
   const changeDifficultly = (difficulty) => {
@@ -247,7 +258,7 @@ const ClassOverview = () => {
         }}
       >
         <ImageContainer isEditing={isEditing} onClick={handleImageClick}>
-          <img src={newThumbnail || courseThumbnail} alt="Class Thumbnail" />
+          <img src={newThumbnail || courseThumbnail || ClassThumbnail} alt="Class Thumbnail" />
           <span className="material-symbols-outlined camera-icon">camera_alt</span>
           <input
             type="file"
@@ -294,19 +305,19 @@ const ClassOverview = () => {
         </Content>        
       </main>
       {isCreator && (
-        <StyledButton
-          onClick={() => {
-            if (isEditing) {
-              handleSaveClick();
-            } else {
-              setIsEditing(true);
-            }
-          }}
-        >
-          <img
-            src={isEditing ? EditedBtn : EditBtn}
-            alt="Edit Button"
-            style={{ width: "100%" }}
+      <StyledButton
+        onClick={() => {
+          if (isEditing) {
+            handleSaveClick();
+          } else {
+            setIsEditing(true);
+          }
+        }}
+      >
+        <img
+          src={isEditing ? EditedBtn : EditBtn}
+          alt="Edit Button"
+          style={{ width: "100%" }}
           />
         </StyledButton>
       )}
