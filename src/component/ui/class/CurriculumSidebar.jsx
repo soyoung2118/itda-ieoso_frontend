@@ -21,12 +21,12 @@ const SidebarContainer = styled.aside`
   letter-spacing: -0.5px;
 
   @media (max-width: 1024px) {
-    width:20vh;
+    width:17vh;
     font-size: 13px;
   }
 
   @media (max-width: 768px) {
-    width: 20vh;
+    width: 14vh;
     padding: 0.5vh 2vh;
   }
 
@@ -61,12 +61,12 @@ const SectionHeader = styled.div`
   cursor: pointer;
 
   @media (max-width: 1024px) {
-    font-size: 16px;
+    font-size: 17px;
     height: 4.5vh;
   }
 
   @media (max-width: 768px) {
-    font-size: 14.5px;
+    font-size: 16px;
     padding: 0vh 1.3vh;
     height: 5vh;
   }
@@ -89,11 +89,11 @@ const ListItem = styled.li`
   position: relative;
 
   @media (max-width: 1024px) {
-    font-size: 13px;
+    font-size: 14.5px;
   }
 
   @media (max-width: 768px) {
-    font-size: 13px;
+    font-size: 14px;
   }
 
   @media (max-width: 480px) {
@@ -226,7 +226,7 @@ const CurriculumSidebar = ({
               selected={activeItem === section.lectureId}
               onClick={() => handleItemClick(section.lectureId)}
             >
-              {`${lectureIndex + 1}. ${section.lectureTitle}`}
+              {`${section.lectureTitle}`}
               {!edit && !isCreator && (
                 <SectionIcon
                   src={

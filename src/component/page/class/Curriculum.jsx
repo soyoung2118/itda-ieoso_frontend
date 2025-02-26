@@ -31,7 +31,6 @@ const Section = styled.div`
   background-color: #ffffff;
   cursor: pointer;
   width: 100%;
-  max-width: 100%;
 `;
 
 const CurriculumTitle = styled.h3`
@@ -47,9 +46,9 @@ const CurriculumTitle = styled.h3`
   }
 
   @media (max-width: 768px) {
-    font-size: 14.5px;
-    padding: 0vh 1.3vh;
-    height: 5vh;
+    font-size: 21px;
+    height: 3vh;
+    margin-left: -2vh;
   }
 
   @media (max-width: 480px) {
@@ -83,6 +82,8 @@ const VideoContainer = styled.div`
 
 const VideoThumbnail = styled.img`
   width: 100%;
+  height: 100%;
+  object-fit: cover;
   border-radius: 8px;
 `;
 
@@ -96,23 +97,24 @@ const MaterialSection = styled.div`
 `;
 
 const Icon = styled.img`
-  width: 1.4rem;
-  height: 1.4rem;
+  width: 4.3vh;
+  height: 50%;
+  marginleft: 1rem;
+  marginright: 1rem;
 
   @media (max-width: 1024px) {
     width: 15vh;
   }
 
   @media (max-width: 768px) {
-    font-size: 14.5px;
+    width: 15px;
     padding: 0vh 1.3vh;
     height: 5vh;
   }
 
   @media (max-width: 480px) {
-    font-size: 11px;
+    width: 15px;
     padding: 0.3vh 1vh;
-    height: 4.7vh;
   }
 `;
 
@@ -155,6 +157,35 @@ const LectureDescription = styled.span`
   @media (max-width: 1024px) {
     font-size: 22px;
   }
+`;
+
+const VideoDetails = styled.p`
+  font-size: 17.3px;
+  color: #909090;
+  display: flex;
+  gap: 1vh;
+  display: flex;
+
+  @media (max-width: 1024px) {
+    font-size: 16px;
+    display: flex;
+    flex-direction: column;
+  }
+  @media (max-width: 768px) {
+    font-size: 14px;
+    margin-left: -2vh;
+  }
+`;
+
+const PlayButton = styled.img`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 1.8rem;
+  height: auto;
+  cursor: pointer;
+  z-index: 10;
 `;
 
 export const formatDate = (isoString) => {
@@ -517,18 +548,7 @@ const Curriculum = () => {
                         }}
                       />
                     )}
-                    <Icon
-                      src={PlayIcon}
-                      style={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)",
-                        width: "1.8rem",
-                        height: "auto",
-                        cursor: "pointer",
-                      }}
-                    />
+                    <PlayButton src={PlayIcon} />
                   </VideoContainer>
                   <div
                     style={{
@@ -540,15 +560,7 @@ const Curriculum = () => {
                     }}
                   >
                     <CurriculumTitle>{sub.title}</CurriculumTitle>
-                    <p
-                      style={{
-                        fontSize: "17.3px",
-                        color: "#909090",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "1vh",
-                      }}
-                    >
+                    <VideoDetails>
                       <div
                         style={{
                           display: "flex",
@@ -567,15 +579,15 @@ const Curriculum = () => {
                       </div>
 
                       <span
-                        style={{
-                          whiteSpace: "nowrap",
-                          flexShrink: 0, //  강제로 같은 줄 유지
-                        }}
+                      // style={{
+                      //   whiteSpace: "nowrap",
+                      //   flexShrink: 0,
+                      // }}
                       >
                         {formatDate(sub?.startDate)} ~{" "}
                         {formatDate(sub?.endDate)}
                       </span>
-                    </p>
+                    </VideoDetails>
                   </div>
                   {!isCreator && (
                     <img
@@ -598,7 +610,7 @@ const Curriculum = () => {
                     gap: "1rem",
                   }}
                 >
-                  <img
+                  <Icon
                     src={Material}
                     style={{
                       width: "4.3vh",
@@ -656,7 +668,7 @@ const Curriculum = () => {
                   }}
                   onClick={() => handleSectionClick(sub)}
                 >
-                  <img
+                  <Icon
                     src={Assignment}
                     alt="assignment icon"
                     style={{
