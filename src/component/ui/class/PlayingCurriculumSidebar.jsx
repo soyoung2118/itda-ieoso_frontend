@@ -143,7 +143,7 @@ const PlayingCurriculumSidebar = ({
         const startDate = new Date(content.startDate);
         const endDate = new Date(content.endDate);
 
-        if (now < startDate || now > endDate) {
+        if (now.getTime() < startDate.getTime() || now.getTime() > endDate.getTime()) {
             alert(
                 `이 콘텐츠는 ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()} 까지만 접근 가능합니다.`
             );
@@ -159,7 +159,7 @@ const PlayingCurriculumSidebar = ({
         const startDate = new Date(material.startDate);
         const endDate = new Date(material.endDate);
 
-        if (now < startDate || now > endDate) {
+        if (now.getTime() < startDate.getTime() || now.getTime() > endDate.getTime()) {
             alert(
                 `이 자료는 ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()}까지만 다운로드 가능합니다.`
             );
@@ -219,7 +219,7 @@ const PlayingCurriculumSidebar = ({
         const startDate = new Date(assignment.startDate);
         const endDate = new Date(assignment.endDate);
 
-        if (now < startDate || now > endDate) {
+        if (now.getTime() < startDate.getTime() || now.getTime() > endDate.getTime()) {
             alert(
                 `이 콘텐츠는 ${startDate.toLocaleString()} 부터 접근 가능합니다.`
             );
