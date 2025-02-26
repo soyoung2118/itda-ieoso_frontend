@@ -74,6 +74,15 @@ const DateTimeEdit = ({
 }) => {
   const [date, setDate] = useState(initialDate ? initialDate : null);
 
+  const formatToKST = (date) => {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+      2,
+      "0"
+    )}-${String(date.getDate()).padStart(2, "0")}T${String(
+      date.getHours()
+    ).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}:00`;
+  };
+
   const updateDateAPI = async (field, dateValue) => {
     if (!subSection) return;
 
@@ -82,9 +91,11 @@ const DateTimeEdit = ({
     let data = {};
 
     // Date 변환 (toISOString)
-    const kstOffset = 9 * 60 * 60 * 1000; // UTC+9 (9시간) 밀리초 단위
-    const localTime = new Date(date.getTime() + kstOffset);
-    const formattedDate = localTime.toISOString();
+    // const kstOffset = 9 * 60 * 60 * 1000;
+    // const localTime = new Date(date.getTime() + kstOffset);
+    const formattedDate = formatToKST(dateValue);
+
+    console.log("[DEBUG] 변환된 날짜:", formattedDate);
 
     if (subSection.contentType === "video" && field === "startDate") {
       const videoId = Number(subSection.videoId);
@@ -125,7 +136,12 @@ const DateTimeEdit = ({
       alert("강의 기간 내에서만 선택할 수 있습니다.");
       return;
     }
+
+    console.log("[DEBUG] 선택한 날짜:", newDate); // 여기 추가
+    console.log("[DEBUG] ISO 변환:", newDate.toISOString()); // 여기 추가
+
     setDate(newDate);
+
     onDateChange(field, newDate);
     updateDateAPI(field, newDate);
   };

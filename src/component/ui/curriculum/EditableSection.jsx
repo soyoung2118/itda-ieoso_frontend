@@ -245,7 +245,7 @@ const EditableSection = ({
     } else if (field === "endDate") {
       setEndDate(date);
     }
-    onDateChange?.(index, field, date); // ✅ 상위(`CurriculumEdit`)에도 변경된 값 전달
+    onDateChange?.(index, field, date); // 상위(`CurriculumEdit`)에도 변경된 값 전달
   };
 
 
