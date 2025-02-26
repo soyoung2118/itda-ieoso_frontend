@@ -364,10 +364,10 @@ export default function LandingPage() {
                     <strong>3분만에</strong> 강의실 개설,
                         <strong>한 눈에 확인</strong> 하는 과제 제출 현황
                 </div>
-                <StartButton onClick={() => navigate('/login')}>
+                <StartButton onClick={() => navigate(isLoggedIn ? '/class/list' : '/login')}>
                     <img src={itdaLogoWhite} alt="itda logo" style={{ width: "24px" }} />
-                        무료로 시작하기
-                    </StartButton>
+                    {isLoggedIn ? '강의실 바로가기' : '무료로 시작하기'}
+                </StartButton>
                 <TableImage src={landingTable} alt="itda logo" style={{ width: "75%", margin: "60px 0px 40px" }} />
           </ExplainContainer>
           <Features>
