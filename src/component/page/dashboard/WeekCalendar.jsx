@@ -23,15 +23,29 @@ function WeeklyCalendar({ currentWeek, setSelectedDate, lectures, userId }) {
     const isOwnLecture = String(userId) === String(lecture.creatorId);
     if (isOwnLecture) return 'MY_LECTURE';
 
-    const hasSubmittedAssignment = (lecture.assignmentDtos || []).some(task => 
-      task.submissionStatus === 'SUBMITTED' && new Date(task.endDate).toLocaleDateString('en-CA') === formattedDate
+    // 해당 날짜에 있는 과제가 SUBMITTED 상태인지 확인
+    const assignmentsOnDate = (lecture.assignmentDtos || []).filter(task => 
+      new Date(task.endDate).toLocaleDateString('en-CA') === formattedDate
+    );
+    const allAssignmentsSubmitted = assignmentsOnDate.every(task => 
+      task.submissionStatus === 'SUBMITTED'
     );
 
-    const hasActiveMaterial = (lecture.materialDtos || []).some(material => 
-      material.materialHistoryStatus === true && new Date(material.startDate).toLocaleDateString('en-CA') === formattedDate
+    // 해당 날짜에 있는 자료가 활성화 상태인지 확인
+    const materialsOnDate = (lecture.materialDtos || []).filter(material => 
+      new Date(material.startDate).toLocaleDateString('en-CA') === formattedDate
+    );
+    const allMaterialsActive = materialsOnDate.every(material => 
+      material.materialHistoryStatus === true
     );
 
-    return hasSubmittedAssignment || hasActiveMaterial ? 'DONE' : 'NOT_DONE';
+    // 존재하는 항목들끼리만 조건을 만족하면 DONE
+    if ((assignmentsOnDate.length === 0 || allAssignmentsSubmitted) &&
+        (materialsOnDate.length === 0 || allMaterialsActive)) {
+      return 'DONE';
+    }
+
+    return 'NOT_DONE';
   };
 
   const getIconColor = (iconType) => {
@@ -144,8 +158,7 @@ const DateBox = styled.div`
   cursor: pointer;
 `;
 
-const DayLabel = styled.div`
-  font-size: 14px;
+const DayLabel = styled.div`  font-size: 14px;
 `;
 
 const DateNumber = styled.div`
@@ -175,3 +188,4 @@ const TodoCircle = styled.div`
 `;
 
 export default WeeklyCalendar;
+
