@@ -75,6 +75,12 @@ const DateTimeEdit = ({
 }) => {
   const [date, setDate] = useState(initialDate ? initialDate : null);
 
+  const parseDate = (dateString) => {
+    const date = new Date(dateString);
+    date.setHours(0, 0, 0, 0);
+    return date;
+  };
+
   const formatToKST = (date) => {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
       2,
@@ -131,13 +137,14 @@ const DateTimeEdit = ({
     }
 
     if (
-      newDate < new Date(lectureStartDate) ||
-      newDate > new Date(lectureEndDate)
+      newDate < parseDate(lectureStartDate) ||
+      newDate > parseDate(lectureEndDate)
     ) {
       alert("강의 기간 내에서만 선택할 수 있습니다.");
+      console.log(parseDate(lectureStartDate), parseDate(lectureEndDate));
       return;
     }
-
+    console.log(parseDate(lectureStartDate), parseDate(lectureEndDate));
     console.log("[DEBUG] 선택한 날짜:", newDate); // 여기 추가
     console.log("[DEBUG] ISO 변환:", newDate.toISOString()); // 여기 추가
 
@@ -165,8 +172,8 @@ const DateTimeEdit = ({
             onChange={handleDateChange}
             showTimeSelect
             dateFormat="yyyy년 MM월 dd일 HH:mm"
-            minDate={new Date(lectureStartDate)}
-            maxDate={new Date(lectureEndDate)}
+            minDate={parseDate(lectureStartDate)}
+            maxDate={parseDate(lectureEndDate)}
             locale={ko}
             customInput={
               <CustomInput
