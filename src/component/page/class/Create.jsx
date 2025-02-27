@@ -15,7 +15,6 @@ export default function Create() {
   const [isAssignmentPending, setIsAssignmentPending] = useState(false);
   const [isLecturePending, setIsLecturePending] = useState(false);
   const { user } = useContext(UsersContext);
-
   const [form, setForm] = useState({
     coursename: '',
     instructor: '',
@@ -27,6 +26,16 @@ export default function Create() {
     assignmentTime: '',
     difficulty: 'easy',
   });
+  let [titleInputCount, setTitleInputCount] = useState(form.coursename.length);
+  let [instructorInputCount, setInstructorInputCount] = useState(form.instructor.length);
+
+  useEffect(() => {
+    setTitleInputCount(form.coursename.length);
+  }, [form.coursename]);
+
+  useEffect(() => {
+    setInstructorInputCount(form.instructor.length);
+  }, [form.instructor]);
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
@@ -170,6 +179,14 @@ const handleAssignmentTimeChange = (timeString) => {
     }
   };
 
+  const onTitleInputHandler = (e) => {
+    setTitleInputCount(e.target.value.length);
+  };
+
+  const onInstructorInputHandler = (e) => {
+    setInstructorInputCount(e.target.value.length);
+  };
+
   const CustomInput = forwardRef(({ value, onClick }, ref) => (
     <InputGroup onClick={onClick}> 
       <IconInput
@@ -197,6 +214,8 @@ const handleAssignmentTimeChange = (timeString) => {
               <Label>
                 강의명
                 <Required>*</Required>
+                <Text>{titleInputCount}</Text>
+                <Text>/30 자</Text>
               </Label>
               <FormInput
                 type="text"
@@ -204,7 +223,7 @@ const handleAssignmentTimeChange = (timeString) => {
                 maxlength='30'
                 placeholder="30자 이내로 설정해주세요."
                 value={form.coursename}
-                onChange={handleFormChange}
+                onChange={(e) => {handleFormChange(e); onTitleInputHandler(e);}}
                 style={{width: '329px'}}
                 autoComplete='off'
               />
@@ -214,13 +233,16 @@ const handleAssignmentTimeChange = (timeString) => {
               <Label>
                 강의자명
                 <Required>*</Required>
+                <Text>{instructorInputCount}</Text>
+                <Text>/5 자</Text>
               </Label>
               <FormInput
                 type="text"
                 name="instructor"
+                maxlength='5'
                 placeholder="ex. 김잇다"
                 value={form.instructor}
-                onChange={handleFormChange}
+                onChange={(e) => {handleFormChange(e); onInstructorInputHandler(e);}}
                 style={{width: '165px '}}
                 autoComplete='off'
               />
@@ -410,9 +432,9 @@ const handleAssignmentTimeChange = (timeString) => {
                 ))}
               </ButtonGroup>
             </RowContainer>
-              {form.difficulty === 'easy' && <HelpText style={{color: 'var(--guide-gray-color)'}}>입문자를 위한 쉬운 개념 강의!</HelpText> }
-              {form.difficulty === 'medium' && <HelpText style={{color: 'var(--guide-gray-color)'}}>개념을 응용하고 실전 활용 능력을 키우는 강의!</HelpText> }
-              {form.difficulty === 'hard' && <HelpText style={{color: 'var(--guide-gray-color)'}}>실무에 적용할 수 있는 전문 강의!</HelpText> }
+              {form.difficulty === 'easy' && <LevelText style={{color: 'var(--guide-gray-color)'}}>입문자를 위한 쉬운 개념 강의!</LevelText> }
+              {form.difficulty === 'medium' && <LevelText style={{color: 'var(--guide-gray-color)'}}>개념을 응용하고 실전 활용 능력을 키우는 강의!</LevelText> }
+              {form.difficulty === 'hard' && <LevelText style={{color: 'var(--guide-gray-color)'}}>실무에 적용할 수 있는 전문 강의!</LevelText> }
             </FormItem>
           </FormGroup>
         </Section>
@@ -434,6 +456,10 @@ const RadioButton = styled.button`
   font-size: 15px;
   background-color: ${props => props.active ? '#F6F6F6' : '#FF4747'};
   color: ${props => props.active ? '#909090' : '#FFFFFF'};
+
+  @media (max-width: 900px) { 
+    width: 289px;
+  }
 `;
 
 const LevelButton = styled.button`
@@ -442,10 +468,14 @@ const LevelButton = styled.button`
   font-size: 15px;
   background-color: ${props => props.active ? '#FF4747' : '#EEEEEE '};
   color: ${props => props.active ? '#FFFFFF' : '#909090'};
-  padding: 6px 12px;
+  padding: 6px 18px;
   border: none;
   cursor: pointer;
-  margin-bottom: 8px
+  margin-bottom: 8px;
+
+  @media (max-width: 900px) { 
+     padding: 6px 12px;
+  }
 `;
 
 const CreateButton = styled.button`
@@ -501,6 +531,7 @@ const Label = styled.div`
   font-size: 17px;
   font-weight: 500;
   margin-top: 20px;
+  align-items: flex-end;
 `;
 
 const Required = styled.span`
@@ -509,6 +540,7 @@ const Required = styled.span`
   font-weight: 800;
   top: -5px;
   left: 0px;
+  margin-right: 5px;
 `;
 
 const FormInput = styled.input`
@@ -544,10 +576,27 @@ const HelpText = styled.div`
   margin-left: 10px;
 `;
 
+const LevelText = styled.div`
+  height: 13px;
+  min-height: 13px;
+  font-size: 12px;
+  font-weight: 400;
+  margin-top: 4px;
+  margin-left: 150px;
+
+  @media (max-width: 800px) { 
+    margin-left: 0px;
+  }
+`
+
 const RowContainer = styled.div`
   display: flex;
   align-items: baseline;
-  height: 50px;
+  
+  @media (max-width: 800px) { 
+      flex-direction: column;
+      padding: 6px 10px;
+    }
 `;
 
 const DayButtonGroup = styled.div`
@@ -580,10 +629,6 @@ const CalendarIcon = styled.span`
 const TimeGroup = styled.div`
   display: flex;
   flex-direction: column;
-
-  @media (max-width: 800px) { 
-    width: 70%;
-  }
 `;
 
 const TimePickerWrapper = styled.div`
@@ -591,6 +636,10 @@ const TimePickerWrapper = styled.div`
   display: flex;
   align-items: center;
   position: relative;
+
+  @media (max-width: 900px) { 
+    margin-right: 0px;
+  }
 `
 
 const CuliculumGroup = styled.div`
@@ -604,8 +653,13 @@ const HalfGroup = styled.div`
   flex-direction: row;
   gap: 10px;
 
-  @media (max-width: 800px) { 
+  @media (max-width: 900px) { 
     flex-direction: column;
     gap: 15px;
   }
 `;
+
+const Text = styled.div`
+  font-size: 13px;
+  color: var(--main-color);
+`

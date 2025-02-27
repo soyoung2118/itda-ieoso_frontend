@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import AdminTopBar from '../../ui/class/AdminTopBar';
 import api from "../../api/api";
 import { UsersContext } from '../../contexts/usersContext';
+import EntryCodeCopyModal from '../../ui/class/EntryCodeCopyModal';
 
 export default function Setting() {
   const navigate = useNavigate();
@@ -12,8 +13,8 @@ export default function Setting() {
   const timeSlots = ['월', '화', '수', '목', '금', '토', '일'];
   const [isAssignmentPending, setIsAssignmentPending] = useState(false);
   const [isLecturePending, setIsLecturePending] = useState(false);
-
   const [showDifficultyChange, setShowDifficultyChange] = useState('');
+  const [copyModalOpen, setCopyModalOpen] = useState(false);
 
   const [form, setForm] = useState({
     coursename: '',
@@ -27,6 +28,16 @@ export default function Setting() {
     assignmentTime: '',
     difficulty: 'easy',
   });
+  let [titleInputCount, setTitleInputCount] = useState(form.coursename.length);
+  let [instructorInputCount, setInstructorInputCount] = useState(form.instructor.length);
+
+  useEffect(() => {
+    setTitleInputCount(form.coursename.length);
+  }, [form.coursename]);
+
+  useEffect(() => {
+    setInstructorInputCount(form.instructor.length);
+  }, [form.instructor]);
 
   useEffect(() => {
     const fetchCourseData = async () => {
@@ -73,7 +84,7 @@ export default function Setting() {
   const handleCopy = (text) => {
     navigator.clipboard.writeText(text)
     .then(() => {
-      console.log('텍스트가 복사되었습니다!');
+      setCopyModalOpen(true);
     })
     .catch(err => {
       console.error('복사 중 오류가 발생했습니다:', err);
@@ -135,7 +146,7 @@ export default function Setting() {
 
       if (settingResponse.data.success) {
         console.log(settingResponse.data);
-        navigate(`/class/${courseId}/overview/info`);
+        //navigate(`/class/${courseId}/overview/info`);
         window.location.reload()
       } else {
         throw new Error('강의실 내용 수정에 실패했습니다');
@@ -143,8 +154,6 @@ export default function Setting() {
     } catch (error) {
       console.error('Failed to update course setting:', error);
     }
-
-    //navigate('/curriculum');
   };
 
   return (
@@ -159,13 +168,15 @@ export default function Setting() {
               <Label>
                 강의명
                 <Required>*</Required>
+                <Text>{titleInputCount}</Text>
+                <Text>/30 자</Text>
               </Label>
               <FormInput
                 type="text"
                 name="coursename"
                 value={form.coursename}
-                onChange={handleFormChange}
-                style={{width: '100%'}}
+                onChange={(e) => {handleFormChange(e); onTitleInputHandler(e);}}
+                style={{width: '329px'}}
                 autoComplete='off'
               />
             </FormItem>
@@ -174,13 +185,15 @@ export default function Setting() {
               <Label>
                 강의자명
                 <Required>*</Required>
+                <Text>{instructorInputCount}</Text>
+                <Text>/5 자</Text>
               </Label>
               <FormInput
                 type="text"
                 name="instructor"
                 placeholder="ex. 김잇다"
                 value={form.instructor}
-                onChange={handleFormChange}
+                onChange={(e) => {handleFormChange(e); onInstructorInputHandler(e);}}
                 style={{width: '165px'}}
                 autoComplete='off'
               />
@@ -190,8 +203,8 @@ export default function Setting() {
               <Label>
                 강의코드
               </Label>
-              <HalfGroup>
-                <DisableInput
+              <CopyGrop>
+                <CodeInput
                     value={form.entrycode}
                     disabled
                     style={{width: '165px', marginRight: '10px', color: '#FF4747'}}
@@ -201,7 +214,7 @@ export default function Setting() {
                     onClick={() => handleCopy(form.entrycode)}>
                     복사하기
                 </RadioButton>
-                </HalfGroup>
+              </CopyGrop>
             </FormItem>
           </FormGroup>
         </Section>
@@ -260,6 +273,7 @@ export default function Setting() {
                   name='lectureTime'
                   style={{width: '289px'}}
                   value={isLecturePending ? '' : formatTimeWithMeridiem(form.lectureTime)}
+                  active={isLecturePending}
                   disabled
                 />
                 </TimeGroup>
@@ -268,6 +282,13 @@ export default function Setting() {
                   <PendingButton active={isLecturePending}>정해지지 않았어요</PendingButton>
                 </TimeGroup>
               </HalfGroup>
+              <GreyHelpText style={{marginTop: '10px'}}>
+                {isLecturePending ? (
+                  "자유롭게 설정합니다."
+                ) : (<>
+                매주 {form.lectureDays?.map(day => timeSlots[day - 1]).join("요일, ")}요일 {form.lectureTime} 강의를 진행합니다.
+                </>)}
+                </GreyHelpText>
             </FormItem>
 
             <FormItem>
@@ -291,6 +312,7 @@ export default function Setting() {
                   name='assignmentTime'
                   style={{width: '289px'}}
                   value={isAssignmentPending ? '' : formatTimeWithMeridiem(form.assignmentTime)}
+                  active={isAssignmentPending}
                   disabled
                 />
                 </TimeGroup> 
@@ -299,6 +321,13 @@ export default function Setting() {
                   <PendingButton active={isAssignmentPending}>정해지지 않았어요</PendingButton>
                 </TimeGroup>
               </HalfGroup>
+              <GreyHelpText style={{marginTop: '10px'}}>
+                {isAssignmentPending ? (
+                  "자유롭게 설정합니다."
+                ) : (<>
+                매주 {form.assignmentDays?.map(day => timeSlots[day - 1]).join("요일, ")}요일 {form.assignmentTime} 강의를 진행합니다.
+                </>)}
+                </GreyHelpText>
             </FormItem>
           </FormGroup>
         </Section>
@@ -323,12 +352,12 @@ export default function Setting() {
                 </RowContainer>
                 <LevelText>
                     {showDifficultyChange ? (
-                        <HelpText>{showDifficultyChange}</HelpText>
+                        <GreyHelpText>{showDifficultyChange}</GreyHelpText>
                     ) : (
                         <>
-                            {form.difficulty === 'easy' && <HelpText>입문자를 위한 쉬운 개념 강의!</HelpText>}
-                            {form.difficulty === 'medium' && <HelpText>개념을 응용하고 실전 활용 능력을 키우는 강의!</HelpText>}
-                            {form.difficulty === 'hard' && <HelpText>실무에 적용할 수 있는 전문 강의!</HelpText>}
+                            {form.difficulty === 'easy' && <GreyHelpText>입문자를 위한 쉬운 개념 강의!</GreyHelpText>}
+                            {form.difficulty === 'medium' && <GreyHelpText>개념을 응용하고 실전 활용 능력을 키우는 강의!</GreyHelpText>}
+                            {form.difficulty === 'hard' && <GreyHelpText>실무에 적용할 수 있는 전문 강의!</GreyHelpText>}
                         </>
                     )}
                 </LevelText>
@@ -336,6 +365,8 @@ export default function Setting() {
           </FormGroup>
         </Section>
         <CreateButton onClick={handleSubmit}>강의실 업데이트하기</CreateButton>
+
+        {copyModalOpen && <EntryCodeCopyModal entrycode={form.entrycode} onClose={() => setCopyModalOpen(false)} />}
       </Container>
     </>
   );
@@ -363,6 +394,10 @@ const PendingButton = styled.button`
   font-size: 15px;
   background-color: ${props => props.active ? '#C3C3C3' : '#F4F4F4'};
   color: #909090;
+
+  @media (max-width: 900px) { 
+    width: 289px;
+  }
 `
 
 const LevelButton = styled.button`
@@ -371,10 +406,14 @@ const LevelButton = styled.button`
   font-size: 15px;
   background-color: ${props => props.active ? '#FF4747' : '#EEEEEE '};
   color: ${props => props.active ? '#FFFFFF' : '#909090'};
-  padding: 6px 12px;
+  padding: 6px 18px;
   border: none;
   cursor: pointer;
-  margin-bottom: 8px
+  margin-bottom: 8px;
+
+  @media (max-width: 900px) { 
+     padding: 6px 12px;
+  }
 `;
 
 const CreateButton = styled.button`
@@ -421,11 +460,19 @@ const FormItem = styled.div`
 const RowContainer = styled.div`
     display: flex;
     align-items: baseline;
-    height: 50px;
+
+    @media (max-width: 800px) { 
+      flex-direction: column;
+      padding: 6px 10px;
+    }
 `;
 
 const LevelText = styled.div`
     margin-left: 150px;
+
+    @media (max-width: 800px) { 
+      margin-left: 0px;
+    }
 `
 
 const FormHalfItem = styled.div`
@@ -440,6 +487,7 @@ const Label = styled.div`
   font-size: 17px;
   font-weight: 500;
   margin-top: 20px;
+  align-items: flex-end;
 `;
 
 const Required = styled.span`
@@ -448,21 +496,15 @@ const Required = styled.span`
   font-weight: 800;
   top: -5px;
   left: 0px;
+  margin-right: 5px;
 `;
 
 const FormInput = styled.input`
   width: 100%;
   box-sizing: border-box;
   font-size: 13px;
+  font-weight: 500;
   padding: 8px 12px;
-  border: 2px solid #C3C3C3;
-  border-radius: 10px;
-`;
-
-const IconInput = styled.input`
-  box-sizing: border-box;
-  font-size: 13px;
-  padding: 8px 32px 8px 12px;
   border: 2px solid #C3C3C3;
   border-radius: 10px;
 `;
@@ -470,29 +512,35 @@ const IconInput = styled.input`
 const DisableInput = styled.input`
   box-sizing: border-box;
   font-size: 13px;
+  font-weight: 500;
+  padding: 8px 12px;
+  color: #767676;
+  background-color: #C3C3C3;
+  background-color: ${props =>  props.active ? '#F4F4F4' : '#C3C3C3'};
+  border:  2px solid #C3C3C3;
+  border-radius: 10px;
+  margin-right: 10px;
+`
+
+const CodeInput = styled.input`
+  box-sizing: border-box;
+  font-size: 13px;
   padding: 8px 12px;
   color: #000000;
-  background-color: #F4F4F4;
   border: 2px solid #C3C3C3;
   border-radius: 10px;
   margin-right: 10px;
 `
 
-const InputGroup = styled.div`
-  display: flex;
-  align-items: center;
-  position: relative;
-`;
-
-const HelpText = styled.div`
+const GreyHelpText = styled.div`
   height: 13px;
   min-height: 13px;
-  color: #FF4747;
+  color: #909090;
   font-size: 12px;
   font-weight: 400;
   margin-top: 4px;
   margin-left: 10px;
-`;
+`
 
 const DayButtonGroup = styled.div`
   display: flex;
@@ -508,7 +556,7 @@ const DayButton = styled.button`
   align-items: center;
   justify-content: center;
   border: none;
-  background-color: ${props => props.active ? '#C3C3C3' : '#F4F4F4'};
+  background-color: ${props =>  props.active ? '#C3C3C3' : '#F4F4F4'};
   color: #909090;
 `;
 
@@ -523,7 +571,24 @@ const CuliculumGroup = styled.div`
   align-items: flex-end;
 `;
 
+
+const CopyGrop = styled.div`
+  display: flex;
+  flex-direction: row;
+`
+
 const HalfGroup = styled.div`
   display: flex;
   flex-direction: row;
+  gap: 10px;
+
+  @media (max-width: 900px) { 
+    flex-direction: column;
+    gap: 15px;
+  }
 `;
+
+const Text = styled.div`
+  font-size: 13px;
+  color: var(--main-color);
+`

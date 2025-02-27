@@ -8,7 +8,7 @@ const MERIDIEM_ITEMS = ['오전', '오후'];
 const HOUR_ITEMS = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'));
 const MINUTE_ITEMS = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
 
-const CustomTimePicker = ({ value = new Date(), onChange, width = 239, disabled = false, placeholder = "시간을 설정해주세요." }) => {
+const CustomTimePicker = ({ value = new Date(), onChange, width = 289, disabled = false, placeholder = "시간을 설정해주세요." }) => {
     const [isOpen, setIsOpen] = useState(false);
     const scrollViewsRef = useRef([null, null, null]);
     const [selectedTime, setSelectedTime] = useState(value || new Date(2000, 0, 1, 0, 0, 0));
@@ -253,7 +253,7 @@ const CustomTimePicker = ({ value = new Date(), onChange, width = 239, disabled 
 
 const Container = styled.div`
   position: relative;
-  width: ${props => props.width}px;
+  width: 289px;
 `;
 
 const InputDisplay = styled.div`

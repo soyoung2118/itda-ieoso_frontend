@@ -35,18 +35,22 @@ const ModalBackdrop = styled.div`
 `;
 
 const ModalWrapper = styled.div`
-  position: relative; /* 추가 */
+  position: relative;
   background: white;
   padding: 20px;
   border-radius: 20px;
   text-align: center;
-  width: 494px;
+  width: 40%;
   height: 283px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+
+  @media (max-width: 1000px) { 
+    width: 70%;
+  }
 `;
 
 const CloseIcon = styled(Close)`
