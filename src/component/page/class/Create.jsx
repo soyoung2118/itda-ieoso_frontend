@@ -15,7 +15,6 @@ export default function Create() {
   const [isAssignmentPending, setIsAssignmentPending] = useState(false);
   const [isLecturePending, setIsLecturePending] = useState(false);
   const { user } = useContext(UsersContext);
-
   const [form, setForm] = useState({
     coursename: '',
     instructor: '',
@@ -27,6 +26,16 @@ export default function Create() {
     assignmentTime: '',
     difficulty: 'easy',
   });
+  let [titleInputCount, setTitleInputCount] = useState(form.coursename.length);
+  let [instructorInputCount, setInstructorInputCount] = useState(form.instructor.length);
+
+  useEffect(() => {
+    setTitleInputCount(form.coursename.length);
+  }, [form.coursename]);
+
+  useEffect(() => {
+    setInstructorInputCount(form.instructor.length);
+  }, [form.instructor]);
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
@@ -170,6 +179,14 @@ const handleAssignmentTimeChange = (timeString) => {
     }
   };
 
+  const onTitleInputHandler = (e) => {
+    setTitleInputCount(e.target.value.length);
+  };
+
+  const onInstructorInputHandler = (e) => {
+    setInstructorInputCount(e.target.value.length);
+  };
+
   const CustomInput = forwardRef(({ value, onClick }, ref) => (
     <InputGroup onClick={onClick}> 
       <IconInput
@@ -197,6 +214,8 @@ const handleAssignmentTimeChange = (timeString) => {
               <Label>
                 강의명
                 <Required>*</Required>
+                <Text>{titleInputCount}</Text>
+                <Text>/30 자</Text>
               </Label>
               <FormInput
                 type="text"
@@ -204,7 +223,7 @@ const handleAssignmentTimeChange = (timeString) => {
                 maxlength='30'
                 placeholder="30자 이내로 설정해주세요."
                 value={form.coursename}
-                onChange={handleFormChange}
+                onChange={(e) => {handleFormChange(e); onTitleInputHandler(e);}}
                 style={{width: '329px'}}
                 autoComplete='off'
               />
@@ -214,13 +233,16 @@ const handleAssignmentTimeChange = (timeString) => {
               <Label>
                 강의자명
                 <Required>*</Required>
+                <Text>{instructorInputCount}</Text>
+                <Text>/5 자</Text>
               </Label>
               <FormInput
                 type="text"
                 name="instructor"
+                maxlength='5'
                 placeholder="ex. 김잇다"
                 value={form.instructor}
-                onChange={handleFormChange}
+                onChange={(e) => {handleFormChange(e); onInstructorInputHandler(e);}}
                 style={{width: '165px '}}
                 autoComplete='off'
               />
@@ -501,6 +523,7 @@ const Label = styled.div`
   font-size: 17px;
   font-weight: 500;
   margin-top: 20px;
+  align-items: flex-end;
 `;
 
 const Required = styled.span`
@@ -509,6 +532,7 @@ const Required = styled.span`
   font-weight: 800;
   top: -5px;
   left: 0px;
+  margin-right: 5px;
 `;
 
 const FormInput = styled.input`
@@ -609,3 +633,8 @@ const HalfGroup = styled.div`
     gap: 15px;
   }
 `;
+
+const Text = styled.div`
+  font-size: 13px;
+  color: var(--main-color);
+`
