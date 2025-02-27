@@ -283,6 +283,13 @@ export default function Setting() {
                   <PendingButton active={isLecturePending}>정해지지 않았어요</PendingButton>
                 </TimeGroup>
               </HalfGroup>
+              <GreyHelpText style={{marginTop: '10px'}}>
+                {isLecturePending ? (
+                  "자유롭게 설정합니다."
+                ) : (<>
+                매주 {form.lectureDays?.map(day => timeSlots[day - 1]).join("요일, ")}요일 {form.lectureTime} 강의를 진행합니다.
+                </>)}
+                </GreyHelpText>
             </FormItem>
 
             <FormItem>
@@ -315,6 +322,13 @@ export default function Setting() {
                   <PendingButton active={isAssignmentPending}>정해지지 않았어요</PendingButton>
                 </TimeGroup>
               </HalfGroup>
+              <GreyHelpText style={{marginTop: '10px'}}>
+                {isAssignmentPending ? (
+                  "자유롭게 설정합니다."
+                ) : (<>
+                매주 {form.assignmentDays?.map(day => timeSlots[day - 1]).join("요일, ")}요일 {form.assignmentTime} 강의를 진행합니다.
+                </>)}
+                </GreyHelpText>
             </FormItem>
           </FormGroup>
         </Section>
@@ -379,6 +393,10 @@ const PendingButton = styled.button`
   font-size: 15px;
   background-color: ${props => props.active ? '#C3C3C3' : '#F4F4F4'};
   color: #909090;
+
+  @media (max-width: 900px) { 
+    width: 289px;
+  }
 `
 
 const LevelButton = styled.button`
@@ -387,10 +405,14 @@ const LevelButton = styled.button`
   font-size: 15px;
   background-color: ${props => props.active ? '#FF4747' : '#EEEEEE '};
   color: ${props => props.active ? '#FFFFFF' : '#909090'};
-  padding: 6px 12px;
+  padding: 6px 18px;
   border: none;
   cursor: pointer;
-  margin-bottom: 8px
+  margin-bottom: 8px;
+
+  @media (max-width: 900px) { 
+     padding: 6px 12px;
+  }
 `;
 
 const CreateButton = styled.button`
@@ -410,10 +432,6 @@ const Container = styled.div`
   padding: 24px 30px;
   background-color: white;
   border-radius: 20px;
-
-  @media (max-width: 600px) {
-    margin: 31px;
-  }
 `;
 
 const Section = styled.div`
@@ -431,10 +449,6 @@ const Title = styled.div`
 const FormGroup = styled.div`
   display: flex;
   flex-direction: column;
-
-  @media (max-width: 800px) { 
-    width: 70%;
-  }
 `;
 
 const FormItem = styled.div`
@@ -445,11 +459,19 @@ const FormItem = styled.div`
 const RowContainer = styled.div`
     display: flex;
     align-items: baseline;
-    height: 50px;
+
+    @media (max-width: 800px) { 
+      flex-direction: column;
+      padding: 6px 10px;
+    }
 `;
 
 const LevelText = styled.div`
     margin-left: 150px;
+
+    @media (max-width: 800px) { 
+      margin-left: 0px;
+    }
 `
 
 const FormHalfItem = styled.div`
@@ -559,7 +581,7 @@ const HalfGroup = styled.div`
   flex-direction: row;
   gap: 10px;
 
-  @media (max-width: 800px) { 
+  @media (max-width: 900px) { 
     flex-direction: column;
     gap: 15px;
   }
