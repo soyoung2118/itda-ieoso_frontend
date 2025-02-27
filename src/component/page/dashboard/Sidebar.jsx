@@ -88,14 +88,6 @@ function Sidebar({ userId, selectedDate }) {
     <SidebarContainer>
       {lectures.length > 0 ? (
         lectures.map(lecture => {
-          const isOwnLecture = String(userId) === String(lecture.creatorId);
-
-          const hasActiveStatus = 
-            (lecture.assignmentDtos || []).some(task => {
-              const assignmentEndDate = new Date(task.endDate).toLocaleDateString('en-CA');
-              return assignmentEndDate === selectedDate.toLocaleDateString('en-CA') && task.submissionStatus === 'SUBMITTED';
-            });
-
           return (
             <MenuItem key={lecture.courseId}>
               {getLectureIcon(getIconType(lecture, selectedDate.toLocaleDateString('en-CA')))}
