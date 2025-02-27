@@ -345,7 +345,7 @@ const MenuTitle = styled.div`
 `;
 
 const RightContainer = styled.div`
-    height: calc(100vh - 7vh);
+    height: 80vh;
     overflow-y: scroll;
     margin-right: -12px;
 
