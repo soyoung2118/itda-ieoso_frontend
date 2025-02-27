@@ -52,7 +52,7 @@ function Sidebar({ userId, selectedDate }) {
       new Date(task.endDate).toLocaleDateString('en-CA') === formattedDate
     );
     const allAssignmentsSubmitted = assignmentsOnDate.every(task => 
-      task.submissionStatus === 'SUBMITTED'
+      task.submissionStatus === 'SUBMITTED' || task.submissionStatus === 'LATE'
     );
 
     // 해당 날짜에 있는 자료가 활성화 상태인지 확인
@@ -65,19 +65,19 @@ function Sidebar({ userId, selectedDate }) {
 
     // 모든 과제가 제출되었고, 모든 자료가 활성화된 경우에만 SUBMITTED
     if (allAssignmentsSubmitted && allMaterialsActive) {
-      return 'SUBMITTED';
+      return 'DONE';
     }
 
-    return 'NOT_SUBMITTED';
+    return 'NOT_DONE';
   };
 
   const getLectureIcon = (iconType) => {
     switch (iconType) {
       case 'MY_LECTURE':
         return <div className="mylectureicon"></div>;
-      case 'SUBMITTED':
+      case 'DONE':
         return <div className="activeicon"></div>;
-      case 'NOT_SUBMITTED':
+      case 'NOT_DONE':
         return <div className="unactiveicon"></div>;
       default:
         return null;

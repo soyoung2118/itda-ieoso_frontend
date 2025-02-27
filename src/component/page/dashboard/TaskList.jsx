@@ -66,7 +66,7 @@ function TaskList({ userId, selectedDate }) {
         const assignmentEndDate = new Date(assignment.endDate).toLocaleDateString('en-CA');
         const isOwnLecture = String(userId) === String(lecture.creatorId);
         return assignmentEndDate === formattedDate && (isOwnLecture || Object.values(assignment).some(value => value !== null));
-      }).map(assignment => ({ ...assignment, type: 'assignment', title: assignment.assignmentTitle, submissionStatus: assignment.submissionStatus === 'SUBMITTED' })));
+      }).map(assignment => ({ ...assignment, type: 'assignment', title: assignment.assignmentTitle, submissionStatus: assignment.submissionStatus === 'SUBMITTED' || assignment.submissionStatus === 'LATE' })));
     }
     return tasks;
   };
