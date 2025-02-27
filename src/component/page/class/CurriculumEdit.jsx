@@ -236,6 +236,11 @@ const CurriculumEdit = () => {
     if (event) event.stopPropagation();
     if (!activeLecture) return;
 
+    if (activeLecture.subSections.length === 1) {
+      alert("최소 하나의 섹션은 유지해야 합니다.");
+      return;
+    }
+
     const subSection = activeLecture.subSections[index];
     let url = "";
 
