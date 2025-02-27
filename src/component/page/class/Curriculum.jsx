@@ -603,16 +603,7 @@ const Curriculum = () => {
                       </span>
                     </VideoDetails>
                   </div>
-                  {!isCreator && (
-                    <img
-                      src={sub.checked ? DoneIcon : UndoneIcon}
-                      style={{
-                        marginLeft: "auto",
-                        marginRight: "1.6rem",
-                        width: "1.2rem",
-                      }}
-                    />
-                  )}
+                  
                 </Section>
               )}
 
