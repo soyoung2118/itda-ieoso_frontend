@@ -92,6 +92,9 @@ const ClassStudents = () => {
         cellRenderer: StudentNameRenderer,
         cellStyle: { whiteSpace: "normal" }, // 자동 줄바꿈 허용
         autoHeight: true,
+        cellClassRules: {
+          "hover-highlight": () => true, // 항상 적용
+        },
       },
       ...assignmentIds.map((id) => ({
         headerName: assignmentMap[id], // UI에는 assignmentTitle 표시
@@ -129,9 +132,7 @@ const ClassStudents = () => {
           navigate(`/class/${courseId}/admin/students/${data.userId}`)
         }
       >
-        <span style={{ color: "black" }}>
-          {data.name}
-        </span>
+        <span style={{ color: "black" }}>{data.name}</span>
       </div>
     );
   };
@@ -272,6 +273,11 @@ const ClassStudents = () => {
               .ag-header-cell-left {
                 text-align: left;
                 padding-left: 10px;
+                
+              }
+              .ag-theme-alpine .hover-highlight:hover {
+                background-color:var(--pink-color); 
+                transition: background-color 0.2s ease-in-out;
               }
             `}
           </style>
