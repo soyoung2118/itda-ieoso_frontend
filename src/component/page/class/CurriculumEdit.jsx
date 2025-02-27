@@ -145,7 +145,8 @@ const CurriculumEdit = () => {
   }, [courseId, userId, lectureId]);
 
   // 챕터 설명 수정
-  const handleDescriptionClick = () => {
+  const handleDescriptionClick = (event) => {
+    event.stopPropagation();
     setIsEditingDescription(true);
   };
 
@@ -299,10 +300,20 @@ const CurriculumEdit = () => {
       console.log(isDragging);
       if (isDragging) return;
 
-      if (event.target.closest(".lecture-description-edit")) {
-        console.log(
-          "[DEBUG] 강의 설명 클릭 감지 -> handleMainClick 실행 안 함"
-        );
+      // if (event.target.closest(".lecture-description-edit")) {
+      //   console.log(
+      //     "[DEBUG] 강의 설명 클릭 감지 -> handleMainClick 실행 안 함"
+      //   );
+      //   return;
+      // }
+
+      const lectureDescriptionElement = document.querySelector(
+        ".lecture-description-edit"
+      );
+
+      if (lectureDescriptionElement?.contains(event.target)) {
+        console.log("[DEBUG] 강의 설명 클릭 감지 -> 편집 모드 활성화");
+        setIsEditingDescription(true);
         return;
       }
 
