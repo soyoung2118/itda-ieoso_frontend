@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import AdminTopBar from '../../ui/class/AdminTopBar';
 import api from "../../api/api";
 import { UsersContext } from '../../contexts/usersContext';
+import EntryCodeCopyModal from '../../ui/class/EntryCodeCopyModal';
 
 export default function Setting() {
   const navigate = useNavigate();
@@ -366,6 +367,8 @@ export default function Setting() {
           </FormGroup>
         </Section>
         <CreateButton onClick={handleSubmit}>강의실 업데이트하기</CreateButton>
+
+        {copyModalOpen && <EntryCodeCopyModal entrycode={form.entrycode} onClose={() => setCopyModalOpen(false)} />}
       </Container>
     </>
   );

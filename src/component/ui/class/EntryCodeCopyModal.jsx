@@ -2,17 +2,18 @@ import styled from "styled-components";
 import LogoSymbol from "../../img/logo/itda_logo_symbol.svg";
 import Close from '@mui/icons-material/Close';
 
-export default function EntryCodeModal({ entrycode, onClose }) {
+export default function EntryCodeCopyModal({ entrycode, onClose }) {
     return (
         <ModalBackdrop>
             <ModalWrapper>
                 <Close onClick={onClose} style={{ alignSelf: 'flex-end', cursor: 'pointer' }}/>
                 <ModalContent>
                     <img src={LogoSymbol} alt="LogoSymbol" width="60" height="60"/>
-                    <ModalText style={{marginTop: '10px'}}>강의실이 개설되었습니다!</ModalText>
+                    <ModalText style={{marginTop: '10px'}}>강의실 코드가 복사되었습니다.</ModalText>
                     <ModalSmallText>내 강의실 코드</ModalSmallText>
                     <ModalText>{entrycode}</ModalText>
-                    <CloseButton onClick={onClose}>수강생 초대하기</CloseButton>
+                    <CloseButton onClick={onClose}>닫기</CloseButton>
+                    {/* <CloseButton onClick={onClose}>수강생 초대하기</CloseButton> */}
                 </ModalContent>
             </ModalWrapper>
         </ModalBackdrop>  
@@ -63,7 +64,7 @@ export default function EntryCodeModal({ entrycode, onClose }) {
   `
   
   const CloseButton = styled.button`
-  background: #ff4747;
+  background: #CECECE;
   color: white;
   border: none;
   border-radius: 10px;
