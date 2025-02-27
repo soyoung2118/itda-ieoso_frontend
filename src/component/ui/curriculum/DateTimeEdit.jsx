@@ -102,7 +102,6 @@ const DateTimeEdit = ({
     // const localTime = new Date(date.getTime() + kstOffset);
     const formattedDate = formatToKST(dateValue);
 
-    console.log("[DEBUG] 변환된 날짜:", formattedDate);
 
     if (subSection.contentType === "video" && field === "startDate") {
       const videoId = Number(subSection.videoId);
@@ -118,12 +117,9 @@ const DateTimeEdit = ({
       url = `/materials/${courseId}/${materialId}/${userId}?startDate=${formattedDatenoz}`;
     }
 
-    console.log("[DEBUG] PATCH 요청 URL:", url);
-    console.log("[DEBUG] 요청 데이터:", data);
 
     try {
       const response = await api.patch(url, data);
-      console.log("[DEBUG] 날짜 업데이트 성공:", response.data);
     } catch (error) {
       console.error("날짜 업데이트 실패:", error);
     }
@@ -141,12 +137,9 @@ const DateTimeEdit = ({
       newDate > parseDate(lectureEndDate)
     ) {
       alert("강의 기간 내에서만 선택할 수 있습니다.");
-      console.log(parseDate(lectureStartDate), parseDate(lectureEndDate));
       return;
     }
-    console.log(parseDate(lectureStartDate), parseDate(lectureEndDate));
-    console.log("[DEBUG] 선택한 날짜:", newDate); // 여기 추가
-    console.log("[DEBUG] ISO 변환:", newDate.toISOString()); // 여기 추가
+
 
     setDate(newDate);
 
