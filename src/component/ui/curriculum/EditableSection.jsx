@@ -184,8 +184,6 @@ const EditableSection = ({
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
-
-      console.log("파일 업로드 성공:", response.data);
     } catch (error) {
       console.error("파일 업로드 실패:", error);
     }
@@ -206,12 +204,10 @@ const EditableSection = ({
         videoTitle: field === "title" ? value : title,
         videoUrl: field === "videoUrl" ? value : videoUrl,
       };
-      console.log(data);
     } else if (subSection.contentType === "material") {
       const materialId = Number(subSection.materialId);
       url = `/materials/${courseId}/${materialId}/${userIdNum}`;
       data = { materialTitle: value };
-      console.log(data);
     } else if (subSection.contentType === "assignment") {
       const assignmentId = Number(subSection.assignmentId);
       url = `/assignments/${courseId}/${assignmentId}/${userIdNum}`;
@@ -220,7 +216,6 @@ const EditableSection = ({
         assignmentDescription:
           field === "assignmentDescription" ? value : assignmentDescription,
       };
-      console.log(data);
     }
 
     try {
