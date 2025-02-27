@@ -123,14 +123,13 @@ const ClassStudents = () => {
       <div
         style={{
           padding: "1.7vh 0vh",
+          cursor: "pointer",
         }}
+        onClick={() =>
+          navigate(`/class/${courseId}/admin/students/${data.userId}`)
+        }
       >
-        <span
-          style={{ color: "black", cursor: "pointer" }}
-          onClick={() =>
-            navigate(`/class/${courseId}/admin/students/${data.userId}`)
-          }
-        >
+        <span style={{ color: "black" }}>
           {data.name}
         </span>
       </div>
