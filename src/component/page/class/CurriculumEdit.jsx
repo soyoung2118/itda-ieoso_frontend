@@ -317,6 +317,11 @@ const CurriculumEdit = () => {
         return;
       }
 
+      if (event.target.closest(".editable-section") || event.target.closest(".file-upload")) {
+        console.log("[DEBUG] 편집 중인 영역 클릭 감지 -> handleClickOutside 실행 안 함");
+        return;
+      }
+
       const editingSection = activeLectureRef.current?.subSections.find(
         (s) => s.isEditing
       );

@@ -219,7 +219,7 @@ const PlayingCurriculumSidebar = ({
         const startDate = new Date(assignment.startDate);
         const endDate = new Date(assignment.endDate);
 
-        if (now.getTime() < startDate.getTime() || now.getTime() > endDate.getTime()) {
+        if (now.getTime() < startDate.getTime()) {
             alert(
                 `이 콘텐츠는 ${startDate.toLocaleString()} 부터 접근 가능합니다.`
             );
