@@ -68,7 +68,6 @@ const TextArea = styled.textarea`
     outline: none;
     border: 2px solid #c3c3c3; /* 기존 border 유지 */
   }
-
 `;
 
 const MaterialSection = styled.div`
@@ -124,14 +123,14 @@ const EditableSection = ({
   const [startDate, setStartDate] = useState(
     subSection?.startDate
       ? new Date(subSection.startDate)
-      // : new Date(lectureStartDate)
-      : null
+      : // : new Date(lectureStartDate)
+        null
   );
   const [endDate, setEndDate] = useState(
     subSection?.endDate
       ? new Date(subSection.endDate)
-      // : new Date(lectureEndDate)
-      : null
+      : // : new Date(lectureEndDate)
+        null
   );
   const [assignmentDescription, setAssignmentDescription] = useState(
     subSection?.assignmentDescription || ""
@@ -206,12 +205,13 @@ const EditableSection = ({
       data = {
         videoTitle: field === "title" ? value : title,
         videoUrl: field === "videoUrl" ? value : videoUrl,
-        startDate: startDate,
       };
+      console.log(data);
     } else if (subSection.contentType === "material") {
       const materialId = Number(subSection.materialId);
       url = `/materials/${courseId}/${materialId}/${userIdNum}`;
       data = { materialTitle: value };
+      console.log(data);
     } else if (subSection.contentType === "assignment") {
       const assignmentId = Number(subSection.assignmentId);
       url = `/assignments/${courseId}/${assignmentId}/${userIdNum}`;
@@ -219,8 +219,8 @@ const EditableSection = ({
         assignmentTitle: field === "title" ? value : title,
         assignmentDescription:
           field === "assignmentDescription" ? value : assignmentDescription,
-        endDate: endDate,
       };
+      console.log(data);
     }
 
     try {
@@ -242,12 +242,13 @@ const EditableSection = ({
   const handleDateChange = (date, field) => {
     if (field === "startDate") {
       setStartDate(date);
+      handleEdit("startDate", date);
     } else if (field === "endDate") {
       setEndDate(date);
+      handleEdit("endDate", date);
     }
     onDateChange?.(index, field, date); // 상위(`CurriculumEdit`)에도 변경된 값 전달
   };
-
 
   return (
     <Section>
@@ -262,7 +263,7 @@ const EditableSection = ({
               subSection={subSection}
               lectureStartDate={lectureStartDate}
               lectureEndDate={lectureEndDate}
-              onDateChange={(date) => handleDateChange(date, "startDate")}// 날짜 상태만 업데이트
+              onDateChange={(date) => handleDateChange(date, "startDate")} // 날짜 상태만 업데이트
             />
             <div style={{ display: "flex" }}>
               <div style={{ alignSelf: "flex-start" }}>
@@ -422,7 +423,7 @@ const EditableSection = ({
               subSection={subSection}
               lectureStartDate={lectureStartDate}
               lectureEndDate={lectureEndDate}
-              onDateChange={(date) => handleDateChange(date, "endDate")}// 날짜 상태만 업데이트
+              onDateChange={(date) => handleDateChange(date, "endDate")} // 날짜 상태만 업데이트
             />
             <div style={{ display: "flex", alignItems: "flex-start" }}>
               <img
