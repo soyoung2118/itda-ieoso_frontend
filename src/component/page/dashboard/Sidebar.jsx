@@ -43,9 +43,32 @@ function Sidebar({ userId, selectedDate }) {
     fetchDashboard();
   }, [userId, selectedDate]);
 
-  const getIconType = (isOwnLecture, hasActiveStatus) => {
+  const getIconType = (lecture, formattedDate) => {
+    const isOwnLecture = String(userId) === String(lecture.creatorId);
     if (isOwnLecture) return 'MY_LECTURE';
-    return hasActiveStatus ? 'SUBMITTED' : 'NOT_SUBMITTED';
+
+    // 해당 날짜에 있는 과제가 SUBMITTED 상태인지 확인
+    const assignmentsOnDate = (lecture.assignmentDtos || []).filter(task => 
+      new Date(task.endDate).toLocaleDateString('en-CA') === formattedDate
+    );
+    const allAssignmentsSubmitted = assignmentsOnDate.every(task => 
+      task.submissionStatus === 'SUBMITTED'
+    );
+
+    // 해당 날짜에 있는 자료가 활성화 상태인지 확인
+    const materialsOnDate = (lecture.materialDtos || []).filter(material => 
+      new Date(material.startDate).toLocaleDateString('en-CA') === formattedDate
+    );
+    const allMaterialsActive = materialsOnDate.every(material => 
+      material.materialHistoryStatus === true
+    );
+
+    // 모든 과제가 제출되었고, 모든 자료가 활성화된 경우에만 SUBMITTED
+    if (allAssignmentsSubmitted && allMaterialsActive) {
+      return 'SUBMITTED';
+    }
+
+    return 'NOT_SUBMITTED';
   };
 
   const getLectureIcon = (iconType) => {
@@ -75,7 +98,7 @@ function Sidebar({ userId, selectedDate }) {
 
           return (
             <MenuItem key={lecture.courseId}>
-              {getLectureIcon(getIconType(isOwnLecture, hasActiveStatus))}
+              {getLectureIcon(getIconType(lecture, selectedDate.toLocaleDateString('en-CA')))}
               {lecture.courseTitle}
             </MenuItem>
           );
