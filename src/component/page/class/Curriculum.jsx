@@ -243,6 +243,7 @@ const Curriculum = () => {
   const context = useOutletContext();
   const isCreator = context?.isCreator || false;
   const [allCompleted, setAllCompleted] = useState(false);
+  const [allCompletedLectures, setAllCompletedLectures] = useState({});
 
   useEffect(() => {
     async function fetchData() {
@@ -353,34 +354,37 @@ const Curriculum = () => {
 
   // 과제 제출 및 자료 다운 여부
   useEffect(() => {
-    if (!activeLecture || !historyData) return;
+    if (!curriculumData || !historyData) return;
 
-    // 현재 강의의 materials와 assignments 가져오기
-    const lectureMaterials = activeLecture?.materials || [];
-    const lectureAssignments = activeLecture?.assignments || [];
+    const completedStatus = {};
 
-    // 모든 materials가 true인지 확인
-    const allMaterialsCompleted = lectureMaterials.every((material) =>
-      historyData.materials.some(
-        (history) =>
-          history.materialId === material.materialId &&
-          history.materialHistoryStatus
-      )
-    );
+    curriculumData.forEach((lecture) => {
+      const lectureMaterials = lecture.materials || [];
+      const lectureAssignments = lecture.assignments || [];
 
-    // 모든 assignments가 SUBMITTED인지 확인
-    const allAssignmentsSubmitted = lectureAssignments.every((assignment) =>
-      historyData.submissions.some(
-        (history) =>
-          history.assignmentId === assignment.assignmentId &&
-          (history.submissionStatus === "SUBMITTED" ||
-            history.submissionStatus === "LATE")
-      )
-    );
+      const allMaterialsCompleted = lectureMaterials.every((material) =>
+        historyData.materials.some(
+          (history) =>
+            history.materialId === material.materialId &&
+            history.materialHistoryStatus
+        )
+      );
 
-    // 모든 과제와 자료가 완료되었는지 여부 업데이트
-    setAllCompleted(allMaterialsCompleted && allAssignmentsSubmitted);
-  }, [historyData, activeLecture]);
+      const allAssignmentsSubmitted = lectureAssignments.every((assignment) =>
+        historyData.submissions.some(
+          (history) =>
+            history.assignmentId === assignment.assignmentId &&
+            (history.submissionStatus === "SUBMITTED" ||
+              history.submissionStatus === "LATE")
+        )
+      );
+
+      completedStatus[lecture.lectureId] =
+        allMaterialsCompleted && allAssignmentsSubmitted;
+    });
+
+    setAllCompletedLectures(completedStatus);
+  }, [curriculumData, historyData]);
 
   const handleSectionClick = (sub) => {
     if (isCreator && sub.contentType === "assignment") {
@@ -485,6 +489,7 @@ const Curriculum = () => {
         activeItem={activeLectureId}
         setActiveItem={setActiveLectureId}
         edit={false}
+        completedLectures={allCompletedLectures}
       />
       <main
         style={{
@@ -512,7 +517,7 @@ const Curriculum = () => {
 
         <Section
           style={{
-            backgroundColor: allCompleted
+            backgroundColor: allCompletedLectures[activeLectureId]
               ? "var(--pink-color)"
               : "var(--grey-color)",
             padding: "2vh 2.5vh",
@@ -523,7 +528,11 @@ const Curriculum = () => {
           </LectureDescription>
           {!isCreator && (
             <SectionIcon
-              src={allCompleted ? DoneSection : UnselectedSection}
+              src={
+                allCompletedLectures[activeLectureId]
+                  ? DoneSection
+                  : UnselectedSection
+              }
               style={{
                 marginLeft: "auto",
                 marginRight: "1.35rem",
@@ -603,7 +612,6 @@ const Curriculum = () => {
                       </span>
                     </VideoDetails>
                   </div>
-                  
                 </Section>
               )}
 
