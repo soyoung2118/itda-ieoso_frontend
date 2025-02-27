@@ -332,7 +332,9 @@ const Curriculum = () => {
         const assignmentHistory = historyData.submissions.find(
           (a) => a.assignmentId === sub.assignmentId
         );
-        isChecked = assignmentHistory?.submissionStatus === "SUBMITTED";
+        isChecked =
+          assignmentHistory?.submissionStatus === "SUBMITTED" ||
+          assignmentHistory?.submissionStatus === "LATE";
       }
 
       return { ...sub, checked: isChecked };
@@ -371,7 +373,8 @@ const Curriculum = () => {
       historyData.submissions.some(
         (history) =>
           history.assignmentId === assignment.assignmentId &&
-          history.submissionStatus === "SUBMITTED"
+          (history.submissionStatus === "SUBMITTED" ||
+            history.submissionStatus === "LATE")
       )
     );
 
