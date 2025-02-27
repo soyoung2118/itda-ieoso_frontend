@@ -29,6 +29,10 @@ const GlobalStyle = createGlobalStyle`
     button, textarea {
         font-family: "Pretendard", sans-serif;
     }
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
 `
 
 export default GlobalStyle

@@ -190,7 +190,7 @@ const Wrapper = styled.div`
     border-radius: 20px;
     background-color: #FFFFFF;
     height: 80vh;
-    margin-bottom: 50px;
+    margin-bottom: 60px;
     padding: 10px;
 `
 
