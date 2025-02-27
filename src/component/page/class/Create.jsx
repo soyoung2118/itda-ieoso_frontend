@@ -432,9 +432,9 @@ const handleAssignmentTimeChange = (timeString) => {
                 ))}
               </ButtonGroup>
             </RowContainer>
-              {form.difficulty === 'easy' && <HelpText style={{color: 'var(--guide-gray-color)'}}>입문자를 위한 쉬운 개념 강의!</HelpText> }
-              {form.difficulty === 'medium' && <HelpText style={{color: 'var(--guide-gray-color)'}}>개념을 응용하고 실전 활용 능력을 키우는 강의!</HelpText> }
-              {form.difficulty === 'hard' && <HelpText style={{color: 'var(--guide-gray-color)'}}>실무에 적용할 수 있는 전문 강의!</HelpText> }
+              {form.difficulty === 'easy' && <LevelText style={{color: 'var(--guide-gray-color)'}}>입문자를 위한 쉬운 개념 강의!</LevelText> }
+              {form.difficulty === 'medium' && <LevelText style={{color: 'var(--guide-gray-color)'}}>개념을 응용하고 실전 활용 능력을 키우는 강의!</LevelText> }
+              {form.difficulty === 'hard' && <LevelText style={{color: 'var(--guide-gray-color)'}}>실무에 적용할 수 있는 전문 강의!</LevelText> }
             </FormItem>
           </FormGroup>
         </Section>
@@ -456,6 +456,10 @@ const RadioButton = styled.button`
   font-size: 15px;
   background-color: ${props => props.active ? '#F6F6F6' : '#FF4747'};
   color: ${props => props.active ? '#909090' : '#FFFFFF'};
+
+  @media (max-width: 900px) { 
+    width: 289px;
+  }
 `;
 
 const LevelButton = styled.button`
@@ -464,10 +468,14 @@ const LevelButton = styled.button`
   font-size: 15px;
   background-color: ${props => props.active ? '#FF4747' : '#EEEEEE '};
   color: ${props => props.active ? '#FFFFFF' : '#909090'};
-  padding: 6px 12px;
+  padding: 6px 18px;
   border: none;
   cursor: pointer;
-  margin-bottom: 8px
+  margin-bottom: 8px;
+
+  @media (max-width: 900px) { 
+     padding: 6px 12px;
+  }
 `;
 
 const CreateButton = styled.button`
@@ -568,10 +576,27 @@ const HelpText = styled.div`
   margin-left: 10px;
 `;
 
+const LevelText = styled.div`
+  height: 13px;
+  min-height: 13px;
+  font-size: 12px;
+  font-weight: 400;
+  margin-top: 4px;
+  margin-left: 150px;
+
+  @media (max-width: 800px) { 
+    margin-left: 0px;
+  }
+`
+
 const RowContainer = styled.div`
   display: flex;
   align-items: baseline;
-  height: 50px;
+  
+  @media (max-width: 800px) { 
+      flex-direction: column;
+      padding: 6px 10px;
+    }
 `;
 
 const DayButtonGroup = styled.div`
@@ -604,10 +629,6 @@ const CalendarIcon = styled.span`
 const TimeGroup = styled.div`
   display: flex;
   flex-direction: column;
-
-  @media (max-width: 800px) { 
-    width: 70%;
-  }
 `;
 
 const TimePickerWrapper = styled.div`
@@ -615,6 +636,10 @@ const TimePickerWrapper = styled.div`
   display: flex;
   align-items: center;
   position: relative;
+
+  @media (max-width: 900px) { 
+    margin-right: 0px;
+  }
 `
 
 const CuliculumGroup = styled.div`
@@ -628,7 +653,7 @@ const HalfGroup = styled.div`
   flex-direction: row;
   gap: 10px;
 
-  @media (max-width: 800px) { 
+  @media (max-width: 900px) { 
     flex-direction: column;
     gap: 15px;
   }
