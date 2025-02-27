@@ -339,7 +339,7 @@ const handleAssignmentTimeChange = (timeString) => {
                 </TimeGroup>
 
                 <TimeGroup>
-                  <RadioButton 
+                  {/* <RadioButton 
                     active={!isLecturePending}
                     onClick={() => {
                       setIsLecturePending(!isLecturePending)
@@ -349,7 +349,7 @@ const handleAssignmentTimeChange = (timeString) => {
                     }}
                   >
                     정해지지 않았어요
-                  </RadioButton>
+                  </RadioButton> */}
                 </TimeGroup>
               </HalfGroup>
             </FormItem>
@@ -397,7 +397,7 @@ const handleAssignmentTimeChange = (timeString) => {
                 </TimeGroup> 
 
                 <TimeGroup>
-                  <RadioButton 
+                  {/* <RadioButton 
                     active={!isAssignmentPending}
                     onClick={() => {
                       setIsAssignmentPending(!isAssignmentPending)
@@ -407,7 +407,7 @@ const handleAssignmentTimeChange = (timeString) => {
                     }}
                   >
                     정해지지 않았어요
-                  </RadioButton>
+                  </RadioButton> */}
                 </TimeGroup>
               </HalfGroup>
             </FormItem>
