@@ -28,7 +28,7 @@ function WeeklyCalendar({ currentWeek, setSelectedDate, lectures, userId }) {
       new Date(task.endDate).toLocaleDateString('en-CA') === formattedDate
     );
     const allAssignmentsSubmitted = assignmentsOnDate.every(task => 
-      task.submissionStatus === 'SUBMITTED'
+      task.submissionStatus === 'SUBMITTED' || task.submissionStatus === 'LATE'
     );
 
     // 해당 날짜에 있는 자료가 활성화 상태인지 확인
