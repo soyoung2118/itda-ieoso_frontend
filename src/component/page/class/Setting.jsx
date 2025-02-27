@@ -146,7 +146,7 @@ export default function Setting() {
 
       if (settingResponse.data.success) {
         console.log(settingResponse.data);
-        navigate(`/class/${courseId}/overview/info`);
+        //navigate(`/class/${courseId}/overview/info`);
         window.location.reload()
       } else {
         throw new Error('강의실 내용 수정에 실패했습니다');
@@ -154,8 +154,6 @@ export default function Setting() {
     } catch (error) {
       console.error('Failed to update course setting:', error);
     }
-
-    //navigate('/curriculum');
   };
 
   return (
