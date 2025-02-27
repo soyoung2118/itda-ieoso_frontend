@@ -279,7 +279,7 @@ export default function Setting() {
                 </TimeGroup>
 
                 <TimeGroup>
-                  <PendingButton active={isLecturePending}>정해지지 않았어요</PendingButton>
+                  {/* <PendingButton active={isLecturePending}>정해지지 않았어요</PendingButton> */}
                 </TimeGroup>
               </HalfGroup>
               <GreyHelpText style={{marginTop: '10px'}}>
@@ -318,7 +318,7 @@ export default function Setting() {
                 </TimeGroup> 
 
                 <TimeGroup>
-                  <PendingButton active={isAssignmentPending}>정해지지 않았어요</PendingButton>
+                  {/* <PendingButton active={isAssignmentPending}>정해지지 않았어요</PendingButton> */}
                 </TimeGroup>
               </HalfGroup>
               <GreyHelpText style={{marginTop: '10px'}}>
