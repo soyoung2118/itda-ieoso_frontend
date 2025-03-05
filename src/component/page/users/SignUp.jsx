@@ -149,9 +149,27 @@ export default function SignUp() {
         <LogoImage src={logoImage} alt="logo" />
         <LogoText>회원가입</LogoText>
         <Progress>
-          <Step active={step === 1 ? "true" : "false"} completed={step > 1 ? "true" : "false"} label="약관동의">1</Step>
-          <Step active={step === 2 ? "true" : "false"} completed={step > 2 ? "true" : "false"} label="아이디 설정">2</Step>
-          <Step active={step === 3 ? "true" : "false"} completed={step > 3 ? "true" : "false"} label="비밀번호 설정">3</Step>
+          <Step
+            active={step === 1}
+            completed={step > 1}
+            label="약관동의"
+          >
+            1
+          </Step>
+          <Step
+            active={step === 2}
+            completed={step > 2}
+            label="아이디 설정"
+          >
+            2
+          </Step>
+          <Step
+            active={step === 3}
+            completed={step > 3}
+            label="비밀번호 설정"
+          >
+            3
+          </Step>
         </Progress>
         <SignUpContainer>
           {step === 1 && (

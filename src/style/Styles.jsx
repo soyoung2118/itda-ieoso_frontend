@@ -188,8 +188,8 @@ export const Progress = styled.div`
 `;
 
 export const Step = styled.div`
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background-color: #FFFFFF;
   color: ${props => (props.active || props.completed ? 'black' : '#C3C3C3')};
@@ -197,15 +197,16 @@ export const Step = styled.div`
   align-items: center;
   justify-content: center;
   margin: 0 50px;
+  gap: 5px;
   border: 2px solid ${props => (props.active || props.completed ? '#474747' : '#C3C3C3')};
-  font-weight: bold;
   position: relative;
+  transition: color 0.3s ease, border-image 0.5s ease;
 
   &:after {
     content: '${props => props.label}';
     position: absolute;
-    top: 40px;
-    font-size: 0.8rem;
+    top: 52px;
+    font-size: 0.9rem;
     color: ${props => (props.active || props.completed ? '#474747' : '#C3C3C3')};
     width: max-content;
   }
@@ -213,12 +214,12 @@ export const Step = styled.div`
   &:not(:last-child):before {
     content: '';
     position: absolute;
-    top: 15px;
-    left: 32px;
-    width: 100px;
-    height: 0px;
-    background-color: #C3C3C3;
-    z-index: 1;
+    top: 20px;
+    left: 41px;
+    width: 103px;
+    height: 2px;
+    background: ${props => (props.completed ? '#474747' : '#C3C3C3')};
+    transition: background 0.5s ease;
   }
 `;
 
