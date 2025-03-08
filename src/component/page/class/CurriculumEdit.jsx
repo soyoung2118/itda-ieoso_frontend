@@ -102,7 +102,6 @@ const CurriculumEdit = () => {
 
         setCurriculumData(lectures);
 
-        console.log("[DEBUG] curriculumData:", lectures);
 
         const defaultLecture =
           lectures.find((lec) => lec.lectureId === parseInt(lectureId)) ||
@@ -128,7 +127,6 @@ const CurriculumEdit = () => {
           (a, b) => (a.contentOrderIndex || 0) - (b.contentOrderIndex || 0)
         );
 
-        console.log("After", defaultLecture);
         setActiveLecture({
           ...defaultLecture,
           instructorName,
@@ -152,12 +150,10 @@ const CurriculumEdit = () => {
 
   // 드래그 시작 시 이동할 아이템을 고정
   const handleDragStart = (start) => {
-    console.log("[DEBUG] Drag Started:", start);
     const draggedItem = subSections.find(
       (item) => item.contentOrderId === start.draggableId
     );
     if (draggedItem) {
-      console.log("[DEBUG] Moved Item Set:", draggedItem);
       setMovedItem(draggedItem);
     }
     setIsDragging(true);
@@ -268,21 +264,17 @@ const CurriculumEdit = () => {
 
     const excludedTags = ["INPUT", "TEXTAREA", "BUTTON", "SELECT", "LABEL"];
     if (excludedTags.includes(event.target.tagName)) {
-      console.log("[DEBUG] 입력 필드 클릭 감지 → handleSectionClick 실행 안함");
       return;
     }
 
     if (event.target.closest(".datetime-edit")) {
-      console.log(
-        "[DEBUG] DateTimeEdit 내부 클릭 감지 → handleSectionClick 실행 안함"
-      );
+
       return;
     }
 
     setActiveLecture((prev) => {
       if (!prev) return prev;
       const clickedSection = prev.subSections[index];
-      console.log("[DEBUG] 클릭된 섹션 정보:", clickedSection);
 
       const updatedSubSections = prev.subSections.map((s, i) =>
         i === index
@@ -297,28 +289,20 @@ const CurriculumEdit = () => {
   // 섹션 외 다른 부분 클릭 시
   useEffect(() => {
     const handleClickOutside = async (event) => {
-      console.log(isDragging);
       if (isDragging) return;
 
-      // if (event.target.closest(".lecture-description-edit")) {
-      //   console.log(
-      //     "[DEBUG] 강의 설명 클릭 감지 -> handleMainClick 실행 안 함"
-      //   );
-      //   return;
-      // }
+ 
 
       const lectureDescriptionElement = document.querySelector(
         ".lecture-description-edit"
       );
 
       if (lectureDescriptionElement?.contains(event.target)) {
-        console.log("[DEBUG] 강의 설명 클릭 감지 -> 편집 모드 활성화");
         setIsEditingDescription(true);
         return;
       }
 
       if (event.target.closest(".editable-section") || event.target.closest(".file-upload")) {
-        console.log("[DEBUG] 편집 중인 영역 클릭 감지 -> handleClickOutside 실행 안 함");
         return;
       }
 
@@ -326,7 +310,6 @@ const CurriculumEdit = () => {
         (s) => s.isEditing
       );
 
-      console.log("[DEBUG] 현재 편집 중인 섹션:", editingSection);
 
       if (editingSection) {
         if (!editingSection.startDate || !editingSection.endDate) {
@@ -336,7 +319,6 @@ const CurriculumEdit = () => {
       }
 
       if (isEditingDescription) {
-        console.log("[DEBUG] 강의 설명 저장 중...");
 
         try {
           const response = await api.patch(
@@ -350,7 +332,6 @@ const CurriculumEdit = () => {
           );
 
           if (response.data.success) {
-            console.log("강의 설명 수정 성공:", response.data);
             setLectureDescription(lectureDescription);
             setIsEditingDescription(false); // 수정 완료 후 편집 종료
           } else {
@@ -365,7 +346,6 @@ const CurriculumEdit = () => {
         !event.target.closest(".editable-section") ||
         event.target.closest(".file-upload")
       ) {
-        console.log("[DEBUG] handleMainClick 실행됨 -> isEditing=false 처리");
 
         setActiveLecture((prev) => {
           if (!prev) return prev;
