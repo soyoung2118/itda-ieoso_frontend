@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, useRef } from "react";
+import { useState, useEffect, useContext, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import TopBar from "../../ui/TopBar";
@@ -81,11 +81,10 @@ const CurriculumEdit = () => {
     activeLectureRef.current = activeLecture; // 최신 값을 저장
   }, [activeLecture]);
 
-  // 데이터 받아와서 초기화
-  useEffect(() => {
-    if (!userId) return;
+  const fetchCurriculum = useCallback(
+    async (newSectionId = null) => {
+      if (!userId) return;
 
-    const fetchCurriculum = async () => {
       try {
         const response = await api.get(
           `/lectures/curriculum/${courseId}/${userId}`
@@ -101,7 +100,6 @@ const CurriculumEdit = () => {
         const lectures = curriculumResponses || [];
 
         setCurriculumData(lectures);
-
 
         const defaultLecture =
           lectures.find((lec) => lec.lectureId === parseInt(lectureId)) ||
@@ -127,20 +125,34 @@ const CurriculumEdit = () => {
           (a, b) => (a.contentOrderIndex || 0) - (b.contentOrderIndex || 0)
         );
 
+        const editingSectionId =
+          newSectionId || sessionStorage.getItem("editingSectionId");
+
         setActiveLecture({
           ...defaultLecture,
           instructorName,
-          subSections: sortedSubSections,
+          subSections: sortedSubSections.map((s) =>
+            newSectionId && String(s.contentOrderId) === String(newSectionId)
+              ? { ...s, isEditing: true }
+              : { ...s, isEditing: false }
+          ),
         });
+
+        // 설정 후 sessionStorage 값 제거
+        sessionStorage.removeItem("editingSectionId");
+
         setSubSections(sortedSubSections);
         setActiveLectureId(defaultLecture.lectureId);
       } catch (error) {
         console.error("커리큘럼 불러오기 실패:", error);
       }
-    };
+    },
+    [courseId, lectureId, userId]
+  );
 
+  useEffect(() => {
     fetchCurriculum();
-  }, [courseId, userId, lectureId]);
+  }, [fetchCurriculum]);
 
   // 챕터 설명 수정
   const handleDescriptionClick = (event) => {
@@ -221,8 +233,39 @@ const CurriculumEdit = () => {
         url = `/assignments/${courseId}/${activeLectureId}/${userId}`;
       }
 
-      await api.post(url);
-      location.reload();
+      // 기존 편집 중이던 섹션을 모두 isEditing: false로 변경
+      setActiveLecture((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          subSections: prev.subSections.map((s) => ({
+            ...s,
+            isEditing: false,
+          })),
+        };
+      });
+
+      // 새 섹션 추가 요청
+      const response = await api.post(url);
+
+      if (response.data && response.data.success) {
+        const newSectionId = String(response.data.data.contentOrderId);
+
+        sessionStorage.setItem("editingSectionId", newSectionId);
+        await fetchCurriculum(newSectionId);
+
+        setActiveLecture((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            subSections: prev.subSections.map((s) =>
+              String(s.contentOrderId) === newSectionId
+                ? { ...s, isEditing: true }
+                : { ...s, isEditing: false }
+            ),
+          };
+        });
+      }
     } catch (error) {
       console.error("추가 실패:", error);
     }
@@ -259,7 +302,7 @@ const CurriculumEdit = () => {
   };
 
   // 섹션 클릭 -> isEditing 상태 변경 (true, false)
-  const handleSectionClick = (index, event) => {
+  const handleSectionClick = async (index, event) => {
     event.stopPropagation(); // 이벤트 버블링 방지
 
     const excludedTags = ["INPUT", "TEXTAREA", "BUTTON", "SELECT", "LABEL"];
@@ -268,30 +311,57 @@ const CurriculumEdit = () => {
     }
 
     if (event.target.closest(".datetime-edit")) {
-
       return;
     }
 
-    setActiveLecture((prev) => {
-      if (!prev) return prev;
-      const clickedSection = prev.subSections[index];
+    const clickedSectionId = String(
+      activeLecture?.subSections[index]?.contentOrderId
+    );
 
-      const updatedSubSections = prev.subSections.map((s, i) =>
-        i === index
-          ? { ...s, isEditing: !s.isEditing }
-          : { ...s, isEditing: false }
-      );
+    // 현재 편집 중이던 섹션 저장
+    const editingSection = activeLecture?.subSections.find((s) => s.isEditing);
 
-      return { ...prev, subSections: updatedSubSections };
-    });
+    if (editingSection) {
+      // 수정 사항 저장 요청
+      try {
+        await api.patch(
+          `/contentorders/${courseId}/${activeLectureId}/${userId}`,
+          {
+            contentOrderId: editingSection.contentOrderId,
+            updatedData: editingSection,
+          }
+        );
+      } catch (error) {
+        console.error("수정사항 저장 실패:", error);
+      }
+    }
+
+    // 🔹 `sessionStorage`에 클릭한 섹션 ID 저장
+    sessionStorage.setItem("editingSectionId", clickedSectionId);
+
+    // 🔹 현재 아무것도 편집 중이 아니었으면 새로고침 없이 바로 상태 업데이트
+    if (!editingSection) {
+      setActiveLecture((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          subSections: prev.subSections.map((s) =>
+            String(s.contentOrderId) === clickedSectionId
+              ? { ...s, isEditing: true }
+              : s
+          ),
+        };
+      });
+    } else {
+      // 🔹 기존 편집 중인 섹션이 있었다면 fetchCurriculum 호출 (기존 상태 반영)
+      await fetchCurriculum(clickedSectionId);
+    }
   };
 
   // 섹션 외 다른 부분 클릭 시
   useEffect(() => {
     const handleClickOutside = async (event) => {
       if (isDragging) return;
-
- 
 
       const lectureDescriptionElement = document.querySelector(
         ".lecture-description-edit"
@@ -302,14 +372,16 @@ const CurriculumEdit = () => {
         return;
       }
 
-      if (event.target.closest(".editable-section") || event.target.closest(".file-upload")) {
+      if (
+        event.target.closest(".editable-section") ||
+        event.target.closest(".file-upload")
+      ) {
         return;
       }
 
       const editingSection = activeLectureRef.current?.subSections.find(
         (s) => s.isEditing
       );
-
 
       if (editingSection) {
         if (!editingSection.startDate || !editingSection.endDate) {
@@ -319,7 +391,6 @@ const CurriculumEdit = () => {
       }
 
       if (isEditingDescription) {
-
         try {
           const response = await api.patch(
             `/lectures/${courseId}/${activeLectureId}/${userId}`,
@@ -346,7 +417,6 @@ const CurriculumEdit = () => {
         !event.target.closest(".editable-section") ||
         event.target.closest(".file-upload")
       ) {
-
         setActiveLecture((prev) => {
           if (!prev) return prev;
 
