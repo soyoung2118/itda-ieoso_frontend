@@ -28,30 +28,32 @@ export default function TopBar() {
                 onClick={isUser ? () => navigate('/class/list') : () => navigate('/')}
             />
             <Header>
-                <div className="header-right">
-                    {isUser ? (
-                        <UserContainer>
-                            {location.pathname === '/dashboard' ? (
-                                <button className="navigate-button" onClick={() => navigate('/class/list')}>강의실 입장하기</button>
-                            ) : (
-                                <button className="navigate-button" onClick={() => navigate('/dashboard')}>대시보드로 가기</button>
-                            )}
-                            <UserIcon src={userIcon} alt="user icon" onClick={handleUserIconClick} />
-                            {showUsersInfoContainer && (
-                               <UsersInfoContainer setShowUsersInfoContainer={setShowUsersInfoContainer} /> 
-                            )}
-                        </UserContainer>
-                    ) : (
-                        <>
-                            <button className="signup" onClick={() => navigate('/signup')}>회원가입</button>
-                            <button className="login" onClick={() => navigate('/login')}>로그인</button>
+                {location.pathname !== '/login' && location.pathname !== '/signup' && (
+                    <div className="header-right">
+                        {isUser ? (
                             <UserContainer>
-                                <UserIcon src={userIcon} alt="user icon" />
-                                <UserText>로그인하세요</UserText>
+                                {location.pathname === '/dashboard' ? (
+                                    <button className="navigate-button" onClick={() => navigate('/class/list')}>강의실 입장하기</button>
+                                ) : (
+                                    <button className="navigate-button" onClick={() => navigate('/dashboard')}>대시보드로 가기</button>
+                                )}
+                                <UserIcon src={userIcon} alt="user icon" onClick={handleUserIconClick} />
+                                {showUsersInfoContainer && (
+                                    <UsersInfoContainer setShowUsersInfoContainer={setShowUsersInfoContainer} />
+                                )}
                             </UserContainer>
-                        </>
-                    )}
-                </div>
+                        ) : (
+                            <>
+                                <button className="signup" onClick={() => navigate('/signup')}>회원가입</button>
+                                <button className="login" onClick={() => navigate('/login')}>로그인</button>
+                                <UserContainer>
+                                    <UserIcon src={userIcon} alt="user icon" />
+                                    <UserText>로그인하세요</UserText>
+                                </UserContainer>
+                            </>
+                        )}
+                    </div>
+                )}
             </Header>
         </Wrapper>
     );
