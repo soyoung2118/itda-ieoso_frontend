@@ -3,10 +3,47 @@ import api from './api';
 export const login = async (credentials) => {
     try {
         const response = await api.post('/login', credentials);
+        // 응답 헤더에서 토큰 추출
+        const token = response.headers['authorization'];
+        if (token) {
+            localStorage.setItem('token', token);
+            // 현재 시간에 1시간을 더한 만료 시간 저장
+            const expirationTime = new Date().getTime() + 3600000; // 1시간 = 3600000 밀리초
+            localStorage.setItem('tokenExpiration', expirationTime);
+            startLogoutTimer(); // 로그아웃 타이머 시작
+        }
         return response;
     } catch (error) {
         console.error('로그인 API 호출 실패:', error);
         throw error;
+    }
+};
+
+// 자동 로그아웃 타이머 시작 함수
+const startLogoutTimer = () => {
+    const expirationTime = localStorage.getItem('tokenExpiration');
+    if (expirationTime) {
+        const timeLeft = expirationTime - new Date().getTime();
+        if (timeLeft > 0) {
+            setTimeout(() => {
+                logout().then(() => {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('tokenExpiration');
+                    window.location.href = '/'; // 페이지 강제 이동
+                }).catch(error => {
+                    console.error('자동 로그아웃 중 오류 발생:', error);
+                });
+            }, timeLeft);
+        } else {
+            // 만료 시간이 이미 지난 경우 즉시 로그아웃
+            logout().then(() => {
+                localStorage.removeItem('token');
+                localStorage.removeItem('tokenExpiration');
+                window.location.href = '/';
+            }).catch(error => {
+                console.error('자동 로그아웃 중 오류 발생:', error);
+            });
+        }
     }
 };
 
