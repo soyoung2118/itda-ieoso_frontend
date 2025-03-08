@@ -7,8 +7,8 @@ export const login = async (credentials) => {
         const token = response.headers['authorization'];
         if (token) {
             localStorage.setItem('token', token);
-            // 현재 시간에 1시간을 더한 만료 시간 저장
-            const expirationTime = new Date().getTime() + 3600000; // 1시간 = 3600000 밀리초
+            // 현재 시간에 10시간을 더한 만료 시간 저장
+            const expirationTime = new Date().getTime() + 36000000; // 10시간 = 36000000 밀리초
             localStorage.setItem('tokenExpiration', expirationTime);
             startLogoutTimer(); // 로그아웃 타이머 시작
         }
