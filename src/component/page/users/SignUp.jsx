@@ -174,7 +174,7 @@ export default function SignUp() {
         <SignUpContainer>
           {step === 1 && (
             <>
-              <p style={{color: 'var(--guide-gray-color)'}}>※ itda 계정을 만들기 위해 약관에 동의해주세요.</p>
+              <p style={{color: 'var(--guide-gray-color)', fontSize: '0.9rem'}}>※ itda 계정을 만들기 위해 약관에 동의해주세요.</p>
               <div style={{minWidth: '250px', width: '100%', margin: '0 auto' }}>
                 <TermsAgreement
                   isChecked={isChecked}
@@ -213,7 +213,6 @@ export default function SignUp() {
                     marginLeft: '0.4rem',
                     color: emailCheckResult.includes('사용 가능한') ? 'var(--guide-green-color)' : 'var(--guide-red-color)',
                     width: '100%',
-                    margin: '-1rem 0 2rem 0'
                   }}>
                     {emailCheckResult}
                   </div>
@@ -233,7 +232,7 @@ export default function SignUp() {
                   marginLeft: '0.4rem',
                   color: password.length > 0 && !validatePassword(password) ? 'var(--guide-red-color)' : 'var(--guide-gray-color)',
                   width: '100%',
-                  margin: '-1rem 0 2rem 0'
+                  margin: '-1.5vh 0 1rem 0'
                 }}>
                   {password.length === 0 
                     ? '영문 대/소문자, 숫자, 특수문자를 조합하여 8자 이상 입력해주세요.' 
@@ -257,7 +256,7 @@ export default function SignUp() {
                     marginLeft: '0.4rem',
                     color: 'var(--guide-red-color)',
                     width: '100%',
-                    margin: '-1rem 0 2rem 0'
+                    margin: '-1.5vh 0 0'
                   }}>
                     비밀번호가 일치하지 않습니다. 다시 확인해주세요.
                   </div>

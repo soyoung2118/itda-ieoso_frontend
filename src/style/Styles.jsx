@@ -8,7 +8,7 @@ export const Container = styled.div`
     background-color: #FFFFFF;
     height: calc(100vh - 7vh);
     width: 100%;
-    padding-top: 6rem;
+    padding-top: 2rem;
 `;
 
 export const Logo = styled.div`
@@ -23,9 +23,9 @@ export const LogoImage = styled.img`
 `;
 
 export const LogoText = styled.div`
-    font-size: 2rem;
+    font-size: 1.7rem;
     font-weight: bold;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
 `;
 
 export const Form = styled.form`
@@ -37,11 +37,11 @@ export const Form = styled.form`
 export const Label = styled.label`
     margin-top: 1rem;
     margin-bottom: 0.5rem;
-    font-size: 1rem;
+    font-size: 0.9rem;
 `;
 
 export const LoginInput = styled.input`
-    padding: 0.8rem;
+    padding: 0.7rem;
     margin-bottom: 1rem;
     border: 1px solid #CDCDCD;
     border-radius: 10px;
@@ -144,11 +144,11 @@ export const SignUpContainer = styled.div`
 `;
 
 export const SignUpInput = styled.input`
-    padding: 0.8rem;
-    margin-bottom: 1rem;
+    padding: 0.7rem;
+    margin-bottom: 0.8rem;
     border: 1px solid #CDCDCD;
     border-radius: 10px;
-    font-size: 1rem;
+    font-size: 0.9rem;
 
     &::placeholder {
         color: #CDCDCD;
@@ -156,7 +156,7 @@ export const SignUpInput = styled.input`
 `;
 
 export const SignUpLink = styled.div`
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     font-size: 0.9rem;
     color: var(--guide-gray-color);
     text-align: center;
@@ -188,8 +188,8 @@ export const Progress = styled.div`
 `;
 
 export const Step = styled.div`
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   background-color: #FFFFFF;
   color: ${props => (props.active || props.completed ? 'black' : '#C3C3C3')};
@@ -197,7 +197,6 @@ export const Step = styled.div`
   align-items: center;
   justify-content: center;
   margin: 0 50px;
-  gap: 5px;
   border: 2px solid ${props => (props.active || props.completed ? '#474747' : '#C3C3C3')};
   position: relative;
   transition: color 0.3s ease, border-image 0.5s ease;
@@ -206,7 +205,7 @@ export const Step = styled.div`
     content: '${props => props.label}';
     position: absolute;
     top: 52px;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: ${props => (props.active || props.completed ? '#474747' : '#C3C3C3')};
     width: max-content;
   }
@@ -215,7 +214,7 @@ export const Step = styled.div`
     content: '';
     position: absolute;
     top: 20px;
-    left: 41px;
+    left: 35px;
     width: 103px;
     height: 2px;
     background: ${props => (props.completed ? '#474747' : '#C3C3C3')};
@@ -247,7 +246,7 @@ export const Term = styled.div`
 export const InputContainer = styled.div`
   display: flex;
   align-items: center;
-  margin: 10px 0;
+  margin: 4px 0;
 `;
 
 export const ErrorMessage = styled.div`
