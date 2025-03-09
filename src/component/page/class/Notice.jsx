@@ -1,6 +1,6 @@
   import { useState, useEffect, useContext } from "react";
   import { useParams, useOutletContext } from "react-router-dom";
-  import ClassSidebar from "../../ui/class/ClassSidebar";
+  //import ClassSidebar from "../../ui/class/ClassSidebar";
   import styled from "styled-components";
   import { Section } from "../../ui/class/ClassLayout";
   import EditButton from "../../ui/class/EditButton";
@@ -336,7 +336,7 @@
 
     return (
           <div style={{ display: "flex", marginTop: "1rem" }}>
-            <ClassSidebar style={{ marginRight: "2rem" }} />
+        {/*<ClassSidebar style={{ marginRight: "2rem" }} />*/}
             <main
               style={{
                 flex: 1,

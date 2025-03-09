@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext, useRef } from "react";
 import { useParams, useOutletContext, useLocation } from "react-router-dom";
 import styled from "styled-components";
-import ClassSidebar from "../../ui/class/ClassSidebar";
+//import ClassSidebar from "../../ui/class/ClassSidebar";
 import ClassThumbnail from "../../img/class/class_thumbnail.svg";
 import EditBtn from "../../img/class/edit_btn.svg";
 import EditedBtn from "../../img/class/edited_btn.svg";
@@ -254,7 +254,7 @@ const ClassOverview = () => {
 
   return (
     <div style={{ display: "flex", marginTop: "1rem" }}>
-      <ClassSidebar style={{ marginRight: "2rem" }} />
+      {/*<ClassSidebar style={{ marginRight: "2rem" }} />*/}
       <main
         style={{
           flex: 1,

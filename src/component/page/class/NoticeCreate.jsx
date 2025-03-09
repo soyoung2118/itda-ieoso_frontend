@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Container from "../../ui/Container";
-import ClassSidebar from "../../ui/class/ClassSidebar";
+//import ClassSidebar from "../../ui/class/ClassSidebar";
 import api from "../../api/api";
 import { UsersContext } from "../../contexts/usersContext";
 import PropTypes from "prop-types";
@@ -264,9 +264,9 @@ const NoticeCreateForm = () => {
   return (
     <div>
         <div style={{ display: "flex", marginTop: "1rem" }}>
-          <ClassSidebar style={{ marginRight: "2rem" }} />
+        {/*<ClassSidebar style={{ marginRight: "2rem" }} />*/}
           <main
-            style={{ display: "flex", flexDirection: "column", width: "80.8%" }}
+            style={{ display: "flex", flexDirection: "column", width: "100%" }}
           >
             <NoticeTitle>{noticeId ? "공지사항 수정" : "공지사항 작성"}</NoticeTitle>
             <Container style={{ padding: "2rem", paddingRight: "4.3rem" }}>
