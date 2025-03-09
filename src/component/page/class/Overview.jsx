@@ -45,6 +45,7 @@ const Content = styled.div`
 const StyledQuill = styled(ReactQuill)`
   width: 100%;
   max-width: 1200px;
+  min-height: 450px;
   
   .ql-toolbar {
     order: 2;
@@ -78,15 +79,17 @@ const StyledButton = styled.a`
 const ImageContainer = styled.div`
   position: relative;
   width: 100%;
-  max-width: 1280px;
-  padding-top: 56.25%;
+  max-width: 640px;
+  height: auto;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   img {
-    position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
-    height: 100%;
+    height: auto;
+    max-height: 380px;
     object-fit: contain;
     object-position: top;
     border-radius: 8px;
