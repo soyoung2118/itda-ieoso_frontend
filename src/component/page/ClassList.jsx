@@ -6,8 +6,10 @@ import LogoGray from "../img/logo/itda_logo_gray.svg";
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import ClassThumbnail from "../img/class/class_thumbnail.svg";
+import { ModalOverlay, ModalContent } from "../ui/modal/ModalStyles";
 import api from "../api/api";
 import { UsersContext } from "../contexts/usersContext";
+import DeleteIcon from '../img/icon/delete.svg';
 
 export default function Class() {
     const navigate = useNavigate();
@@ -15,6 +17,8 @@ export default function Class() {
     const [showPopup, setShowPopup] = useState(false);
     const { user } = useContext(UsersContext);
     const [lectures, setLectures] = useState([]);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [selectedCourseId, setSelectedCourseId] = useState(null);
     
     const handleLectureClick = (id) => {
         navigate(`/class/${id}/overview/info`);
@@ -47,6 +51,23 @@ export default function Class() {
         if(difficulty === 'EASY') return '하'
         return null
     }
+
+    const handleDeleteLecture = async (courseId) => {
+        try {
+            await api.delete(`/courses/${courseId}?userId=${user.userId}`);
+            getAllLectures();
+        } catch (error) {
+            console.error('강의실 삭제 중 오류 발생:', error);
+        }
+    };
+
+    const confirmDelete = async () => {
+        if (selectedCourseId) {
+            await handleDeleteLecture(selectedCourseId);
+            setShowDeleteModal(false);
+            setSelectedCourseId(null);
+        }
+    };
 
     return (
       <>
@@ -116,6 +137,15 @@ export default function Class() {
                                 </IconRow>
                             </LectureDetail>
                         </LectureInfo>
+                        <DeleteIconWrapper 
+                            onClick={(e) => { 
+                                e.stopPropagation(); 
+                                setSelectedCourseId(lecture.courseId);
+                                setShowDeleteModal(true);
+                            }}
+                        >
+                            <img src={DeleteIcon} alt="Delete Icon" style={{ width: "30px", height: "30px" }} />
+                        </DeleteIconWrapper>
                     </LectureCard>
                 ))
                )}
@@ -139,6 +169,20 @@ export default function Class() {
                 </PopupMenu>
             )}
         </Container>
+
+        {/* 모달 */}
+        {showDeleteModal && (
+            <ModalOverlay>
+                <ModalContent>
+                    <h2>강의실 나가기</h2>
+                    <span>강의실을 나가시겠습니까?</span>
+                    <div className="button-container">
+                        <button className="close-button" onClick={() => setShowDeleteModal(false)}>취소</button>
+                        <button className="delete-button" onClick={confirmDelete}>나가기</button>
+                    </div>
+                </ModalContent>
+            </ModalOverlay>
+        )}
       </>
     );
 }
@@ -291,4 +335,11 @@ const NoLecturesMessage = styled.p`
     height: 60vh;
     font-size: 18px;
     color: #bababa;
+`;
+
+const DeleteIconWrapper = styled.span`
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
+    cursor: pointer;
 `;
