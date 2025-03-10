@@ -191,12 +191,18 @@ const Container = styled.div`
     position: relative;
     display: flex;
     height: 100%;
-    width: 100%;
+    padding: 1.5rem 9vw;
     margin-bottom: 100px;
+
+    @media (min-width: 768px) {
+        padding: 0.5rem 5vw;
+        flex-direction: row;
+    }
 `;
 
 const Sidebar = styled.div`
-    width: 15%;
+    min-width: 110px;
+    width: 10%;
     height: 60vh;
     margin: 30px 20px;
     background-color: #fff;
@@ -231,7 +237,8 @@ const LectureCard = styled.div`
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     cursor: pointer;
 
-    @media (min-width: 600px) {
+    @media (min-width: 768px) {
+        min-width: 420px;
         flex-direction: row; // 화면이 넓어지면 가로 정렬
     }
 `;
@@ -290,8 +297,8 @@ const IconRow = styled.div`
 
 const AddButton = styled.button`
     position: fixed;
-    bottom: 2rem;
-    right: 2rem;
+    bottom: 2.5rem;
+    right: 6vw;
     width: 3.8rem;
     height: 60px;
     padding-bottom: 15px;
