@@ -5,7 +5,7 @@ import TopBar from "../ui/TopBar";
 import LogoGray from "../img/logo/itda_logo_gray.svg";
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import ClassThumbnail from "../img/class/class_thumbnail.svg";
+import ClassThumbnail from "../img/class/classlist_thumbnail.svg";
 import api from "../api/api";
 import { UsersContext } from "../contexts/usersContext";
 

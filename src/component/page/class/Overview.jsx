@@ -2,7 +2,8 @@ import { useEffect, useState, useContext, useRef } from "react";
 import { useParams, useOutletContext, useLocation } from "react-router-dom";
 import styled from "styled-components";
 //import ClassSidebar from "../../ui/class/ClassSidebar";
-import ClassThumbnail from "../../img/class/class_thumbnail.svg";
+import ClassThumbnail from "../../img/class/class_thumbnail_background.svg";
+import VideoIcon from "../../img/icon/videocam.svg";
 import EditBtn from "../../img/class/edit_btn.svg";
 import EditedBtn from "../../img/class/edited_btn.svg";
 import { Section } from "../../ui/class/ClassLayout";
@@ -101,9 +102,19 @@ const ImageContainer = styled.div`
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 2rem;
-    color: rgba(255, 255, 255, 0.7);
-    display: ${({ isEditing }) => (isEditing ? "block" : "none")};
+    font-size: 3.5rem;
+    color: rgba(255, 255, 255);
+    display: ${({ isEditing, hasThumbnail }) => (isEditing && !hasThumbnail ? "block" : "none")};
+    pointer-events: none;
+  }
+
+  .video-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 3.5rem;
+    display: ${({ isEditing, hasThumbnail }) => (!isEditing && !hasThumbnail ? "block" : "none")};
     pointer-events: none;
   }
 `;
@@ -264,9 +275,14 @@ const ClassOverview = () => {
           borderRadius: "8px",
         }}
       >
-        <ImageContainer isEditing={isEditing} onClick={handleImageClick}>
+        <ImageContainer
+          isEditing={isEditing}
+          hasThumbnail={!!(newThumbnail || courseThumbnail)}
+          onClick={handleImageClick}
+        >
           <img src={newThumbnail || courseThumbnail || ClassThumbnail} alt="Class Thumbnail" />
           <span className="material-symbols-outlined camera-icon">camera_alt</span>
+          <img src={VideoIcon} alt="Video Icon" className="video-icon" />
           <input
             type="file"
             accept="image/*"
