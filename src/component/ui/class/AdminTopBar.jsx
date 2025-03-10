@@ -16,9 +16,10 @@ const Container = styled.div`
 `;
 
 const Title = styled.h1`
-  font-size: 27.5px;
-  font-weight: 900;
+  font-size: 26px;
+  font-weight: bold;
   color: var(--black-color);
+  margin-top: 2rem;
   margin-bottom: 1.8vh;
   margin-left:2.5vh;
 

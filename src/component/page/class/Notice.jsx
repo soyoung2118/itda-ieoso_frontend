@@ -11,6 +11,7 @@
   const Title = styled.h1`
     font-size: 26px;
     font-weight: bold;
+    margin-left: 1rem;
     margin-top: 0rem;
     margin-bottom: 0px;
   `;
@@ -335,12 +336,11 @@
     };
 
     return (
-          <div style={{ display: "flex", marginTop: "1rem" }}>
+          <div style={{ display: "flex", marginTop: "2rem" }}>
         {/*<ClassSidebar style={{ marginRight: "2rem" }} />*/}
             <main
               style={{
                 flex: 1,
-                padding: "1.5rem 0rem",
                 borderRadius: "8px",
               }}
             >

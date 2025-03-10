@@ -9,7 +9,7 @@ import PropTypes from "prop-types";
 
 const NoticeTitle = styled.h3`
   font-size: 26px;
-  font-weight: 800;
+  font-weight: bold;
   color: var(--black-color);
   margin-bottom: 1rem;
   margin-left: 1rem;

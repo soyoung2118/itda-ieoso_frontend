@@ -256,15 +256,12 @@ const ClassOverview = () => {
   }
 
   return (
-    <div style={{ display: "flex", marginTop: "1rem" }}>
+    <div style={{ display: "flex", marginTop: "2rem" }}>
       {/*<ClassSidebar style={{ marginRight: "2rem" }} />*/}
       <main
         style={{
           flex: 1,
-          backgroundColor: "#f9f9f9",
-          padding: "0rem",
           borderRadius: "8px",
-          marginTop: "0.5rem",
         }}
       >
         <ImageContainer isEditing={isEditing} onClick={handleImageClick}>
