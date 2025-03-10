@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Container from "../../ui/Container";
 //import ClassSidebar from "../../ui/class/ClassSidebar";
+import { ModalOverlay, ModalContent } from "../../ui/modal/ModalStyles";
 import api from "../../api/api";
 import { UsersContext } from "../../contexts/usersContext";
 import PropTypes from "prop-types";
@@ -102,54 +103,6 @@ const Text = styled.div`
   color: var(--main-color);
 `
 
-const ModalOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-`;
-
-const ModalContent = styled.div`
-background-color: white;
-padding: 40px 80px;
-border-radius: 8px;
-text-align: center;
-width: 50%;
-max-width: 300px;
-font-size: 1rem;
-
-.button-container {
-  display: flex;
-  margin-top: 2rem;
-  gap: 2rem;
-  justify-content: center;
-}
-
-.close-button {
-  background-color: #C3C3C3;
-  color: var(--white-color);
-  border: none;
-  border-radius: 15px;
-  padding: 10px 32px;
-  font-size: 1rem;
-}
-
-.delete-button {
-  background-color: var(--main-color);
-  color: white;
-  border: none;
-  border-radius: 15px;
-  padding: 15px 32px;
-  font-size: 1rem;
-}
-`;
-
 const NoticeCreateModal = ({ isOpen, onClose, isEditMode }) => {
   NoticeCreateModal.propTypes = {
     isOpen: PropTypes.bool.isRequired,
@@ -163,9 +116,9 @@ const NoticeCreateModal = ({ isOpen, onClose, isEditMode }) => {
     <ModalOverlay>
       <ModalContent>
         <h2>{isEditMode ? "공지사항 수정" : "공지사항 등록"}</h2>
-        <span>{isEditMode ? "공지사항이 수정되었습니다." : "공지사항이 게시되었습니다."}</span>
+        <span>{isEditMode ? "공지사항이 수정되었어요." : "공지사항이 게시되었어요."}</span>
         <div className="button-container">
-          <button className="close-button" onClick={onClose}>닫기</button>
+          <button className="close-button" onClick={onClose}>확인</button>
         </div>
       </ModalContent>
     </ModalOverlay>
@@ -307,7 +260,7 @@ const NoticeCreateForm = () => {
                 {noticeId && (
                   <CancelButton type="button" onClick={handleCancel}>취소하기</CancelButton>
                 )}
-                <StyledButton type="submit">게시하기</StyledButton>
+                <StyledButton type="submit">{noticeId ? "수정하기" : "게시하기"}</StyledButton>
               </ButtonContainer>
               </form>
             </Container>

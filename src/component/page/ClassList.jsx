@@ -175,7 +175,7 @@ export default function Class() {
             <ModalOverlay>
                 <ModalContent>
                     <h2>강의실 나가기</h2>
-                    <span>강의실을 나가시겠습니까?</span>
+                    <span>강의실을 나갈까요?</span>
                     <div className="button-container">
                         <button className="close-button" onClick={() => setShowDeleteModal(false)}>취소</button>
                         <button className="delete-button" onClick={confirmDelete}>나가기</button>
