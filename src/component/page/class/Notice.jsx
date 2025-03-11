@@ -1,8 +1,8 @@
   import { useState, useEffect, useContext } from "react";
   import { useParams, useOutletContext } from "react-router-dom";
-  import ClassSidebar from "../../ui/class/ClassSidebar";
 import styled from "styled-components";
 import { ModalOverlay, ModalContent } from "../../ui/modal/ModalStyles";
+  //import ClassSidebar from "../../ui/class/ClassSidebar";
   import { Section } from "../../ui/class/ClassLayout";
   import EditButton from "../../ui/class/EditButton";
   import api from "../../api/api";
@@ -12,6 +12,7 @@ import { ModalOverlay, ModalContent } from "../../ui/modal/ModalStyles";
   const Title = styled.h1`
     font-size: 26px;
     font-weight: bold;
+    margin-left: 1rem;
     margin-top: 0rem;
     margin-bottom: 0px;
   `;
@@ -163,10 +164,10 @@ import { ModalOverlay, ModalContent } from "../../ui/modal/ModalStyles";
       <ModalOverlay>
         <ModalContent>
           <h2>공지사항 삭제</h2>
-          <span>공지글을 삭제하시겠습니까? <br /> 한 번 삭제한 글은 복구할 수 없습니다.</span>
+          <span>공지사항을 삭제할까요? <br /> 한 번 삭제한 글은 복구할 수 없습니다.</span>
           <div className="button-container">
-            <button className="close-button" onClick={onClose}>닫기</button>
-            <button className="delete-button" onClick={onDelete}>삭제</button>
+            <button className="close-button" onClick={onClose}>취소</button>
+            <button className="delete-button" onClick={onDelete}>삭제하기</button>
           </div>
         </ModalContent>
       </ModalOverlay>
@@ -288,12 +289,11 @@ import { ModalOverlay, ModalContent } from "../../ui/modal/ModalStyles";
     };
 
     return (
-          <div style={{ display: "flex", marginTop: "1rem" }}>
-            <ClassSidebar style={{ marginRight: "2rem" }} />
+          <div style={{ display: "flex", marginTop: "2rem" }}>
+        {/*<ClassSidebar style={{ marginRight: "2rem" }} />*/}
             <main
               style={{
                 flex: 1,
-                padding: "1.5rem 0rem",
                 borderRadius: "8px",
               }}
             >
