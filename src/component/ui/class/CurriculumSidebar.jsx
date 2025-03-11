@@ -21,13 +21,13 @@ const SidebarContainer = styled.aside`
   letter-spacing: -0.5px;
 
   @media (max-width: 1024px) {
-    width: 17vh;
+    width: 12vh;
     font-size: 13px;
   }
 
   @media (max-width: 768px) {
-    width: 14vh;
-    padding: 0.5vh 2vh;
+    width: 12vh;
+    padding: 0.5vh 1vh;
   }
 
   @media (max-width: 480px) {
@@ -62,13 +62,12 @@ const SectionHeader = styled.div`
 
   @media (max-width: 1024px) {
     font-size: 17px;
-    height: 4.5vh;
+    height: 3vh;
   }
 
   @media (max-width: 768px) {
-    font-size: 16px;
+    font-size: 15px;
     padding: 0vh 1.3vh;
-    height: 5vh;
   }
 
   @media (max-width: 480px) {
@@ -93,7 +92,7 @@ const ListItem = styled.li`
   }
 
   @media (max-width: 768px) {
-    font-size: 14px;
+    font-size: 13.5px;
   }
 
   @media (max-width: 480px) {
@@ -133,9 +132,15 @@ const TruncatedText = styled.span`
 const SectionIcon = styled.img`
   margin-left: auto;
   width: 2.4vh;
+
   @media (max-width: 1024px) {
     width: 19px;
   }
+
+  @media (max-width: 768px) {
+    width: 17px;
+  }
+
   @media (max-width: 480px) {
     width: 11px;
   }
@@ -144,8 +149,13 @@ const SectionIcon = styled.img`
 const Icon = styled.img`
   width: 1.4rem;
   @media (max-width: 1024px) {
-    width: 18px;
+    width: 17px;
   }
+
+  @media (max-width: 768px) {
+    width: 19px;
+  }
+
   @media (max-width: 480px) {
     width: 12.5px;
   }

@@ -18,6 +18,7 @@ import SelectedSection from "../../img/class/check/sel_sec.svg";
 import UnselectedSection from "../../img/class/check/unsel_sec.svg";
 import DoneSection from "../../img/class/check/done_sec.svg";
 import EditButton from "../../ui/class/EditButton";
+import VideoDefaultThumbnail from "../../img/class/video_thumbnail.svg";
 import Close from "@mui/icons-material/Close";
 import api from "../../api/api";
 import { UsersContext } from "../../contexts/usersContext";
@@ -30,7 +31,35 @@ const Section = styled.div`
   margin: 1.15rem 0rem;
   background-color: #ffffff;
   cursor: pointer;
-  width: 100%;
+  width: 98.8%;
+
+  @media (max-width: 1024px) {
+    padding: 1.35vh 1.7vh;
+    width: 98%;
+  }
+`;
+
+const LectureDescriptionSection = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 1.3rem 1.5rem;
+  border-radius: 14px;
+  margin: 1.15rem 0rem;
+  cursor: pointer;
+  width: 99%;
+  background-color: ${({ isCompleted }) =>
+    isCompleted ? "var(--pink-color)" : "var(--grey-color)"};
+  padding: 2vh 2.5vh;
+
+  @media (max-width: 1024px) {
+    padding: 1.35vh 1.7vh;
+    width: 98%;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.8vh 1.7vh;
+    width: 97%;
+  }
 `;
 
 const CurriculumTitle = styled.h3`
@@ -64,7 +93,8 @@ const VideoContainer = styled.div`
   border-radius: 8px;
 
   @media (max-width: 1024px) {
-    width: 24vh;
+    width: 12.5vh;
+    height: 9vh;
   }
 
   @media (max-width: 768px) {
@@ -103,7 +133,7 @@ const Icon = styled.img`
   marginright: 1rem;
 
   @media (max-width: 1024px) {
-    width: 15vh;
+    width: 2.3vh;
   }
 
   @media (max-width: 768px) {
@@ -122,7 +152,7 @@ const SectionIcon = styled.img`
   margin-left: auto;
 
   @media (max-width: 1024px) {
-    width: 15vh !important;
+    width: 2vh !important;
   }
 
   @media (max-width: 768px) {
@@ -164,16 +194,30 @@ const VideoDetails = styled.p`
   color: #909090;
   display: flex;
   gap: 1vh;
-  display: flex;
 
   @media (max-width: 1024px) {
     font-size: 16px;
     display: flex;
-    flex-direction: column;
+    gap: 0vh;
   }
   @media (max-width: 768px) {
+    // flex-direction: column;
     font-size: 14px;
     margin-left: -2vh;
+  }
+
+  & > div {
+    display: flex;
+    align-items: center;
+    gap: 1.3vh;
+
+    @media (max-width: 1024px) {
+      gap: 0.5vh;
+    }
+
+    @media (max-width: 768px) {
+      gap: 0.5vh;
+    }
   }
 `;
 
@@ -515,14 +559,7 @@ const Curriculum = () => {
           </p>
         </div>
 
-        <Section
-          style={{
-            backgroundColor: allCompletedLectures[activeLectureId]
-              ? "var(--pink-color)"
-              : "var(--grey-color)",
-            padding: "2vh 2.5vh",
-          }}
-        >
+        <LectureDescriptionSection>
           <LectureDescription>
             {activeLecture?.lectureDescription}
           </LectureDescription>
@@ -540,7 +577,7 @@ const Curriculum = () => {
               }}
             />
           )}
-        </Section>
+        </LectureDescriptionSection>
 
         {filteredSubSections?.map((sub) => (
           <div key={sub.id}>
@@ -552,26 +589,19 @@ const Curriculum = () => {
                 >
                   <VideoContainer>
                     {sub.thumbnail ? (
+                      <div>
+                        <VideoThumbnail
+                          src={sub.thumbnail}
+                          alt="YouTube 썸네일"
+                        />
+                        <PlayButton src={PlayIcon} />
+                      </div>
+                    ) : (
                       <VideoThumbnail
-                        src={sub.thumbnail}
+                        src={VideoDefaultThumbnail}
                         alt="YouTube 썸네일"
                       />
-                    ) : (
-                      <div
-                        style={{
-                          width: "100%",
-                          height: "8rem",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          backgroundColor: "#f0f0f0",
-                          borderRadius: "8px",
-                          color: "#909090",
-                          fontSize: "1rem",
-                        }}
-                      />
                     )}
-                    <PlayButton src={PlayIcon} />
                   </VideoContainer>
                   <div
                     style={{
@@ -585,17 +615,18 @@ const Curriculum = () => {
                     <CurriculumTitle>{sub.title}</CurriculumTitle>
                     <VideoDetails>
                       <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                        }}
+                      // style={{
+                      //   display: "flex",
+                      //   alignItems: "center",
+                      //   gap:"1.3vh"
+                      // }}
                       >
                         <span>{activeLecture.instructorName}</span>
                         <span
                           style={{
                             borderLeft: "1.5px solid #909090",
                             height: "1rem",
-                            marginLeft: "1.3vh",
+                            // marginLeft: "1.3vh",
                             marginRight: "0.5vh",
                           }}
                         ></span>
@@ -623,15 +654,7 @@ const Curriculum = () => {
                     gap: "1rem",
                   }}
                 >
-                  <Icon
-                    src={Material}
-                    style={{
-                      width: "4.3vh",
-                      height: "50%",
-                      marginLeft: "1rem",
-                      marginRight: "1rem",
-                    }}
-                  />
+                  <Icon src={Material} />
                   <MaterialSection>
                     <div
                       style={{
@@ -681,16 +704,7 @@ const Curriculum = () => {
                   }}
                   onClick={() => handleSectionClick(sub)}
                 >
-                  <Icon
-                    src={Assignment}
-                    alt="assignment icon"
-                    style={{
-                      width: "4.3vh",
-                      height: "50%",
-                      marginLeft: "1rem",
-                      marginRight: "1rem",
-                    }}
-                  />
+                  <Icon src={Assignment} alt="assignment icon" />
                   <MaterialSection
                     style={{
                       display: "flex",
