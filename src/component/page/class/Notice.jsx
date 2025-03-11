@@ -167,7 +167,7 @@ import { ModalOverlay, ModalContent } from "../../ui/modal/ModalStyles";
           <span>공지사항을 삭제할까요? <br /> 한 번 삭제한 글은 복구할 수 없습니다.</span>
           <div className="button-container">
             <button className="close-button" onClick={onClose}>취소</button>
-            <button className="delete-button" onClick={onDelete}>삭제</button>
+            <button className="delete-button" onClick={onDelete}>삭제하기</button>
           </div>
         </ModalContent>
       </ModalOverlay>

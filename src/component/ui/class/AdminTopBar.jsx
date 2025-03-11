@@ -185,7 +185,7 @@ const AdminTopBar = ({ activeTab }) => {
             <span>강의실을 삭제할까요?</span>
             <div className="button-container">
               <button className="close-button" onClick={() => setShowDeleteModal(false)}>취소</button>
-              <button className="delete-button" onClick={() => handleDeleteLecture(courseId)}>삭제</button>
+              <button className="delete-button" onClick={() => handleDeleteLecture(courseId)}>삭제하기</button>
             </div>
           </ModalContent>
         </ModalOverlay>

@@ -37,6 +37,7 @@ export const ModalOverlay = styled.div`
       padding: 10px 32px;
       font-size: 1rem;
       cursor: pointer;
+      width: 125px;
     }
 
     .delete-button {
@@ -47,5 +48,6 @@ export const ModalOverlay = styled.div`
       padding: 15px 32px;
       font-size: 1rem;
       cursor: pointer;
+      width: 125px;
     }
   `;
