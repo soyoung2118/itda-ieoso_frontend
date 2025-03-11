@@ -24,6 +24,19 @@ import api from "../../api/api";
 import { UsersContext } from "../../contexts/usersContext";
 import { getYouTubeThumbnail } from "../../ui/curriculum/EditableSection";
 
+const CurriculmContainer = styled.main`
+  flex: 1;
+  padding: 3.5vh;
+  border-radius: 8px;
+
+  @media (max-width: 1024px) {
+    padding: 2.5vh;
+  }
+
+  @media (max-width: 768px) {
+    padding: 3vh 2.3vh;
+  }
+`;
 const Section = styled.div`
   display: flex;
   padding: 1.3rem 1.5rem;
@@ -36,6 +49,55 @@ const Section = styled.div`
   @media (max-width: 1024px) {
     padding: 1.35vh 1.7vh;
     width: 98%;
+  }
+`;
+
+const LectureTitle = styled.h1`
+  font-size: 2.3rem;
+  font-weight: 700;
+  color: var(--main-color);
+  margin: 0;
+  margin-bottom: -0.2rem;
+
+  @media (max-width: 1024px) {
+    font-size: 31px;
+  }
+  @media (max-width: 768px) {
+    font-size: 26px;
+  }
+`;
+
+const LectureDate = styled.span`
+  color: #969696;
+  font-size: 23px;
+
+  font-weight: 510;
+  margin: 0 1rem;
+  margin-left: 1.8vh;
+
+  @media (max-width: 1024px) {
+    font-size: 20px;
+    margin-left: 1.2vh;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 17px;
+    font-weight: 500;
+    margin-left: 1vh;
+  }
+`;
+
+const LectureDescription = styled.span`
+  font-size: 1.6rem;
+  font-weight: 700;
+
+  @media (max-width: 1024px) {
+    font-size: 22px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 19px;
+    font-weight: 670;
   }
 `;
 
@@ -52,13 +114,14 @@ const LectureDescriptionSection = styled.div`
   padding: 2vh 2.5vh;
 
   @media (max-width: 1024px) {
-    padding: 1.35vh 1.7vh;
+    padding: 1.2vh 1.7vh;
     width: 98%;
   }
 
   @media (max-width: 768px) {
-    padding: 0.8vh 1.7vh;
-    width: 97%;
+    padding: 0vh 1.7vh;
+    width: 99%;
+    border-radius: 9px;
   }
 `;
 
@@ -150,9 +213,12 @@ const Icon = styled.img`
 
 const SectionIcon = styled.img`
   margin-left: auto;
+  margin-right: 1.35rem;
+  width: 1.8rem;
 
   @media (max-width: 1024px) {
-    width: 2vh !important;
+    width: 1.8vh;
+    margin-right: 1.3vh;
   }
 
   @media (max-width: 768px) {
@@ -165,27 +231,6 @@ const SectionIcon = styled.img`
     font-size: 11px;
     padding: 0.3vh 1vh;
     height: 4.7vh;
-  }
-`;
-
-const LectureTitle = styled.h1`
-  font-size: 2.3rem;
-  font-weight: 700;
-  color: var(--main-color);
-  margin: 0;
-  margin-bottom: -0.2rem;
-
-  @media (max-width: 1024px) {
-    font-size: 30px;
-  }
-`;
-
-const LectureDescription = styled.span`
-  font-size: 1.6rem;
-  font-weight: bolder;
-
-  @media (max-width: 1024px) {
-    font-size: 22px;
   }
 `;
 
@@ -535,28 +580,14 @@ const Curriculum = () => {
         edit={false}
         completedLectures={allCompletedLectures}
       />
-      <main
-        style={{
-          flex: 1,
-          padding: "2rem",
-          borderRadius: "8px",
-        }}
-      >
+      <CurriculmContainer>
         <div style={{ display: "flex", alignItems: "flex-end" }}>
           <LectureTitle>{activeLecture?.lectureTitle}</LectureTitle>
 
-          <p
-            style={{
-              color: "#969696",
-              fontSize: "1.2rem",
-              marginLeft: "1rem",
-              fontWeight: "510",
-              margin: "0 1rem",
-            }}
-          >
+          <LectureDate>
             [{formatLecturePeriod(activeLecture?.startDate)} ~{" "}
             {formatLecturePeriod(activeLecture?.endDate)}]
-          </p>
+          </LectureDate>
         </div>
 
         <LectureDescriptionSection>
@@ -570,11 +601,6 @@ const Curriculum = () => {
                   ? DoneSection
                   : UnselectedSection
               }
-              style={{
-                marginLeft: "auto",
-                marginRight: "1.35rem",
-                width: "1.8rem",
-              }}
             />
           )}
         </LectureDescriptionSection>
@@ -745,7 +771,7 @@ const Curriculum = () => {
             </div>
           </div>
         ))}
-      </main>
+      </CurriculmContainer>
       {isCreator && (
         <EditButton
           to={`/class/${courseId}/curriculum/${activeLectureId}/edit`}

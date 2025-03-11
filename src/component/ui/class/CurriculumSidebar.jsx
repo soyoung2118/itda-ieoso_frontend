@@ -26,7 +26,7 @@ const SidebarContainer = styled.aside`
   }
 
   @media (max-width: 768px) {
-    width: 12vh;
+    width: 11vh;
     padding: 0.5vh 1vh;
   }
 
@@ -67,7 +67,7 @@ const SectionHeader = styled.div`
 
   @media (max-width: 768px) {
     font-size: 15px;
-    padding: 0vh 1.3vh;
+    padding: 0vh 1.1vh;
   }
 
   @media (max-width: 480px) {
@@ -92,7 +92,7 @@ const ListItem = styled.li`
   }
 
   @media (max-width: 768px) {
-    font-size: 13.5px;
+    font-size: 13px;
   }
 
   @media (max-width: 480px) {
@@ -153,11 +153,19 @@ const Icon = styled.img`
   }
 
   @media (max-width: 768px) {
-    width: 19px;
+    width: 15px;
   }
 
   @media (max-width: 480px) {
     width: 12.5px;
+  }
+`;
+
+const CheckIcon = styled.img`
+  margin-left: auto;
+  margin-right: 2.5vh;
+  @media (max-width: 768px) {
+    margin-right: 1.3vh;
   }
 `;
 
@@ -271,12 +279,7 @@ const CurriculumSidebar = ({
                       <TruncatedText width="10rem">
                         {getSubSectionTitle(subSection)}
                       </TruncatedText>
-                      {!edit && !isCreator && (
-                        <img
-                          src={Check}
-                          style={{ marginLeft: "auto", marginRight: "2.5vh" }}
-                        />
-                      )}
+                      {!edit && !isCreator && <CheckIcon src={Check} />}
                     </ListItem>
                   </div>
                 ))}
