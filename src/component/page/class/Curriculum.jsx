@@ -557,9 +557,6 @@ const Curriculum = () => {
   }, [curriculumData, historyData]);
 
   const handleSectionClick = (sub) => {
-    if (isCreator && sub.contentType === "assignment") {
-      return;
-    }
     const now = new Date();
     const startDate = new Date(sub.startDate);
     const endDate = new Date(sub.endDate);
@@ -577,6 +574,11 @@ const Curriculum = () => {
 
       navigate(`/playing/${courseId}/${activeLectureId}/${sub.videoId}`);
     } else if (sub.contentType === "assignment") {
+      if (isCreator) {
+        navigate(
+          `/assignment/submit/${courseId}/${activeLectureId}/${sub.assignmentId}`
+        );
+      }
       if (now.getTime() < startDate.getTime()) {
         alert(
           `이 과제는 ${startDate.toLocaleString()} 이후에 제출할 수 있습니다.`
