@@ -130,7 +130,6 @@ const ClassStudents = () => {
         style={{
           padding: "1.7vh 0vh",
           cursor: "pointer",
-          backgroundColor: isHovered ? "var(--pink-color)" : "transparent",
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}

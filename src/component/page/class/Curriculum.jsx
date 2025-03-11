@@ -39,6 +39,7 @@ const CurriculmContainer = styled.main`
 `;
 const Section = styled.div`
   display: flex;
+  align-items: center;
   padding: 1.3rem 1.5rem;
   border-radius: 14px;
   margin: 1.15rem 0rem;
@@ -47,8 +48,12 @@ const Section = styled.div`
   width: 98.8%;
 
   @media (max-width: 1024px) {
-    padding: 1.35vh 1.7vh;
-    width: 98%;
+    padding: 1.35vh 1.55vh;
+    width: 99%;
+  }
+  @media (max-width: 768px) {
+    padding: 1.3vh 1.4vh;
+    width: 100%;
   }
 `;
 
@@ -60,10 +65,10 @@ const LectureTitle = styled.h1`
   margin-bottom: -0.2rem;
 
   @media (max-width: 1024px) {
-    font-size: 31px;
+    font-size: 30px;
   }
   @media (max-width: 768px) {
-    font-size: 26px;
+    font-size: 24.5px;
   }
 `;
 
@@ -76,13 +81,12 @@ const LectureDate = styled.span`
   margin-left: 1.8vh;
 
   @media (max-width: 1024px) {
-    font-size: 20px;
+    font-size: 19px;
     margin-left: 1.2vh;
   }
 
   @media (max-width: 768px) {
-    font-size: 17px;
-    font-weight: 500;
+    font-size: 15.5px;
     margin-left: 1vh;
   }
 `;
@@ -92,11 +96,11 @@ const LectureDescription = styled.span`
   font-weight: 700;
 
   @media (max-width: 1024px) {
-    font-size: 22px;
+    font-size: 21px;
   }
 
   @media (max-width: 768px) {
-    font-size: 19px;
+    font-size: 17px;
     font-weight: 670;
   }
 `;
@@ -119,7 +123,7 @@ const LectureDescriptionSection = styled.div`
   }
 
   @media (max-width: 768px) {
-    padding: 0vh 1.7vh;
+    padding: 1.5vh 2.3vh;
     width: 99%;
     border-radius: 9px;
   }
@@ -133,12 +137,12 @@ const CurriculumTitle = styled.h3`
   letter-spacing: -1px;
 
   @media (max-width: 1024px) {
-    font-size: 23px;
+    font-size: 21px;
     height: 4.5vh;
   }
 
   @media (max-width: 768px) {
-    font-size: 21px;
+    font-size: 18.5px;
     height: 3vh;
     margin-left: -2vh;
   }
@@ -152,41 +156,48 @@ const CurriculumTitle = styled.h3`
 
 const VideoContainer = styled.div`
   position: relative;
-  width: 14.5rem;
+  width: 25.5vh;
   border-radius: 8px;
 
+  @media (max-width: 1200px) {
+    width: 20vh;
+  }
+
   @media (max-width: 1024px) {
-    width: 12.5vh;
-    height: 9vh;
+    width: 17vh;
   }
 
   @media (max-width: 768px) {
-    font-size: 14.5px;
-    padding: 0vh 1.3vh;
-    height: 5vh;
+    width: 11vh;
   }
 
   @media (max-width: 480px) {
     font-size: 11px;
     padding: 0.3vh 1vh;
-    height: 4.7vh;
   }
 `;
 
 const VideoThumbnail = styled.img`
   width: 100%;
-  height: 100%;
   object-fit: cover;
   border-radius: 8px;
 `;
 
 const MaterialSection = styled.div`
   display: flex;
+  align-items: center;
   background-color: var(--lightgrey-color);
   width: 100%;
   padding: 1.2rem 1.5rem;
   border-radius: 8px;
   font-size: 1.07rem;
+
+  @media (max-width: 1024px) {
+    padding: 1.3vh 1.5vh;
+  }
+  @media (max-width: 768px) {
+    padding: 1.5vh;
+  }
 `;
 
 const Icon = styled.img`
@@ -196,13 +207,11 @@ const Icon = styled.img`
   marginright: 1rem;
 
   @media (max-width: 1024px) {
-    width: 2.3vh;
+    width: 2.1vh;
   }
 
   @media (max-width: 768px) {
-    width: 15px;
-    padding: 0vh 1.3vh;
-    height: 5vh;
+    width: 2vh;
   }
 
   @media (max-width: 480px) {
@@ -214,17 +223,15 @@ const Icon = styled.img`
 const SectionIcon = styled.img`
   margin-left: auto;
   margin-right: 1.35rem;
-  width: 1.8rem;
+  width: 2.7vh;
 
   @media (max-width: 1024px) {
-    width: 1.8vh;
+    width: 2.5vh;
     margin-right: 1.3vh;
   }
 
   @media (max-width: 768px) {
-    font-size: 14.5px;
-    padding: 0vh 1.3vh;
-    height: 5vh;
+    margin-right: 1vh;
   }
 
   @media (max-width: 480px) {
@@ -234,20 +241,43 @@ const SectionIcon = styled.img`
   }
 `;
 
+const VideoInformation = styled.div`
+  margin-left: 2.4vh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  align-self: flex-start;
+
+  @media (max-width: 1200px) {
+    margin-left: 1.8vh;
+  }
+
+  @media (max-width: 1024px) {
+    margin-left: 1.5vh;
+  }
+
+  @media (max-width: 768px) {
+    margin-left: 3.1vh;
+  }
+`;
+
 const VideoDetails = styled.p`
   font-size: 17.3px;
   color: #909090;
   display: flex;
   gap: 1vh;
 
+  @media (max-width: 1200px) {
+    font-size: 15px;
+  }
+
   @media (max-width: 1024px) {
-    font-size: 16px;
-    display: flex;
+    font-size: 13.5px;
     gap: 0vh;
   }
   @media (max-width: 768px) {
-    // flex-direction: column;
-    font-size: 14px;
+    font-size: 11.8px;
     margin-left: -2vh;
   }
 
@@ -266,15 +296,66 @@ const VideoDetails = styled.p`
   }
 `;
 
+const SectionTitle = styled.span`
+  margin-right: 0.6rem;
+  cursor: pointer;
+  display: inline-block;
+  flex-shrink: 1;
+  white-space: nowrap;
+  overflow: hidden;
+
+  @media (max-width: 1024px) {
+    font-size: 15.7px;
+  }
+  @media (max-width: 768px) {
+    font-size: 13.6px;
+  }
+`;
+
+const FileSize = styled.span`
+  color: var(--main-color);
+  font-size: 0.9rem;
+
+  @media (max-width: 1024px) {
+    font-size: 14px;
+  }
+  @media (max-width: 768px) {
+    font-size: 11px;
+  }
+`;
+
+const AssignmentDate = styled.span`
+  color: var(--main-color);
+  margintop: 0.3rem;
+  whitespace: nowrap;
+  flexshrink: 0;
+
+  @media (max-width: 1024px) {
+    font-size: 14.5px;
+  }
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
+`;
+
 const PlayButton = styled.img`
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 1.8rem;
+  width: 4vh;
   height: auto;
   cursor: pointer;
   z-index: 10;
+`;
+
+const CheckIcon = styled.img`
+  margin-left: auto;
+  width: 1.2rem;
+
+  @media (max-width: 768px) {
+    width: 1.5vh;
+  }
 `;
 
 export const formatDate = (isoString) => {
@@ -629,15 +710,7 @@ const Curriculum = () => {
                       />
                     )}
                   </VideoContainer>
-                  <div
-                    style={{
-                      marginLeft: "2rem",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "flex-start",
-                      justifyContent: "flex-start",
-                    }}
-                  >
+                  <VideoInformation>
                     <CurriculumTitle>{sub.title}</CurriculumTitle>
                     <VideoDetails>
                       <div
@@ -668,7 +741,7 @@ const Curriculum = () => {
                         {formatDate(sub?.endDate)}
                       </span>
                     </VideoDetails>
-                  </div>
+                  </VideoInformation>
                 </Section>
               )}
 
@@ -689,31 +762,16 @@ const Curriculum = () => {
                         gap: "0.5vh",
                       }}
                     >
-                      <span
-                        style={{
-                          marginRight: "0.6rem",
-                          cursor: "pointer",
-                          display: "inline-block",
-                        }}
-                        onClick={() => handleMaterialClick(sub)}
-                      >
+                      <SectionTitle onClick={() => handleMaterialClick(sub)}>
                         {sub.title}
-                      </span>
-                      <span
-                        style={{
-                          color: "var(--main-color)",
-                          fontSize: "0.9rem",
-                        }}
-                      >
-                        {sub.fileSize || ""}
-                      </span>
+                      </SectionTitle>
+                      <FileSize>{sub.fileSize || ""}</FileSize>
                     </div>
 
                     {!isCreator && (
-                      <img
+                      <CheckIcon
                         src={sub.checked ? DoneIcon : UndoneIcon}
                         alt="download status"
-                        style={{ marginLeft: "auto", width: "1.2rem" }}
                       />
                     )}
                   </MaterialSection>
@@ -733,36 +791,17 @@ const Curriculum = () => {
                   <Icon src={Assignment} alt="assignment icon" />
                   <MaterialSection
                     style={{
-                      display: "flex",
                       flexWrap: "wrap",
-                      alignItems: "baseline",
                     }}
                   >
-                    <span
-                      style={{
-                        flexShrink: 1,
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        marginRight: "0.8rem",
-                      }}
-                    >
-                      {sub.title ?? "과제 없음"}
-                    </span>
-                    <span
-                      style={{
-                        color: "var(--main-color)",
-                        marginTop: "0.3rem",
-                        whiteSpace: "nowrap",
-                        flexShrink: 0,
-                      }}
-                    >
+                    <SectionTitle>{sub.title ?? "과제 없음"}</SectionTitle>
+                    <AssignmentDate>
                       {formatDate(sub?.startDate)} ~ {formatDate(sub?.endDate)}
-                    </span>
+                    </AssignmentDate>
                     {!isCreator && (
-                      <img
+                      <CheckIcon
                         src={sub.checked ? DoneIcon : UndoneIcon}
                         alt="submission status"
-                        style={{ marginLeft: "auto", width: "1.2rem" }}
                       />
                     )}
                   </MaterialSection>

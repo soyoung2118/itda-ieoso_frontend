@@ -12,22 +12,21 @@ import { useParams, useOutletContext, useNavigate } from "react-router-dom";
 import { UsersContext } from "../../contexts/usersContext";
 
 const SidebarContainer = styled.aside`
-  width: clamp(8rem, 14vw, 25rem);
+  width: 17%;
   height: 90vh;
   background-color: white;
   border-radius: 12px;
   padding: 1rem;
-  margin-top: 2rem;
+  margin-top: 3.5vh;
   letter-spacing: -0.5px;
 
+
   @media (max-width: 1024px) {
-    width: 12vh;
     font-size: 13px;
   }
 
   @media (max-width: 768px) {
-    width: 11vh;
-    padding: 0.5vh 1vh;
+    padding: 1vh 2vh;
   }
 
   @media (max-width: 480px) {
@@ -50,8 +49,7 @@ const SectionHeader = styled.div`
   font-weight: 700;
   font-size: 1.12rem;
   color: var(--black-color);
-  padding: 0rem 1rem;
-  height: 3rem;
+  padding: 1.3vh 2vh;
   display: flex;
   align-items: center;
   background-color: ${(props) =>
@@ -62,12 +60,12 @@ const SectionHeader = styled.div`
 
   @media (max-width: 1024px) {
     font-size: 17px;
-    height: 3vh;
+    padding: 1vh 2vh;
   }
 
   @media (max-width: 768px) {
-    font-size: 15px;
-    padding: 0vh 1.1vh;
+    font-size: 14px;
+    padding: 1vh 1.5vh;
   }
 
   @media (max-width: 480px) {
@@ -81,7 +79,7 @@ const ListItem = styled.li`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding-left: 1rem;
+  padding-left: 1.9vh;
   border-radius: 0.5rem;
   font-size: 0.99rem;
   font-weight: 500;
@@ -92,7 +90,7 @@ const ListItem = styled.li`
   }
 
   @media (max-width: 768px) {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   @media (max-width: 480px) {
@@ -138,7 +136,7 @@ const SectionIcon = styled.img`
   }
 
   @media (max-width: 768px) {
-    width: 17px;
+    width: 2.6vh;
   }
 
   @media (max-width: 480px) {
@@ -164,6 +162,11 @@ const Icon = styled.img`
 const CheckIcon = styled.img`
   margin-left: auto;
   margin-right: 2.5vh;
+
+  @media (max-width: 1024px) {
+    margin-right: 1.3vh;
+  }
+
   @media (max-width: 768px) {
     margin-right: 1.3vh;
   }
