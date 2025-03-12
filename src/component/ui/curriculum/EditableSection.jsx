@@ -87,6 +87,30 @@ const GrayLine = styled.div`
   margin-bottom: 1.1rem;
 `;
 
+const Submission = styled.h3`
+  font-color: 15px;
+`;
+
+const ButtonContainer = styled.div`
+  margin-top: 3vh;
+`;
+
+const SectionButton = styled.button.attrs((props) => ({
+  selected: props.selected || false,
+}))`
+  width: 16vh;
+  height: 5.5vh;
+  background-color: ${({ selected }) =>
+    selected ? "var(--main-color)" : "#EEEEEE"};
+  color: ${({ selected }) => (selected ? "white" : "#474747")};
+  font-size: 17px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-right: 1.8vh;
+`;
+
 export const getYouTubeThumbnail = (url) => {
   try {
     if (!url || typeof url !== "string") return null;
@@ -121,16 +145,13 @@ const EditableSection = ({
       : "기간 미정"
   );
   const [startDate, setStartDate] = useState(
-    subSection?.startDate
-      ? new Date(subSection.startDate)
-      : // : new Date(lectureStartDate)
-        null
+    subSection?.startDate ? new Date(subSection.startDate) : null
   );
   const [endDate, setEndDate] = useState(
-    subSection?.endDate
-      ? new Date(subSection.endDate)
-      : // : new Date(lectureEndDate)
-        null
+    subSection?.endDate ? new Date(subSection.endDate) : null
+  );
+  const [submissionType, setSubmissionType] = useState(
+    subSection?.submissionType || "text"
   );
   const [assignmentDescription, setAssignmentDescription] = useState(
     subSection?.assignmentDescription || ""
@@ -215,6 +236,7 @@ const EditableSection = ({
         assignmentTitle: field === "title" ? value : title,
         assignmentDescription:
           field === "assignmentDescription" ? value : assignmentDescription,
+        submissionType: field === "submissionType" ? value : submissionType,
       };
     }
 
@@ -230,6 +252,7 @@ const EditableSection = ({
     if (field === "title") setTitle(value);
     if (field === "videoUrl") setVideoUrl(value);
     if (field === "assignmentDescription") setAssignmentDescription(value);
+    if (field === "submissionType") setSubmissionType(value);
 
     handleEdit(field, value);
   };
@@ -455,6 +478,23 @@ const EditableSection = ({
                   }}
                   placeholder="설명을 작성해주세요."
                 ></TextArea>
+                <ButtonContainer>
+                  <Submission>과제 제출 방식</Submission>
+                  <div style={{ display: "flex" }}>
+                    <SectionButton
+                      selected={submissionType === "TEXT"}
+                      onClick={() => handleChange("submissionType", "TEXT")}
+                    >
+                      글
+                    </SectionButton>
+                    <SectionButton
+                      selected={submissionType === "FILE"}
+                      onClick={() => handleChange("submissionType", "FILE")}
+                    >
+                      파일
+                    </SectionButton>
+                  </div>
+                </ButtonContainer>
               </div>
             </div>
           </div>

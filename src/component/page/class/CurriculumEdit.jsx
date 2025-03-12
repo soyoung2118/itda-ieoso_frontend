@@ -125,6 +125,8 @@ const CurriculumEdit = () => {
           (a, b) => (a.contentOrderIndex || 0) - (b.contentOrderIndex || 0)
         );
 
+        console.log(sortedSubSections);
+
         const editingSectionId =
           newSectionId || sessionStorage.getItem("editingSectionId");
 
@@ -336,10 +338,10 @@ const CurriculumEdit = () => {
       }
     }
 
-    // 🔹 `sessionStorage`에 클릭한 섹션 ID 저장
+    // `sessionStorage`에 클릭한 섹션 ID 저장
     sessionStorage.setItem("editingSectionId", clickedSectionId);
 
-    // 🔹 현재 아무것도 편집 중이 아니었으면 새로고침 없이 바로 상태 업데이트
+    // 현재 아무것도 편집 중이 아니었으면 새로고침 없이 바로 상태 업데이트
     if (!editingSection) {
       setActiveLecture((prev) => {
         if (!prev) return prev;
