@@ -33,17 +33,26 @@ export default function Class() {
         }
     };
 
+    const lecturesToDisplay =
+        selectedMenu === "전체 강의실"
+            ? lectures
+            : lectures.filter((lecture) => lecture.user.userId === user.userId);
+
+    const lecturesCount = lecturesToDisplay.length;
+
     useEffect(() => {
         if (user && user.userId) {
             getAllLectures();
         }
     }, [user]);
 
-    const lecturesToDisplay =
-        selectedMenu === "전체 강의실"
-            ? lectures
-            : lectures.filter((lecture) => lecture.user.userId === user.userId);
-    const lecturesCount = lecturesToDisplay.length;
+    useEffect(() => {
+        if (lecturesCount === 0) {
+            setShowPopup(true);
+        } else {
+            setShowPopup(false);
+        }
+    }, [lecturesCount]);
 
     const changeDifficultly = (difficulty) => {
         if(difficulty === 'HARD') return '상'
