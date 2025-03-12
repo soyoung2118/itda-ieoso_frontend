@@ -4,6 +4,7 @@ import { UsersProvider } from "./component/contexts/usersContext.jsx";
 import LandingPage from "./component/page/LandingPage.jsx";
 import LogIn from "./component/page/users/LogIn.jsx";
 import SignUp from "./component/page/users/SignUp.jsx";
+import FindPassword from "./component/page/users/FindPassword.jsx";
 import ClassList from "./component/page/ClassList.jsx";
 import Create from "./component/page/class/Create.jsx";
 import Setting from "./component/page/class/Setting.jsx";
@@ -33,6 +34,7 @@ function App() {
             {/* 로그인 페이지 */}
             <Route path="/login" element={<LogIn />} />
             <Route path="/signup" element={<SignUp />} />
+            <Route path="find-password" element={<FindPassword />} />
 
             {/* 강의실 페이지 */}
             <Route path="/class/list" element={<ClassList />} />

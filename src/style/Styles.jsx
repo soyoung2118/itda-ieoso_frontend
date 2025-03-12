@@ -38,6 +38,7 @@ export const Label = styled.div`
     margin-top: 0.7rem;
     margin-bottom: 0.5rem;
     font-size: 0.9rem;
+    font-weight: 600;
 `;
 
 export const LoginInput = styled.input`
