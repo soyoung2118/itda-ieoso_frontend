@@ -85,9 +85,21 @@ const CurriculumSection = ({
           {subSection.contentType === "video" && (
             <>
               <VideoContainer>
-                <VideoThumbnail
-                  src={getYouTubeThumbnail(subSection.videoUrl)}
-                />
+                {subSection.videoUrl ? (
+                  <VideoThumbnail
+                    src={getYouTubeThumbnail(subSection.videoUrl)}
+                    alt="Video Thumbnail"
+                  />
+                ) : (
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      borderRadius: "8px",
+                      border: "solid 1.5px #C3C3C3"
+                    }}
+                  ></div>
+                )}
                 <img
                   src={PlayIcon}
                   alt="Play Icon"
@@ -188,14 +200,14 @@ const CurriculumSection = ({
               <MaterialSection
                 style={{
                   display: "flex",
-                  flexWrap: "wrap", 
+                  flexWrap: "wrap",
                   alignItems: "baseline",
                 }}
               >
                 <span
                   style={{
-                    flexShrink: 1, 
-                    whiteSpace: "nowrap", 
+                    flexShrink: 1,
+                    whiteSpace: "nowrap",
                     overflow: "hidden",
                     marginRight: "0.8rem",
                   }}
@@ -205,7 +217,7 @@ const CurriculumSection = ({
                 <span
                   style={{
                     color: "var(--main-color)",
-                    marginTop: "0.3rem", 
+                    marginTop: "0.3rem",
                     whiteSpace: "nowrap",
                     flexShrink: 0,
                   }}

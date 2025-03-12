@@ -12,22 +12,21 @@ import { useParams, useOutletContext, useNavigate } from "react-router-dom";
 import { UsersContext } from "../../contexts/usersContext";
 
 const SidebarContainer = styled.aside`
-  width: clamp(8rem, 14vw, 25rem);
+  width: 17%;
   height: 90vh;
   background-color: white;
   border-radius: 12px;
   padding: 1rem;
-  margin-top: 2rem;
+  margin-top: 3.5vh;
   letter-spacing: -0.5px;
 
+
   @media (max-width: 1024px) {
-    width: 17vh;
     font-size: 13px;
   }
 
   @media (max-width: 768px) {
-    width: 14vh;
-    padding: 0.5vh 2vh;
+    padding: 1vh 2vh;
   }
 
   @media (max-width: 480px) {
@@ -50,8 +49,7 @@ const SectionHeader = styled.div`
   font-weight: 700;
   font-size: 1.12rem;
   color: var(--black-color);
-  padding: 0rem 1rem;
-  height: 3rem;
+  padding: 1.3vh 2vh;
   display: flex;
   align-items: center;
   background-color: ${(props) =>
@@ -62,13 +60,12 @@ const SectionHeader = styled.div`
 
   @media (max-width: 1024px) {
     font-size: 17px;
-    height: 4.5vh;
+    padding: 1vh 2vh;
   }
 
   @media (max-width: 768px) {
-    font-size: 16px;
-    padding: 0vh 1.3vh;
-    height: 5vh;
+    font-size: 14px;
+    padding: 1vh 1.5vh;
   }
 
   @media (max-width: 480px) {
@@ -82,7 +79,7 @@ const ListItem = styled.li`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding-left: 1rem;
+  padding-left: 1.9vh;
   border-radius: 0.5rem;
   font-size: 0.99rem;
   font-weight: 500;
@@ -93,7 +90,7 @@ const ListItem = styled.li`
   }
 
   @media (max-width: 768px) {
-    font-size: 14px;
+    font-size: 12px;
   }
 
   @media (max-width: 480px) {
@@ -133,9 +130,15 @@ const TruncatedText = styled.span`
 const SectionIcon = styled.img`
   margin-left: auto;
   width: 2.4vh;
+
   @media (max-width: 1024px) {
     width: 19px;
   }
+
+  @media (max-width: 768px) {
+    width: 2.6vh;
+  }
+
   @media (max-width: 480px) {
     width: 11px;
   }
@@ -144,10 +147,28 @@ const SectionIcon = styled.img`
 const Icon = styled.img`
   width: 1.4rem;
   @media (max-width: 1024px) {
-    width: 18px;
+    width: 17px;
   }
+
+  @media (max-width: 768px) {
+    width: 15px;
+  }
+
   @media (max-width: 480px) {
     width: 12.5px;
+  }
+`;
+
+const CheckIcon = styled.img`
+  margin-left: auto;
+  margin-right: 2.5vh;
+
+  @media (max-width: 1024px) {
+    margin-right: 1.3vh;
+  }
+
+  @media (max-width: 768px) {
+    margin-right: 1.3vh;
   }
 `;
 
@@ -261,12 +282,7 @@ const CurriculumSidebar = ({
                       <TruncatedText width="10rem">
                         {getSubSectionTitle(subSection)}
                       </TruncatedText>
-                      {!edit && !isCreator && (
-                        <img
-                          src={Check}
-                          style={{ marginLeft: "auto", marginRight: "2.5vh" }}
-                        />
-                      )}
+                      {!edit && !isCreator && <CheckIcon src={Check} />}
                     </ListItem>
                   </div>
                 ))}

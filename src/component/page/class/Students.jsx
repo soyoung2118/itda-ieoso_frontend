@@ -124,12 +124,15 @@ const ClassStudents = () => {
   };
 
   const StudentNameRenderer = ({ data }) => {
+    const [isHovered, setIsHovered] = useState(false);
     return (
       <div
         style={{
           padding: "1.7vh 0vh",
           cursor: "pointer",
         }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
         onClick={() =>
           navigate(`/class/${courseId}/admin/students/${data.userId}`)
         }
