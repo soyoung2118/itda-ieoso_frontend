@@ -8,7 +8,7 @@ export const Container = styled.div`
     background-color: #FFFFFF;
     height: calc(100vh - 7vh);
     width: 100%;
-    padding-top: 2rem;
+    padding-top: 6vh;
 `;
 
 export const Logo = styled.div`
@@ -34,17 +34,16 @@ export const Form = styled.form`
     flex-direction: column;
 `;
 
-export const Label = styled.label`
-    margin-top: 1rem;
+export const Label = styled.div`
+    margin-top: 0.7rem;
     margin-bottom: 0.5rem;
     font-size: 0.9rem;
 `;
 
 export const LoginInput = styled.input`
     padding: 0.7rem;
-    margin-bottom: 1rem;
     border: 1px solid #CDCDCD;
-    border-radius: 10px;
+    border-radius: 15px;
     font-size: 1rem;
 
     &::placeholder {
@@ -139,16 +138,17 @@ export const SignUpContainer = styled.div`
   align-items: center;
   justify-content: center;
   width: 80%;
-  max-width: 600px;
+  max-width: 550px;
   margin: 0 auto;
 `;
 
 export const SignUpInput = styled.input`
+    width: 100%;
     padding: 0.7rem;
-    margin-bottom: 0.8rem;
     border: 1px solid #CDCDCD;
-    border-radius: 10px;
+    border-radius: 15px;
     font-size: 0.9rem;
+    box-sizing: border-box;
 
     &::placeholder {
         color: #CDCDCD;
@@ -173,7 +173,7 @@ export const LoginButton = styled.button`
     background-color: #FF4747;
     color: white;
     border: none;
-    border-radius: 10px;
+    border-radius: 15px;
     cursor: pointer;
     margin-bottom: 1rem;
 `;
@@ -244,15 +244,34 @@ export const Term = styled.div`
 `;
 
 export const InputContainer = styled.div`
-  display: flex;
   align-items: center;
-  margin: 4px 0;
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 8px;
 `;
 
-export const ErrorMessage = styled.div`
-  color: #FF4747;
-  font-size: 12px;
+export const InputEmailContainer = styled.div`
+  display: flex;
+  width: 100%;
+`;
+
+export const EmailCheckButton = styled.button`
+  padding: 0.8rem;
+  width: 30%;
+  margin-left: 1rem;
+  color: white;
+  background-color: var(--main-color);
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+`;
+
+export const ValidateMessage = styled.div`
+  font-size: 0.8rem;
+  margin-left: 0.4rem;
+  width: 100%;
   margin-bottom: 10px;
+  min-height: 20px;
 `;
 
 export const WelcomeMessage = styled.div`
@@ -271,7 +290,6 @@ export const WelcomeMessage = styled.div`
 
 export const NextButton = styled.button`
   width: 100%;
-  max-width: 600px;
   display: block;
   background-color: #FF4747;
   color: white;
@@ -279,6 +297,6 @@ export const NextButton = styled.button`
   padding: 0.75rem;
   font-size: 1rem;
   cursor: pointer;
-  border-radius: 10px;
+  border-radius: 15px;
   margin: 20px auto;
 `;

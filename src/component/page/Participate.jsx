@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import TopBar from "../ui/TopBar";
 import logoImage from "../img/logo/itda_logo_symbol.svg";
+import { SignUpInput,NextButton } from "../../style/Styles";
 import api from "../api/api";
 import { UsersContext } from "../contexts/usersContext";
 
@@ -12,11 +13,26 @@ export default function Participate() {
   const { user } = useContext(UsersContext);
 
   const handleParticipate = async () => {
-    const response = await api.post(`/courses/enter/${user.userId}?entryCode=${code}`);
-    if (response.status === 200) {
-      navigate('/class/list');
-    } else {
-      alert('코드가 올바르지 않습니다.');
+    if (code.trim() === "") {
+      alert('코드를 입력해주세요.');
+      return;
+    }
+    
+    try {
+      const response = await api.post(`/courses/enter/${user.userId}?entryCode=${code}`);
+      if (response.status === 200) {
+        navigate('/class/list');
+      } else if (response.status === 404) {
+        alert('존재하지 않는 코드에요');
+      } else {
+        alert('오류가 발생했습니다.');
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        alert('존재하지 않는 코드에요');
+      } else {
+        alert('오류가 발생했습니다.');
+      }
     }
   }
 
@@ -25,19 +41,19 @@ export default function Participate() {
       <TopBar />
       <Container>
         <LogoImage src={logoImage} alt="logo" />
-        <LogoText>Start your itda</LogoText>
+        <LogoText>강의실 입장</LogoText>
         <Explain>공유 받은 강의 공간 입장 코드를 입력해주세요.</Explain>
         <div style={{ width: '60%', maxWidth: '800px', margin: '0 auto', display: 'flex',  justifyContent: 'center' }}>
           <Form>
             <Label>강의실 입장코드</Label>
-            <LoginInput 
+            <SignUpInput
               type="text" 
               placeholder="코드를 입력해주세요."
               onChange={(e) => setCode(e.target.value)}
               value={code} 
             />
             
-            <LoginButton style={{ fontSize: '1rem' }} onClick={handleParticipate}>강의실 입장하기</LoginButton>
+            <NextButton style={{ fontSize: '1rem' }} onClick={handleParticipate}>강의실 입장하기</NextButton>
           </Form>
         </div>
       </Container>
@@ -69,7 +85,8 @@ const LogoImage = styled.img`
 
 const LogoText = styled.div`
     font-size: 2rem;
-    font-weight: 900;    margin-bottom: 10px;
+    font-weight: 800;    
+    margin-bottom: 10px;
 `;
 
 const Explain = styled.div`
@@ -88,30 +105,6 @@ const Form = styled.div`
 const Label = styled.label`
     margin-top: 1rem;
     margin-bottom: 0.5rem;
-    font-size: 1.2rem;
-    font-weight: 900;
-`;
-
-const LoginInput = styled.input`
-    padding: 0.8rem;
-    margin-bottom: 1rem;
-    border: 1px solid #CDCDCD;
-    border-radius: 10px;
-    font-size: 1rem;
-
-    &::placeholder {
-        color: #CDCDCD;
-    }
-`;
-
-const LoginButton = styled.button`
-    padding: 0.8rem;
-    background-color: #FF4747;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    margin-bottom: 1rem;
     font-size: 1.2rem;
     font-weight: 600;
 `;

@@ -6,6 +6,7 @@ import {
     Container,
     LogoImage,
     LogoText,
+    SignUpContainer,
     Form,
     Label,
     LoginInput,
@@ -66,7 +67,7 @@ export default function LogIn() {
             <Container>
                 <LogoImage src={logoImage} alt="logo" />
                 <LogoText>로그인</LogoText>
-                <div style={{ minWidth: '300px', width: '40%', margin: '0 auto' }}>
+                <SignUpContainer>
                     <Form onSubmit={handleLogin}>
                         <Label>이메일</Label>
                         <LoginInput
@@ -104,8 +105,8 @@ export default function LogIn() {
                     <SignUpLink>
                         계정이 없으신가요? <a href="/signup">회원가입하기</a>
                     </SignUpLink>
-                </Form>
-                </div>
+                    </Form>
+                </SignUpContainer>
             </Container>
         </>
     );
