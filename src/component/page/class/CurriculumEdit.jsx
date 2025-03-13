@@ -125,8 +125,6 @@ const CurriculumEdit = () => {
           (a, b) => (a.contentOrderIndex || 0) - (b.contentOrderIndex || 0)
         );
 
-        console.log(sortedSubSections);
-
         const editingSectionId =
           newSectionId || sessionStorage.getItem("editingSectionId");
 
