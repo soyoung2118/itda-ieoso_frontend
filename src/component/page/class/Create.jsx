@@ -156,7 +156,8 @@ const handleAssignmentTimeChange = (timeString) => {
         lectureTime: isLecturePending ? '00:00:00' : formatTimeToServer(form.lectureTime),
         assignmentDueDay: form.assignmentDays,
         assignmentDueTime: isAssignmentPending ? '00:00:00' : formatTimeToServer(form.assignmentTime),
-        difficultyLevel: form.difficulty.toUpperCase()
+        difficultyLevel: form.difficulty.toUpperCase(),
+        isAssignmentPublic: form.isAssignmentPublic
       };
 
       if ((!isLecturePending && !settingData.lectureTime) || 

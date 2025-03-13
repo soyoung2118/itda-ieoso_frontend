@@ -14,6 +14,7 @@ export default function Setting() {
   const [isAssignmentPending, setIsAssignmentPending] = useState(false);
   const [isLecturePending, setIsLecturePending] = useState(false);
   const [showDifficultyChange, setShowDifficultyChange] = useState('');
+  const [showPublicChange, setShowPublicChange] = useState('');
   const [copyModalOpen, setCopyModalOpen] = useState(false);
 
   const [form, setForm] = useState({
@@ -27,6 +28,7 @@ export default function Setting() {
     assignmentDays: [],
     assignmentTime: '',
     difficulty: 'easy',
+    isAssignmentPublic: true,
   });
   let [titleInputCount, setTitleInputCount] = useState(form.coursename.length);
   let [instructorInputCount, setInstructorInputCount] = useState(form.instructor.length);
@@ -59,7 +61,8 @@ export default function Setting() {
             lectureTime: courseData.lectureTime?.slice(0, -3),
             assignmentDays: courseData.assignmentDueDay ? courseData.assignmentDueDay.split(',').map(Number) : [],
             assignmentTime: courseData.assignmentDueTime?.slice(0, -3),
-            difficulty: courseData.difficultyLevel?.toLowerCase()
+            difficulty: courseData.difficultyLevel?.toLowerCase(),
+            isAssignmentPublic: courseData.isAssignmentPublic,
           });
 
           setIsAssignmentPending(!courseData.assignmentDueDay || courseData.assignmentDueTime === '');
@@ -119,6 +122,14 @@ export default function Setting() {
     setForm(prev => ({ ...prev, difficulty: newLevel }));
     };
 
+    const handleAssignmentVisibility = (isPublic) => {
+      if (form.isAssignmentPublic !== isPublic) {
+          if(isPublic) setShowPublicChange('강의실 관리 메뉴의 "요약 보기"와 "학생별 보기" 페이지가 수강생에게 표시됩니다.');
+          else setShowPublicChange('강의실 관리 메뉴의 "요약 보기"와 "학생별 보기" 페이지가 수강생에게 표시되지 않습니다.');
+      }
+      setForm(prev => ({ ...prev, isAssignmentPublic: isPublic }));
+      };
+
   const handleSubmit = async () => {
     try{
       if (!user) {
@@ -135,7 +146,8 @@ export default function Setting() {
         lectureTime: form.lectureTime + ':00',
         assignmentDueDay: form.assignmentDays,
         assignmentDueTime: form.assignmentTime + ':00',
-        difficultyLevel: form.difficulty.toUpperCase()
+        difficultyLevel: form.difficulty.toUpperCase(),
+        isAssignmentPublic: form.isAssignmentPublic
       };
 
       console.log(settingData);
@@ -276,7 +288,7 @@ export default function Setting() {
             </HalfGroup>
 
             <FormItem>
-              <Label>강의 업로드 시간</Label>
+              <Label>강의 업로드 일시</Label>
               <HalfGroup>
                 <TimeGroup>
                     <DayButtonGroup>
@@ -302,7 +314,7 @@ export default function Setting() {
                 </TimeGroup>
 
                 <TimeGroup>
-                  {/* <PendingButton active={isLecturePending}>정해지지 않았어요</PendingButton> */}
+                  <PendingButton active={isLecturePending}>정해지지 않았어요</PendingButton>
                 </TimeGroup>
               </HalfGroup>
               <GreyHelpText style={{marginTop: '10px'}}>
@@ -315,7 +327,7 @@ export default function Setting() {
             </FormItem>
 
             <FormItem>
-              <Label>과제 마감 시간</Label>
+              <Label>과제 마감 일시</Label>
               <HalfGroup>
                 <TimeGroup>
                   <DayButtonGroup>
@@ -341,7 +353,7 @@ export default function Setting() {
                 </TimeGroup> 
 
                 <TimeGroup>
-                  {/* <PendingButton active={isAssignmentPending}>정해지지 않았어요</PendingButton> */}
+                  <PendingButton active={isAssignmentPending}>정해지지 않았어요</PendingButton>
                 </TimeGroup>
               </HalfGroup>
               <GreyHelpText style={{marginTop: '10px'}}>
@@ -381,6 +393,35 @@ export default function Setting() {
                             {form.difficulty === 'easy' && <GreyHelpText>입문자를 위한 쉬운 개념 강의!</GreyHelpText>}
                             {form.difficulty === 'medium' && <GreyHelpText>개념을 응용하고 실전 활용 능력을 키우는 강의!</GreyHelpText>}
                             {form.difficulty === 'hard' && <GreyHelpText>실무에 적용할 수 있는 전문 강의!</GreyHelpText>}
+                        </>
+                    )}
+                </LevelText>
+            </FormItem>
+          </FormGroup>
+
+          <FormGroup> 
+            <FormItem>
+            <RowContainer>
+                <Label style={{marginRight: '50px'}}>수강생 간 과제 제출<Required>*</Required></Label>
+                    <ButtonGroup>
+                      {['open', 'close'].map((option) => (
+                      <LevelButton
+                        key={option}
+                        active={form.isAssignmentPublic === (option === 'open')}
+                        onClick={() => handleAssignmentVisibility(option === 'open')}
+                      >
+                        {option === 'open' ? '공개' : '비공개'}
+                      </LevelButton>
+                        ))}
+                    </ButtonGroup>
+                </RowContainer>
+                <LevelText>
+                    {showPublicChange ? (
+                        <GreyHelpText>{showPublicChange}</GreyHelpText>
+                    ) : (
+                        <>
+                            {form.isAssignmentPublic && <GreyHelpText style={{color: 'var(--guide-gray-color)'}}>수강생들이 서로 제출한 과제를 볼 수 있어요.</GreyHelpText> }
+                            {!form.isAssignmentPublic && <GreyHelpText style={{color: 'var(--guide-gray-color)'}}>수강생들은 자신이 제출한 과제만 볼 수 있어요.</GreyHelpText> }
                         </>
                     )}
                 </LevelText>
@@ -562,13 +603,13 @@ const GreyHelpText = styled.div`
   font-size: 12px;
   font-weight: 400;
   margin-top: 4px;
-  margin-left: 10px;
 `
 
 const DayButtonGroup = styled.div`
   display: flex;
   gap: 5px;
   margin-right: 10px;
+  margin-left: 10px;
 `;
 
 const DayButton = styled.button`
