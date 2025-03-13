@@ -159,7 +159,6 @@ const AdminTopBar = ({ activeTab }) => {
       <Title>강의실 관리</Title>
       <NavbarContent>
         <TabContainer>
-          {/* 강의 개설자가 아니고 isAssignmentPublic이 true일 때 요약 탭 표시 */}
           {!currentCourse?.isCreator && currentCourse?.isAssignmentPublic && (
             <TabLink
               to={`/class/${courseId}/admin/summary`}
@@ -169,7 +168,6 @@ const AdminTopBar = ({ activeTab }) => {
             </TabLink>
           )}
   
-          {/* 강의 개설자일 경우 모든 탭 표시 */}
           {currentCourse?.isCreator && (
             <>
               <TabLink
@@ -195,7 +193,6 @@ const AdminTopBar = ({ activeTab }) => {
         </TabContainer>
   
         <IconContainer>
-          {/* 강의 개설자일 때만 삭제 아이콘 표시 */}
           {currentCourse?.isCreator && (
             <>
             <Icon
