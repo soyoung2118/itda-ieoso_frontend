@@ -1,10 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useContext } from "react";
+import { useNavigate } from 'react-router-dom';
 import styled from "styled-components";
 import userIcon from "../../img/icon/usericon.svg";
 import { logout } from "../../api/usersApi";
-import { useContext } from "react";
 import { UsersContext } from "../../contexts/usersContext";
-import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 export function UsersInfoContainer({ setShowUsersInfoContainer }) {
@@ -40,13 +39,25 @@ export function UsersInfoContainer({ setShowUsersInfoContainer }) {
         }
     };
 
+    const handleChangePassword = () => {
+        navigate('/change-password');
+    }
+
     return (
         <Dropdown className="dropdown-container">
-            <UserInfo>
-                <img src={userIcon} alt="user icon" className="user-info-profile" />
-                <p className="user-info-name">{user.name}</p>
-                <button className="user-info-logout-button" onClick={handleLogout}>로그아웃하기</button>
-            </UserInfo>
+            <DropdownContainer>
+                <UserInfo>
+                    <img src={userIcon} alt="user icon" className="user-info-profile" />
+                    <UserText>
+                        <div className="user-info-name">{user.name}</div>
+                        <div className="user-info-email">{user.email}</div>
+                    </UserText>
+                </UserInfo>
+                <div className="button-container">
+                    <button className="user-button" onClick={handleChangePassword}>비밀번호 변경</button>
+                    <button className="user-button" onClick={handleLogout}>로그아웃 하기</button>
+                </div>
+            </DropdownContainer>
         </Dropdown>
     );
 }
@@ -59,18 +70,22 @@ const Dropdown = styled.div`
     background-color: white;
     border: 1px solid #ccc;
     border-radius: 8px;
-    padding: 2px 15px;
+    padding: 10px 15px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     z-index: 1000;
 `;
 
-const UserInfo = styled.div`
-    display: flex;
+const DropdownContainer = styled.div`
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
     padding: 5px 10px;
     width: 100%;
+
+    .button-container {
+        display: flex;
+        margin-top: 12px;
+    }
 
     .user-info-profile {
         width: 40px;
@@ -86,17 +101,31 @@ const UserInfo = styled.div`
         white-space: nowrap;
     }
 
-    .user-info-logout-button {
+    .user-info-email {
+        margin-top: 4px;
         font-size: 12px;
-        font-weight: 500;
+        font-weight: 200;
+    }
+
+    .user-button {
+        font-size: 12px;
+        font-weight: 300;
         background-color: transparent;
-        border: 1px solid #000;
-        margin-right: 10px;
+        border: 1px solid #000000;
+        margin: 0 5px;
         padding: 5px 10px;
         border-radius: 60px;
         cursor: pointer;
         white-space: nowrap;
     }
+`;
+
+const UserInfo = styled.div`
+  display: flex;  
+`;
+
+const UserText = styled.div`
+    margin-left: 10px;
 `;
 
 // PropTypes 설정

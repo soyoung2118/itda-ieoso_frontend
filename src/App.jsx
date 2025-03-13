@@ -5,6 +5,7 @@ import LandingPage from "./component/page/LandingPage.jsx";
 import LogIn from "./component/page/users/LogIn.jsx";
 import SignUp from "./component/page/users/SignUp.jsx";
 import FindPassword from "./component/page/users/FindPassword.jsx";
+import ChangePassword from "./component/page/users/ChangePassword.jsx";
 import ClassList from "./component/page/ClassList.jsx";
 import Create from "./component/page/class/Create.jsx";
 import Setting from "./component/page/class/Setting.jsx";
@@ -35,6 +36,7 @@ function App() {
             <Route path="/login" element={<LogIn />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="find-password" element={<FindPassword />} />
+            <Route path='change-password' element={<ChangePassword />} />
 
             {/* 강의실 페이지 */}
             <Route path="/class/list" element={<ClassList />} />
