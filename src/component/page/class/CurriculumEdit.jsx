@@ -78,7 +78,7 @@ const CurriculumEdit = () => {
 
   const activeLectureRef = useRef(null);
   useEffect(() => {
-    activeLectureRef.current = activeLecture; // 최신 값을 저장
+    activeLectureRef.current = activeLecture;
   }, [activeLecture]);
 
   const fetchCurriculum = useCallback(
