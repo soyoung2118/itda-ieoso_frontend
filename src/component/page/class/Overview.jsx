@@ -79,13 +79,13 @@ const StyledButton = styled.a`
 
 const ImageContainer = styled.div`
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   max-width: 640px;
   height: auto;
   margin: 0 auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 
   img {
     width: 100%;
@@ -93,18 +93,19 @@ const ImageContainer = styled.div`
     max-height: 380px;
     object-fit: contain;
     object-position: top;
-    border-radius: 8px;
+    border-radius: 12px !important;
     cursor: pointer;
   }
 
   .camera-icon {
     position: absolute;
+    z-index: 10;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 3.5rem;
     color: rgba(255, 255, 255);
-    display: ${({ isEditing, hasThumbnail }) => (isEditing && !hasThumbnail ? "block" : "none")};
+    display: ${({ isEditing }) => (isEditing ? "block" : "none")};
     pointer-events: none;
   }
 

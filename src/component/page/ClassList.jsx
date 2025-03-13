@@ -54,10 +54,11 @@ export default function Class() {
 
     const handleDeleteLecture = async (courseId) => {
         try {
-            await api.delete(`/courses/${courseId}?userId=${user.userId}`);
+            await api.delete(`/courses/exit/${courseId}`);
             getAllLectures();
         } catch (error) {
             console.error('강의실 삭제 중 오류 발생:', error);
+            alert("강의 개설자는 강의실을 나갈 수 없어요.");
         }
     };
 
