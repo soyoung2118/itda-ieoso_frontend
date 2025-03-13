@@ -252,9 +252,26 @@ const EditableSection = ({
     if (field === "title") setTitle(value);
     if (field === "videoUrl") setVideoUrl(value);
     if (field === "assignmentDescription") setAssignmentDescription(value);
-    if (field === "submissionType") setSubmissionType(value);
 
     handleEdit(field, value);
+  };
+
+
+  const toggleSubmissionType = (type) => {
+    let newType;
+
+    if (submissionType === "BOTH") {
+      newType = type === "TEXT" ? "FILE" : "TEXT";
+    } else if (submissionType === type) {
+      newType = "";
+    } else if (submissionType === "") {
+      newType = type;
+    } else {
+      newType = "BOTH";
+    }
+
+    setSubmissionType(newType);
+    handleEdit("submissionType", newType);
   };
 
   const handleDateChange = (date, field) => {
@@ -482,14 +499,18 @@ const EditableSection = ({
                   <Submission>과제 제출 방식</Submission>
                   <div style={{ display: "flex" }}>
                     <SectionButton
-                      selected={submissionType === "TEXT"}
-                      onClick={() => handleChange("submissionType", "TEXT")}
+                      selected={
+                        submissionType === "TEXT" || submissionType === "BOTH"
+                      }
+                      onClick={() => toggleSubmissionType("TEXT")}
                     >
                       글
                     </SectionButton>
                     <SectionButton
-                      selected={submissionType === "FILE"}
-                      onClick={() => handleChange("submissionType", "FILE")}
+                      selected={
+                        submissionType === "FILE" || submissionType === "BOTH"
+                      }
+                      onClick={() => toggleSubmissionType("FILE")}
                     >
                       파일
                     </SectionButton>
