@@ -160,12 +160,21 @@ const AdminTopBar = ({ activeTab }) => {
       <NavbarContent>
         <TabContainer>
           {!currentCourse?.isCreator && currentCourse?.isAssignmentPublic && (
+            <>
             <TabLink
               to={`/class/${courseId}/admin/summary`}
-              className={"active"}
+              className={activeTab === "summary" ? "active" : ""}
             >
               요약
             </TabLink>
+
+            <TabLink
+            to={`/class/${courseId}/admin/students`}
+            className={activeTab === "students" ? "active" : ""}
+            >
+            과제 보기
+            </TabLink>
+            </>
           )}
   
           {currentCourse?.isCreator && (
