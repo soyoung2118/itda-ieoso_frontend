@@ -18,7 +18,7 @@ export const getMyCoursesTitles = async (userId) => {
   return courses.map((course) => ({
     courseId: course.courseId,
     courseTitle: course.courseTitle,
-    isCreator: String(course.user?.userId) === String(userId)
+    isCreator: String(course.user?.userId) === String(userId),
+    isAssignmentPublic: course.isAssignmentPublic,
   }));
 };
-
