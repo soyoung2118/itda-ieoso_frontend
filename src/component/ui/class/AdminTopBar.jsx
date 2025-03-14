@@ -277,20 +277,6 @@ const AdminTopBar = ({ activeTab }) => {
         <IconContainer>
           {currentCourse?.isCreator && (
             <>
-            <Icon
-              className="material-icons"
-              src={Delete}
-              alt="delete icon"
-              onClick={() => setShowDeleteModal(true)}
-            />
-          <Icon
-            className="material-icons"
-            src={Share}
-            alt="share icon"
-            onClick={handleShare}
-          />
-          </>
-          )}
           <Icon 
             className="material-icons" 
             src={Delete} 
@@ -319,6 +305,8 @@ const AdminTopBar = ({ activeTab }) => {
               </div>
               <button className="invite-button" onClick={handleShare}>강의실 초대하기</button>
             </ShareDropdownContainer>
+              )}  
+          </>
           )}
         </IconContainer>
       </NavbarContent>
