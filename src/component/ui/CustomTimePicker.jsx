@@ -253,7 +253,7 @@ const CustomTimePicker = ({ value = new Date(), onChange, width = 289, disabled 
 
 const Container = styled.div`
   position: relative;
-  width: 289px;
+  width: 200px;
 `;
 
 const InputDisplay = styled.div`

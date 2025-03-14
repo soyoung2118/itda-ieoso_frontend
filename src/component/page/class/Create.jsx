@@ -25,6 +25,7 @@ export default function Create() {
     assignmentDays: [],
     assignmentTime: '',
     difficulty: 'easy',
+    isAssignmentPublic: true,
   });
   let [titleInputCount, setTitleInputCount] = useState(form.coursename.length);
   let [instructorInputCount, setInstructorInputCount] = useState(form.instructor.length);
@@ -74,6 +75,10 @@ const handleAssignmentTimeChange = (timeString) => {
   
   const handleDifficultySelect = (difficulty) => {
     setForm(prev => ({ ...prev, difficulty }));
+  };
+
+  const handleAssignmentVisibility = (isPublic) => {
+    setForm(prev => ({ ...prev, isAssignmentPublic: isPublic }));
   };
 
   const formatTimeToServer = (timeString) => {
@@ -151,7 +156,8 @@ const handleAssignmentTimeChange = (timeString) => {
         lectureTime: isLecturePending ? '00:00:00' : formatTimeToServer(form.lectureTime),
         assignmentDueDay: form.assignmentDays,
         assignmentDueTime: isAssignmentPending ? '00:00:00' : formatTimeToServer(form.assignmentTime),
-        difficultyLevel: form.difficulty.toUpperCase()
+        difficultyLevel: form.difficulty.toUpperCase(),
+        isAssignmentPublic: form.isAssignmentPublic
       };
 
       if ((!isLecturePending && !settingData.lectureTime) || 
@@ -208,7 +214,6 @@ const handleAssignmentTimeChange = (timeString) => {
       <Container>
         <Section>
           <Title style={{marginTop: '6px'}}>STEP 1. 강의실을 만들어볼까요?</Title>
-          
           <FormGroup>
             <FormItem>
               <Label>
@@ -224,7 +229,7 @@ const handleAssignmentTimeChange = (timeString) => {
                 placeholder="30자 이내로 설정해주세요."
                 value={form.coursename}
                 onChange={(e) => {handleFormChange(e); onTitleInputHandler(e);}}
-                style={{width: '329px'}}
+                style={{width: '100%'}}
                 autoComplete='off'
               />
             </FormItem>
@@ -243,7 +248,7 @@ const handleAssignmentTimeChange = (timeString) => {
                 placeholder="ex. 김잇다"
                 value={form.instructor}
                 onChange={(e) => {handleFormChange(e); onInstructorInputHandler(e);}}
-                style={{width: '165px '}}
+                style={{width: '100%'}}
                 autoComplete='off'
               />
             </FormItem>
@@ -287,7 +292,7 @@ const handleAssignmentTimeChange = (timeString) => {
                   min="1"
                   max="12"
                   name="durationWeeks"
-                  placeholder="숫자를 입력해주세요"
+                  placeholder="숫자를 입력해주세요."
                   value={form.durationWeeks}
                   onChange={handleFormChange}
                   style={{width: '165px'}}
@@ -299,23 +304,22 @@ const handleAssignmentTimeChange = (timeString) => {
             </FormItem>
 
             <FormItem>
-              <Label>강의 업로드 시간</Label>
+              <Label>강의 업로드 일시</Label>
+              <TimeGroup>
+              <DayButtonGroup>
+                {timeSlots.map((day) => (
+                  <DayButton 
+                    key={day}
+                    active={!isLecturePending && form.lectureDays.includes(timeSlots.indexOf(day) + 1)}
+                    onClick={() => !isLecturePending && handleDaySelect('lecture', day)}
+                  >
+                    {day}
+                  </DayButton>
+                ))}
+                </DayButtonGroup>
+                { !isLecturePending && <HelpText>복수 선택이 가능해요!</HelpText>}
+              </TimeGroup>
               <HalfGroup>
-                <TimeGroup>
-                <DayButtonGroup>
-                  {timeSlots.map((day) => (
-                    <DayButton 
-                      key={day}
-                      active={!isLecturePending && form.lectureDays.includes(timeSlots.indexOf(day) + 1)}
-                      onClick={() => !isLecturePending && handleDaySelect('lecture', day)}
-                    >
-                      {day}
-                    </DayButton>
-                  ))}
-                  </DayButtonGroup>
-                  { !isLecturePending && <HelpText>복수 선택이 가능해요!</HelpText>}
-                </TimeGroup>
-                
                 <TimeGroup>
                     <TimePickerWrapper>
                       <CustomTimePicker
@@ -332,31 +336,28 @@ const handleAssignmentTimeChange = (timeString) => {
                         disabled={isLecturePending}
                         placeholder="강의 시간을 설정해주세요."
                       />
+                      {/* <RadioButton 
+                        active={!isLecturePending}
+                        onClick={() => {
+                          setIsLecturePending(!isLecturePending)
+                          if (!isLecturePending) {
+                            setForm(prev => ({ ...prev, lectureDays: [], lectureTime: '' }));
+                          }
+                        }}
+                      >
+                        {!isLecturePending && "정해지지 않았어요"}
+                        {isLecturePending && "설정 되었어요!"}
+                      </RadioButton> */}
                       </TimePickerWrapper>
                       {form.lectureTime && !isLecturePending && 
                         <HelpText style={{color: 'var(--guide-green-color)'}}>강의 시간이 설정되었어요!</HelpText>
                       }
                 </TimeGroup>
-
-                <TimeGroup>
-                  {/* <RadioButton 
-                    active={!isLecturePending}
-                    onClick={() => {
-                      setIsLecturePending(!isLecturePending)
-                      if (!isLecturePending) {
-                        setForm(prev => ({ ...prev, lectureDays: [], lectureTime: '' }));
-                      }
-                    }}
-                  >
-                    정해지지 않았어요
-                  </RadioButton> */}
-                </TimeGroup>
               </HalfGroup>
             </FormItem>
 
             <FormItem>
-              <Label>과제 마감 시간</Label>
-              <HalfGroup>
+              <Label>과제 마감 일시</Label>
                 <TimeGroup>
                   <DayButtonGroup>
                   {timeSlots.map((day) => (
@@ -369,11 +370,9 @@ const handleAssignmentTimeChange = (timeString) => {
                     </DayButton>
                   ))}
                   </DayButtonGroup>
-                  {!isAssignmentPending && 
-                  <HelpText>복수 선택이 가능해요!</HelpText>
-                  }
+                  {!isAssignmentPending && <HelpText style={{color: 'var(--guide-gray-color)'}}>복수 선택이 가능해요.</HelpText>}
                 </TimeGroup>
-
+                <HalfGroup>
                 <TimeGroup>
                     <TimePickerWrapper>
                       <CustomTimePicker
@@ -390,25 +389,23 @@ const handleAssignmentTimeChange = (timeString) => {
                         disabled={isAssignmentPending}
                         placeholder="과제 시간을 설정해주세요."
                       />
+                      {/* <RadioButton 
+                        active={!isAssignmentPending}
+                        onClick={() => {
+                          setIsAssignmentPending(!isAssignmentPending)
+                          if (!isAssignmentPending) {
+                            setForm(prev => ({ ...prev, assignmentDays: [], assignmentTime: '' }));
+                          }
+                        }}
+                      >
+                        {!isAssignmentPending && "정해지지 않았어요"}
+                        {isAssignmentPending && "설정 되었어요!"}
+                      </RadioButton> */}
                     </TimePickerWrapper>
                     {form.assignmentTime && !isAssignmentPending &&
                    <HelpText style={{color: 'var(--guide-green-color)'}}>과제 시간이 설정되었어요!</HelpText>
                    }
                 </TimeGroup> 
-
-                <TimeGroup>
-                  {/* <RadioButton 
-                    active={!isAssignmentPending}
-                    onClick={() => {
-                      setIsAssignmentPending(!isAssignmentPending)
-                      if (!isAssignmentPending) {
-                        setForm(prev => ({ ...prev, assignmentDays: [], assignmentTime: '' }));
-                      }
-                    }}
-                  >
-                    정해지지 않았어요
-                  </RadioButton> */}
-                </TimeGroup>
               </HalfGroup>
             </FormItem>
           </FormGroup>
@@ -418,8 +415,7 @@ const handleAssignmentTimeChange = (timeString) => {
           <Title>STEP 3. 수강생에게 강좌를 어떻게 공개하실 건가요?</Title>
           <FormGroup>
             <FormItem>
-            <RowContainer>
-            <Label style={{marginRight: '50px'}}>수업 난이도<Required>*</Required></Label>
+            <Label>수업 난이도<Required>*</Required></Label>
               <ButtonGroup>
                 {['easy', 'medium', 'hard'].map((level) => (
                   <LevelButton
@@ -431,10 +427,28 @@ const handleAssignmentTimeChange = (timeString) => {
                   </LevelButton>
                 ))}
               </ButtonGroup>
-            </RowContainer>
               {form.difficulty === 'easy' && <LevelText style={{color: 'var(--guide-gray-color)'}}>입문자를 위한 쉬운 개념 강의!</LevelText> }
               {form.difficulty === 'medium' && <LevelText style={{color: 'var(--guide-gray-color)'}}>개념을 응용하고 실전 활용 능력을 키우는 강의!</LevelText> }
               {form.difficulty === 'hard' && <LevelText style={{color: 'var(--guide-gray-color)'}}>실무에 적용할 수 있는 전문 강의!</LevelText> }
+            </FormItem>
+          </FormGroup>
+
+          <FormGroup>
+            <FormItem>
+            <Label>수강생 간 과제 제출<Required>*</Required></Label>
+              <ButtonGroup>
+                {['open', 'close'].map((option) => (
+                  <LevelButton
+                    key={option}
+                    active={form.isAssignmentPublic === (option === 'open')}
+                    onClick={() => handleAssignmentVisibility(option === 'open')}
+                  >
+                    {option === 'open' ? '공개' : '비공개'}
+                  </LevelButton>
+                ))}
+              </ButtonGroup>
+              {form.isAssignmentPublic && <LevelText style={{color: 'var(--guide-gray-color)'}}>수강생들이 서로 제출한 과제를 볼 수 있어요.</LevelText> }
+              {!form.isAssignmentPublic && <LevelText style={{color: 'var(--guide-gray-color)'}}>수강생들은 자신이 제출한 과제만 볼 수 있어요.</LevelText> }
             </FormItem>
           </FormGroup>
         </Section>
@@ -450,16 +464,14 @@ const ButtonGroup = styled.div`
 `;
 
 const RadioButton = styled.button`
-  padding: 8px 20px;
+  padding: 10px 20px;
+  margin-left: 5px;
   border: none;
   border-radius: 10px;
   font-size: 15px;
   background-color: ${props => props.active ? '#F6F6F6' : '#FF4747'};
   color: ${props => props.active ? '#909090' : '#FFFFFF'};
-
-  @media (max-width: 900px) { 
-    width: 289px;
-  }
+  width: 149px;
 `;
 
 const LevelButton = styled.button`
@@ -468,14 +480,11 @@ const LevelButton = styled.button`
   font-size: 15px;
   background-color: ${props => props.active ? '#FF4747' : '#EEEEEE '};
   color: ${props => props.active ? '#FFFFFF' : '#909090'};
-  padding: 6px 18px;
+  width: 80px;
+  padding: 8px 0px;
   border: none;
   cursor: pointer;
   margin-bottom: 8px;
-
-  @media (max-width: 900px) { 
-     padding: 6px 12px;
-  }
 `;
 
 const CreateButton = styled.button`
@@ -491,26 +500,23 @@ const CreateButton = styled.button`
 `;
 
 const Container = styled.div`
-  margin: 41px 61px;
-  padding: 24px 30px;
-  background-color: white;
+  margin: 41px 27vw;
   border-radius: 20px;
-
-  @media (max-width: 600px) {
-    margin: 31px;
+  @media (max-width: 800px) {
+    margin: 41px 10vw;
   }
 `;
 
 const Section = styled.div`
-  width: 100%;
-  padding-bottom: 30px;
-  border-bottom: 2px solid #C3C3C3;
+  background-color: white;
+  padding: 30px;
+  margin-bottom: 20px;
+  border-radius: 20px;
 `;
 
 const Title = styled.div`
   font-size: 21px;
   font-weight: 700;
-  margin-top: 30px;
 `;
 
 const FormGroup = styled.div`
@@ -569,7 +575,7 @@ const InputGroup = styled.div`
 const HelpText = styled.div`
   height: 13px;
   min-height: 13px;
-  color: #FF4747;
+  color: #909090;
   font-size: 12px;
   font-weight: 400;
   margin-top: 4px;
@@ -577,27 +583,10 @@ const HelpText = styled.div`
 `;
 
 const LevelText = styled.div`
-  height: 13px;
-  min-height: 13px;
   font-size: 12px;
   font-weight: 400;
   margin-top: 4px;
-  margin-left: 150px;
-
-  @media (max-width: 800px) { 
-    margin-left: 0px;
-  }
 `
-
-const RowContainer = styled.div`
-  display: flex;
-  align-items: baseline;
-  
-  @media (max-width: 800px) { 
-      flex-direction: column;
-      padding: 6px 10px;
-    }
-`;
 
 const DayButtonGroup = styled.div`
   display: flex;
@@ -651,12 +640,8 @@ const CuliculumGroup = styled.div`
 const HalfGroup = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 10px;
-
-  @media (max-width: 900px) { 
-    flex-direction: column;
-    gap: 15px;
-  }
+  gap: 15px;
+  margin-top: 10px;
 `;
 
 const Text = styled.div`
