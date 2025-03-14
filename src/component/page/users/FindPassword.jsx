@@ -21,6 +21,9 @@ export default function FindPassword() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [isError, setIsError] = useState(false);
 
   const handleFindPassword = async (event) => {
     event.preventDefault();
@@ -29,23 +32,34 @@ export default function FindPassword() {
       return;
     }
 
+    setIsLoading(true);
+    setModalMessage('전송 중...');
+    setIsModalOpen(true);
+    setIsError(false);
+
     try {
       const response = await findpassword(name, email);
 
       if (response) {
-        setIsModalOpen(true);
+        setModalMessage('이메일로 임시 비밀번호를 보냈어요');
       } else {
-        alert('비밀번호 찾기에 실패했습니다. 다시 시도해주세요.');
+        setModalMessage('비밀번호 찾기에 실패했습니다. 다시 시도해주세요.');
+        setIsError(true);
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('서버 오류가 발생했습니다. 나중에 다시 시도해주세요.');
+      setModalMessage('서버 오류가 발생했습니다. 다시 시도해주세요.');
+      setIsError(true);
+    } finally {
+      setIsLoading(false);
     }
   }
 
   const closeModal = () => {
     setIsModalOpen(false);
-    navigate('/login');
+    if (!isError) {
+      navigate('/login');
+    }
   }
 
   return (
@@ -79,7 +93,7 @@ export default function FindPassword() {
       {isModalOpen && (
         <ModalOverlay>
           <ModalContainer>
-            <Message>이메일로 임시 비밀번호를 보냈어요</Message>
+            <Message>{modalMessage}</Message>
             <CloseButton onClick={closeModal}>확인</CloseButton>
           </ModalContainer>
         </ModalOverlay>
