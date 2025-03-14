@@ -78,7 +78,7 @@ const CurriculumEdit = () => {
 
   const activeLectureRef = useRef(null);
   useEffect(() => {
-    activeLectureRef.current = activeLecture; // 최신 값을 저장
+    activeLectureRef.current = activeLecture;
   }, [activeLecture]);
 
   const fetchCurriculum = useCallback(
@@ -336,10 +336,10 @@ const CurriculumEdit = () => {
       }
     }
 
-    // 🔹 `sessionStorage`에 클릭한 섹션 ID 저장
+    // `sessionStorage`에 클릭한 섹션 ID 저장
     sessionStorage.setItem("editingSectionId", clickedSectionId);
 
-    // 🔹 현재 아무것도 편집 중이 아니었으면 새로고침 없이 바로 상태 업데이트
+    // 현재 아무것도 편집 중이 아니었으면 새로고침 없이 바로 상태 업데이트
     if (!editingSection) {
       setActiveLecture((prev) => {
         if (!prev) return prev;

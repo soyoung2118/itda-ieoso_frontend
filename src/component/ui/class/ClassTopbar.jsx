@@ -173,6 +173,7 @@ const ClassTopbar = ({ onCourseChange, isCreator }) => {
   const [classOptions, setClassOptions] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isScrollable, setIsScrollable] = useState(false);
+  const [currentCourse, setCurrentCourse] = useState(null);
   const tabRef = useRef(null);
 
   useEffect(() => {
@@ -180,10 +181,15 @@ const ClassTopbar = ({ onCourseChange, isCreator }) => {
       if (!user?.userId) return;
       const courses = await getMyCoursesTitles(user.userId);
       setClassOptions(courses);
+  
+      const foundCourse = courses.find(
+        (course) => String(course.courseId) === String(courseId)
+      );
+      setCurrentCourse(foundCourse || null);
     };
-
+  
     fetchClasses();
-  }, [user?.userId]);
+  }, [user?.userId, courseId]);  
 
   useEffect(() => {
     const checkScrollable = () => {
@@ -275,7 +281,7 @@ const ClassTopbar = ({ onCourseChange, isCreator }) => {
         >
           커리큘럼
         </TabLink>
-        {isCreator && (
+        {(currentCourse?.isCreator || currentCourse?.isAssignmentPublic) && (
           <TabLink
             to={`/class/${courseId}/admin/summary`}
             className={getActiveTab() === "admin" ? "active" : ""}

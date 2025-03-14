@@ -6,6 +6,7 @@ import Delete from "../../img/icon/bin.svg";
 import Share from "../../img/icon/share.svg";
 import { ModalOverlay, ModalContent } from "../../ui/modal/ModalStyles";
 import api from "../../api/api";
+import { getMyCoursesTitles } from "../../api/classApi";
 import { UsersContext } from "../../contexts/usersContext";
 import { getCourseNameandEntryCode } from "../../api/classApi";
 
@@ -179,6 +180,23 @@ const AdminTopBar = ({ activeTab }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [courseName, setCourseName] = useState("");
   const [entryCode, setEntryCode] = useState("");
+  const [classOptions, setClassOptions] = useState(null);
+  const [currentCourse, setCurrentCourse] = useState(null);
+  
+  useEffect(() => {
+    if (!user?.userId) return;
+  
+    const fetchClasses = async () => {
+      const courses = await getMyCoursesTitles(user.userId);
+      setClassOptions(courses);
+  
+      const current = courses.find(course => String(course.courseId) === String(courseId));
+      setCurrentCourse(current);
+      console.log(current);
+    };
+  
+    fetchClasses();
+  }, [user?.userId, courseId]); 
 
   useEffect(() => {
     const fetchCourseDetails = async () => {
@@ -214,27 +232,65 @@ const AdminTopBar = ({ activeTab }) => {
       <Title>강의실 관리</Title>
       <NavbarContent>
         <TabContainer>
-          <TabLink
-            to={`/class/${courseId}/admin/summary`}
-            className={activeTab === "summary" ? "active" : ""}
-          >
-            요약
-          </TabLink>
-          <TabLink
+          {!currentCourse?.isCreator && currentCourse?.isAssignmentPublic && (
+            <>
+            <TabLink
+              to={`/class/${courseId}/admin/summary`}
+              className={activeTab === "summary" ? "active" : ""}
+            >
+              요약
+            </TabLink>
+
+            <TabLink
             to={`/class/${courseId}/admin/students`}
             className={activeTab === "students" ? "active" : ""}
-          >
+            >
             과제 보기
-          </TabLink>
-          <TabLink
-            to={`/class/${courseId}/admin/setting`}
-            className={activeTab === "setting" ? "active" : ""}
-          >
-            설정
-          </TabLink>
+            </TabLink>
+            </>
+          )}
+  
+          {currentCourse?.isCreator && (
+            <>
+              <TabLink
+                to={`/class/${courseId}/admin/summary`}
+                className={activeTab === "summary" ? "active" : ""}
+              >
+                요약
+              </TabLink>
+              <TabLink
+                to={`/class/${courseId}/admin/students`}
+                className={activeTab === "students" ? "active" : ""}
+              >
+                과제 보기
+              </TabLink>
+              <TabLink
+                to={`/class/${courseId}/admin/setting`}
+                className={activeTab === "setting" ? "active" : ""}
+              >
+                설정
+              </TabLink>
+            </>
+          )}
         </TabContainer>
-
+  
         <IconContainer>
+          {currentCourse?.isCreator && (
+            <>
+            <Icon
+              className="material-icons"
+              src={Delete}
+              alt="delete icon"
+              onClick={() => setShowDeleteModal(true)}
+            />
+          <Icon
+            className="material-icons"
+            src={Share}
+            alt="share icon"
+            onClick={handleShare}
+          />
+          </>
+          )}
           <Icon 
             className="material-icons" 
             src={Delete} 
@@ -266,21 +322,32 @@ const AdminTopBar = ({ activeTab }) => {
           )}
         </IconContainer>
       </NavbarContent>
+  
       {showDeleteModal && (
         <ModalOverlay>
           <ModalContent>
             <h2>강의실 삭제</h2>
             <span>강의실을 삭제할까요?</span>
             <div className="button-container">
-              <button className="close-button" onClick={() => setShowDeleteModal(false)}>취소</button>
-              <button className="delete-button" onClick={() => handleDeleteLecture(courseId)}>삭제하기</button>
+              <button
+                className="close-button"
+                onClick={() => setShowDeleteModal(false)}
+              >
+                취소
+              </button>
+              <button
+                className="delete-button"
+                onClick={() => handleDeleteLecture(courseId)}
+              >
+                삭제하기
+              </button>
             </div>
           </ModalContent>
         </ModalOverlay>
       )}
     </Container>
   );
-};
+};  
 
 AdminTopBar.propTypes = {
   activeTab: PropTypes.string.isRequired,
