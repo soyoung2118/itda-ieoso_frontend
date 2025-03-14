@@ -272,7 +272,7 @@ export const ValidateMessage = styled.div`
   margin-left: 0.4rem;
   width: 100%;
   margin-bottom: 10px;
-  min-height: 20px;
+  min-height: 15px;
 `;
 
 export const WelcomeMessage = styled.div`
@@ -299,5 +299,5 @@ export const NextButton = styled.button`
   font-size: 1rem;
   cursor: pointer;
   border-radius: 15px;
-  margin: 20px auto;
+  margin: 10px auto;
 `;

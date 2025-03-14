@@ -208,15 +208,14 @@ export default function SignUp() {
                     <EmailCheckButton onClick={handleEmailCheck}>이메일 확인</EmailCheckButton>
                   </InputEmailContainer>
                 </InputContainer>
-                {emailCheckResult && (
-                  <ValidateMessage
-                    style={{
-                      color: emailCheckResult.includes('사용 가능한') ? 'var(--guide-green-color)' : 'var(--guide-red-color)',
-                      visibility: emailCheckResult ? 'visible' : 'hidden',
-                  }}>
-                    {emailCheckResult}
-                  </ValidateMessage>
-                )}
+                <ValidateMessage
+                  style={{
+                    color: emailCheckResult.includes('사용 가능한') ? 'var(--guide-green-color)' : 'var(--guide-red-color)',
+                    visibility: emailCheckResult ? 'visible' : 'hidden',
+                  }}
+                >
+                  {emailCheckResult || ''}
+                </ValidateMessage>
                 <InputContainer >
                 <Label>비밀번호</Label>
                   <SignUpInput
@@ -245,15 +244,12 @@ export default function SignUp() {
                     onChange={e => setConfirmPassword(e.target.value)}
                   />
                 
-                {step === 2 && password !== confirmPassword && (
-                  <ValidateMessage style={{
-                    color: 'var(--guide-red-color)',
-                    
-                  }}>
-                    비밀번호가 일치하지 않습니다. 다시 확인해주세요.
-                  </ValidateMessage>
-                  )}
-                  </InputContainer>
+                </InputContainer>
+                <ValidateMessage style={{ color: 'var(--guide-red-color)' }}>
+                  {step === 2 && password !== confirmPassword && password.length > 0
+                    ? '비밀번호가 일치하지 않습니다. 다시 확인해주세요.'
+                    : ''}
+                </ValidateMessage>
               </div>
               <NextButton
                 onClick={handleCombinedClick}
