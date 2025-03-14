@@ -14,6 +14,7 @@ import {
 } from "../../../style/Styles";
 import { ModalOverlay} from "../../ui/modal/ModalStyles";
 import styled from "styled-components";
+import { findpassword } from '../../api/usersApi';
 
 export default function FindPassword() {
   const navigate = useNavigate();
@@ -21,13 +22,25 @@ export default function FindPassword() {
   const [email, setEmail] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleFindPassword = (event) => {
+  const handleFindPassword = async (event) => {
     event.preventDefault();
     if (!name || !email) {
       alert('이름과 이메일을 작성해주세요.');
       return;
     }
-    setIsModalOpen(true);
+
+    try {
+      const response = await findpassword(name, email);
+
+      if (response) {
+        setIsModalOpen(true);
+      } else {
+        alert('비밀번호 찾기에 실패했습니다. 다시 시도해주세요.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('서버 오류가 발생했습니다. 나중에 다시 시도해주세요.');
+    }
   }
 
   const closeModal = () => {
