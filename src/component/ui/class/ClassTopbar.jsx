@@ -69,9 +69,9 @@ const ClassTitleContainer = styled.div`
 `;
 
 const DropdownContainer = styled.div`
-  position: fixed;
-  top: 175px;
-  left: 120px;
+  position: absolute;
+  top: 200px;
+  left: 125px;
   font-weight: bold;
   min-width: 5rem;
   width: 10rem;
