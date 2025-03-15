@@ -19,6 +19,31 @@ export const login = async (credentials) => {
     }
 };
 
+export const findpassword = async (name, email) => {
+    const response = await api.post(`/users/reset/password?email=${email}&name=${name}`);
+    return response.data;
+}
+
+export const signup = async (credentials) => {
+  const response = await api.post('/users/sign-up', credentials);
+  return response.data;
+};
+
+export const checkEmail = async (email) => {
+  const response = await api.get(`/users/check-email?email=${email}`);
+  return response.data;
+};
+
+export const logout = async () => {
+  try{
+    const response = await api.post('/logout');
+    return response;
+  } catch (error) {
+    console.error('로그아웃 중 오류 발생:', error);
+    throw error;
+  }
+};
+
 // 자동 로그아웃 타이머 시작 함수
 const startLogoutTimer = () => {
     const expirationTime = localStorage.getItem('tokenExpiration');
@@ -45,26 +70,6 @@ const startLogoutTimer = () => {
             });
         }
     }
-};
-
-export const signup = async (credentials) => {
-  const response = await api.post('/users/sign-up', credentials);
-  return response.data;
-};
-
-export const checkEmail = async (email) => {
-  const response = await api.get(`/users/check-email?email=${email}`);
-  return response.data;
-};
-
-export const logout = async () => {
-  try{
-    const response = await api.post('/logout');
-    return response;
-  } catch (error) {
-    console.error('로그아웃 중 오류 발생:', error);
-    throw error;
-  }
 };
 
 export const getUsersInfo = async () => {

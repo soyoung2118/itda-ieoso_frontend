@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { NavLink, useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import PropTypes from "prop-types";
@@ -8,6 +8,7 @@ import { ModalOverlay, ModalContent } from "../../ui/modal/ModalStyles";
 import api from "../../api/api";
 import { getMyCoursesTitles } from "../../api/classApi";
 import { UsersContext } from "../../contexts/usersContext";
+import { getCourseNameandEntryCode } from "../../api/classApi";
 
 const Container = styled.div`
   width: 100%;
@@ -116,12 +117,69 @@ const Icon = styled.img`
   }
 `;
 
+const ShareDropdownContainer = styled.div`
+  position: absolute;
+  top: 340px;
+  right: 110px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  width: 250px;
+
+  div {
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0 12px;
+    background-color: #EDEDED;
+    border-radius: 10px;
+  }
+
+  text{
+    height: 100%;
+    font-weight: 700;
+  }
+
+  .shareinfo{
+    margin-bottom: 12px;
+  }
+
+  span {
+    padding: 6px 10px 6px;
+  }
+
+  button {
+    background-color: #F7F7F7;
+    color: var(--black-color);
+    border: none;
+    border-radius: 0 15px 15px 0;
+    padding: 7px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .invite-button{
+    width: 100%;
+    font-weight: 600;
+    background-color: var(--pink-color);
+    padding: 10px 0;
+    margin-top: 5px;
+    border-radius: 15px;
+  }
+`;
+
+
 const AdminTopBar = ({ activeTab }) => {
   const { courseId } = useParams();
   const { user } = useContext(UsersContext);
   const navigate = useNavigate();
   // 모달 관련 상태
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [courseName, setCourseName] = useState("");
+  const [entryCode, setEntryCode] = useState("");
   const [classOptions, setClassOptions] = useState(null);
   const [currentCourse, setCurrentCourse] = useState(null);
   
@@ -139,7 +197,19 @@ const AdminTopBar = ({ activeTab }) => {
   
     fetchClasses();
   }, [user?.userId, courseId]); 
-  
+
+  useEffect(() => {
+    const fetchCourseDetails = async () => {
+      const details = await getCourseNameandEntryCode(courseId);
+      if (details) {
+        setCourseName(details.courseTitle);
+        setEntryCode(details.entryCode);
+      }
+    };
+
+    fetchCourseDetails();
+  }, [courseId]);
+
   const handleDeleteLecture = async (courseId) => {
     console.log('Deleting course with ID:', courseId);
     try {
@@ -150,8 +220,11 @@ const AdminTopBar = ({ activeTab }) => {
     }
   };
   
-  const handleShareAlert = async () => {
-    alert('공유 기능은 아직 준비중입니다 :)');
+  const handleShare = () => {
+    const inviteText = `[${courseName}] 강의실에 초대합니다!\n\n🔗 강의실 링크: https://eduitda.com\n📌 강의실 코드: ${entryCode}\n\n1. itda 로그인\n2. + 버튼 클릭 > 강의실 입장하기\n3. 강의실 코드 입력\n\n지금 바로 참여하고 함께 배워요! 😊`;
+    navigator.clipboard.writeText(inviteText)
+      .then(() => alert('초대 메시지가 복사되었습니다!'))
+      .catch(err => console.error('복사 실패:', err));
   };
 
   return (
@@ -204,18 +277,35 @@ const AdminTopBar = ({ activeTab }) => {
         <IconContainer>
           {currentCourse?.isCreator && (
             <>
-            <Icon
-              className="material-icons"
-              src={Delete}
-              alt="delete icon"
-              onClick={() => setShowDeleteModal(true)}
-            />
-          <Icon
-            className="material-icons"
-            src={Share}
-            alt="share icon"
-            onClick={handleShareAlert}
+          <Icon 
+            className="material-icons" 
+            src={Delete} 
+            alt="delete icon" 
+            onClick={() => {
+              setShowDeleteModal(true);
+            }}
           />
+          <Icon 
+            className="material-icons" 
+            src={Share} 
+            alt="share icon" 
+            onClick={() => setShowDropdown(!showDropdown)}
+          />
+          {showDropdown && (
+            <ShareDropdownContainer>
+              <text>강의실 링크</text>
+              <div className="shareinfo">
+                <span>www.eduitda.com</span>
+                <button onClick={() => navigator.clipboard.writeText('www.eduitda.com')}>URL 복사</button>
+              </div>
+              <text>강의실 코드</text>
+              <div className="shareinfo">
+                <span>{entryCode}</span>
+                <button onClick={() => navigator.clipboard.writeText(entryCode)}>코드 복사</button>
+              </div>
+              <button className="invite-button" onClick={handleShare}>강의실 초대하기</button>
+            </ShareDropdownContainer>
+              )}  
           </>
           )}
         </IconContainer>

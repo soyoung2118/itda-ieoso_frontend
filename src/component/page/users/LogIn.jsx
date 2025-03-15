@@ -1,4 +1,5 @@
 import { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import TopBar from "../../ui/TopBar";
 import logoImage from "../../img/logo/itda_logo_symbol.svg";
 //import { Checkbox, FormControlLabel } from '@mui/material';
@@ -6,10 +7,11 @@ import {
     Container,
     LogoImage,
     LogoText,
+    SignUpContainer,
     Form,
     Label,
     LoginInput,
-    //CheckboxContainer,
+    CheckboxContainer,
     //CustomCheckboxSquare,
     LoginButton,
     SignUpLink,
@@ -19,6 +21,7 @@ import { UsersContext } from "../../contexts/usersContext";
 
 export default function LogIn() {
     const { setUser, setIsUser } = useContext(UsersContext);
+    const navigate = useNavigate();
     //const [isChecked, setIsChecked] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -66,7 +69,7 @@ export default function LogIn() {
             <Container>
                 <LogoImage src={logoImage} alt="logo" />
                 <LogoText>로그인</LogoText>
-                <div style={{ minWidth: '300px', width: '40%', margin: '0 auto' }}>
+                <SignUpContainer>
                     <Form onSubmit={handleLogin}>
                         <Label>이메일</Label>
                         <LoginInput
@@ -81,8 +84,8 @@ export default function LogIn() {
                             placeholder="비밀번호를 입력해주세요."
                             onChange={(e) => setPassword(e.target.value)}
                         />
-                        {/* 
-                        <CheckboxContainer>
+                        <CheckboxContainer style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'end' }}>
+                            {/*
                             <FormControlLabel
                                 control={
                                     <Checkbox
@@ -95,17 +98,32 @@ export default function LogIn() {
                                 label="자동 로그인"
                                 style={{ margin: 0 }}  // 여백 제거로 높이 일치
                             />
+                            */}
+                            
+                            <span 
+                                onClick={() => navigate('/find-password')} 
+                                style={{ 
+                                    marginTop: '5px',
+                                    marginRight: '10px', 
+                                    textDecoration: 'none', 
+                                    color: '#909090',
+                                    fontSize: '0.9rem',  // 폰트 크기 일치
+                                    lineHeight: '1.5',   // 라인 높이 일치
+                                    cursor: 'pointer'    // 클릭 가능한 커서
+                                }}
+                            >
+                                비밀번호 찾기
+                            </span>
                         </CheckboxContainer>
-                        */}
                         <LoginButton
-                            style={{ fontSize: '1rem', marginTop: '25px' }}
+                            style={{ fontSize: '1rem', marginTop: '15px' }}
                             type="submit"
                         >로그인</LoginButton>
                     <SignUpLink>
                         계정이 없으신가요? <a href="/signup">회원가입하기</a>
                     </SignUpLink>
-                </Form>
-                </div>
+                    </Form>
+                </SignUpContainer>
             </Container>
         </>
     );

@@ -6,6 +6,7 @@ import TopBar from "../ui/TopBar";
 import ClassTopbar from "../ui/class/ClassTopbar";
 import { PageLayout } from "../ui/class/ClassLayout";  
 import { getMyCourses } from "../api/classApi";
+
 export default function Class() {
   const { courseId: paramCourseId } = useParams(); 
   const navigate = useNavigate();
@@ -31,9 +32,11 @@ export default function Class() {
           try {
             // 사용자가 수강 중인 강의 목록 가져오기
             const myCourses = await getMyCourses(user.userId);
-            const isEnrolled = myCourses.some(course => course.courseId === Number(selectedCourseId));
+            const currentCourse = myCourses.find(course => course.courseId === Number(selectedCourseId));
+            const isEnrolled = !!currentCourse;
+            const isAssignmentPublic = currentCourse?.isAssignmentPublic;
 
-            const restrictedPaths = ['/admin/', '/overview/info', '/overview/notice', '/curriculum/'];
+            const restrictedPaths = ['/overview/info', '/overview/notice', '/curriculum/', '/admin/'];
             const currentPath = window.location.pathname;
             const isRestrictedPath = restrictedPaths.some(path => currentPath.includes(path));
 
@@ -42,8 +45,8 @@ export default function Class() {
               if (isOverviewOrCurriculum && !isEnrolled) {
                 alert('강의 참여자가 아닙니다. 강의 목록으로 이동합니다.');
                 navigate('/class/list');
-              } else if (!isOverviewOrCurriculum) {
-                alert('개설자가 아닙니다. 강의 목록으로 이동합니다.');
+              } else if (!isOverviewOrCurriculum && !isAssignmentPublic) {
+                alert('접근오류로 강의 목록으로 이동합니다.');
                 navigate('/class/list');
               }
             }
