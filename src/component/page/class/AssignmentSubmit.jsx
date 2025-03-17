@@ -261,6 +261,12 @@ const NoticeContentContainer = styled.div`
   display: flex;
   flex-direction: column;
   padding-left: 10px;
+  overflow: auto;
+  height: calc(30vh - 65px);
+  white-space: pre;
+  &::-webkit-scrollbar {
+    display: block;
+  }
 `;
 
 const TitleContainer = styled.div`
