@@ -232,7 +232,8 @@ const PlayingCurriculumSidebar = ({
     };
 
     const dateText = (time) => {
-      return time.replace("T", " "); 
+        const date = time.slice(0, -3);
+      return date.replace("T", " "); 
     }
 
     return (
