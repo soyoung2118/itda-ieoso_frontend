@@ -31,7 +31,6 @@ const ClassPlaying = () => {
 
     return (
         <>
-            <TopBar />
             <Container>
                 <LeftSide>
                     <TitleContainer>

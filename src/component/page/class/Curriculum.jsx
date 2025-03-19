@@ -576,7 +576,7 @@ const Curriculum = () => {
     } else if (sub.contentType === "assignment") {
       if (isCreator) {
         navigate(
-          `/assignment/submit/${courseId}/${activeLectureId}/${sub.assignmentId}`
+          `/class/${courseId}/assignment/submit/${activeLectureId}/${sub.assignmentId}`
         );
       }
       if (now.getTime() < startDate.getTime()) {
@@ -586,7 +586,7 @@ const Curriculum = () => {
         return;
       }
       navigate(
-        `/assignment/submit/${courseId}/${activeLectureId}/${sub.assignmentId}`
+        `/class/${courseId}/assignment/submit/${activeLectureId}/${sub.assignmentId}`
       );
     }
   };

@@ -151,7 +151,7 @@ const PlayingCurriculumSidebar = ({
         }
         setSelectedContentId(goVideo);
         setSelectedType("video");
-        navigate(`/playing/${courseId}/${goLecture}/${goVideo}`);
+        navigate(`/class/${courseId}/playing/${goLecture}/${goVideo}`);
     };
 
     const handleMaterialClick = async (material) => {
@@ -228,7 +228,7 @@ const PlayingCurriculumSidebar = ({
 
         setSelectedContentId(goAssignment);
         setSelectedType("assignment");
-        navigate(`/assignment/submit/${courseId}/${goLecture}/${goAssignment}`);
+        navigate(`/class/${courseId}/assignment/submit/${goLecture}/${goAssignment}`);
     };
  
     const dateText = (time) => {

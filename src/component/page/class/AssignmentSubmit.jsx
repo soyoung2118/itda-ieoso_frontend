@@ -156,7 +156,6 @@ const ClassAssignmentSubmit = () => {
 
   return (
     <Wrapper>
-      <TopBar />
       <Container>
         <LeftSide>
           <TitleContainer>

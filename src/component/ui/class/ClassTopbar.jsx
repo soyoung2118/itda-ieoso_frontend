@@ -212,7 +212,7 @@ const ClassTopbar = ({ onCourseChange, isCreator }) => {
   const getActiveTab = () => {
     if (location.pathname.includes("/overview/info")) return "info";
     if (location.pathname.includes("/overview/notice")) return "notice";
-    if (location.pathname.includes("/curriculum")) return "curriculum";
+    if (location.pathname.includes("/curriculum") || location.pathname.includes("/playing") || location.pathname.includes("/submit")) return "curriculum";
     if (location.pathname.includes("/admin")) return "admin";
     return "";
   };
