@@ -38,11 +38,6 @@ const AssignmentSubmitBox = ({
       return;
     }
 
-    if (files.length >= 4) {
-      alert("파일은 3개까지만 업로드 가능합니다.");
-      return;
-    }
-
     try {
       let response;
 
