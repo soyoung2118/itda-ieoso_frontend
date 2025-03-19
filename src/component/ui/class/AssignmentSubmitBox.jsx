@@ -15,6 +15,7 @@ const AssignmentSubmitBox = ({
   setFiles,
   submissionId,
   submissionStatus,
+  submissionType,
   setCanEdit,
   setIsSubmittedModalOpen,
   setIsReSubmittedModalOpen,
@@ -24,44 +25,6 @@ const AssignmentSubmitBox = ({
 
   const [previousFiles, setPreviousFiles] = useState([]);
   const [deletedFiles, setDeletedFiles] = useState([]);
-  const [submissionType, setSubmissionType] = useState(null);
-
-  useEffect(() => {
-    const fetchSubmissionType = async () => {
-      if (!assignmentId || !courseId || !userId) return;
-
-      try {
-        const response = await api.get(
-          `/lectures/curriculum/${courseId}/${userId}`
-        );
-
-        if (response.data.success) {
-          const curriculumData = response.data.data.curriculumResponses;
-
-          let foundType = null;
-          for (const lecture of curriculumData) {
-            const assignment = lecture.assignments.find(
-              (a) => a.assignmentId === parseInt(assignmentId)
-            );
-            if (assignment) {
-              foundType = assignment.submissionType;
-              break;
-            }
-          }
-
-          if (foundType) {
-            setSubmissionType(foundType);
-          } else {
-            console.warn("해당 과제의 submissionType을 찾을 수 없습니다.");
-          }
-        }
-      } catch (error) {
-        console.error("과제 유형 로딩 오류:", error);
-      }
-    };
-
-    fetchSubmissionType();
-  }, [assignmentId, courseId, userId]);
 
   useEffect(() => {
     setCanEdit(true);
@@ -177,7 +140,7 @@ const AssignmentSubmitBox = ({
   };
 
   return (
-    <Wrapper>
+    <Wrapper isText={submissionType === "TEXT"} isBoth={submissionType === "BOTH"}>
       {(submissionType === "TEXT" || submissionType === "BOTH") && (
         <Box>
           <FormTitle>내용</FormTitle>
@@ -195,7 +158,7 @@ const AssignmentSubmitBox = ({
       {(submissionType === "FILE" || submissionType === "BOTH") && (
         <Box style={{ marginTop: submissionType === "BOTH" ? "20px" : "0px" }}>
           <FormTitle>파일 업로드하기</FormTitle>
-          <DragZone setFiles={setFiles} />
+          <DragZone files={files} setFiles={setFiles} />
 
           {files &&
             files.map((file) => (
@@ -241,9 +204,8 @@ const FormTitle = styled.div`
 
 const Wrapper = styled.div`
   border-radius: 20px;
-  background-color: #ffffff;
-  height: 80vh;
-  margin-bottom: 60px;
+  background-color: #FFFFFF;
+  height: ${(props) => (props.isText ? "32vh" : props.isBoth ? "80vh" : "55vh")};
   padding: 10px;
 `;
 

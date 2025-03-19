@@ -22,6 +22,7 @@ const ClassAssignmentSubmit = () => {
 
   const [submissionId, setSubmissionId] = useState(null);
   const [submissionStatus, setSubmissionStatus] = useState("");
+  const [submissionType, setSubmissionType] = useState(null);
 
   const [curriculumData, setCurriculumData] = useState([]);
   const [currentLectureInfo, setCurrentLectureInfo] = useState([]);
@@ -51,7 +52,6 @@ const ClassAssignmentSubmit = () => {
           if (submission) {
             setSubmissionId(submission.submissionId);
             setSubmissionStatus(submission.submissionStatus);
-            console.log(submissionStatus);
           } else {
             setSubmissionId(null);
             setSubmissionStatus("NOT_SUBMITTED");
@@ -109,6 +109,44 @@ const ClassAssignmentSubmit = () => {
   }, [currentLectureInfo, assignmentId]);
 
   useEffect(() => {
+      const fetchSubmissionType = async () => {
+        if (!assignmentId || !courseId || !user) return;
+  
+        try {
+          const response = await api.get(
+            `/lectures/curriculum/${courseId}/${user.userId}`
+          );
+  
+          if (response.data.success) {
+            const curriculum = response.data.data.curriculumResponses;
+            
+            let foundType = null;
+            for (const lecture of curriculum) {
+              const assignment = lecture.assignments.find(
+                (a) => a.assignmentId === parseInt(assignmentId)
+              );
+              if (assignment) {
+                foundType = assignment.submissionType;
+                console.log(foundType);
+                break;
+              }
+            }
+  
+            if (foundType) {
+              setSubmissionType(foundType);
+            } else {
+              console.warn("해당 과제의 submissionType을 찾을 수 없습니다.");
+            }
+          }
+        } catch (error) {
+          console.error("과제 유형 로딩 오류:", error);
+        }
+      };
+  
+      fetchSubmissionType();
+    }, [assignmentId, courseId, user]);
+
+  useEffect(() => {
     if (submissionStatus === "NOT_SUBMITTED") {
       setCanEdit(true);
     } else {
@@ -156,6 +194,7 @@ const ClassAssignmentSubmit = () => {
               setFiles={setFiles}
               submissionId={submissionId}
               submissionStatus={submissionStatus}
+              submissionType={submissionType}
               setIsSubmittedModalOpen={setIsSubmittedModalOpen}
               setIsReSubmittedModalOpen={setIsReSubmittedModalOpen}
             />
@@ -166,6 +205,7 @@ const ClassAssignmentSubmit = () => {
               files={files}
               submissionId={submissionId}
               submissionStatus={submissionStatus}
+              submissionType={submissionType}
               setIsDeleteModalOpen={setIsDeleteModalOpen}
             />
           )}
