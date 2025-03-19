@@ -230,7 +230,7 @@ const PlayingCurriculumSidebar = ({
         setSelectedType("assignment");
         navigate(`/assignment/submit/${courseId}/${goLecture}/${goAssignment}`);
     };
-
+ 
     const dateText = (time) => {
         const date = time.slice(0, -3);
       return date.replace("T", " "); 

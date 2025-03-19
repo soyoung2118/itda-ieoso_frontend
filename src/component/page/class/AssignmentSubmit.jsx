@@ -6,9 +6,9 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import api from "../../api/api";
 import PlayingCurriculumSidebar from "../../ui/class/PlayingCurriculumSidebar";
 import { UsersContext } from "../../contexts/usersContext";
-import AssignmentModal from "../../ui/class/AssignmentModal";
 import AssignmentSubmitBox from "../../ui/class/AssignmentSubmitBox";
 import AssignmentShowBox from "../../ui/class/AssignmentShowBox";
+import { ModalOverlay } from "../../ui/modal/ModalStyles";
 
 const ClassAssignmentSubmit = () => {
   const navigate = useNavigate();
@@ -181,31 +181,40 @@ const ClassAssignmentSubmit = () => {
         </RightSide>
 
         {isSubmittedModalOpen && (
-          <AssignmentModal
-            text="과제 제출이 완료되었습니다."
-            onClose={() => {
-              setIsSubmittedModalOpen(false);
-              window.location.reload();
-            }}
-          />
+          <ModalOverlay>
+            <ModalContainer>
+              <Message>과제 제출이 완료되었어요</Message>
+              <CloseButton
+                onClick={() => {
+                  setIsSubmittedModalOpen(false);
+                  window.location.reload();
+                }}>확인</CloseButton>
+            </ModalContainer>
+          </ModalOverlay>
         )}
         {isReSubmittedModalOpen && (
-          <AssignmentModal
-            text="과제 수정이 완료되었습니다."
-            onClose={() => {
-              setIsReSubmittedModalOpen(false);
-              window.location.reload();
-            }}
-          />
+          <ModalOverlay>
+            <ModalContainer>
+              <Message>과제가 수정되었어요</Message>
+              <CloseButton
+                onClick={() => {
+                  setIsReSubmittedModalOpen(false);
+                  window.location.reload();
+                }}>확인</CloseButton>
+            </ModalContainer>
+          </ModalOverlay>
         )}
         {isDeleteModalOpen && (
-          <AssignmentModal
-            text="과제 삭제가 완료되었습니다."
-            onClose={() => {
-              setIsDeleteModalOpen(false);
-              window.location.reload();
-            }}
-          />
+          <ModalOverlay>
+            <ModalContainer>
+              <Message>과제가 삭제되었어요</Message>
+              <CloseButton
+                onClick={() => {
+                  setIsDeleteModalOpen(false);
+                  window.location.reload();
+                }}>확인</CloseButton>
+            </ModalContainer>
+          </ModalOverlay>
         )}
       </Container>
     </Wrapper>
@@ -297,74 +306,36 @@ const RightSide = styled.div`
   background-color: #ffffff;
 `;
 
-const EditorContainer = styled.div`
-  border: 2px solid #cdcdcd;
-  border-radius: 8px;
-  overflow: hidden;
-  margin-top: 10px;
-  height: 18vh;
-  margin: 10px;
-`;
-
-const TextArea = styled.textarea`
-    width: 100%;
-    height: 18vh;
-    padding: 16px;
-    border: none;
-    resize: none;
-    font-size: 13px;
-
-    &::placeholder {
-        color: #9E9E9E;
-    }
-
-    &:focus {
-        outline: none;
-    }
-
-    background-color: $submissionStatus === 'NOT_SUBMITTED' ? #FFFFFF : '#F6F7F9';
-`;
-
-const ImageItemContainer = styled.div`
+const ModalContainer = styled.div`
   display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  gap: 10px;
-  margin: 10px;
-  padding-bottom: 5px;
-  background-color: #f6f7f9;
-  border-radius: 10px;
-  height: 40px;
-`;
-
-const ImageItem = styled.div`
-  display: flex;
+  flex-direction: column;
   align-items: center;
-  background-color: #f6f7f9;
-  padding: 5px;
-  justify-content: space-between;
+  background-color: white;
+  padding: 40px 80px;
   border-radius: 8px;
-`;
-const ImageText = styled.div`
-  margin-right: 3px;
-  max-width: 100px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  cursor: pointer;
+  text-align: center;
+  width: 50%;
+  max-width: 300px;
+  font-size: 1rem;
+  position: relative;
 `;
 
-const SubmitButton = styled.button`
-  float: right;
-  padding: 8px 20px;
-  background-color: #ff4747;
-  color: white;
+const Message = styled.div`
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 20px;
+`;
+
+const CloseButton = styled.button`
+  background: none;
   border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
+  color: red;
+  font-size: 16px;
   cursor: pointer;
-  margin-right: 10px;
+  position: absolute;
+  right: 30px;
+  bottom: 20px;
+  font-weight: 700;
 `;
 
 export default ClassAssignmentSubmit;
