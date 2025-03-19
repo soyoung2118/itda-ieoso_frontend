@@ -312,7 +312,7 @@ const NoticeContentContainer = styled.div`
   padding-left: 10px;
   overflow: auto;
   height: calc(30vh - 65px);
-  white-space: pre;
+  white-space: pre-wrap;
   &::-webkit-scrollbar {
     display: block;
   }
