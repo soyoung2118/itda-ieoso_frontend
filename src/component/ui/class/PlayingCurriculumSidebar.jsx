@@ -248,7 +248,7 @@ const PlayingCurriculumSidebar = ({
                       return (
                           <div key={lecture.lectureId}>
                               <CurriculumItem>
-                                  <ItemTitle>{index + 1}. {lecture.lectureDescription}</ItemTitle>
+                                  <ItemTitle>{index + 1}주차 {lecture.lectureDescription}</ItemTitle>
                               </CurriculumItem>
                                 {lecture.lectureId && sortedContents.map((content) => {
                                     const isSelected =
@@ -342,7 +342,7 @@ const MenuTitle = styled.div`
     font-weight: 600;
     background: none;
     border: none;
-    border-bottom: 3px solid #000
+    border-bottom: 1px solid #000
 `;
 
 const RightContainer = styled.div`
