@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import api from './api';
 
 export const login = async (credentials) => {
@@ -7,10 +8,10 @@ export const login = async (credentials) => {
         const token = response.headers['authorization'];
         if (token) {
             localStorage.setItem('token', token);
-            // 현재 시간에 10시간을 더한 만료 시간 저장
-            const expirationTime = new Date().getTime() + 36000000; // 10시간 = 36000000 밀리초
+
+            const expirationTime = new Date().getTime() + 36000000; // 10시간
             localStorage.setItem('tokenExpiration', expirationTime);
-            startLogoutTimer(); // 로그아웃 타이머 시작
+            startLogoutTimer();
         }
         return response;
     } catch (error) {
@@ -35,41 +36,43 @@ export const checkEmail = async (email) => {
 };
 
 export const logout = async () => {
-  try{
-    const response = await api.post('/logout');
-    return response;
-  } catch (error) {
-    console.error('로그아웃 중 오류 발생:', error);
-    throw error;
-  }
+    try {
+        const response = await api.post('/logout');
+        window.location.href = '/';
+
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        return response;
+    } catch (error) {
+        console.error('로그아웃 중 오류 발생:', error);
+        throw error;
+    }
 };
 
-// 자동 로그아웃 타이머 시작 함수
+// 자동 로그아웃 타이머 설정 함수
 const startLogoutTimer = () => {
+    if (window.autoLogoutTimer) {
+        clearTimeout(window.autoLogoutTimer);
+    }
+
     const expirationTime = localStorage.getItem('tokenExpiration');
     if (expirationTime) {
         const timeLeft = expirationTime - new Date().getTime();
         if (timeLeft > 0) {
-            setTimeout(() => {
-                logout().then(() => {
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('tokenExpiration');
-                    window.location.href = '/'; // 페이지 강제 이동
-                }).catch(error => {
-                    console.error('자동 로그아웃 중 오류 발생:', error);
-                });
+            window.autoLogoutTimer = setTimeout(() => {
+                logout();
             }, timeLeft);
         } else {
-            // 만료 시간이 이미 지난 경우 즉시 로그아웃
-            logout().then(() => {
-                localStorage.removeItem('token');
-                localStorage.removeItem('tokenExpiration');
-                window.location.href = '/';
-            }).catch(error => {
-                console.error('자동 로그아웃 중 오류 발생:', error);
-            });
+            logout(); // 시간이 이미 지났다면 즉시 로그아웃
         }
     }
+};
+
+// 앱이 실행될 때 자동 로그아웃 타이머를 설정 훅
+export const useAutoLogout = () => {
+    useEffect(() => {
+        startLogoutTimer();
+    }, []);
 };
 
 export const getUsersInfo = async () => {
