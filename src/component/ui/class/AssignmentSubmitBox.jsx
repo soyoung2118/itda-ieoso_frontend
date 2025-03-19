@@ -56,6 +56,11 @@ const AssignmentSubmitBox = ({
         });
       }
 
+      if(!submissionId){
+        alert('강의자는 과제를 제출할 수 없습니다.');
+        return;
+      }
+
       switch (submissionStatus) {
         case "NOT_SUBMITTED": {
           response = await api.put(
