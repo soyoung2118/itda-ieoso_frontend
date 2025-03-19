@@ -12,8 +12,7 @@ import {
     LoginInput,
     NextButton,
 } from "../../../style/Styles";
-import { ModalOverlay} from "../../ui/modal/ModalStyles";
-import styled from "styled-components";
+import { ModalOverlay, AlertModalContainer} from "../../ui/modal/ModalStyles";
 import { findpassword } from '../../api/usersApi';
 
 export default function FindPassword() {
@@ -28,7 +27,7 @@ export default function FindPassword() {
   const handleFindPassword = async (event) => {
     event.preventDefault();
     if (!name || !email) {
-      alert('이름과 이메일을 작성해주세요.');
+      setModalMessage('이름과 이메일을 작성해주세요.');
       return;
     }
 
@@ -92,43 +91,12 @@ export default function FindPassword() {
       </Container>
       {isModalOpen && (
         <ModalOverlay>
-          <ModalContainer>
-            <Message>{modalMessage}</Message>
-            <CloseButton onClick={closeModal}>확인</CloseButton>
-          </ModalContainer>
+          <AlertModalContainer>
+            <div className="text">{modalMessage}</div>
+            <div className="close-button" onClick={closeModal}>확인</div>
+          </AlertModalContainer>
         </ModalOverlay>
       )}
     </>
   );
 }
-
-const ModalContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: white;
-  padding: 40px 80px;
-  border-radius: 8px;
-  text-align: center;
-  width: 50%;
-  max-width: 300px;
-  font-size: 1rem;
-  position: relative;
-`;
-
-const Message = styled.div`
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 20px;
-`;
-
-const CloseButton = styled.button`
-  background: none;
-  border: none;
-  color: red;
-  font-size: 16px;
-  cursor: pointer;
-  position: absolute;
-  right: 30px;
-  bottom: 20px;
-`;

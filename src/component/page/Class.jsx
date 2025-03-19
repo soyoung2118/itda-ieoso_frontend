@@ -6,6 +6,7 @@ import TopBar from "../ui/TopBar";
 import ClassTopbar from "../ui/class/ClassTopbar";
 import { PageLayout } from "../ui/class/ClassLayout";  
 import { getMyCourses } from "../api/classApi";
+import { ModalOverlay, AlertModalContainer } from "../ui/modal/ModalStyles";
 
 export default function Class() {
   const { courseId: paramCourseId } = useParams(); 
@@ -16,6 +17,8 @@ export default function Class() {
   const [courseData, setCourseData] = useState(null);
   const [isCreator, setIsCreator] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
 
   useEffect(() => {
     if (!selectedCourseId || !user) return;
@@ -43,11 +46,11 @@ export default function Class() {
             if (!isCreator && isRestrictedPath) {
               const isOverviewOrCurriculum = ['/overview/', '/curriculum/'].some(path => currentPath.includes(path));
               if (isOverviewOrCurriculum && !isEnrolled) {
-                alert('강의 참여자가 아닙니다. 강의 목록으로 이동합니다.');
-                navigate('/class/list');
+                setModalMessage('강의 참여자가 아닙니다. 강의 목록으로 이동합니다.');
+                setShowModal(true);
               } else if (!isOverviewOrCurriculum && !isAssignmentPublic) {
-                alert('접근오류로 강의 목록으로 이동합니다.');
-                navigate('/class/list');
+                setModalMessage('접근오류로 강의 목록으로 이동합니다.');
+                setShowModal(true);
               }
             }
           } catch (error) {
@@ -69,6 +72,11 @@ export default function Class() {
     navigate(`/class/${newCourseId}/overview/info`);
   };
 
+  const handleModalClose = () => {
+    setShowModal(false);
+    navigate('/class/list');
+  };
+
   if (loading) return <div></div>;
   if (!courseData) return <div>강의 정보를 불러올 수 없습니다.</div>;
 
@@ -79,6 +87,14 @@ export default function Class() {
         <ClassTopbar selectedCourseId={selectedCourseId} onCourseChange={handleCourseChange} isCreator={isCreator} />
         <Outlet context={{ courseData, isCreator }} />
       </PageLayout>
+      {showModal && (
+            <ModalOverlay>
+              <AlertModalContainer>
+                <div className="text">{modalMessage}</div>
+                <div className="close-button" onClick={handleModalClose}>확인</div>
+              </AlertModalContainer>
+          </ModalOverlay>
+        )}
     </div>
   );
 }

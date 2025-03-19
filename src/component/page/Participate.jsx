@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import TopBar from "../ui/TopBar";
+import { ModalOverlay, AlertModalContainer } from "../ui/modal/ModalStyles";
 import logoImage from "../img/logo/itda_logo_symbol.svg";
 import { SignUpInput,NextButton } from "../../style/Styles";
 import api from "../api/api";
@@ -11,10 +12,21 @@ export default function Participate() {
   const navigate = useNavigate();
   const [code, setCode] = useState("");
   const { user } = useContext(UsersContext);
+  const [modalMessage, setModalMessage] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = (message) => {
+    setModalMessage(message);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   const handleParticipate = async () => {
     if (code.trim() === "") {
-      alert('코드를 입력해주세요.');
+      openModal('코드를 입력해주세요.');
       return;
     }
     
@@ -23,15 +35,15 @@ export default function Participate() {
       if (response.status === 200) {
         navigate('/class/list');
       } else if (response.status === 404) {
-        alert('존재하지 않는 코드에요');
+        openModal('존재하지 않는 코드에요');
       } else {
-        alert('오류가 발생했습니다.');
+        openModal('오류가 발생했습니다.');
       }
     } catch (error) {
       if (error.response && error.response.status === 404) {
-        alert('존재하지 않는 코드에요');
+        openModal('존재하지 않는 코드에요');
       } else {
-        alert('오류가 발생했습니다.');
+        openModal('오류가 발생했습니다.');
       }
     }
   }
@@ -57,6 +69,14 @@ export default function Participate() {
           </Form>
         </div>
       </Container>
+      {isModalOpen && (
+        <ModalOverlay>
+          <AlertModalContainer>
+            <div className="text">{modalMessage}</div>
+            <div className="close-button" onClick={closeModal}>닫기</div>
+          </AlertModalContainer>
+        </ModalOverlay>
+      )}
     </>
   );
 }
