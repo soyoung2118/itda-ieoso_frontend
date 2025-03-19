@@ -39,9 +39,6 @@ const ClassPlaying = () => {
                         </MainTitle>
                         
                         <ClickContainer onClick={handleNavigationCurriculum}>
-                            <SubTitle>
-                                {currentVideoInfo.videoTitle || "강의를 선택해주세요"}
-                            </SubTitle>
                             <ArrowForwardIosIcon style={{ width: '13px', marginLeft: '15px' }}/>
                         </ClickContainer>
                     </TitleContainer>
@@ -58,6 +55,7 @@ const ClassPlaying = () => {
 
 const Container = styled.div`
     display: flex;
+    margin-top: 30px;
     overflow: hidden;
     background-color: #F6F7F9;
 `;
@@ -65,20 +63,19 @@ const Container = styled.div`
 const LeftSide = styled.div`
     width: 70vw;
     flex: 1;
-    padding: 0px 37px;
+    padding-left: 5px;
+    padding-right: 20px;
 `;
 
 const RightSide = styled.div`
-    width: 30vw;
-    padding: 0px 15px;
-    padding-top: 36px;
-    padding-bottom: 24px;
+    width: 20vw;
+    padding: 25px 20px;
     background-color: #FFFFFF;
+    border-radius: 20px;
 `;
 
 const TitleContainer = styled.div`
     display: flex;
-    margin-top: 36px;
     margin-bottom: 26px;
     align-items: flex-end;
 `;

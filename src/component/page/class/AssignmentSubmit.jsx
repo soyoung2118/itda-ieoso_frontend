@@ -155,7 +155,6 @@ const ClassAssignmentSubmit = () => {
   }, [assignmentId, submissionStatus]);
 
   return (
-    <Wrapper>
       <Container>
         <LeftSide>
           <TitleContainer>
@@ -256,29 +255,21 @@ const ClassAssignmentSubmit = () => {
           </ModalOverlay>
         )}
       </Container>
-    </Wrapper>
   );
 };
 
-const Wrapper = styled.div`
-  height: 100vh;
-`;
-
 const Container = styled.div`
-    display: flex;
-    height: 100%,
-    background-color: #F6F7F9;
+  display: flex;
+  margin-top: 30px;
+  background-color: #F6F7F9;
 `;
 
 const LeftSide = styled.div`
   width: 70vw;
   flex: 1;
-  padding: 0px 37px;
-  height: calc(92vh - 16px);
-  overflow-y: scroll;
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  padding-left: 5px;
+  padding-right: 20px;
+
 `;
 
 const FormTitle = styled.div`
@@ -318,7 +309,6 @@ const NoticeContentContainer = styled.div`
 `;
 
 const TitleContainer = styled.div`
-  margin-top: 36px;
   margin-bottom: 26px;
   display: flex;
   align-items: flex-end;
@@ -329,7 +319,6 @@ const MainTitle = styled.div`
   font-weight: 700;
   display: flex;
   align-items: center;
-  align-items: center;
   margin-right: 10px;
 `;
 
@@ -339,10 +328,10 @@ const ClickContainer = styled.div`
 `;
 
 const RightSide = styled.div`
-  width: 30vw;
-  padding: 0px 15px;
-  padding-top: 36px;
-  background-color: #ffffff;
+  width: 20vw;
+  padding: 25px 20px;
+  background-color: #FFFFFF;
+  border-radius: 20px;
 `;
 
 const ModalContainer = styled.div`

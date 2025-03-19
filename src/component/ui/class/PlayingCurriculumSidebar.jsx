@@ -349,6 +349,7 @@ const RightContainer = styled.div`
     height: 80vh;
     overflow-y: scroll;
     margin-right: -12px;
+    white-space: pre-wrap;
 
     &::-webkit-scrollbar {
         display: none;
@@ -366,19 +367,6 @@ const CurriculumItem = styled.div`
     justify-content: space-between;
     padding: 8px 0;
     border-bottom: 1px solid #eee;
-`;
-
-const IconWrapper = styled.div`
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px;
-    
-    &:hover {
-        background-color: #f5f5f5;
-        border-radius: 50%;
-    }
 `;
 
 const ItemTitle = styled.span`
@@ -425,11 +413,13 @@ const IconContainer = styled.div`
 const BlackText = styled.div`
   font-size: 13px;
   color: #474747;
+  white-space: pre-wrap;
 `
 
 const RedText = styled.div`
   font-size: 11px;
   color: #FF4747;
+  white-space: pre-wrap;
 `
 
 const GreyText = styled.div`
