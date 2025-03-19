@@ -153,9 +153,9 @@ const handleAssignmentTimeChange = (timeString) => {
           : null,
         durationWeeks: Number(form.durationWeeks),
         lectureDay: form.lectureDays,
-        lectureTime: isLecturePending ? '00:00:00' : formatTimeToServer(form.lectureTime),
+        lectureTime: isLecturePending ? null : formatTimeToServer(form.lectureTime),
         assignmentDueDay: form.assignmentDays,
-        assignmentDueTime: isAssignmentPending ? '00:00:00' : formatTimeToServer(form.assignmentTime),
+        assignmentDueTime: isAssignmentPending ? null : formatTimeToServer(form.assignmentTime),
         difficultyLevel: form.difficulty.toUpperCase(),
         isAssignmentPublic: form.isAssignmentPublic
       };
@@ -336,7 +336,7 @@ const handleAssignmentTimeChange = (timeString) => {
                         disabled={isLecturePending}
                         placeholder="강의 시간을 설정해주세요."
                       />
-                      {/* <RadioButton 
+                      <RadioButton 
                         active={!isLecturePending}
                         onClick={() => {
                           setIsLecturePending(!isLecturePending)
@@ -347,7 +347,7 @@ const handleAssignmentTimeChange = (timeString) => {
                       >
                         {!isLecturePending && "정해지지 않았어요"}
                         {isLecturePending && "설정 되었어요!"}
-                      </RadioButton> */}
+                      </RadioButton>
                       </TimePickerWrapper>
                       {form.lectureTime && !isLecturePending && 
                         <HelpText style={{color: 'var(--guide-green-color)'}}>강의 시간이 설정되었어요!</HelpText>
@@ -389,7 +389,7 @@ const handleAssignmentTimeChange = (timeString) => {
                         disabled={isAssignmentPending}
                         placeholder="과제 시간을 설정해주세요."
                       />
-                      {/* <RadioButton 
+                      <RadioButton 
                         active={!isAssignmentPending}
                         onClick={() => {
                           setIsAssignmentPending(!isAssignmentPending)
@@ -400,7 +400,7 @@ const handleAssignmentTimeChange = (timeString) => {
                       >
                         {!isAssignmentPending && "정해지지 않았어요"}
                         {isAssignmentPending && "설정 되었어요!"}
-                      </RadioButton> */}
+                      </RadioButton>
                     </TimePickerWrapper>
                     {form.assignmentTime && !isAssignmentPending &&
                    <HelpText style={{color: 'var(--guide-green-color)'}}>과제 시간이 설정되었어요!</HelpText>
