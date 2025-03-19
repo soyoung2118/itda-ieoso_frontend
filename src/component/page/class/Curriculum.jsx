@@ -572,7 +572,7 @@ const Curriculum = () => {
         return;
       }
 
-      navigate(`/playing/${courseId}/${activeLectureId}/${sub.videoId}`);
+      navigate(`/class/${courseId}/playing/${activeLectureId}/${sub.videoId}`);
     } else if (sub.contentType === "assignment") {
       if (isCreator) {
         navigate(
