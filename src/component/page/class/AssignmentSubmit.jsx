@@ -155,6 +155,15 @@ const ClassAssignmentSubmit = () => {
     }
   }, [assignmentId, submissionStatus]);
 
+  function truncateText(text, maxLength) {
+    if (text.length > maxLength) {
+      return text.slice(0, maxLength) + "...";
+    }
+    return text;
+  }
+
+  const maxLength = 30;
+
   return (
       <Container>
         <LeftSide>
@@ -173,7 +182,7 @@ const ClassAssignmentSubmit = () => {
           <WhiteBoxComponent>
             <NoticeTitleContainer>
               <FormTitle style={{ marginTop: "0px" }}>
-                {currentAssignmentInfo?.assignmentTitle || "과제 제목"}
+              {truncateText(currentAssignmentInfo?.assignmentTitle || "과제 제목", maxLength)}
               </FormTitle>
             </NoticeTitleContainer>
             <NoticeContentContainer>

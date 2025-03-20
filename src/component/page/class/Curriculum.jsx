@@ -654,6 +654,13 @@ const Curriculum = () => {
         Object.values(sub).every((value) => value !== null)
       );
 
+  function truncateText(text) {
+    if (text.length > 30) {
+      return text.slice(0, 30) + "...";
+    }
+    return text;
+  }
+
   return (
     <div style={{ display: "flex" }}>
       <CurriculumSidebar
@@ -796,7 +803,7 @@ const Curriculum = () => {
                       flexWrap: "wrap",
                     }}
                   >
-                    <SectionTitle>{sub.title ?? "과제 없음"}</SectionTitle>
+                    <SectionTitle>{truncateText(sub.title || "과제 없음")}</SectionTitle>
                     <AssignmentDate>
                       {formatDate(sub?.startDate)} ~ {formatDate(sub?.endDate)}
                     </AssignmentDate>
