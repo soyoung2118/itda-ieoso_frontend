@@ -155,21 +155,20 @@ const ClassAssignmentSubmit = () => {
     }
   }, [assignmentId, submissionStatus]);
 
-  function truncateText(text, maxLength) {
-    if (text.length > maxLength) {
-      return text.slice(0, maxLength) + "...";
+  function truncateText(text) {
+    if (text.length > 30) {
+      return text.slice(0, 30) + "...";
     }
     return text;
   }
-
-  const maxLength = 30;
 
   return (
       <Container>
         <LeftSide>
           <TitleContainer>
             <MainTitle>
-              {currentLectureInfo?.lectureDescription || "강의를 선택해주세요"}
+              {currentLectureInfo?.lectureTitle} {" "}
+              {truncateText(currentAssignmentInfo?.assignmentTitle || "과제 제목")}
             </MainTitle>
 
             <ClickContainer onClick={handleNavigationCurriculum}>
@@ -180,11 +179,6 @@ const ClassAssignmentSubmit = () => {
           </TitleContainer>
 
           <WhiteBoxComponent>
-            <NoticeTitleContainer>
-              <FormTitle style={{ marginTop: "0px" }}>
-              {truncateText(currentAssignmentInfo?.assignmentTitle || "과제 제목", maxLength)}
-              </FormTitle>
-            </NoticeTitleContainer>
             <NoticeContentContainer>
               {currentAssignmentInfo?.assignmentDescription || "과제 설명"}
             </NoticeContentContainer>
@@ -297,15 +291,6 @@ const WhiteBoxComponent = styled.div`
   padding: 10px;
 `;
 
-const NoticeTitleContainer = styled.div`
-  border-radius: 13px;
-  background-color: #f6f7f9;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
-`;
-
 const NoticeContentContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -329,7 +314,7 @@ const MainTitle = styled.div`
   font-weight: 700;
   display: flex;
   align-items: center;
-  margin-right: 10px;
+  margin-right: 5px;
 `;
 
 const ClickContainer = styled.div`

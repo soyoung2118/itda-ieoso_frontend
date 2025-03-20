@@ -183,8 +183,6 @@ const PlayingCurriculumSidebar = ({
             },
             });
 
-            console.log(response.data.data);
-
             const presignedUrl = response.data.data;
             const fileResponse = await fetch(presignedUrl);
             const arrayBuffer = await fileResponse.arrayBuffer();
@@ -261,7 +259,6 @@ const PlayingCurriculumSidebar = ({
                                     (selectedType === "video" && content.videoId === Number(videoId)) ||
                                     (selectedType === "assignment" && content.assignmentId === Number(assignmentId))
                                     
-                                    console.log("isSelected:", isSelected);
                                     return (
                                         <SubItem 
                                             now={Boolean(isSelected)} 

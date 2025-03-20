@@ -35,7 +35,8 @@ const ClassPlaying = () => {
                 <LeftSide>
                     <TitleContainer>
                         <MainTitle>
-                            <span>{currentLectureInfo.lectureDescription || "강의를 선택해주세요"}</span>
+                            {currentLectureInfo?.lectureTitle} {" "}
+                            {currentVideoInfo.videoTitle || "강의 영상 제목"}
                         </MainTitle>
                         
                         <ClickContainer onClick={handleNavigationCurriculum}>
