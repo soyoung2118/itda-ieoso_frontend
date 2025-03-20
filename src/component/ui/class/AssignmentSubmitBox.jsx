@@ -140,7 +140,7 @@ const AssignmentSubmitBox = ({
   };
 
   return (
-    <Wrapper isText={submissionType === "TEXT"} isBoth={submissionType === "BOTH"}>
+    <Wrapper isBoth={submissionType === "BOTH"} isText={submissionType === "TEXT"} fileCount={files?.length || 0}>
       {(submissionType === "TEXT" || submissionType === "BOTH") && (
         <Box>
           <FormTitle>내용</FormTitle>
@@ -205,7 +205,12 @@ const FormTitle = styled.div`
 const Wrapper = styled.div`
   border-radius: 20px;
   background-color: #FFFFFF;
-  height: ${(props) => (props.isText ? "32vh" : props.isBoth ? "80vh" : "55vh")};
+  height: ${(props) =>
+    props.isText 
+      ? "32vh"
+      : props.isBoth
+        ? `calc(58vh + ${props.fileCount * 50}px)`
+        : `calc(32vh + ${props.fileCount * 50}px)`};
   padding: 10px;
 `;
 
@@ -225,6 +230,7 @@ const TextArea = styled.textarea`
   border: none;
   resize: none;
   font-size: 13px;
+  box-sizing: border-box;
 
   &::placeholder {
     color: #9e9e9e;

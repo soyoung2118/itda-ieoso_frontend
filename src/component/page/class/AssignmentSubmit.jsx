@@ -86,7 +86,8 @@ const ClassAssignmentSubmit = () => {
 
           setFiles(filesData);
           setPreviousFiles(filesData);
-          setContent(statusResponse.data.data.textContent);
+          if(statusResponse.data.data.textContent === "null") setContent("");
+          else setContent(statusResponse.data.data.textContent);
         }
       } catch (error) {
         console.error("과제 정보 로딩 오류:", error);

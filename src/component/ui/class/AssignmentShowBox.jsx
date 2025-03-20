@@ -70,7 +70,7 @@ const AssignmentShowBox = ({content, files, setCanEdit, submissionId, submission
     };
 
     return (
-        <Wrapper isBoth={submissionType === "BOTH"}>
+        <Wrapper isBoth={submissionType === "BOTH"} isText={submissionType === "TEXT"} fileCount={files?.length || 0}>
         {(submissionType === "TEXT" || submissionType === "BOTH") && (
         <Box>
             <FormTitle>내용</FormTitle>
@@ -117,7 +117,12 @@ const FormTitle = styled.div`
 const Wrapper = styled.div`
     border-radius: 20px;
     background-color: #FFFFFF;
-    height: ${(props) => (props.isBoth ? "65vh" : "40vh")};
+    height: ${(props) => 
+        props.isText 
+        ? "35vh"
+        : props.isBoth
+            ? `calc(40vh + ${props.fileCount * 50}px)`
+            : `calc(15vh + ${props.fileCount * 50}px)`};
     padding: 10px;
 `;
 
