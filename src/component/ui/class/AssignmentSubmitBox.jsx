@@ -260,12 +260,18 @@ const ImageItem = styled.div`
   padding: 5px;
   justify-content: space-between;
   border-radius: 8px;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
   text-overflow: ellipsis;
 `;
 
 const ImageText = styled.div`
   margin-right: 3px;
-  white-space: nowrap;
+  max-width: 80%;
+  white-space: wrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const SubmitButton = styled.button`

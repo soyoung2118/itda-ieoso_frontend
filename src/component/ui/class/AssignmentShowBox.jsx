@@ -85,13 +85,13 @@ const AssignmentShowBox = ({content, files, setCanEdit, submissionId, submission
                 <FormTitle>파일</FormTitle>
                     {files && files.map((file) => (
                         <ImageItemContainer>
-                        <ImageItem 
-                            key={file.fileUrl} 
-                            title={file.fileName}
-                        >
-                            <ImageTitle title={file.fileName} onClick={(e) => OnClickImage(e, file.id)}>{file.name}</ImageTitle>
-                            <ImageDate>{file.size}</ImageDate>
-                        </ImageItem>
+                            <ImageItem 
+                                key={file.fileUrl} 
+                                title={file.fileName}
+                            >
+                                <ImageTitle title={file.fileName} onClick={(e) => OnClickImage(e, file.id)}>{file.name}</ImageTitle>
+                                <ImageDate>{file.size}</ImageDate>
+                            </ImageItem>
                         </ImageItemContainer>
                     ))}
             </Box>
@@ -162,7 +162,9 @@ const ImageItem = styled.div`
     padding: 5px;
     justify-content: space-between;
     border-radius: 8px;
+    width: 100%;
     white-space: nowrap;
+    overflow: hidden;
     text-overflow: ellipsis;
 `;
 
@@ -172,6 +174,10 @@ const ImageTitle = styled.div`
     text-decoration: underline;
     margin-right: 3px;
     cursor: pointer;
+    max-width: 80%;
+    white-space: wrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 `;
 
 const ImageDate = styled.div`
