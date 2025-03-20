@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import PropTypes from "prop-types";
 import styled from 'styled-components';
 import Assignment from "../../img/icon/docs.svg";
@@ -15,6 +15,7 @@ const PlayingCurriculumSidebar = ({
     setCurrentLectureInfo,
 }) => {
     const navigate = useNavigate();
+    const location = useLocation();
     const { courseId, lectureId, videoId, assignmentId } = useParams();
     const { user } = useContext(UsersContext);
     const [submissionStatusList, setSubmissionStatusList] = useState([]);
@@ -78,7 +79,6 @@ const PlayingCurriculumSidebar = ({
                         ...prev, 
                         ...materials.map(sub => sub.materialHistoryStatus)
                     ]);
-
                 }
 
             } catch (error) {
@@ -101,6 +101,12 @@ const PlayingCurriculumSidebar = ({
         }
     }, [curriculumData, lectureId, videoId, assignmentId, setCurrentLectureInfo]);
 
+    useEffect(() => {
+        if(location.pathname.includes("/submit")) setSelectedType("assignment");
+        else if(location.pathname.includes("/playing")) setSelectedType("video");
+        else null;
+    }, [location.pathname])
+
     const truncate = (str, n) => {
         return str?.length > n ? str.substr(0, n - 1) + "..." : str;
     };
@@ -113,10 +119,10 @@ const PlayingCurriculumSidebar = ({
             const status = submissionStatusList[index];
             switch (status) {
                 case 'NOT_SUBMITTED':
-                    return <span key={id} className="material-icons" style={{ color: '#C3C3C3', fontSize: '20px' }}>check_circle</span>;
+                    return <span key={id} className="material-icons" style={{ color: '#C3C3C3', fontSize: '22px' }}>check_circle</span>;
                 case 'LATE':
                 case 'SUBMITTED':
-                    return <span key={id} className="material-icons" style={{ color: '#474747', fontSize: '20px' }}>check_circle</span>;
+                    return <span key={id} className="material-icons" style={{ color: '#474747', fontSize: '22px' }}>check_circle</span>;
                 default:
                     return null;
             }
@@ -128,9 +134,9 @@ const PlayingCurriculumSidebar = ({
             const status = materialStatusList[index];
             switch (status) {
                 case true:
-                    return <span key={id} className="material-icons" style={{ color: '#474747', fontSize: '20px' }}>check_circle</span>;
+                    return <span key={id} className="material-icons" style={{ color: '#474747', fontSize: '22px' }}>check_circle</span>;
                 case false:
-                    return <span key={id} className="material-icons" style={{ color: '#C3C3C3', fontSize: '20px' }}>check_circle</span>;
+                    return <span key={id} className="material-icons" style={{ color: '#C3C3C3', fontSize: '22px' }}>check_circle</span>;
                 default:
                     return null;
             }
@@ -230,7 +236,7 @@ const PlayingCurriculumSidebar = ({
         setSelectedType("assignment");
         navigate(`/class/${courseId}/assignment/submit/${goLecture}/${goAssignment}`);
     };
- 
+    
     const dateText = (time) => {
         const date = time.slice(0, -3);
       return date.replace("T", " "); 
@@ -252,16 +258,16 @@ const PlayingCurriculumSidebar = ({
                               </CurriculumItem>
                                 {lecture.lectureId && sortedContents.map((content) => {
                                     const isSelected =
-                                        (selectedType === "video" && Number(content.videoId) === Number(selectedContentId)) ||
-                                        (selectedType === "material" && Number(content.materialId) === Number(selectedContentId)) ||
-                                        (selectedType === "assignment" && Number(content.assignmentId) === Number(selectedContentId));
-
+                                    (selectedType === "video" && content.videoId === Number(videoId)) ||
+                                    (selectedType === "assignment" && content.assignmentId === Number(assignmentId))
+                                    
+                                    console.log("isSelected:", isSelected);
                                     return (
                                         <SubItem 
-                                            $now={isSelected} 
+                                            now={Boolean(isSelected)} 
                                             key={content.contentOrderId} 
                                             status={content.contentType === 'video' ? content.videoHistoryStatus : null}>
-                                      <SubItemTitle>
+                                        <SubItemTitle>
                                           {content.contentType === 'video' &&
                                             <ContentItem onClick={() => handleVideoClick(lecture.lectureId, content.videoId, content)}>
                                               <img
@@ -269,8 +275,8 @@ const PlayingCurriculumSidebar = ({
                                                   src={Video}
                                                   alt="video icon"
                                                   style={{
-                                                  width: "16px",
-                                                  marginRight: "4px",
+                                                  width: "20px",
+                                                  marginRight: "10px",
                                                   }}
                                               />
                                               <TextContainer>
@@ -286,8 +292,8 @@ const PlayingCurriculumSidebar = ({
                                                   src={Material}
                                                   alt="material icon"
                                                   style={{
-                                                  width: "16px",
-                                                  marginRight: "4px",
+                                                  width: "20px",
+                                                  marginRight: "10px",
                                                   }}
                                               />
                                               <TextContainer>
@@ -308,8 +314,8 @@ const PlayingCurriculumSidebar = ({
                                                   src={Assignment}
                                                   alt="assignment icon"
                                                   style={{
-                                                  width: "16px",
-                                                  marginRight: "4px",
+                                                  width: "20px",
+                                                  marginRight: "10px",
                                                   }}
                                               />
                                               <TextContainer>
@@ -342,11 +348,10 @@ const MenuTitle = styled.div`
     font-weight: 600;
     background: none;
     border: none;
-    border-bottom: 1px solid #000
+    border-bottom: 1px solid #000;
 `;
 
 const RightContainer = styled.div`
-    height: 80vh;
     overflow-y: scroll;
     margin-right: -12px;
     white-space: pre-wrap;
@@ -366,7 +371,6 @@ const CurriculumItem = styled.div`
     align-items: center;
     justify-content: space-between;
     padding: 8px 0;
-    border-bottom: 1px solid #eee;
 `;
 
 const ItemTitle = styled.span`
@@ -377,14 +381,15 @@ const ItemTitle = styled.span`
 const SubItem = styled.div`
     display: flex;
     flex-direction: column;
-    padding: 15px 14px;
+    padding: 12px 10px;
+    border-radius: 13px;
     background-color: ${props => props.now ? '#F8F8F8' : 'transparent'};
 `;
 
 const ContentItem = styled.div`
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     padding: 2px 0;
     cursor: pointer;
 `;
@@ -392,8 +397,9 @@ const ContentItem = styled.div`
 const SubItemTitle = styled.div`
     font-size: 15px;
     margin-bottom: 4px;
-    font-weight: ${props => props.status === 'WATCHING' ? 800 : 400}
+    font-weight: 400;
 `;
+
 const TextContainer = styled.div`
     flex-grow: 1;
     overflow: hidden;
@@ -411,13 +417,13 @@ const IconContainer = styled.div`
 `
 
 const BlackText = styled.div`
-  font-size: 13px;
+  font-size: 12px;
   color: #474747;
   white-space: pre-wrap;
 `
 
 const RedText = styled.div`
-  font-size: 11px;
+  font-size: 10px;
   color: #FF4747;
   white-space: pre-wrap;
 `

@@ -329,6 +329,8 @@ const ClickContainer = styled.div`
 
 const RightSide = styled.div`
   width: 20vw;
+  height: 70vh;
+  overflow-y: auto;
   padding: 25px 20px;
   background-color: #FFFFFF;
   border-radius: 20px;
