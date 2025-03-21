@@ -203,7 +203,6 @@ const ClassOverview = () => {
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        console.log("Base64 인코딩된 파일 데이터:", reader.result);
       };
       reader.readAsDataURL(file);
 

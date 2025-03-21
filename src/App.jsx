@@ -1,5 +1,8 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { useEffect, useRef, useCallback, useState } from "react";
+import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
 import { UsersProvider } from "./component/contexts/usersContext.jsx";
+import { logout } from "./component/api/usersApi.js";
+import { ModalOverlay, AlertModalContainer } from "./component/ui/modal/ModalStyles.jsx";
 
 import LandingPage from "./component/page/LandingPage.jsx";
 import LogIn from "./component/page/users/LogIn.jsx";
@@ -23,30 +26,76 @@ import ClassPlaying from "./component/page/class/Playing.jsx";
 import ClassAssignmentSubmit from "./component/page/class/AssignmentSubmit.jsx";
 import StudentDetail from "./component/page/class/StudentDetail.jsx";
 
-function App() {
+function LogoutHandler() {
+  const navigate = useNavigate();
+  const logoutTimerRef = useRef(null);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+
+  const handleLogout = useCallback(async () => {
+    try {
+      await logout();
+      localStorage.removeItem("token");
+      localStorage.removeItem("tokenExpiration");
+      navigate("/");
+    } catch (error) {
+      console.error("자동 로그아웃 중 오류 발생:", error);
+    }
+  }, [navigate]);
+
+  useEffect(() => {
+    const expirationTime = localStorage.getItem('tokenExpiration');
+    
+    if (expirationTime) {
+      const timeLeft = expirationTime - new Date().getTime();
+
+      if (timeLeft <= 0) {
+        setModalIsOpen(true);
+      } else {
+        setTimeout(() => {
+          setModalIsOpen(true)
+        }, timeLeft);
+      }
+    }
+
+    return () => {
+      if (logoutTimerRef.current) {
+        clearTimeout(logoutTimerRef.current);
+      }
+    };
+  }, []);
+
   return (
     <>
-      <BrowserRouter>
-        <UsersProvider>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
+      {modalIsOpen && (
+        <ModalOverlay>
+          <AlertModalContainer isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)}>
+            <div className="text">로그인 시간이 만료되어 로그아웃합니다.</div>
+            <div className="close-button" onClick={() => {
+              setModalIsOpen(false);
+              handleLogout()
+            }}>확인</div>
+          </AlertModalContainer>
+        </ModalOverlay>
+      )}
+    </>
+  );
+}
 
-            {/* 로그인 페이지 */}
-            <Route path="/login" element={<LogIn />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="find-password" element={<FindPassword />} />
-            <Route path='change-password' element={<ChangePassword />} />
+function App() {
+  return (
+    <BrowserRouter>
+      <UsersProvider>
+        <LogoutHandler />
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LogIn />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/find-password" element={<FindPassword />} />
+          <Route path="/change-password" element={<ChangePassword />} />
+          <Route path="/class/list" element={<ClassList />} />
+          <Route path="/class/create" element={<Create />} />
+          <Route path="/class/participate" element={<Participate />} />
 
-            {/* 강의실 페이지 */}
-            <Route path="/class/list" element={<ClassList />} />
-            <Route path="/class/create" element={<Create />} />
-
-            {/* 강의실 입장 페이지 */}
-            <Route path="/class/participate" element={<Participate />} />
-
-            {/* 강의실 상세 페이지 */}
-
-            {/* 강의실 관련 라우트 */}
           <Route path="/class/:courseId" element={<Class />}>
             <Route path="overview/info" element={<ClassOverview />} />
             <Route path="overview/notice" element={<ClassNotice />} />
@@ -62,15 +111,10 @@ function App() {
             <Route path="assignment/submit/:lectureId/:assignmentId" element={<ClassAssignmentSubmit />}/>
           </Route>
 
-            {/* 대시보드 페이지 */}
-            <Route path="/dashboard" element={<Dashboard />} />
-
-            {/* 강의실 수강  */}
-            
-          </Routes>
-        </UsersProvider>
-      </BrowserRouter>
-    </>
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Routes>
+      </UsersProvider>
+    </BrowserRouter>
   );
 }
 

@@ -20,6 +20,7 @@ import {
 } from "../../../style/Styles";
 import { signup, checkEmail } from '../../api/usersApi';
 import TermsAgreement from './Terms';
+import { ModalOverlay, AlertModalContainer } from '../../ui/modal/ModalStyles';
 
 
 export default function SignUp() {
@@ -36,10 +37,13 @@ export default function SignUp() {
     marketing: false,
   });
   const [emailCheckResult, setEmailCheckResult] = useState('');
+  const [modalMessage, setModalMessage] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleNext = () => {
     if (step === 1 && (!termsChecked.service || !termsChecked.privacy)) {
-      alert('필수 약관에 동의해주세요.');
+      setModalMessage('필수 약관에 동의해주세요.');
+      setIsModalOpen(true);
       return;
     }
     if (step === 2 && !validatePassword(password)) {
@@ -142,6 +146,10 @@ export default function SignUp() {
       validatePassword(password) &&
       password === confirmPassword
     );
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -276,6 +284,14 @@ export default function SignUp() {
           )}
         </SignUpContainer>
       </Container>
+      {isModalOpen && (
+        <ModalOverlay>
+          <AlertModalContainer>
+            <div className='text'>{modalMessage}</div>
+            <div className='close-button' onClick={closeModal}>확인</div>
+          </AlertModalContainer>
+        </ModalOverlay>
+      )}
     </>
   );
 }

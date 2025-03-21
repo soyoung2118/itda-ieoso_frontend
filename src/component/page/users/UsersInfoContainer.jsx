@@ -26,14 +26,9 @@ export function UsersInfoContainer({ setShowUsersInfoContainer }) {
     const handleLogout = async (e) => {
         e.preventDefault();
         try {
-            const response = await logout();
-            if (response.status === 200) {
-                localStorage.removeItem('token');
-                localStorage.removeItem('user');
-                setIsUser(false);
-                setUser(null);
-                navigate('/');
-            }
+            await logout();
+            setIsUser(false);
+            setUser(null);
         } catch (error) {
             console.error('로그아웃 중 오류 발생:', error);
         }
