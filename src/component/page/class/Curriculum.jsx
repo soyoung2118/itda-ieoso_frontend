@@ -572,11 +572,11 @@ const Curriculum = () => {
         return;
       }
 
-      navigate(`/playing/${courseId}/${activeLectureId}/${sub.videoId}`);
+      navigate(`/class/${courseId}/playing/${activeLectureId}/${sub.videoId}`);
     } else if (sub.contentType === "assignment") {
       if (isCreator) {
         navigate(
-          `/assignment/submit/${courseId}/${activeLectureId}/${sub.assignmentId}`
+          `/class/${courseId}/assignment/submit/${activeLectureId}/${sub.assignmentId}`
         );
       }
       if (now.getTime() < startDate.getTime()) {
@@ -586,7 +586,7 @@ const Curriculum = () => {
         return;
       }
       navigate(
-        `/assignment/submit/${courseId}/${activeLectureId}/${sub.assignmentId}`
+        `/class/${courseId}/assignment/submit/${activeLectureId}/${sub.assignmentId}`
       );
     }
   };
@@ -653,6 +653,13 @@ const Curriculum = () => {
     : activeLecture?.subSections.filter((sub) =>
         Object.values(sub).every((value) => value !== null)
       );
+
+  function truncateText(text) {
+    if (text.length > 30) {
+      return text.slice(0, 30) + "...";
+    }
+    return text;
+  }
 
   return (
     <div style={{ display: "flex" }}>
@@ -796,7 +803,7 @@ const Curriculum = () => {
                       flexWrap: "wrap",
                     }}
                   >
-                    <SectionTitle>{sub.title ?? "과제 없음"}</SectionTitle>
+                    <SectionTitle>{truncateText(sub.title || "과제 없음")}</SectionTitle>
                     <AssignmentDate>
                       {formatDate(sub?.startDate)} ~ {formatDate(sub?.endDate)}
                     </AssignmentDate>

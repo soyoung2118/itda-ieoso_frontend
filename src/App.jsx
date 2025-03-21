@@ -107,14 +107,19 @@ function App() {
             <Route path="admin/students" element={<ClassStudents />} />
             <Route path="admin/students/:studentId" element={<StudentDetail />} />
             <Route path="admin/setting" element={<Setting />} />
+            <Route path="playing/:lectureId/:videoId" element={<ClassPlaying />} />
+            <Route path="assignment/submit/:lectureId/:assignmentId" element={<ClassAssignmentSubmit />}/>
           </Route>
 
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/playing/:courseId/:lectureId/:videoId" element={<ClassPlaying />} />
-          <Route path="/assignment/submit/:courseId/:lectureId/:assignmentId" element={<ClassAssignmentSubmit />} />
-        </Routes>
-      </UsersProvider>
-    </BrowserRouter>
+            {/* 대시보드 페이지 */}
+            <Route path="/dashboard" element={<Dashboard />} />
+
+            {/* 강의실 수강  */}
+            
+          </Routes>
+        </UsersProvider>
+      </BrowserRouter>
+    </>
   );
 }
 

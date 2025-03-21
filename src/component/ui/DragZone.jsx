@@ -3,9 +3,13 @@ import { useDropzone } from 'react-dropzone';
 import styled from 'styled-components';
 import Cloud from "../img/icon/cloud.svg";
 
-const ClassAssignmentSubmit = ({ setFiles }) => {
+const ClassAssignmentSubmit = ({ files, setFiles, maxFiles = 3 }) => {
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
       onDrop: (acceptedFiles) => {
+        if (files.length + acceptedFiles.length > maxFiles) {
+          alert(`파일은 최대 ${maxFiles}개까지만 업로드 가능합니다.`);
+          return;
+        }
         setFiles(prevFiles => [
           ...prevFiles,
           ...acceptedFiles.map(file => ({
