@@ -4,7 +4,7 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 import Delete from "../../img/icon/bin.svg";
 import Share from "../../img/icon/share.svg";
-import { ModalOverlay, ModalContent } from "../../ui/modal/ModalStyles";
+import { ModalOverlay, ModalContent, AlertModalContainer } from "../../ui/modal/ModalStyles";
 import api from "../../api/api";
 import { getMyCoursesTitles } from "../../api/classApi";
 import { UsersContext } from "../../contexts/usersContext";
@@ -178,6 +178,7 @@ const AdminTopBar = ({ activeTab }) => {
   // 모달 관련 상태
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showInviteModal, setShowInviteModal] = useState(false);
   const [courseName, setCourseName] = useState("");
   const [entryCode, setEntryCode] = useState("");
   const [classOptions, setClassOptions] = useState(null);
@@ -223,7 +224,7 @@ const AdminTopBar = ({ activeTab }) => {
   const handleShare = () => {
     const inviteText = `[${courseName}] 강의실에 초대합니다!\n\n🔗 강의실 링크: https://eduitda.com\n📌 강의실 코드: ${entryCode}\n\n1. itda 로그인\n2. + 버튼 클릭 > 강의실 입장하기\n3. 강의실 코드 입력\n\n지금 바로 참여하고 함께 배워요! 😊`;
     navigator.clipboard.writeText(inviteText)
-      .then(() => alert('초대 메시지가 복사되었습니다!'))
+      .then(() => setShowInviteModal(true))
       .catch(err => console.error('복사 실패:', err));
   };
 
@@ -331,6 +332,15 @@ const AdminTopBar = ({ activeTab }) => {
               </button>
             </div>
           </ModalContent>
+        </ModalOverlay>
+      )}
+
+      {showInviteModal && (
+        <ModalOverlay>
+          <AlertModalContainer>
+            <div className="text">초대 메시지가 복사되었습니다!</div>
+            <div className="close-button" onClick={() => setShowInviteModal(false)}>확인</div>
+          </AlertModalContainer>
         </ModalOverlay>
       )}
     </Container>
