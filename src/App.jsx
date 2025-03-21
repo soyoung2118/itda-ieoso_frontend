@@ -85,7 +85,7 @@ function App() {
   return (
     <BrowserRouter>
       <UsersProvider>
-        <LogoutHandler /> {/* LogoutHandler 추가 */}
+        <LogoutHandler />
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LogIn />} />
@@ -111,15 +111,10 @@ function App() {
             <Route path="assignment/submit/:lectureId/:assignmentId" element={<ClassAssignmentSubmit />}/>
           </Route>
 
-            {/* 대시보드 페이지 */}
-            <Route path="/dashboard" element={<Dashboard />} />
-
-            {/* 강의실 수강  */}
-            
-          </Routes>
-        </UsersProvider>
-      </BrowserRouter>
-    </>
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Routes>
+      </UsersProvider>
+    </BrowserRouter>
   );
 }
 
