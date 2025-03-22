@@ -1,5 +1,5 @@
 import { useEffect, useRef, useCallback, useState } from "react";
-import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import { UsersProvider } from "./component/contexts/usersContext.jsx";
 import { logout } from "./component/api/usersApi.js";
 import { ModalOverlay, AlertModalContainer } from "./component/ui/modal/ModalStyles.jsx";
@@ -28,6 +28,7 @@ import StudentDetail from "./component/page/class/StudentDetail.jsx";
 
 function LogoutHandler() {
   const navigate = useNavigate();
+  const location = useLocation();
   const logoutTimerRef = useRef(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
@@ -42,9 +43,17 @@ function LogoutHandler() {
     }
   }, [navigate]);
 
-  useEffect(() => {
+  const checkExpiration = useCallback(() => {
     const expirationTime = localStorage.getItem('tokenExpiration');
-    
+    if (expirationTime && new Date().getTime() > expirationTime) {
+      setModalIsOpen(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    checkExpiration();
+
+    const expirationTime = localStorage.getItem('tokenExpiration');
     if (expirationTime) {
       const timeLeft = expirationTime - new Date().getTime();
 
@@ -52,7 +61,7 @@ function LogoutHandler() {
         setModalIsOpen(true);
       } else {
         setTimeout(() => {
-          setModalIsOpen(true)
+          setModalIsOpen(true);
         }, timeLeft);
       }
     }
@@ -62,7 +71,11 @@ function LogoutHandler() {
         clearTimeout(logoutTimerRef.current);
       }
     };
-  }, []);
+  }, [checkExpiration]);
+
+  useEffect(() => {
+    checkExpiration();
+  }, [location, checkExpiration]);
 
   return (
     <>
@@ -72,7 +85,7 @@ function LogoutHandler() {
             <div className="text">로그인 시간이 만료되어 로그아웃합니다.</div>
             <div className="close-button" onClick={() => {
               setModalIsOpen(false);
-              handleLogout()
+              handleLogout();
             }}>확인</div>
           </AlertModalContainer>
         </ModalOverlay>
@@ -83,7 +96,8 @@ function LogoutHandler() {
 
 function App() {
   return (
-    <BrowserRouter>
+    <>
+      <BrowserRouter>
       <UsersProvider>
         <LogoutHandler />
         <Routes>
@@ -115,6 +129,7 @@ function App() {
         </Routes>
       </UsersProvider>
     </BrowserRouter>
+    </>
   );
 }
 
