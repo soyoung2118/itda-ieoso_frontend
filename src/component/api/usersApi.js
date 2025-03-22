@@ -9,7 +9,7 @@ export const login = async (credentials) => {
         if (token) {
             localStorage.setItem('token', token);
 
-            const expirationTime = new Date().getTime() + 36000000; // 10시간
+            const expirationTime = new Date().getTime() + 180000; // 10시간 180000 3분
             localStorage.setItem('tokenExpiration', expirationTime);
             startLogoutTimer();
         }
