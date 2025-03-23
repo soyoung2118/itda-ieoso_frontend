@@ -13,7 +13,26 @@ import { UsersContext } from "../../contexts/usersContext";
 import { formatLecturePeriod } from "./Curriculum";
 import EditButton from "../../ui/class/EditButton";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { Description } from "@mui/icons-material";
+import { Description, StyleOutlined } from "@mui/icons-material";
+
+const Curriculum = styled.div`
+  flex: 1;
+  padding: 3.5vh;
+  padding-right: 0vh;
+  border-radius: 8px;
+
+  @media (max-width: 768px) {
+    padding: 2vh;
+    padding-right: 0vh;
+    border-radius: 9px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0vh;
+    padding-left: 3vh;
+    border-radius: 9px;
+  }
+`;
 
 const SectionWrapper = styled.div`
   display: flex;
@@ -34,6 +53,147 @@ const Section = styled.div`
     `
     padding-bottom: 8.5rem;
   `}
+`;
+
+const LectureSection = styled.div`
+  display: flex;
+  border-radius: 12px;
+  margin: 1rem 0rem;
+  cursor: pointer;
+  position: relative;
+  align-items: flex-end;
+  background-color: var(--main-color);
+  padding: 1rem 1.5rem;
+
+  ${({ isEditing }) =>
+    isEditing &&
+    `
+    padding-bottom: 8.5rem;
+  `}
+
+  @media (max-width: 768px) {
+    padding: 1.2vh 1.5vh;
+    margin-bottom: 1vh;
+    border-radius: 10px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1.8vh 3vh;
+    border-radius: 8px;
+  }
+`;
+
+const LectureTitle = styled.h1`
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--white-color);
+  margin: 0;
+
+  @media (max-width: 1024px) {
+    font-size: 27px;
+  }
+  @media (max-width: 768px) {
+    font-size: 19px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 15px;
+  }
+`;
+
+const LecturePeriod = styled.p`
+  color: var(--white-color);
+  font-size: 1.2rem;
+
+  font-weight: 540;
+  margin: 0.2rem 1rem;
+  margin-left: 1.8vh;
+
+  @media (max-width: 1024px) {
+    font-size: 19px;
+    margin-left: 1.2vh;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14.5px;
+    margin-left: 1vh;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 11.5px;
+    margin-left: 1.5vh;
+  }
+`;
+
+const LectureDescriptionSection = styled.div`
+  display: flex;
+  border-radius: 12px;
+  margin: 1.7vh 0vh;
+  cursor: pointer;
+  position: relative;
+  background-color: var(--grey-color);
+  padding: 0.15rem 1.5rem;
+  ${({ isEditing }) =>
+    isEditing &&
+    `
+    padding-bottom: 8.5rem;
+  `}
+
+  @media (max-width: 1024px) {
+    padding: 0.4vh 1.7vh;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.3vh 1.5vh;
+    border-radius: 9px;
+    margin: 1.2vh 0vh;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0.3vh 3vh;
+    margin: 1.2vh 0vh;
+  }
+`;
+
+const EditingDescription = styled.input`
+  font-size: 1.555rem;
+  font-weight: 650;
+  letter-spacing: -1px;
+  width: 100%;
+  background-color: white;
+  border: 1.5px solid var(--darkgrey-color);
+  border-radius: 8px;
+  outline: none;
+  padding: 1.5vh 2vh;
+  margin: 1.5vh 0vh;
+
+  @media (max-width: 1024px) {
+    font-size: 21px;
+    padding: 0.8vh 1vh;
+    margin: 0.8vh 0vh;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 15.5px;
+  }
+`;
+
+const LectureDescription = styled.h1`
+  font-size: 1.555rem;
+  font-weight: 650;
+  letter-spacing: -1px;
+
+  @media (max-width: 1024px) {
+    font-size: 21px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 15.5px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 11.5px;
+  }
 `;
 
 const Icon = styled.img`
@@ -68,12 +228,10 @@ const CurriculumEdit = () => {
   const [editTarget, setEditTarget] = useState(null);
   const [activeSection, setActiveSection] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
-
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [lectureDescription, setLectureDescription] = useState(
     activeLecture?.lectureDescription || ""
   );
-
   const [movedItem, setMovedItem] = useState(null);
 
   const activeLectureRef = useRef(null);
@@ -84,21 +242,18 @@ const CurriculumEdit = () => {
   const fetchCurriculum = useCallback(
     async (newSectionId = null) => {
       if (!userId) return;
-
       try {
         const response = await api.get(
           `/lectures/curriculum/${courseId}/${userId}`
         );
-
         if (!response.data || !response.data.success) {
           console.error("API 요청 실패:", response.data);
           return;
         }
-
         const { curriculumResponses, instructorName } =
           response.data.data || {};
-        const lectures = curriculumResponses || [];
 
+        const lectures = curriculumResponses || [];
         setCurriculumData(lectures);
 
         const defaultLecture =
@@ -294,7 +449,6 @@ const CurriculumEdit = () => {
 
     try {
       await api.delete(url);
-      // setSubSections((prev) => prev.filter((_, i) => i !== index));
       location.reload();
     } catch (error) {
       console.error("삭제 실패:", error);
@@ -303,7 +457,7 @@ const CurriculumEdit = () => {
 
   // 섹션 클릭 -> isEditing 상태 변경 (true, false)
   const handleSectionClick = async (index, event) => {
-    event.stopPropagation(); // 이벤트 버블링 방지
+    event.stopPropagation();
 
     const excludedTags = ["INPUT", "TEXTAREA", "BUTTON", "SELECT", "LABEL"];
     if (excludedTags.includes(event.target.tagName)) {
@@ -459,84 +613,36 @@ const CurriculumEdit = () => {
           setActiveItem={setActiveLectureId}
           edit={true}
         />
-        <main
-          style={{
-            flex: 1,
-            padding: "2rem",
-            borderRadius: "8px",
-          }}
-        >
-          <Section
-            style={{
-              display: "flex",
-              alignItems: "flex-end",
-              backgroundColor: "var(--main-color)",
-              padding: "1rem 1.5rem",
-            }}
-          >
-            <h1
-              style={{
-                fontSize: "2rem",
-                fontWeight: "700",
-                color: "var(--white-color)",
-                margin: "0",
-              }}
-            >
+        <Curriculum>
+          <LectureSection>
+            <LectureTitle>
               {activeLecture?.lectureTitle ?? "제목 없음"}
-            </h1>
-
-            <p
-              style={{
-                color: "var(--white-color)",
-                fontSize: "1.2rem",
-                marginLeft: "1rem",
-                fontWeight: "540",
-                margin: "0.2rem 1rem",
-              }}
-            >
+            </LectureTitle>
+            {/* 
+            <LecturePeriod>
               {formatLecturePeriod(activeLecture?.startDate)} ~{" "}
               {formatLecturePeriod(activeLecture?.endDate)}
-            </p>
-          </Section>
-          <Section
+            </LecturePeriod> */}
+          </LectureSection>
+
+          <LectureDescriptionSection
             className="lecture-description-edit"
-            style={{
-              backgroundColor: "var(--grey-color)",
-              padding: "0.15rem 1.5rem",
-            }}
             onClick={handleDescriptionClick}
           >
             {isEditingDescription ? (
-              <input
+              <EditingDescription
                 type="text"
                 value={lectureDescription}
                 onChange={(e) => setLectureDescription(e.target.value)}
                 autoFocus
-                style={{
-                  fontSize: "1.555rem",
-                  fontWeight: "650",
-                  letterSpacing: "-1px",
-                  width: "100%",
-                  backgroundColor: "white",
-                  border: "1.5px solid var(--darkgrey-color)",
-                  borderRadius: "8px",
-                  outline: "none",
-                  padding: "1.5vh 2vh",
-                  margin: "1.5vh 0vh",
-                }}
               />
             ) : (
-              <h1
-                style={{
-                  fontSize: "1.555rem",
-                  fontWeight: "650",
-                  letterSpacing: "-1px",
-                }}
-              >
+              <LectureDescription>
                 {activeLecture?.lectureDescription || "설명 없음"}
-              </h1>
+              </LectureDescription>
             )}
-          </Section>
+          </LectureDescriptionSection>
+
           <DragDropContext
             onDragStart={handleDragStart}
             // onDragUpdate={handleDragUpdate}
@@ -600,7 +706,7 @@ const CurriculumEdit = () => {
               )}
             </Droppable>
           </DragDropContext>
-        </main>
+        </Curriculum>
       </div>
       <EditButton
         edit={false}

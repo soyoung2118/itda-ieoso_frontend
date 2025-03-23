@@ -20,18 +20,18 @@ const SidebarContainer = styled.aside`
   margin-top: 3.5vh;
   letter-spacing: -0.5px;
 
-
   @media (max-width: 1024px) {
     font-size: 13px;
   }
 
   @media (max-width: 768px) {
     padding: 1vh 2vh;
+    border-radius: 7px;
   }
 
   @media (max-width: 480px) {
     width: 18vh;
-    padding: 0vh 1.2vh;
+    padding: 2vh 2h;
   }
 `;
 
@@ -41,7 +41,7 @@ const ListSection = styled.div`
   transition: background-color 0.3s ease;
 
   @media (max-width: 480px) {
-    padding: 0.8vh 1.2vh;
+    padding: 1.3vh 0.2vh;
   }
 `;
 
@@ -60,18 +60,18 @@ const SectionHeader = styled.div`
 
   @media (max-width: 1024px) {
     font-size: 17px;
-    padding: 1vh 2vh;
+    padding: 1vh 1vh;
   }
 
   @media (max-width: 768px) {
     font-size: 14px;
-    padding: 1vh 1.5vh;
   }
 
   @media (max-width: 480px) {
     font-size: 11px;
-    padding: 0.3vh 1vh;
+    padding: 1vh 1.5vh;
     height: 4.7vh;
+    border-radius: 7px;
   }
 `;
 
@@ -91,6 +91,7 @@ const ListItem = styled.li`
 
   @media (max-width: 768px) {
     font-size: 12px;
+    gap: 0.5vh;
   }
 
   @media (max-width: 480px) {
@@ -136,7 +137,7 @@ const SectionIcon = styled.img`
   }
 
   @media (max-width: 768px) {
-    width: 2.6vh;
+    width: 1.6vh;
   }
 
   @media (max-width: 480px) {
@@ -155,7 +156,7 @@ const Icon = styled.img`
   }
 
   @media (max-width: 480px) {
-    width: 12.5px;
+    width: 2.8vh;
   }
 `;
 
@@ -169,6 +170,10 @@ const CheckIcon = styled.img`
 
   @media (max-width: 768px) {
     margin-right: 1.3vh;
+  }
+
+  @media (max-width: 480px) {
+    width: 1.7vh;
   }
 `;
 

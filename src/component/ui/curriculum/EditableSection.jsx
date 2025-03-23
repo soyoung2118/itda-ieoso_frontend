@@ -38,6 +38,105 @@ const VideoThumbnail = styled.div`
   font-size: 1.1rem;
 `;
 
+const VideoIconImg = styled.img`
+  width: 2.6rem;
+  margin-left: 1rem;
+  margin-right: 3rem;
+`;
+
+const VideoContainer = styled.div`
+  margin-left: 2rem;
+  height: 100%;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
+const VideoTitleInput = styled.input`
+  width: 100%;
+  background: none;
+  outline: none;
+  border: 2px solid #c3c3c3;
+  border-radius: 7px;
+  color: black;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: bold;
+  box-sizing: border-box;
+
+  @media (max-width: 1024px) {
+    font-size: 14px;
+  }
+`;
+
+const VideoLinkInput = styled.input`
+  width: 100%;
+  background: none;
+  outline: none;
+  border: 2px solid #c3c3c3;
+  border-radius: 7px;
+  color: black;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: bold;
+  box-sizing: border-box;
+
+  @media (max-width: 1024px) {
+    font-size: 14px;
+  }
+`;
+
+const VideoConfirmButton = styled.button`
+  background-color: var(--main-color);
+  color: var(--white-color);
+  width: 30%;
+  margin-left: 1rem;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+
+  @media (max-width: 1024px) {
+    font-size: 12px;
+  }
+`;
+
+const UploadIcon = styled.img`
+  width: 1.2rem;
+  margin-right: 1rem;
+`;
+
+const MaterialIcon = styled.img`
+  width: 2.4rem;
+  margin-left: 1rem;
+  margin-right: 3rem;
+`;
+
+const AssignmentInput = styled.input`
+  width: 100%;
+  background: none;
+  outline: none;
+  border: 2px solid #c3c3c3;
+  border-radius: 7px;
+  color: black;
+  padding: 15px;
+  font-size: 16.5px;
+  font-weight: bold;
+  box-sizing: border-box;
+  margin-bottom: 1rem;
+  font-family: Pretendard, Pretendard-Bold, Pretendard-ExtraBold,
+    Pretendard-Light, Pretendard-Medium, Pretendard-SemiBold, Pretendard-Thin,
+    sans-serif;
+
+  @media (max-width: 1024px) {
+    font-size: 15px;
+    padding: 1vh 1vh;
+    width: calc(100% - 1.3vh);
+  }
+`;
+
 const Input = styled.input`
   width: 100%;
   border: none;
@@ -52,7 +151,7 @@ const TextArea = styled.textarea`
     Pretendard-Light, Pretendard-Medium, Pretendard-SemiBold, Pretendard-Thin,
     sans-serif;
   width: calc(100% - 3.5vh);
-  font-size: 1.03rem;
+  font-size: 16.5px;
   border: 2px solid #c3c3c3;
   border-radius: 7px;
   color: black;
@@ -67,6 +166,15 @@ const TextArea = styled.textarea`
   &:focus {
     outline: none;
     border: 2px solid #c3c3c3; /* 기존 border 유지 */
+  }
+
+  @media (max-width: 1024px) {
+    font-size: 15px;
+    padding: 1vh 1vh;
+    height: 10vh;
+  }
+  @media (max-width: 768px) {
+    font-size: 10px;
   }
 `;
 
@@ -95,6 +203,13 @@ const ButtonContainer = styled.div`
   margin-top: 3vh;
 `;
 
+const DeleteIcon = styled.img`
+  width: 1.25rem;
+  cursor: pointer;
+  margin-right: 1rem;
+  margin-bottom: 0.5rem;
+`;
+
 const SectionButton = styled.button.attrs((props) => ({
   selected: props.selected || false,
 }))`
@@ -109,6 +224,16 @@ const SectionButton = styled.button.attrs((props) => ({
   border-radius: 8px;
   cursor: pointer;
   margin-right: 1.8vh;
+
+  @media (max-width: 1024px) {
+    font-size: 14.5px;
+    width: 11vh;
+    height: 3.5vh;
+  }
+  @media (max-width: 768px) {
+    font-size: 13px;
+    width: 10vh;
+  }
 `;
 
 export const getYouTubeThumbnail = (url) => {
@@ -256,7 +381,6 @@ const EditableSection = ({
     handleEdit(field, value);
   };
 
-
   const toggleSubmissionType = (type) => {
     let newType;
 
@@ -302,14 +426,7 @@ const EditableSection = ({
             />
             <div style={{ display: "flex" }}>
               <div style={{ alignSelf: "flex-start" }}>
-                <img
-                  src={VideoIcon}
-                  style={{
-                    width: "2.6rem",
-                    marginLeft: "1rem",
-                    marginRight: "3rem",
-                  }}
-                />
+                <VideoIconImg src={VideoIcon} />
               </div>
 
               <div style={{ display: "flex", width: "100%" }}>
@@ -330,68 +447,26 @@ const EditableSection = ({
                   )}
                 </VideoThumbnail>
 
-                <div
-                  style={{
-                    marginLeft: "2rem",
-                    height: "100%",
-                    flexGrow: 1,
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                  }}
-                >
+                <VideoContainer>
                   <div style={{ width: "100%" }}>
-                    <Input
+                    <VideoTitleInput
                       value={title || ""}
                       onChange={(e) => handleChange("title", e.target.value)}
                       placeholder="강의명을 작성해주세요."
-                      style={{
-                        border: "2px solid #c3c3c3",
-                        borderRadius: "7px",
-                        color: "black",
-                        padding: "15px",
-                        fontSize: "16px",
-                        fontWeight: "bold",
-                        width: "100%",
-                        boxSizing: "border-box",
-                      }}
                     />
                   </div>
                   <div style={{ display: "flex" }}>
-                    <Input
+                    <VideoLinkInput
                       value={videoUrl || ""}
                       onChange={handleVideoInput}
                       placeholder="유튜브 영상 링크를 입력해주세요. - https://youtu.be"
-                      style={{
-                        border: "2px solid #c3c3c3",
-                        borderRadius: "7px",
-                        color: "black",
-                        padding: "15px",
-                        fontSize: "16px",
-                        fontWeight: "bold",
-                        width: "100%",
-                        boxSizing: "border-box",
-                      }}
                     />
 
-                    <button
-                      onClick={handleVideoConfirm}
-                      style={{
-                        backgroundColor: "var(--main-color)",
-                        color: "var(--white-color)",
-                        width: "30%",
-                        marginLeft: "1rem",
-                        border: "none",
-                        borderRadius: "5px",
-                        fontSize: "16px",
-                        fontWeight: "bold",
-                        cursor: "pointer",
-                      }}
-                    >
+                    <VideoConfirmButton onClick={handleVideoConfirm}>
                       영상 입력하기
-                    </button>
+                    </VideoConfirmButton>
                   </div>
-                </div>
+                </VideoContainer>
               </div>
             </div>
           </div>
@@ -410,14 +485,7 @@ const EditableSection = ({
               onDateChange={(date) => handleDateChange(date, "startDate")} // 날짜 상태만 업데이트
             />
             <div style={{ display: "flex" }}>
-              <img
-                src={Material}
-                style={{
-                  width: "2.4rem",
-                  marginLeft: "1rem",
-                  marginRight: "3rem",
-                }}
-              />
+              <MaterialIcon src={Material} />
               <MaterialSection style={{ border: "2px solid #c3c3c3" }}>
                 <label
                   style={{
@@ -430,10 +498,7 @@ const EditableSection = ({
                     cursor: "pointer",
                   }}
                 >
-                  <img
-                    src={Upload}
-                    style={{ width: "1.2rem", marginRight: "1rem" }}
-                  />
+                  <UploadIcon src={Upload} />
                   <span style={{ color: "#c3c3c3", fontWeight: "bold" }}>
                     {uploadedFile || "파일 업로드"}
                   </span>
@@ -452,41 +517,21 @@ const EditableSection = ({
           <div>
             <DateTimeEdit
               field="endDate"
-              initialDate={endDate} // 공통된 initialDate로 통합
+              initialDate={endDate}
               courseId={courseId}
               userId={userId}
               subSection={subSection}
               lectureStartDate={lectureStartDate}
               lectureEndDate={lectureEndDate}
-              onDateChange={(date) => handleDateChange(date, "endDate")} // 날짜 상태만 업데이트
+              onDateChange={(date) => handleDateChange(date, "endDate")}
             />
             <div style={{ display: "flex", alignItems: "flex-start" }}>
-              <img
-                src={Assignment}
-                style={{
-                  width: "2.4rem",
-                  marginLeft: "1rem",
-                  marginRight: "3rem",
-                }}
-              />
+              <MaterialIcon src={Assignment} />
               <div style={{ width: "100%" }}>
-                <Input
+                <AssignmentInput
                   value={title}
                   onChange={(e) => handleChange("title", e.target.value)}
                   placeholder="과제명을 작성해주세요."
-                  style={{
-                    border: "2px solid #c3c3c3",
-                    borderRadius: "7px",
-                    color: "black",
-                    padding: "15px",
-                    fontSize: "16px",
-                    fontWeight: "bold",
-                    width: "100%",
-                    boxSizing: "border-box",
-                    marginBottom: "1rem",
-                    fontFamily:
-                      "Pretendard, Pretendard-Bold, Pretendard-ExtraBold, Pretendard-Light, Pretendard-Medium, Pretendard-SemiBold, Pretendard-Thin, sans-serif",
-                  }}
                 />
                 <TextArea
                   value={assignmentDescription || ""}
@@ -523,33 +568,27 @@ const EditableSection = ({
         <div
           style={{
             marginTop: "1rem",
-            width: "100%", // Section 전체 너비 사용
+            width: "100%",
           }}
         >
           <GrayLine
             style={{
-              width: "100%", // Section 전체 너비를 사용
+              width: "100%",
             }}
           />
 
           <div
             style={{
               display: "flex",
-              justifyContent: "flex-end", // 오른쪽 끝 정렬
-              marginTop: "0.5rem", // 간격 조정
+              justifyContent: "flex-end",
+              marginTop: "0.5rem",
             }}
           >
-            <img
+            <DeleteIcon
               src={Delete}
               alt="삭제 아이콘"
-              style={{
-                width: "1.25rem",
-                cursor: "pointer",
-                marginRight: "1rem",
-                marginBottom: "0.5rem",
-              }}
               onClick={(e) => {
-                e.stopPropagation(); // 클릭 이벤트 버블링 방지
+                e.stopPropagation();
                 handleDelete(e, index);
               }}
             />

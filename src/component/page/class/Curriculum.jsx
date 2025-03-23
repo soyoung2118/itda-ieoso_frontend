@@ -192,6 +192,9 @@ const MaterialSection = styled.div`
   border-radius: 8px;
   font-size: 1.07rem;
 
+  // align-items: baseline;
+  // gap: 0.5vh;
+
   @media (max-width: 1024px) {
     padding: 1.3vh 1.5vh;
   }
@@ -203,8 +206,8 @@ const MaterialSection = styled.div`
 const Icon = styled.img`
   width: 4.3vh;
   height: 50%;
-  marginleft: 1rem;
-  marginright: 1rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
 
   @media (max-width: 1024px) {
     width: 2.1vh;
@@ -264,7 +267,7 @@ const VideoInformation = styled.div`
 
 const VideoDetails = styled.p`
   font-size: 17.3px;
-  color: #909090;
+  color: var(--black-color);
   display: flex;
   gap: 1vh;
 
@@ -294,6 +297,17 @@ const VideoDetails = styled.p`
       gap: 0.5vh;
     }
   }
+`;
+
+const PlayButton = styled.img`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 4vh;
+  height: auto;
+  cursor: pointer;
+  z-index: 10;
 `;
 
 const SectionTitle = styled.span`
@@ -338,16 +352,6 @@ const AssignmentDate = styled.span`
   }
 `;
 
-const PlayButton = styled.img`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 4vh;
-  height: auto;
-  cursor: pointer;
-  z-index: 10;
-`;
 
 const CheckIcon = styled.img`
   margin-left: auto;
@@ -426,15 +430,6 @@ const Curriculum = () => {
         );
 
         if (curriculumRes.data.success) {
-          // const lectures = curriculumRes.data.data || [];
-          // const lectures = curriculumRes.data.data?.curriculumResponses || [];
-
-          // setCurriculumData(lectures);
-
-          // const defaultLecture =
-          //   lectures.find((lec) => lec.lectureId === Number(lectureId)) ||
-          //   lectures[0];
-
           const { curriculumResponses, instructorName } =
             curriculumRes.data.data || {};
           const lectures = curriculumResponses || [];
@@ -490,7 +485,6 @@ const Curriculum = () => {
   useEffect(() => {
     if (!activeLecture || !historyData) return;
 
-    // 변경 사항이 없으면 업데이트하지 않도록 최적화
     const updatedSubSections = activeLecture.subSections.map((sub) => {
       let isChecked = false;
 

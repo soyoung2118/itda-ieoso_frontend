@@ -18,6 +18,19 @@ const Section = styled.div`
   position: relative;
   cursor: pointer;
   width: 100%;
+
+  @media (max-width: 1024px) {
+    padding: 1.5vh 1.8vh;
+  }
+
+  @media (max-width: 768px) {
+    border-radius: 10px;
+    margin: 0.6vh 0vh;
+  }
+  @media (max-width: 480px) {
+    border-radius: 6px;
+    margin: 0.6vh 0vh;
+  }
 `;
 
 const CurriculumTitle = styled.h3`
@@ -25,19 +38,118 @@ const CurriculumTitle = styled.h3`
   font-weight: 700;
   margin-bottom: -0.3rem;
   margin-top: 0.5rem;
+
+  @media (max-width: 1024px) {
+    font-size: 22px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 10px;
+  }
 `;
 
 const VideoContainer = styled.div`
   position: relative;
-  width: 24vh;
-  height: 17vh;
+  width: 22%;
+  aspect-ratio: 4 / 2.6;
   border-radius: 8px;
+
+  @media (max-width: 1024px) {
+    width: 30%;
+  }
+
+  @media (max-width: 768px) {
+    width: 27%;
+  }
+  @media (max-width: 480px) {
+    border-radius: 4px;
+  }
+`;
+
+const VideoContents = styled.div`
+  margin-left: 2rem;
+
+  @media (max-width: 768px) {
+    margin-left: 1.8vh;
+  }
 `;
 
 const VideoThumbnail = styled.img`
   width: 100%;
   height: 100%;
   border-radius: 8px;
+`;
+
+const EmptyVideoThumbnail = styled.div`
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  border: solid 1.5px #c3c3c3;
+
+  @media (max-width: 768px) {
+    border-radius: 6px;
+    border: solid 1.3px #c3c3c3;
+  }
+`;
+
+const Play = styled.img`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 1.8rem;
+  height: auto;
+  cursor: pointer;
+
+  @media (max-width: 768px) {
+    width: 2vh;
+  }
+
+  @media (max-width: 480px) {
+    width: 2.5vh;
+  }
+`;
+
+const VideoDetails = styled.p`
+  font-size: 16.5px;
+  color: var(--black-color);
+  display: flex;
+  align-items: center;
+  gap: 1vh;
+
+  @media (max-width: 1024px) {
+    gap: 0.5vh;
+    font-size: 11.5px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 9px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 7px;
+  }
+`;
+
+const BlackLine = styled.span`
+  border-left: 1.5px solid black;
+  height: 1rem;
+  margin-left: 1vh;
+
+  @media (max-width: 1024px) {
+    margin-left: 0.5vh;
+  }
+  @media (max-width: 768px) {
+    border-left: 1px solid black;
+  }
+
+  @media (max-width: 480px) {
+    border-left: 0.5px solid black;
+  }
 `;
 
 const MaterialSection = styled.div`
@@ -47,6 +159,65 @@ const MaterialSection = styled.div`
   padding: 2.2vh 2.6vh;
   border-radius: 8px;
   font-size: 1.07rem;
+
+  @media (max-width: 1024px) {
+    padding: 1vh 1vh;
+    font-size: 14px;
+  }
+
+  @media (max-width: 768px) {
+    padding: 1vh 1vh;
+    font-size: 10.5px;
+  }
+
+  @media (max-width: 480px) {
+    border-radius: 5px;
+    padding: 1.5vh 2vh;
+    font-size: 7px;
+  }
+`;
+
+const MaterialIcon = styled.img`
+  width: 2.4rem;
+  margin-left: 1rem;
+  margin-right: 3rem;
+
+  @media (max-width: 1024px) {
+    width: 2.4vh;
+    margin-left: 0vh;
+    margin-right: 1.5vh;
+  }
+
+  @media (max-width: 480px) {
+    margin-left: 1vh;
+    margin-right: 1.5vh;
+  }
+`;
+
+const AssignmentTitle = styled.span`
+  flex-shrink: 1;
+  overflow: hidden;
+  margin-right: 0.8rem;
+`;
+
+const AssignmentDate = styled.span`
+  color: var(--main-color);
+  whitespace: nowrap;
+  flexshrink: 0;
+  margin-left: 1vh;
+
+  @media (max-width: 1024px) {
+    font-size: 10px;
+    margin-left: 0.6vh;
+  }
+  @media (max-width: 768px) {
+    font-size: 9.5px;
+    margin-left: 0.3vh;
+  }
+  @media (max-width: 480px) {
+    font-size: 6px;
+    margin-left: 0vh;
+  }
 `;
 
 const formatPeriod = (startDate, endDate) => {
@@ -65,6 +236,19 @@ const CurriculumSection = ({
   updateSection,
 }) => {
   const isEditing = subSection.isEditing;
+
+  const truncatedText = (text) => {
+    if (!text) return "";
+
+    const width = window.innerWidth;
+
+    let maxLength = 10;
+    if (width >= 1024) maxLength = 30;
+    else if (width >= 768) maxLength = 20;
+    else if (width >= 480) maxLength = 15;
+
+    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+  };
 
   return (
     <Section onClick={(event) => handleSectionClick(index, event)}>
@@ -91,140 +275,65 @@ const CurriculumSection = ({
                     alt="Video Thumbnail"
                   />
                 ) : (
-                  <div
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      borderRadius: "8px",
-                      border: "solid 1.5px #C3C3C3"
-                    }}
-                  ></div>
+                  <EmptyVideoThumbnail />
                 )}
-                <img
-                  src={PlayIcon}
-                  alt="Play Icon"
-                  style={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    width: "1.8rem",
-                    height: "auto",
-                    cursor: "pointer",
-                  }}
-                />
+                <Play src={PlayIcon} alt="Play Icon" />
               </VideoContainer>
-              <div style={{ marginLeft: "2rem" }}>
+              <VideoContents>
                 <CurriculumTitle>
                   {subSection.title ?? "영상 제목 없음"}
                 </CurriculumTitle>
 
-                <p
-                  style={{
-                    fontSize: "clamp(0.85rem, 1vw, 1.08rem)",
-                    color: "#909090",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "1vh",
-                  }}
-                >
+                <VideoDetails>
                   <div style={{ whiteSpace: "nowrap" }}>
                     <span>{lecture.instructorName}</span>
-                    <span
-                      style={{
-                        borderLeft: "1.5px solid #909090",
-                        height: "1rem",
-                        marginLeft: "1vh",
-                      }}
-                    ></span>
+                    <BlackLine />
                   </div>
 
                   <span
-                    style={{
-                      whiteSpace: "nowrap",
-                    }}
+                    style={
+                      {
+                        // whiteSpace: "nowrap",
+                      }
+                    }
                   >
                     {formatDate(subSection?.startDate)} ~{" "}
                     {formatDate(subSection?.endDate)}
                   </span>
-                </p>
-              </div>
+                </VideoDetails>
+              </VideoContents>
             </>
           )}
 
           {subSection.contentType === "material" && (
             <>
-              <img
-                src={Material}
-                style={{
-                  width: "2.4rem",
-                  marginLeft: "1rem",
-                  marginRight: "3rem",
-                }}
-              />
+              <MaterialIcon src={Material} />
               <MaterialSection>
-                <div
+                <span style={{ marginRight: "0.6rem" }}>
+                  {truncatedText(subSection.originalFilename) ?? "자료 없음"}
+                </span>
+                <span
                   style={{
-                    display: "flex",
-                    alignItems: "baseline",
-                    gap: "0.5vh",
+                    color: "var(--main-color)",
                   }}
                 >
-                  <span style={{ marginRight: "0.6rem" }}>
-                    {subSection.originalFilename ?? "자료 없음"}
-                  </span>
-                  <span
-                    style={{
-                      color: "var(--main-color)",
-                      fontSize: "0.9rem",
-                    }}
-                  >
-                    {subSection.fileSize ?? " "}
-                  </span>
-                </div>
+                  {subSection.fileSize ?? " "}
+                </span>
               </MaterialSection>
             </>
           )}
 
           {subSection.contentType === "assignment" && (
             <>
-              <img
-                src={Assignment}
-                alt="assignment icon"
-                style={{
-                  width: "2.4rem",
-                  marginLeft: "1rem",
-                  marginRight: "3rem",
-                }}
-              />
-              <MaterialSection
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  alignItems: "baseline",
-                }}
-              >
-                <span
-                  style={{
-                    flexShrink: 1,
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    marginRight: "0.8rem",
-                  }}
-                >
-                  {subSection.assignmentTitle ?? "과제 없음"}
-                </span>
-                <span
-                  style={{
-                    color: "var(--main-color)",
-                    marginTop: "0.3rem",
-                    whiteSpace: "nowrap",
-                    flexShrink: 0,
-                  }}
-                >
+              <MaterialIcon src={Assignment} alt="assignment icon" />
+              <MaterialSection>
+                <AssignmentTitle>
+                  {truncatedText(subSection.assignmentTitle) ?? "과제 없음"}
+                </AssignmentTitle>
+                <AssignmentDate>
                   {formatDate(subSection?.startDate)} ~{" "}
                   {formatDate(subSection?.endDate)}
-                </span>
+                </AssignmentDate>
               </MaterialSection>
             </>
           )}

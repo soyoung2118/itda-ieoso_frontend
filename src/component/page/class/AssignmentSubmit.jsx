@@ -105,6 +105,7 @@ const ClassAssignmentSubmit = () => {
 
     if (foundAssignment) {
       setCurrentAssignmentInfo(foundAssignment);
+      console.log(foundAssignment);
     }
   }, [currentLectureInfo, assignmentId]);
 
