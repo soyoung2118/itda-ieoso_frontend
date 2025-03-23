@@ -30,8 +30,7 @@ const SidebarContainer = styled.aside`
   }
 
   @media (max-width: 480px) {
-    width: 18vh;
-    padding: 2vh 2h;
+    width: 20%;
   }
 `;
 
@@ -41,7 +40,7 @@ const ListSection = styled.div`
   transition: background-color 0.3s ease;
 
   @media (max-width: 480px) {
-    padding: 1.3vh 0.2vh;
+    padding: 1vh 0vh;
   }
 `;
 
@@ -69,9 +68,9 @@ const SectionHeader = styled.div`
 
   @media (max-width: 480px) {
     font-size: 11px;
+    font-weight: 650;
     padding: 1vh 1.5vh;
-    height: 4.7vh;
-    border-radius: 7px;
+    border-radius: 6px;
   }
 `;
 
@@ -95,8 +94,7 @@ const ListItem = styled.li`
   }
 
   @media (max-width: 480px) {
-    font-size: 9.5px;
-    padding-left: 2vh;
+    font-size: 8.3px;
   }
 `;
 
@@ -141,7 +139,7 @@ const SectionIcon = styled.img`
   }
 
   @media (max-width: 480px) {
-    width: 11px;
+    width: 2vh;
   }
 `;
 
@@ -156,7 +154,7 @@ const Icon = styled.img`
   }
 
   @media (max-width: 480px) {
-    width: 2.8vh;
+    width: 2.2vh;
   }
 `;
 
@@ -173,7 +171,7 @@ const CheckIcon = styled.img`
   }
 
   @media (max-width: 480px) {
-    width: 1.7vh;
+    width: 1.3vh;
   }
 `;
 
