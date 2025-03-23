@@ -22,11 +22,23 @@ export const ModalOverlay = styled.div`
     max-width: 300px;
     font-size: 1rem;
 
+    /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+        padding: 20px 40px;
+        font-size: 15px;
+    }
+
     .button-container {
       display: flex;
       margin-top: 2rem;
       gap: 2rem;
       justify-content: center;
+
+            /* 모바일 세로 (해상도 ~ 479px)*/ 
+      @media all and (max-width:479px) {
+        margin-top: 1.5rem;
+        gap: 1.5rem;
+      }
     }
 
     .close-button {
@@ -38,6 +50,13 @@ export const ModalOverlay = styled.div`
       font-size: 1rem;
       cursor: pointer;
       width: 125px;
+
+      /* 모바일 세로 (해상도 ~ 479px)*/ 
+      @media all and (max-width:479px) {
+        padding: 5px 16px;
+        width: 110px;
+        font-size: 13px;
+      }
     }
 
     .delete-button {
@@ -49,6 +68,13 @@ export const ModalOverlay = styled.div`
       font-size: 1rem;
       cursor: pointer;
       width: 125px;
+
+            /* 모바일 세로 (해상도 ~ 479px)*/ 
+      @media all and (max-width:479px) {
+        padding: 15px 16px;
+        width: 110px;
+        font-size: 13px;
+      }
     }
   `;
 
@@ -64,11 +90,21 @@ export const AlertModalContainer = styled.div`
   max-width: 300px;
   font-size: 1rem;
   position: relative;
+    
+  /* 모바일 세로 (해상도 ~ 479px)*/ 
+  @media all and (max-width:479px) {
+    width: 150px;
+  }
 
   .text {
     font-size: 18px;
     font-weight: 700;
     margin-bottom: 20px;
+
+    /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+        font-size: 13px;
+    }
   }
   .close-button {
   background: none;
@@ -79,5 +115,10 @@ export const AlertModalContainer = styled.div`
   position: absolute;
   right: 30px;
   bottom: 20px;
+
+    /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+        font-size: 14px;
+    }
   }
 `;

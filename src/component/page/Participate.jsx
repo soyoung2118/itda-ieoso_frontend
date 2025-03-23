@@ -55,7 +55,7 @@ export default function Participate() {
         <LogoImage src={logoImage} alt="logo" />
         <LogoText>강의실 입장</LogoText>
         <Explain>공유 받은 강의 공간 입장 코드를 입력해주세요.</Explain>
-        <div style={{ width: '60%', maxWidth: '800px', margin: '0 auto', display: 'flex',  justifyContent: 'center' }}>
+        <div style={{ minWidth: '300px', width: '60%', maxWidth: '800px', margin: '0 auto', display: 'flex',  justifyContent: 'center' }}>
           <Form>
             <Label>강의실 입장코드</Label>
             <SignUpInput

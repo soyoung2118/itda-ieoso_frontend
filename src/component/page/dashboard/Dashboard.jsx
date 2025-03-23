@@ -86,12 +86,12 @@ return (
     <TopBar />
     <Container>
       <WeekRange>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ fontSize: '26px', fontWeight: 'bold', color: '#000' }}>이번 주 강의표</div>
-          <div style={{ fontSize: '16px', color: '#888', marginLeft: '10px', paddingTop: '5px' }}>
+        <WeekTitle>
+          <div className="week-text">이번 주 강의표</div>
+          <div className='date-text'>
             {weekDates[0].toLocaleDateString()} - {weekDates[6].toLocaleDateString()}
           </div>
-        </div>
+        </WeekTitle>
         <WeekButton>
           <button onClick={prevWeek} style={{ transform: 'scale(0.8)' }}>
             <ChevronLeft style={{ fontSize: '30px' }} />
@@ -127,6 +127,38 @@ const WeekRange = styled.div`
   justify-content: space-between;
 `;
 
+const WeekTitle = styled.div`
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-left: 2px;
+
+  @media all and (max-width:479px) {
+    display: block;
+  }
+
+  .week-text {
+    font-size: 26px;
+    font-weight: bold;
+    color: #000000;
+
+    @media all and (max-width:479px) {
+      font-size: 20px;
+    }
+  }
+  .date-text{
+    font-size: 16px;
+    color: #888;
+    padding-top: 5px;
+    margin-left: 15px;
+
+    @media all and (max-width:479px) {
+      font-size: 14px;
+      margin-left: 0;
+    }
+  }
+`;
+
 const WeekButton = styled.div`
   display: flex;
   gap: 10px;
@@ -140,6 +172,10 @@ const WeekButton = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+
+    @media all and (max-width:479px) {
+      padding: 2px;
+    }
   }
 `;
 
