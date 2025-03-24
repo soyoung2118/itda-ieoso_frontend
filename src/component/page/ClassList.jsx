@@ -230,7 +230,8 @@ const Container = styled.div`
 `;
 
 const Sidebar = styled.div`
-    width: 90%;
+    min-width: 110px;
+    width: 10%;
     height: 60vh;
     margin: 30px 20px;
     background-color: #fff;
@@ -246,6 +247,7 @@ const Sidebar = styled.div`
         display: flex;
         justify-content: space-around;
         align-items: center;
+        width: 90%;
         height: 8vh;
         margin: 25px 10px 5px;
         padding: 8px;
