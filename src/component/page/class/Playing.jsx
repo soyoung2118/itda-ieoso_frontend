@@ -75,6 +75,14 @@ const RightSide = styled.div`
     padding: 25px 20px;
     background-color: #FFFFFF;
     border-radius: 20px;
+
+    @media (max-width: 480px) {
+        width: 10vw;
+    }
+
+    @media (max-width: 768px) {
+        width: 25vw;
+    }
 `;
 
 const TitleContainer = styled.div`
