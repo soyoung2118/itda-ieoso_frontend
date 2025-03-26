@@ -6,18 +6,21 @@ import {
     Container,
     LogoImage,
     LogoText,
-    LoginButton,
+    EmailCheckButton,
     SignUpContainer,
     Progress,
     Label,
     Step,
     SignUpInput,
     NextButton,
-    InputContainer,
-    WelcomeMessage
+  InputContainer,
+    ValidateMessage,
+    WelcomeMessage,
+    InputEmailContainer
 } from "../../../style/Styles";
 import { signup, checkEmail } from '../../api/usersApi';
 import TermsAgreement from './Terms';
+import { ModalOverlay, AlertModalContainer } from '../../ui/modal/ModalStyles';
 
 
 export default function SignUp() {
@@ -34,10 +37,13 @@ export default function SignUp() {
     marketing: false,
   });
   const [emailCheckResult, setEmailCheckResult] = useState('');
+  const [modalMessage, setModalMessage] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleNext = () => {
     if (step === 1 && (!termsChecked.service || !termsChecked.privacy)) {
-      alert('필수 약관에 동의해주세요.');
+      setModalMessage('필수 약관에 동의해주세요.');
+      setIsModalOpen(true);
       return;
     }
     if (step === 2 && !validatePassword(password)) {
@@ -142,6 +148,10 @@ export default function SignUp() {
     );
   };
 
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <>
       <TopBar />
@@ -175,7 +185,7 @@ export default function SignUp() {
           {step === 1 && (
             <>
               <p style={{color: 'var(--guide-gray-color)', fontSize: '0.9rem'}}>※ itda 계정을 만들기 위해 약관에 동의해주세요.</p>
-              <div style={{minWidth: '250px', width: '100%', margin: '0 auto' }}>
+              <div style={{minWidth: '300px', width: '100%', margin: '0 auto' }}>
                 <TermsAgreement
                   isChecked={isChecked}
                   termsChecked={termsChecked}
@@ -190,77 +200,64 @@ export default function SignUp() {
           )}
           {step === 2 && (
             <>
-              <div style={{ minWidth: '300px', maxWidth: '600px', width: '100%', margin: '0 auto' }}>
-                <Label style={{ textAlign: 'left', width: '100%' }}>이름</Label>
-                <InputContainer>
-                  <SignUpInput placeholder="이름을 입력해주세요." style={{ width: '100%' }}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                </InputContainer>
-                <Label style={{ textAlign: 'left', width: '100%' }}>이메일</Label>
-                <InputContainer>  
-                  <SignUpInput placeholder="이메일을 입력해주세요." style={{ width: '65%' }}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                  <LoginButton style={{
-                    width: '35%',
-                    marginLeft: '1rem',
-                  }} onClick={handleEmailCheck}>이메일 확인</LoginButton>
-                </InputContainer>
-                {emailCheckResult && (
-                  <div style={{
-                    fontSize: '0.8rem',
-                    marginLeft: '0.4rem',
-                    color: emailCheckResult.includes('사용 가능한') ? 'var(--guide-green-color)' : 'var(--guide-red-color)',
-                    width: '100%',
-                  }}>
-                    {emailCheckResult}
-                  </div>
-                )}
-                <Label style={{ textAlign: 'left',marginBottom: '1rem' }}>비밀번호</Label>
+              <div style={{ minWidth: '300px', maxWidth: '550px', width: '100%', margin: '0 auto' }}>
                 <InputContainer >
+                  <Label style={{ textAlign: 'left', width: '100%' }}>이름</Label>
+                    <SignUpInput placeholder="이름을 입력해주세요."
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                </InputContainer>
+                <InputContainer >
+                  <Label>이메일</Label>
+                  <InputEmailContainer>
+                    <SignUpInput placeholder="이메일을 입력해주세요." style={{ width: '68%' }}
+                      onChange={(e) => setEmail(e.target.value)}
+                      />
+                    <EmailCheckButton onClick={handleEmailCheck}>이메일 확인</EmailCheckButton>
+                  </InputEmailContainer>
+                </InputContainer>
+                <ValidateMessage
+                  style={{
+                    color: emailCheckResult.includes('사용 가능한') ? 'var(--guide-green-color)' : 'var(--guide-red-color)',
+                    visibility: emailCheckResult ? 'visible' : 'hidden',
+                  }}
+                >
+                  {emailCheckResult || ''}
+                </ValidateMessage>
+                <InputContainer >
+                <Label>비밀번호</Label>
                   <SignUpInput
                     type="password"
                     placeholder="비밀번호를 설정해주세요."
                     value={password}
                     onChange={e => setPassword(e.target.value)}
-                    style={{ width: '100%' }}
                   />
                 </InputContainer>
-                <div style={{
-                  fontSize: '0.8rem',
-                  marginLeft: '0.4rem',
+                <ValidateMessage style={{
                   color: password.length > 0 && !validatePassword(password) ? 'var(--guide-red-color)' : 'var(--guide-gray-color)',
-                  width: '100%',
-                  margin: '-1.5vh 0 1rem 0'
+                  
                 }}>
                   {password.length === 0 
                     ? '영문 대/소문자, 숫자, 특수문자를 조합하여 8자 이상 입력해주세요.' 
                     : (!validatePassword(password) 
                         ? '8자 이상으로 비밀번호를 작성해주세요.' 
                         : '영문 대/소문자, 숫자, 특수문자를 조합하여 8자 이상 입력해주세요.')}
-                </div>
-                <Label style={{ textAlign: 'left', margin: '1rem 0' }}>비밀번호 확인</Label>
-                <InputContainer>
+                </ValidateMessage>
+                <InputContainer >
+                <Label>비밀번호 확인</Label>
                   <SignUpInput
                     type="password"
                     placeholder="설정하신 비밀번호를 입력해주세요."
                     value={confirmPassword}
                     onChange={e => setConfirmPassword(e.target.value)}
-                    style={{ width: '100%' }}
                   />
+                
                 </InputContainer>
-                {step === 2 && password !== confirmPassword && (
-                  <div style={{
-                    fontSize: '0.8rem',
-                    marginLeft: '0.4rem',
-                    color: 'var(--guide-red-color)',
-                    width: '100%',
-                    margin: '-1.5vh 0 0'
-                  }}>
-                    비밀번호가 일치하지 않습니다. 다시 확인해주세요.
-                  </div>
-                )}
+                <ValidateMessage style={{ color: 'var(--guide-red-color)' }}>
+                  {step === 2 && password !== confirmPassword && password.length > 0
+                    ? '비밀번호가 일치하지 않습니다. 다시 확인해주세요.'
+                    : ''}
+                </ValidateMessage>
               </div>
               <NextButton
                 onClick={handleCombinedClick}
@@ -287,6 +284,14 @@ export default function SignUp() {
           )}
         </SignUpContainer>
       </Container>
+      {isModalOpen && (
+        <ModalOverlay>
+          <AlertModalContainer>
+            <div className='text'>{modalMessage}</div>
+            <div className='close-button' onClick={closeModal}>확인</div>
+          </AlertModalContainer>
+        </ModalOverlay>
+      )}
     </>
   );
 }

@@ -69,9 +69,9 @@ const ClassTitleContainer = styled.div`
 `;
 
 const DropdownContainer = styled.div`
-  position: fixed;
-  top: 175px;
-  left: 120px;
+  position: absolute;
+  top: 200px;
+  left: 125px;
   font-weight: bold;
   min-width: 5rem;
   width: 10rem;
@@ -212,7 +212,7 @@ const ClassTopbar = ({ onCourseChange, isCreator }) => {
   const getActiveTab = () => {
     if (location.pathname.includes("/overview/info")) return "info";
     if (location.pathname.includes("/overview/notice")) return "notice";
-    if (location.pathname.includes("/curriculum")) return "curriculum";
+    if (location.pathname.includes("/curriculum") || location.pathname.includes("/playing") || location.pathname.includes("/submit")) return "curriculum";
     if (location.pathname.includes("/admin")) return "admin";
     return "";
   };

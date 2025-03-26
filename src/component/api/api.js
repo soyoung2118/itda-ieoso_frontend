@@ -37,7 +37,7 @@ api.interceptors.response.use(
         // 로그인 시도에서 발생한 401 에러는 리다이렉트하지 않음
         if (!error.config.url.includes('/login')) {
           localStorage.removeItem('token'); // 토큰 삭제
-          window.location.href = '/'; // 페이지 강제 이동
+          //window.location.href = '/'; // 페이지 강제 이동
         }
       }
 

@@ -22,3 +22,20 @@ export const getMyCoursesTitles = async (userId) => {
     isAssignmentPublic: course.isAssignmentPublic,
   }));
 };
+
+export const getCourseNameandEntryCode = async (courseId) => {
+  try {
+    const response = await api.get(`/courses/${courseId}`);
+    if (response.data.success) {
+      const { courseTitle, entryCode } = response.data.data;
+      return { courseTitle, entryCode };
+    } else {
+      console.error("강의 정보 불러오기 실패");
+      return null;
+    }
+  } catch (error) {
+    console.error("강의 정보 불러오기 오류:", error);
+    return null;
+  }
+};
+

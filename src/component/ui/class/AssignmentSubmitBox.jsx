@@ -15,6 +15,7 @@ const AssignmentSubmitBox = ({
   setFiles,
   submissionId,
   submissionStatus,
+  submissionType,
   setCanEdit,
   setIsSubmittedModalOpen,
   setIsReSubmittedModalOpen,
@@ -24,44 +25,6 @@ const AssignmentSubmitBox = ({
 
   const [previousFiles, setPreviousFiles] = useState([]);
   const [deletedFiles, setDeletedFiles] = useState([]);
-  const [submissionType, setSubmissionType] = useState(null);
-
-  useEffect(() => {
-    const fetchSubmissionType = async () => {
-      if (!assignmentId || !courseId || !userId) return;
-
-      try {
-        const response = await api.get(
-          `/lectures/curriculum/${courseId}/${userId}`
-        );
-
-        if (response.data.success) {
-          const curriculumData = response.data.data.curriculumResponses;
-
-          let foundType = null;
-          for (const lecture of curriculumData) {
-            const assignment = lecture.assignments.find(
-              (a) => a.assignmentId === parseInt(assignmentId)
-            );
-            if (assignment) {
-              foundType = assignment.submissionType;
-              break;
-            }
-          }
-
-          if (foundType) {
-            setSubmissionType(foundType);
-          } else {
-            console.warn("해당 과제의 submissionType을 찾을 수 없습니다.");
-          }
-        }
-      } catch (error) {
-        console.error("과제 유형 로딩 오류:", error);
-      }
-    };
-
-    fetchSubmissionType();
-  }, [assignmentId, courseId, userId]);
 
   useEffect(() => {
     setCanEdit(true);
@@ -72,11 +35,6 @@ const AssignmentSubmitBox = ({
 
     if (!content && files.length === 0) {
       alert("제출할 것이 없습니다.");
-      return;
-    }
-
-    if (files.length >= 4) {
-      alert("파일은 3개까지만 업로드 가능합니다.");
       return;
     }
 
@@ -96,6 +54,11 @@ const AssignmentSubmitBox = ({
         newFiles.forEach((file) => {
           formData.append("files", file.object);
         });
+      }
+
+      if(!submissionId){
+        alert('강의자는 과제를 제출할 수 없습니다.');
+        return;
       }
 
       switch (submissionStatus) {
@@ -177,7 +140,7 @@ const AssignmentSubmitBox = ({
   };
 
   return (
-    <Wrapper>
+    <Wrapper isBoth={submissionType === "BOTH"} isText={submissionType === "TEXT"} fileCount={files?.length || 0}>
       {(submissionType === "TEXT" || submissionType === "BOTH") && (
         <Box>
           <FormTitle>내용</FormTitle>
@@ -195,7 +158,7 @@ const AssignmentSubmitBox = ({
       {(submissionType === "FILE" || submissionType === "BOTH") && (
         <Box style={{ marginTop: submissionType === "BOTH" ? "20px" : "0px" }}>
           <FormTitle>파일 업로드하기</FormTitle>
-          <DragZone setFiles={setFiles} />
+          <DragZone files={files} setFiles={setFiles} />
 
           {files &&
             files.map((file) => (
@@ -241,9 +204,13 @@ const FormTitle = styled.div`
 
 const Wrapper = styled.div`
   border-radius: 20px;
-  background-color: #ffffff;
-  height: 80vh;
-  margin-bottom: 60px;
+  background-color: #FFFFFF;
+  height: ${(props) =>
+    props.isText 
+      ? "32vh"
+      : props.isBoth
+        ? `calc(58vh + ${props.fileCount * 50}px)`
+        : `calc(32vh + ${props.fileCount * 50}px)`};
   padding: 10px;
 `;
 
@@ -263,6 +230,7 @@ const TextArea = styled.textarea`
   border: none;
   resize: none;
   font-size: 13px;
+  box-sizing: border-box;
 
   &::placeholder {
     color: #9e9e9e;
@@ -292,12 +260,18 @@ const ImageItem = styled.div`
   padding: 5px;
   justify-content: space-between;
   border-radius: 8px;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
   text-overflow: ellipsis;
 `;
 
 const ImageText = styled.div`
   margin-right: 3px;
-  white-space: nowrap;
+  max-width: 80%;
+  white-space: wrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const SubmitButton = styled.button`

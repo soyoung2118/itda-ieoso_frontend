@@ -6,9 +6,9 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import api from "../../api/api";
 import PlayingCurriculumSidebar from "../../ui/class/PlayingCurriculumSidebar";
 import { UsersContext } from "../../contexts/usersContext";
-import AssignmentModal from "../../ui/class/AssignmentModal";
 import AssignmentSubmitBox from "../../ui/class/AssignmentSubmitBox";
 import AssignmentShowBox from "../../ui/class/AssignmentShowBox";
+import { ModalOverlay } from "../../ui/modal/ModalStyles";
 
 const ClassAssignmentSubmit = () => {
   const navigate = useNavigate();
@@ -22,6 +22,7 @@ const ClassAssignmentSubmit = () => {
 
   const [submissionId, setSubmissionId] = useState(null);
   const [submissionStatus, setSubmissionStatus] = useState("");
+  const [submissionType, setSubmissionType] = useState(null);
 
   const [curriculumData, setCurriculumData] = useState([]);
   const [currentLectureInfo, setCurrentLectureInfo] = useState([]);
@@ -51,7 +52,6 @@ const ClassAssignmentSubmit = () => {
           if (submission) {
             setSubmissionId(submission.submissionId);
             setSubmissionStatus(submission.submissionStatus);
-            console.log(submissionStatus);
           } else {
             setSubmissionId(null);
             setSubmissionStatus("NOT_SUBMITTED");
@@ -86,7 +86,8 @@ const ClassAssignmentSubmit = () => {
 
           setFiles(filesData);
           setPreviousFiles(filesData);
-          setContent(statusResponse.data.data.textContent);
+          if(statusResponse.data.data.textContent === "null") setContent("");
+          else setContent(statusResponse.data.data.textContent);
         }
       } catch (error) {
         console.error("과제 정보 로딩 오류:", error);
@@ -110,6 +111,44 @@ const ClassAssignmentSubmit = () => {
   }, [currentLectureInfo, assignmentId]);
 
   useEffect(() => {
+      const fetchSubmissionType = async () => {
+        if (!assignmentId || !courseId || !user) return;
+  
+        try {
+          const response = await api.get(
+            `/lectures/curriculum/${courseId}/${user.userId}`
+          );
+  
+          if (response.data.success) {
+            const curriculum = response.data.data.curriculumResponses;
+            
+            let foundType = null;
+            for (const lecture of curriculum) {
+              const assignment = lecture.assignments.find(
+                (a) => a.assignmentId === parseInt(assignmentId)
+              );
+              if (assignment) {
+                foundType = assignment.submissionType;
+                console.log(foundType);
+                break;
+              }
+            }
+  
+            if (foundType) {
+              setSubmissionType(foundType);
+            } else {
+              console.warn("해당 과제의 submissionType을 찾을 수 없습니다.");
+            }
+          }
+        } catch (error) {
+          console.error("과제 유형 로딩 오류:", error);
+        }
+      };
+  
+      fetchSubmissionType();
+    }, [assignmentId, courseId, user]);
+
+  useEffect(() => {
     if (submissionStatus === "NOT_SUBMITTED") {
       setCanEdit(true);
     } else {
@@ -117,14 +156,20 @@ const ClassAssignmentSubmit = () => {
     }
   }, [assignmentId, submissionStatus]);
 
+  function truncateText(text) {
+    if (text.length > 30) {
+      return text.slice(0, 30) + "...";
+    }
+    return text;
+  }
+
   return (
-    <Wrapper>
-      <TopBar />
       <Container>
         <LeftSide>
           <TitleContainer>
             <MainTitle>
-              {currentLectureInfo?.lectureDescription || "강의를 선택해주세요"}
+              {currentLectureInfo?.lectureTitle} {" "}
+              {truncateText(currentAssignmentInfo?.assignmentTitle || "과제 제목")}
             </MainTitle>
 
             <ClickContainer onClick={handleNavigationCurriculum}>
@@ -135,11 +180,6 @@ const ClassAssignmentSubmit = () => {
           </TitleContainer>
 
           <WhiteBoxComponent>
-            <NoticeTitleContainer>
-              <FormTitle style={{ marginTop: "0px" }}>
-                {currentAssignmentInfo?.assignmentTitle || "과제 제목"}
-              </FormTitle>
-            </NoticeTitleContainer>
             <NoticeContentContainer>
               {currentAssignmentInfo?.assignmentDescription || "과제 설명"}
             </NoticeContentContainer>
@@ -157,6 +197,7 @@ const ClassAssignmentSubmit = () => {
               setFiles={setFiles}
               submissionId={submissionId}
               submissionStatus={submissionStatus}
+              submissionType={submissionType}
               setIsSubmittedModalOpen={setIsSubmittedModalOpen}
               setIsReSubmittedModalOpen={setIsReSubmittedModalOpen}
             />
@@ -167,6 +208,7 @@ const ClassAssignmentSubmit = () => {
               files={files}
               submissionId={submissionId}
               submissionStatus={submissionStatus}
+              submissionType={submissionType}
               setIsDeleteModalOpen={setIsDeleteModalOpen}
             />
           )}
@@ -182,56 +224,57 @@ const ClassAssignmentSubmit = () => {
         </RightSide>
 
         {isSubmittedModalOpen && (
-          <AssignmentModal
-            text="과제 제출이 완료되었습니다."
-            onClose={() => {
-              setIsSubmittedModalOpen(false);
-              window.location.reload();
-            }}
-          />
+          <ModalOverlay>
+            <ModalContainer>
+              <Message>과제 제출이 완료되었어요</Message>
+              <CloseButton
+                onClick={() => {
+                  setIsSubmittedModalOpen(false);
+                  window.location.reload();
+                }}>확인</CloseButton>
+            </ModalContainer>
+          </ModalOverlay>
         )}
         {isReSubmittedModalOpen && (
-          <AssignmentModal
-            text="과제 수정이 완료되었습니다."
-            onClose={() => {
-              setIsReSubmittedModalOpen(false);
-              window.location.reload();
-            }}
-          />
+          <ModalOverlay>
+            <ModalContainer>
+              <Message>과제가 수정되었어요</Message>
+              <CloseButton
+                onClick={() => {
+                  setIsReSubmittedModalOpen(false);
+                  window.location.reload();
+                }}>확인</CloseButton>
+            </ModalContainer>
+          </ModalOverlay>
         )}
         {isDeleteModalOpen && (
-          <AssignmentModal
-            text="과제 삭제가 완료되었습니다."
-            onClose={() => {
-              setIsDeleteModalOpen(false);
-              window.location.reload();
-            }}
-          />
+          <ModalOverlay>
+            <ModalContainer>
+              <Message>과제가 삭제되었어요</Message>
+              <CloseButton
+                onClick={() => {
+                  setIsDeleteModalOpen(false);
+                  window.location.reload();
+                }}>확인</CloseButton>
+            </ModalContainer>
+          </ModalOverlay>
         )}
       </Container>
-    </Wrapper>
   );
 };
 
-const Wrapper = styled.div`
-  height: 100vh;
-`;
-
 const Container = styled.div`
-    display: flex;
-    height: 100%,
-    background-color: #F6F7F9;
+  display: flex;
+  margin-top: 30px;
+  background-color: #F6F7F9;
 `;
 
 const LeftSide = styled.div`
   width: 70vw;
   flex: 1;
-  padding: 0px 37px;
-  height: calc(92vh - 16px);
-  overflow-y: scroll;
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  padding-left: 5px;
+  padding-right: 20px;
+
 `;
 
 const FormTitle = styled.div`
@@ -249,23 +292,19 @@ const WhiteBoxComponent = styled.div`
   padding: 10px;
 `;
 
-const NoticeTitleContainer = styled.div`
-  border-radius: 13px;
-  background-color: #f6f7f9;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
-`;
-
 const NoticeContentContainer = styled.div`
   display: flex;
   flex-direction: column;
   padding-left: 10px;
+  overflow: auto;
+  height: calc(30vh - 65px);
+  white-space: pre-wrap;
+  &::-webkit-scrollbar {
+    display: block;
+  }
 `;
 
 const TitleContainer = styled.div`
-  margin-top: 36px;
   margin-bottom: 26px;
   display: flex;
   align-items: flex-end;
@@ -276,8 +315,7 @@ const MainTitle = styled.div`
   font-weight: 700;
   display: flex;
   align-items: center;
-  align-items: center;
-  margin-right: 10px;
+  margin-right: 5px;
 `;
 
 const ClickContainer = styled.div`
@@ -286,80 +324,44 @@ const ClickContainer = styled.div`
 `;
 
 const RightSide = styled.div`
-  width: 30vw;
-  padding: 0px 15px;
-  padding-top: 36px;
-  background-color: #ffffff;
+  width: 20vw;
+  height: 70vh;
+  overflow-y: auto;
+  padding: 25px 20px;
+  background-color: #FFFFFF;
+  border-radius: 20px;
 `;
 
-const EditorContainer = styled.div`
-  border: 2px solid #cdcdcd;
-  border-radius: 8px;
-  overflow: hidden;
-  margin-top: 10px;
-  height: 18vh;
-  margin: 10px;
-`;
-
-const TextArea = styled.textarea`
-    width: 100%;
-    height: 18vh;
-    padding: 16px;
-    border: none;
-    resize: none;
-    font-size: 13px;
-
-    &::placeholder {
-        color: #9E9E9E;
-    }
-
-    &:focus {
-        outline: none;
-    }
-
-    background-color: $submissionStatus === 'NOT_SUBMITTED' ? #FFFFFF : '#F6F7F9';
-`;
-
-const ImageItemContainer = styled.div`
+const ModalContainer = styled.div`
   display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  gap: 10px;
-  margin: 10px;
-  padding-bottom: 5px;
-  background-color: #f6f7f9;
-  border-radius: 10px;
-  height: 40px;
-`;
-
-const ImageItem = styled.div`
-  display: flex;
+  flex-direction: column;
   align-items: center;
-  background-color: #f6f7f9;
-  padding: 5px;
-  justify-content: space-between;
+  background-color: white;
+  padding: 40px 80px;
   border-radius: 8px;
-`;
-const ImageText = styled.div`
-  margin-right: 3px;
-  max-width: 100px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  cursor: pointer;
+  text-align: center;
+  width: 50%;
+  max-width: 300px;
+  font-size: 1rem;
+  position: relative;
 `;
 
-const SubmitButton = styled.button`
-  float: right;
-  padding: 8px 20px;
-  background-color: #ff4747;
-  color: white;
+const Message = styled.div`
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 20px;
+`;
+
+const CloseButton = styled.button`
+  background: none;
   border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
+  color: red;
+  font-size: 16px;
   cursor: pointer;
-  margin-right: 10px;
+  position: absolute;
+  right: 30px;
+  bottom: 20px;
+  font-weight: 700;
 `;
 
 export default ClassAssignmentSubmit;

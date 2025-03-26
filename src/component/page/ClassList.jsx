@@ -6,7 +6,7 @@ import LogoGray from "../img/logo/itda_logo_gray.svg";
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import ClassThumbnail from "../img/class/classlist_thumbnail.svg";
-import { ModalOverlay, ModalContent } from "../ui/modal/ModalStyles";
+import { ModalOverlay, ModalContent, AlertModalContainer } from "../ui/modal/ModalStyles";
 import api from "../api/api";
 import { UsersContext } from "../contexts/usersContext";
 import DeleteIcon from '../img/icon/delete.svg';
@@ -19,6 +19,7 @@ export default function Class() {
     const [lectures, setLectures] = useState([]);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedCourseId, setSelectedCourseId] = useState(null);
+    const [showAlertModal, setShowAlertModal] = useState(false);
     
     const handleLectureClick = (id) => {
         navigate(`/class/${id}/overview/info`);
@@ -33,17 +34,26 @@ export default function Class() {
         }
     };
 
+    const lecturesToDisplay =
+        selectedMenu === "전체 강의실"
+            ? lectures
+            : lectures.filter((lecture) => lecture.user.userId === user.userId);
+
+    const lecturesCount = lecturesToDisplay.length;
+
     useEffect(() => {
         if (user && user.userId) {
             getAllLectures();
         }
     }, [user]);
 
-    const lecturesToDisplay =
-        selectedMenu === "전체 강의실"
-            ? lectures
-            : lectures.filter((lecture) => lecture.user.userId === user.userId);
-    const lecturesCount = lecturesToDisplay.length;
+    useEffect(() => {
+        if (lecturesCount === 0) {
+            setShowPopup(true);
+        } else {
+            setShowPopup(false);
+        }
+    }, [lecturesCount]);
 
     const changeDifficultly = (difficulty) => {
         if(difficulty === 'HARD') return '상'
@@ -58,7 +68,7 @@ export default function Class() {
             getAllLectures();
         } catch (error) {
             console.error('강의실 삭제 중 오류 발생:', error);
-            alert("강의 개설자는 강의실을 나갈 수 없어요.");
+            setShowAlertModal(true);
         }
     };
 
@@ -182,6 +192,18 @@ export default function Class() {
                         <button className="delete-button" onClick={confirmDelete}>나가기</button>
                     </div>
                 </ModalContent>
+            </ModalOverlay>
+        )}
+
+        {/* 새로운 알림 모달 */}
+        {showAlertModal && (
+            <ModalOverlay>
+                <AlertModalContainer>
+                    <div className="text">강의 개설자는 강의실을 나갈 수 없어요.</div>
+                    <div className="button-container">
+                        <button className="close-button" onClick={() => setShowAlertModal(false)}>확인</button>
+                    </div>
+                </AlertModalContainer>
             </ModalOverlay>
         )}
       </>

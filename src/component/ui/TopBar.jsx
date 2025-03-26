@@ -28,7 +28,7 @@ export default function TopBar() {
                 onClick={isUser ? () => navigate('/class/list') : () => navigate('/')}
             />
             <Header>
-                {location.pathname !== '/login' && location.pathname !== '/signup' && (
+                {location.pathname !== '/login' && location.pathname !== '/signup' && location.pathname !=="/find-password" &&(
                     <div className="header-right">
                         {isUser ? (
                             <UserContainer>

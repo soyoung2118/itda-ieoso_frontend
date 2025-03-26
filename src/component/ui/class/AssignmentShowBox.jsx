@@ -4,13 +4,12 @@ import styled from 'styled-components';
 import api from "../../api/api";
 import { UsersContext } from '../../contexts/usersContext';
 
-const AssignmentShowBox = ({content, files, setCanEdit, submissionId, setIsDeleteModalOpen}) => {
+const AssignmentShowBox = ({content, files, setCanEdit, submissionId, submissionType, setIsDeleteModalOpen}) => {
     const { assignmentId } = useParams();
     const { user } = useContext(UsersContext);
 
     useEffect(() => {
         setCanEdit(false);
-        console.log(files);
     }, [assignmentId]);
 
     const handleDelete = async () => {
@@ -71,27 +70,32 @@ const AssignmentShowBox = ({content, files, setCanEdit, submissionId, setIsDelet
     };
 
     return (
-        <Wrapper>
-            <Box>
-                <FormTitle>내용</FormTitle>
-                <EditorContainer>
-                    {content}
-                </EditorContainer>
-            </Box>
+        <Wrapper isBoth={submissionType === "BOTH"} isText={submissionType === "TEXT"} fileCount={files?.length || 0}>
+        {(submissionType === "TEXT" || submissionType === "BOTH") && (
+        <Box>
+            <FormTitle>내용</FormTitle>
+            <EditorContainer>
+                {content}
+            </EditorContainer>
+        </Box>
+        )}
+
+        {(submissionType === "FILE" || submissionType === "BOTH") && (
             <Box style={{marginTop: '20px'}}>
                 <FormTitle>파일</FormTitle>
                     {files && files.map((file) => (
                         <ImageItemContainer>
-                        <ImageItem 
-                            key={file.fileUrl} 
-                            title={file.fileName}
-                        >
-                            <ImageTitle title={file.fileName} onClick={(e) => OnClickImage(e, file.id)}>{file.name}</ImageTitle>
-                            <ImageDate>{file.size}</ImageDate>
-                        </ImageItem>
+                            <ImageItem 
+                                key={file.fileUrl} 
+                                title={file.fileName}
+                            >
+                                <ImageTitle title={file.fileName} onClick={(e) => OnClickImage(e, file.id)}>{file.name}</ImageTitle>
+                                <ImageDate>{file.size}</ImageDate>
+                            </ImageItem>
                         </ImageItemContainer>
                     ))}
             </Box>
+            )}
             <SubmitButton onClick={handleDelete}>삭제하기</SubmitButton>
             <SubmitButton onClick={changeMode}>수정하기</SubmitButton>
         </Wrapper>
@@ -100,6 +104,7 @@ const AssignmentShowBox = ({content, files, setCanEdit, submissionId, setIsDelet
 
 const Box = styled.div`
     gap: 10px;
+    margin-bottom: 20px;
 `
 
 const FormTitle = styled.div`
@@ -112,10 +117,14 @@ const FormTitle = styled.div`
 const Wrapper = styled.div`
     border-radius: 20px;
     background-color: #FFFFFF;
-    height: 70vh;
-    margin-bottom: 60px;
+    height: ${(props) => 
+        props.isText 
+        ? "35vh"
+        : props.isBoth
+            ? `calc(40vh + ${props.fileCount * 50}px)`
+            : `calc(15vh + ${props.fileCount * 50}px)`};
     padding: 10px;
-`
+`;
 
 const EditorContainer = styled.div`
     border-radius: 8px;
@@ -126,7 +135,7 @@ const EditorContainer = styled.div`
     margin: 10px;
     background-color: #F6F7F9;
     padding: 10px;
-    white-space: pre;
+    white-space: pre-wrap;
     &::-webkit-scrollbar {
         display: none;
     }
@@ -153,7 +162,9 @@ const ImageItem = styled.div`
     padding: 5px;
     justify-content: space-between;
     border-radius: 8px;
+    width: 100%;
     white-space: nowrap;
+    overflow: hidden;
     text-overflow: ellipsis;
 `;
 
@@ -163,6 +174,10 @@ const ImageTitle = styled.div`
     text-decoration: underline;
     margin-right: 3px;
     cursor: pointer;
+    max-width: 80%;
+    white-space: wrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 `;
 
 const ImageDate = styled.div`
