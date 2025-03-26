@@ -97,29 +97,29 @@ const StudentProgressTable = ({ assignments }) => {
   if (!assignments.length) return <div>과제 데이터가 없습니다.</div>;
 
   const studentsMap = new Map();
-  const students = Array.from(studentsMap.values());
-  const tableRef = useRef(null);
-  const scrollbarThumbRef = useRef(null);
-  const isDragging = useRef(false); 
-  const startX = useRef(0);
-  const scrollLeft = useRef(0);
 
   assignments.forEach((assignment) => {
     assignment.studentStatuses.forEach((student) => {
       if (!studentsMap.has(student.userId)) {
         studentsMap.set(student.userId, {
           name: student.studentName,
-          profile: Profile, 
+          profile: Profile, // 기본 프로필 이미지 사용
           submissions: [],
         });
       }
       studentsMap
         .get(student.userId)
-        .submissions.push(student.status); 
+        .submissions.push(student.status); // 상태를 그대로 저장
     });
   });
+  const students = Array.from(studentsMap.values());
 
- 
+  const tableRef = useRef(null);
+  const scrollbarThumbRef = useRef(null);
+  const isDragging = useRef(false); // 드래그 상태 추적
+  const startX = useRef(0);
+  const scrollLeft = useRef(0);
+
   const handleScroll = () => {
     const scrollWidth =
       tableRef.current.scrollWidth - tableRef.current.clientWidth;
@@ -165,7 +165,7 @@ const StudentProgressTable = ({ assignments }) => {
   useEffect(() => {
     const currentTable = tableRef.current;
     currentTable.addEventListener("scroll", handleScroll);
-    handleScroll(); 
+    handleScroll(); // 초기 스크롤바 상태 설정
 
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
