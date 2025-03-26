@@ -15,11 +15,23 @@ import EditButton from "../../ui/class/EditButton";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { Description, StyleOutlined } from "@mui/icons-material";
 
+const CurriculumPage = styled.div`
+  display: flex;
+  margin-top: 1rem;
+  width: 100%;
+`;
+
 const Curriculum = styled.div`
   flex: 1;
   padding: 3.5vh;
   padding-right: 0vh;
   border-radius: 8px;
+
+  @media (max-width: 1024px) {
+    padding: 2.5vh;
+    padding-right: 0vh;
+    border-radius: 9px;
+  }
 
   @media (max-width: 768px) {
     padding: 2vh;
@@ -29,7 +41,7 @@ const Curriculum = styled.div`
 
   @media (max-width: 480px) {
     padding: 0vh;
-    padding-left: 3vh;
+    margin-left: 3vh;
     border-radius: 9px;
   }
 `;
@@ -70,11 +82,16 @@ const LectureSection = styled.div`
     `
     padding-bottom: 8.5rem;
   `}
+  @media (max-width: 1024px) {
+    padding: 1vh 1.5vh;
+    margin-bottom: 1vh;
+    border-radius: 11px;
+  }
 
   @media (max-width: 768px) {
-    padding: 1.2vh 1.5vh;
+    padding: 1vh 1.5vh;
     margin-bottom: 1vh;
-    border-radius: 10px;
+    border-radius: 9px;
   }
 
   @media (max-width: 480px) {
@@ -140,11 +157,13 @@ const LectureDescriptionSection = styled.div`
   `}
 
   @media (max-width: 1024px) {
-    padding: 0.4vh 1.7vh;
+    padding: 0vh 1.7vh;
+    margin: 1vh 0vh;
+    border-radius: 10px;
   }
 
   @media (max-width: 768px) {
-    padding: 0.3vh 1.5vh;
+    padding: 0vh 1.5vh;
     border-radius: 9px;
     margin: 1.2vh 0vh;
   }
@@ -606,7 +625,7 @@ const CurriculumEdit = () => {
 
   return (
     <div>
-      <div style={{ display: "flex", marginTop: "1rem" }}>
+      <CurriculumPage>
         <CurriculumSidebar
           sections={curriculumData}
           activeItem={activeLectureId}
@@ -707,7 +726,7 @@ const CurriculumEdit = () => {
             </Droppable>
           </DragDropContext>
         </Curriculum>
-      </div>
+      </CurriculumPage>
       <EditButton
         edit={false}
         to={`/class/${courseId}/curriculum/${activeLectureId}/`}

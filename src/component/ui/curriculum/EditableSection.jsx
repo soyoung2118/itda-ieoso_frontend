@@ -21,11 +21,15 @@ const Section = styled.div`
   position: relative;
   cursor: pointer;
   width: 100%;
+
+  @media (max-width: 480px) {
+    padding: 0.8rem 1rem;
+  }
 `;
 
 const VideoThumbnail = styled.div`
-  width: 13rem;
-  height: 7.7rem;
+  width: 23vh;
+  height: 14.5vh;
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -36,21 +40,66 @@ const VideoThumbnail = styled.div`
   background-color: var(--lightgrey-color);
   color: #adadad;
   font-size: 1.1rem;
+
+  @media (max-width: 1024px) {
+    width: 11.3vh;
+    height: 7.7vh;
+    font-size: 13.5px;
+  }
+
+  @media (max-width: 768px) {
+    width: 10.6vh;
+    height: 7.4vh;
+    font-size: 11.5px;
+  }
+
+  @media (max-width: 480px) {
+    width: 16vh;
+    height: 13vh;
+    font-size: 7px;
+    border-radius: 5.5px;
+  }
 `;
 
 const VideoIconImg = styled.img`
-  width: 2.6rem;
-  margin-left: 1rem;
-  margin-right: 3rem;
+  width: 5vh;
+  margin-left: 1.8vh;
+  margin-right: 5vh;
+
+  @media (max-width: 1024px) {
+    margin-left: 0.5vh;
+    margin-right: 1.5vh;
+    width: 2.3vh;
+  }
+  @media (max-width: 768px) {
+    margin-left: 0.3vh;
+    margin-right: 1.45vh;
+    width: 2.5vh;
+  }
+  @media (max-width: 480px) {
+    margin-left: 0vh;
+    margin-right: 1.8vh;
+    width: 3.7vh;
+  }
 `;
 
 const VideoContainer = styled.div`
-  margin-left: 2rem;
+  margin-left: 3.5vh;
   height: 100%;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+
+  @media (max-width: 1024px) {
+    margin-left: 1.1vh;
+    justify-content: center;
+    gap: 0.8vh;
+  }
+
+  @media (max-width: 480px) {
+    gap: 1.5vh;
+  }
 `;
 
 const VideoTitleInput = styled.input`
@@ -60,13 +109,29 @@ const VideoTitleInput = styled.input`
   border: 2px solid #c3c3c3;
   border-radius: 7px;
   color: black;
-  padding: 15px;
+  padding: 1.65vh;
   font-size: 16px;
   font-weight: bold;
   box-sizing: border-box;
 
   @media (max-width: 1024px) {
-    font-size: 14px;
+    font-size: 11.5px;
+    padding: 0.9vh;
+    border: 1.5px solid #c3c3c3;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 9.5px;
+    padding: 0.8vh;
+    border: 1.35px solid #c3c3c3;
+    border-radius: 6px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 6.6px;
+    padding: 1.2vh;
+    border: 1px solid #c3c3c3;
+    border-radius: 4.5px;
   }
 `;
 
@@ -77,13 +142,29 @@ const VideoLinkInput = styled.input`
   border: 2px solid #c3c3c3;
   border-radius: 7px;
   color: black;
-  padding: 15px;
+  padding: 1.65vh;
   font-size: 16px;
   font-weight: bold;
   box-sizing: border-box;
 
   @media (max-width: 1024px) {
-    font-size: 14px;
+    font-size: 11px;
+    padding: 0.9vh;
+    border: 1.5px solid #c3c3c3;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 9.3px;
+    padding: 0.8vh;
+    border: 1.35px solid #c3c3c3;
+    border-radius: 6px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 6.6px;
+    padding: 1.2vh;
+    border: 1px solid #c3c3c3;
+    border-radius: 4px;
   }
 `;
 
@@ -91,7 +172,7 @@ const VideoConfirmButton = styled.button`
   background-color: var(--main-color);
   color: var(--white-color);
   width: 30%;
-  margin-left: 1rem;
+  margin-left: 1.5vh;
   border: none;
   border-radius: 5px;
   font-size: 16px;
@@ -99,19 +180,67 @@ const VideoConfirmButton = styled.button`
   cursor: pointer;
 
   @media (max-width: 1024px) {
-    font-size: 12px;
+    font-size: 11px;
+    font-weight: 550;
+    width: 33%;
+    margin-left: 0.8vh;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 8.5px;
+    margin-left: 0.6vh;
+    border-radius: 4px;
+  }
+
+  @media (max-width: 480px) {
+    width: 32.5%;
+    font-size: 5.2px;
+    border-radius: 3px;
   }
 `;
 
 const UploadIcon = styled.img`
   width: 1.2rem;
   margin-right: 1rem;
+
+  @media (max-width: 1024px) {
+    width: 1.1vh;
+    margin-right: 0.8vh;
+  }
+
+  @media (max-width: 768px) {
+    width: 1.1vh;
+    margin-right: 0.9vh;
+  }
+
+  @media (max-width: 480px) {
+    width: 2vh;
+    margin-right: 1vh;
+  }
 `;
 
 const MaterialIcon = styled.img`
   width: 2.4rem;
   margin-left: 1rem;
   margin-right: 3rem;
+
+  @media (max-width: 1024px) {
+    margin-left: 0.6vh;
+    margin-right: 1.7vh;
+    width: 2vh;
+  }
+
+  @media (max-width: 768px) {
+    margin-left: 0.3vh;
+    margin-right: 1.5vh;
+    width: 2.3vh;
+  }
+
+  @media (max-width: 480px) {
+    margin-left: 0vh;
+    margin-right: 1.8vh;
+    width: 3.5vh;
+  }
 `;
 
 const AssignmentInput = styled.input`
@@ -131,9 +260,27 @@ const AssignmentInput = styled.input`
     sans-serif;
 
   @media (max-width: 1024px) {
-    font-size: 15px;
-    padding: 1vh 1vh;
+    font-size: 11.5px;
+    padding: 0.9vh;
+    border: 1.5px solid #c3c3c3;
     width: calc(100% - 1.3vh);
+  }
+
+  @media (max-width: 768px) {
+    font-size: 10px;
+    padding: 0.9vh;
+    border: 1.35px solid #c3c3c3;
+    border-radius: 6px;
+    width: calc(100% - 1.3vh);
+    margin-bottom: 1vh;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 6.6px;
+    padding: 1.2vh;
+    border: 1px solid #c3c3c3;
+    border-radius: 4px;
+    width: calc(100% - 1vh);
   }
 `;
 
@@ -169,12 +316,22 @@ const TextArea = styled.textarea`
   }
 
   @media (max-width: 1024px) {
-    font-size: 15px;
-    padding: 1vh 1vh;
-    height: 10vh;
+    width: calc(100% - 3.3vh);
+    font-size: 11.5px;
+    padding: 0.9vh;
+    border: 1.5px solid #c3c3c3;
+    height: 9vh;
   }
   @media (max-width: 768px) {
     font-size: 10px;
+    height: 8vh;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 6.6px;
+    border: 1px solid #c3c3c3;
+    border-radius: 4px;
+    height: 9vh;
   }
 `;
 
@@ -185,6 +342,28 @@ const MaterialSection = styled.div`
   padding: 1rem;
   border-radius: 8px;
   font-size: 1.07rem;
+  border: 2px solid #c3c3c3;
+
+  @media (max-width: 1024px) {
+    font-size: 13px;
+    padding: 0.9vh;
+    border: 1px solid #c3c3c3;
+    border-radius: 7px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 11.2px;
+    padding: 0.9vh;
+    border: 1px solid #c3c3c3;
+    border-radius: 5px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 6.8px;
+    padding: 1vh;
+    border: 1px solid #c3c3c3;
+    border-radius: 4px;
+  }
 `;
 
 const GrayLine = styled.div`
@@ -193,14 +372,45 @@ const GrayLine = styled.div`
   background-color: #c3c3c3;
   margin-top: 1.2rem;
   margin-bottom: 1.1rem;
+
+  @media (max-width: 768px) {
+    margin-bottom: 0.8rem;
+  }
+  @media (max-width: 480px) {
+    margin-bottom: 0.4rem;
+  }
 `;
 
 const Submission = styled.h3`
-  font-color: 15px;
+  font-size: 18px;
+
+  @media (max-width: 1024px) {
+    font-size: 14.8px;
+    margin-bottom: 0.8vh;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 11.5px;
+    margin-bottom: 0.7vh;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 7px;
+  }
 `;
 
 const ButtonContainer = styled.div`
   margin-top: 3vh;
+
+  @media (max-width: 1024px) {
+    margin-top: 2.3vh;
+    margin-bottom: 1vh;
+  }
+
+  @media (max-width: 768px) {
+    margin-top: 2.3vh;
+    margin-bottom: 1vh;
+  }
 `;
 
 const DeleteIcon = styled.img`
@@ -208,6 +418,20 @@ const DeleteIcon = styled.img`
   cursor: pointer;
   margin-right: 1rem;
   margin-bottom: 0.5rem;
+
+  @media (max-width: 1024px) {
+    width: 0.9rem;
+  }
+
+  @media (max-width: 768px) {
+    width: 0.7rem;
+    margin-right: 0.5rem;
+  }
+
+  @media (max-width: 480px) {
+    width: 0.4rem;
+    margin-right: 0.3rem;
+  }
 `;
 
 const SectionButton = styled.button.attrs((props) => ({
@@ -226,13 +450,24 @@ const SectionButton = styled.button.attrs((props) => ({
   margin-right: 1.8vh;
 
   @media (max-width: 1024px) {
-    font-size: 14.5px;
-    width: 11vh;
-    height: 3.5vh;
+    font-size: 11px;
+    width: 6.9vh;
+    height: 2.2vh;
+    border-radius: 4.5px;
+    margin-right: 0.8vh;
   }
   @media (max-width: 768px) {
-    font-size: 13px;
+    font-size: 8.5px;
+    width: 6.9vh;
+    height: 2.25vh;
+    border-radius: 4px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 6.6px;
     width: 10vh;
+    height: 3.3vh;
+    border-radius: 2px;
   }
 `;
 
@@ -486,7 +721,7 @@ const EditableSection = ({
             />
             <div style={{ display: "flex" }}>
               <MaterialIcon src={Material} />
-              <MaterialSection style={{ border: "2px solid #c3c3c3" }}>
+              <MaterialSection>
                 <label
                   style={{
                     className: "file-upload",

@@ -25,6 +25,7 @@ const SidebarContainer = styled.aside`
   }
 
   @media (max-width: 768px) {
+  width: 16%;
     padding: 1vh 2vh;
     border-radius: 7px;
   }
@@ -64,6 +65,8 @@ const SectionHeader = styled.div`
 
   @media (max-width: 768px) {
     font-size: 14px;
+    padding: 0.7vh 1vh;
+    border-radius: 7px;
   }
 
   @media (max-width: 480px) {

@@ -44,7 +44,7 @@ const CurriculumTitle = styled.h3`
   }
 
   @media (max-width: 768px) {
-    font-size: 18px;
+    font-size: 17px;
   }
 
   @media (max-width: 480px) {
@@ -207,7 +207,7 @@ const AssignmentDate = styled.span`
   margin-left: 1vh;
 
   @media (max-width: 1024px) {
-    font-size: 10px;
+    font-size: 12px;
     margin-left: 0.6vh;
   }
   @media (max-width: 768px) {
@@ -238,6 +238,19 @@ const CurriculumSection = ({
   const isEditing = subSection.isEditing;
 
   const truncatedText = (text) => {
+    if (!text) return "";
+
+    const width = window.innerWidth;
+
+    let maxLength = 10;
+    if (width >= 1024) maxLength = 20;
+    else if (width >= 768) maxLength = 15;
+    else if (width >= 480) maxLength = 9;
+
+    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+  };
+
+  const materialTruncatedText = (text) => {
     if (!text) return "";
 
     const width = window.innerWidth;
@@ -310,7 +323,7 @@ const CurriculumSection = ({
               <MaterialIcon src={Material} />
               <MaterialSection>
                 <span style={{ marginRight: "0.6rem" }}>
-                  {truncatedText(subSection.originalFilename) ?? "자료 없음"}
+                  {materialTruncatedText(subSection.originalFilename) ?? "자료 없음"}
                 </span>
                 <span
                   style={{
