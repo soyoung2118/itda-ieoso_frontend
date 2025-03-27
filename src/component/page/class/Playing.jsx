@@ -1,38 +1,74 @@
 import { useContext, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import TopBar from '../../ui/TopBar';
+import MenuIcon from '@mui/icons-material/Menu';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import PlayingCurriculumSidebar from '../../ui/class/PlayingCurriculumSidebar';
+import api from "../../api/api";
+import { UsersContext } from "../../contexts/usersContext";
 import VideoPlaying from '../../ui/class/VideoPlaying'
 
 const ClassPlaying = () => {
     const navigate = useNavigate();
     const { courseId, lectureId, videoId } = useParams();
+    const isMobile = window.screen.width <= 480;
+    const [isVisible, setIsVisible] = useState(!isMobile);
+    const { user } = useContext(UsersContext);
 
     const [curriculumData, setCurriculumData] = useState([]);
     const [currentLectureInfo, setCurrentLectureInfo] = useState([]);
     const [currentVideoInfo, setCurrentVideoInfo] = useState([]);
 
     useEffect(() => {
-        if (!currentLectureInfo?.videos || !videoId) return;
-        
-        const foundVideo = currentLectureInfo.videos.find(
-            video => video.videoId === Number(videoId)
-        );
-        if (foundVideo) {
-            setCurrentVideoInfo(foundVideo);
-        }
-    }, [currentLectureInfo, videoId]);
+        const fetchCurriculumAndVideoData = async () => {
+            if (!courseId || !user || !lectureId || !videoId) return;
+ 
+            try {
+                const curriculumResponse = await api.get(
+                    `/lectures/curriculum/${courseId}/${user.userId}`
+                );
+ 
+                if (curriculumResponse.data.success) {
+                    const curriculum = curriculumResponse.data.data.curriculumResponses;
+                    setCurriculumData(curriculum);
+ 
+                    const currentLecture = curriculum.find(
+                        lecture => lecture.lectureId === Number(lectureId)
+                    );
+ 
+                    if (currentLecture) {
+                        setCurrentLectureInfo(currentLecture);
+ 
+                        const currentVideo = currentLecture.videos.find(
+                            video => video.videoId === Number(videoId)
+                        );
+ 
+                        if (currentVideo) {
+                            setCurrentVideoInfo(currentVideo);
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error("데이터 로딩 오류:", error);
+            }
+        };
+ 
+        fetchCurriculumAndVideoData();
+    }, [courseId, lectureId, videoId, user]);
 
     const handleNavigationCurriculum = () => {
         navigate(`/class/${courseId}/curriculum/${lectureId}`);
     };
 
+    const setIsVisibleHandler = () => {
+        setIsVisible(!isVisible);
+    }
+
     return (
         <>
             <Container>
                 <LeftSide>
+                <TopContainer>
                     <TitleContainer>
                         <MainTitle>
                             {currentLectureInfo?.lectureTitle} {" "}
@@ -43,12 +79,30 @@ const ClassPlaying = () => {
                             <ArrowForwardIosIcon style={{ width: '13px', marginLeft: '15px' }}/>
                         </ClickContainer>
                     </TitleContainer>
+
+                    { isMobile && (
+                    <MenuContainer>
+                        <MenuIcon onClick={setIsVisibleHandler} className="menu-icon" />
+                    </MenuContainer>
+                    )}
+                    </TopContainer>
+
                     <VideoPlaying videoUrl={currentVideoInfo.videoUrl} />
                 </LeftSide>
 
-                <RightSide>
-                <PlayingCurriculumSidebar curriculumData={curriculumData} setCurriculumData={setCurriculumData} currentLectureInfo={currentLectureInfo} setCurrentLectureInfo={setCurrentLectureInfo}/>
-                </RightSide>
+                { (!isMobile || isVisible) && (
+                <>
+                    {isVisible && (
+                    <RightSide isVisible={isVisible}>
+                        <PlayingCurriculumSidebar
+                            curriculumData={curriculumData}
+                            setCurriculumData={setCurriculumData}
+                            currentLectureInfo={currentLectureInfo}
+                            setCurrentLectureInfo={setCurrentLectureInfo}/>
+                        </RightSide>
+                    )}
+                </>
+                )}
             </Container>
         </>
     );
@@ -60,6 +114,16 @@ const Container = styled.div`
     overflow: hidden;
     background-color: #F6F7F9;
 `;
+
+const MenuContainer = styled.div`
+  margin-top: 3px;
+`
+
+const TopContainer = styled.div`
+  margin-bottom: 26px;
+  display: flex;
+  justify-content: space-between;
+`
 
 const LeftSide = styled.div`
     width: 70vw;
@@ -77,8 +141,16 @@ const RightSide = styled.div`
     border-radius: 20px;
 
     @media (max-width: 480px) {
-        width: 10vw;
-    }
+    display: ${(props) => (props.isVisible ? "block" : "none")};
+    position: absolute;
+    width: 60vw !important;
+    right: 0;
+    margin-top: 35px;
+    margin-right: 25px;
+    background: white;
+    z-index: 1000;
+    border: 2px solid #e0e0e0;
+  }
 
     @media (max-width: 768px) {
         width: 25vw;

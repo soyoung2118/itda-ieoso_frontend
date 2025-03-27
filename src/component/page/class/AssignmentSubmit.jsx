@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import TopBar from "../../ui/TopBar";
+import MenuIcon from '@mui/icons-material/Menu';
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import api from "../../api/api";
 import PlayingCurriculumSidebar from "../../ui/class/PlayingCurriculumSidebar";
@@ -12,13 +12,16 @@ import { ModalOverlay } from "../../ui/modal/ModalStyles";
 
 const ClassAssignmentSubmit = () => {
   const navigate = useNavigate();
+  const isMobile = window.screen.width <= 480;
+  const [isVisible, setIsVisible] = useState(!isMobile);
+  
+  const [previousFiles, setPreviousFiles] = useState([]);
+  const [deletedFiles, setDeletedFiles] = useState([]);
   const { courseId, lectureId, assignmentId } = useParams();
   const { user } = useContext(UsersContext);
 
   const [content, setContent] = useState("");
   const [files, setFiles] = useState([]);
-  const [previousFiles, setPreviousFiles] = useState([]);
-  const [deletedFiles, setDeletedFiles] = useState([]);
 
   const [submissionId, setSubmissionId] = useState(null);
   const [submissionStatus, setSubmissionStatus] = useState("");
@@ -38,17 +41,44 @@ const ClassAssignmentSubmit = () => {
   };
 
   useEffect(() => {
-    const fetchSubmissionData = async () => {
+    const fetchCurriculumAndAssignmentData = async () => {
+      if (!courseId || !user || !lectureId || !assignmentId) return;
+  
       try {
-        if (!assignmentId || !lectureId || !user || !courseId) return;
+        const curriculumResponse = await api.get(
+          `/lectures/curriculum/${courseId}/${user.userId}`
+        );
+  
+        if (curriculumResponse.data.success) {
+          const curriculum = curriculumResponse.data.data.curriculumResponses;
+          setCurriculumData(curriculum);
+  
+          const currentLecture = curriculum.find(
+            lecture => lecture.lectureId === Number(lectureId)
+          );
+  
+          if (currentLecture) {
+            setCurrentLectureInfo(currentLecture);
+            const currentAssignment = currentLecture.assignments.find(
+              assignment => assignment.assignmentId === Number(assignmentId)
+            );
+  
+            if (currentAssignment) {
+              setCurrentAssignmentInfo(currentAssignment);
+              setSubmissionType(currentAssignment.submissionType);
+            }
+          }
+        }
 
         const lectureResponse = await api.get(
           `/lectures/history/${courseId}/${user.userId}`
         );
+        
         if (lectureResponse.data.success) {
           const submission = lectureResponse.data.data.submissions.find(
             (submission) => submission.assignmentId === parseInt(assignmentId)
           );
+          
           if (submission) {
             setSubmissionId(submission.submissionId);
             setSubmissionStatus(submission.submissionStatus);
@@ -57,13 +87,14 @@ const ClassAssignmentSubmit = () => {
             setSubmissionStatus("NOT_SUBMITTED");
           }
         }
+  
       } catch (error) {
-        console.error("제출 정보 로딩 오류:", error);
+        console.error("데이터 로딩 오류:", error);
       }
     };
-
-    fetchSubmissionData();
-  }, [assignmentId, lectureId, courseId, user]);
+  
+    fetchCurriculumAndAssignmentData();
+  }, [courseId, lectureId, assignmentId, user]);
 
   useEffect(() => {
     const fetchAssignmentData = async () => {
@@ -162,21 +193,33 @@ const ClassAssignmentSubmit = () => {
     return text;
   }
 
+  const setIsVisibleHandler = () => {
+    setIsVisible(!isVisible);
+  }
+
   return (
       <Container>
         <LeftSide>
-          <TitleContainer>
-            <MainTitle>
-              {currentLectureInfo?.lectureTitle} {" "}
-              {truncateText(currentAssignmentInfo?.assignmentTitle || "과제 제목")}
-            </MainTitle>
+          <TopContainer>
+            <TitleContainer>
+              <MainTitle>
+                {currentLectureInfo?.lectureTitle} {" "}
+                {truncateText(currentAssignmentInfo?.assignmentTitle || "과제 제목")}
+              </MainTitle>
 
-            <ClickContainer onClick={handleNavigationCurriculum}>
-              <ArrowForwardIosIcon
-                style={{ width: "13px", marginLeft: "15px" }}
-              />
-            </ClickContainer>
-          </TitleContainer>
+              <ClickContainer onClick={handleNavigationCurriculum}>
+                <ArrowForwardIosIcon
+                  style={{ width: "13px", marginLeft: "15px" }}
+                />
+              </ClickContainer>
+            </TitleContainer>
+
+            { isMobile && (
+            <MenuContainer>
+              <MenuIcon onClick={setIsVisibleHandler} className="menu-icon" />
+            </MenuContainer>
+            )}
+          </TopContainer>
 
           <WhiteBoxComponent>
             <NoticeContentContainer>
@@ -213,14 +256,20 @@ const ClassAssignmentSubmit = () => {
           )}
         </LeftSide>
 
-        <RightSide>
-          <PlayingCurriculumSidebar
-            curriculumData={curriculumData}
-            setCurriculumData={setCurriculumData}
-            currentLectureInfo={currentLectureInfo}
-            setCurrentLectureInfo={setCurrentLectureInfo}
-          />
-        </RightSide>
+        { (!isMobile || isVisible) && (
+          <>
+            {isVisible && (
+              <RightSide isVisible={isVisible}>
+                <PlayingCurriculumSidebar
+                  curriculumData={curriculumData}
+                  setCurriculumData={setCurriculumData}
+                  currentLectureInfo={currentLectureInfo}
+                  setCurrentLectureInfo={setCurrentLectureInfo}
+                />
+            </RightSide>
+            )}
+          </>
+        )}
 
         {isSubmittedModalOpen && (
           <ModalOverlay>
@@ -273,14 +322,7 @@ const LeftSide = styled.div`
   flex: 1;
   padding-left: 5px;
   padding-right: 20px;
-
-`;
-
-const FormTitle = styled.div`
-  font-size: 17px;
-  font-weight: 700;
-  padding: 0px 10px;
-  margin-top: 5px;
+  position: relative;
 `;
 
 const WhiteBoxComponent = styled.div`
@@ -304,10 +346,19 @@ const NoticeContentContainer = styled.div`
 `;
 
 const TitleContainer = styled.div`
-  margin-bottom: 26px;
   display: flex;
   align-items: flex-end;
 `;
+
+const MenuContainer = styled.div`
+  margin-top: 3px;
+`
+
+const TopContainer = styled.div`
+  margin-bottom: 26px;
+  display: flex;
+  justify-content: space-between;
+`
 
 const MainTitle = styled.div`
   font-size: 24px;
@@ -331,7 +382,15 @@ const RightSide = styled.div`
   border-radius: 20px;
 
   @media (max-width: 480px) {
-    width: 10vw;
+    display: ${(props) => (props.isVisible ? "block" : "none")};
+    position: absolute;
+    width: 60vw !important;
+    right: 0;
+    margin-top: 35px;
+    margin-right: 25px;
+    background: white;
+    z-index: 1000;
+    border: 2px solid #e0e0e0;
   }
 
   @media (max-width: 768px) {

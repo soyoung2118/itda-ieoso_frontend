@@ -375,7 +375,7 @@ const ItemTitle = styled.span`
     font-size: 17px;
     font-weight: 700;
     display: inline-block;
-    max-width: 18vw;
+    max-width: 100%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -423,7 +423,7 @@ const IconContainer = styled.div`
 const RedText = styled.div`
   font-size: 10px;
   color: #FF4747;
-  max-width: 13vw;
+  max-width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -439,7 +439,7 @@ const BlackText = styled.span`
   font-size: 12px;
   color: #474747;
   display: inline-block;
-  max-width: 10vw;
+  max-width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
