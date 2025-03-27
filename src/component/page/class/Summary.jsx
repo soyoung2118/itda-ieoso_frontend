@@ -79,16 +79,15 @@ const CalendarWrapper = styled.div`
   .react-calendar__tile--now:hover {
     background-color: var(
       --main-color
-    ) !important; /* 호버 시에도 동일한 배경 */
+    ) !important;
   }
 
   .react-calendar__tile:hover {
-    background-color: rgba(0, 0, 0, 0.1); /* 일반 셀 호버 효과 */
+    background-color: rgba(0, 0, 0, 0.1); ]
   }
 
-  /* 이전/다음 달 날짜 스타일 */
   .react-calendar__month-view__days__day--neighboringMonth {
-    color: #aaa; /* 회색으로 표시 */
+    color: #aaa; 
   }
 `;
 
@@ -163,7 +162,7 @@ const ClassSummary = () => {
                 {currentTime} 기준
               </p>
             </div>
-            <Section style={{ padding: "5vh 5vh", paddingBottom: "3rem" }}>
+            <Section style={{ padding: "2.2vh 4.8vh", paddingBottom: "3rem" }}>
               {/* <div
                 style={{ display: "flex", gap: "2rem", marginBottom: "4rem" }}
               >
