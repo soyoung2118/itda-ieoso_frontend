@@ -8,7 +8,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   position: absolute;
-  left: -4.8rem;
+  left: -10vh;
   top: 50%;
   transform: translateY(-50%);
   align-items: center;
@@ -19,8 +19,26 @@ const Container = styled.div`
   padding: 1rem;
   z-index: 10;
 
+  @media (max-width: 1024px) {
+    padding: 1vh;
+    left: -5.6vh;
+    border-radius: 6px;
+  }
+
+  @media (max-width: 768px) {
+    padding: 1vh;
+    left: -5.7vh;
+    border-radius: 6px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1.5vh;
+    left: -9vh;
+    border-radius: 4px;
+  }
+
   & img {
-    width: 1.8rem;
+    width: 4vh;
     cursor: pointer;
     margin: 0.8rem 0;
     transition: transform 0.2s ease-in-out;
@@ -41,6 +59,35 @@ const HighlightLine = styled.div`
   background-color: var(--main-color);
 
   z-index: 9;
+
+  @media (max-width: 1024px) {
+    width: 0.35vh;
+  }
+
+  @media (max-width: 768px) {
+    width: 0.42vh;
+  }
+
+  @media (max-width: 480px) {
+    width: 0.5vh;
+  }
+`;
+
+const Icon = styled.img`
+  @media (max-width: 1024px) {
+    width: 2.2vh !important;
+    margin: 0.95vh 0vh !important;
+  }
+
+  @media (max-width: 768px) {
+    width: 2.3vh !important;
+    margin: 0.9vh 0vh !important;
+  }
+
+  @media (max-width: 480px) {
+    width: 3.5vh !important;
+    margin: 1.5vh 0vh !important;
+  }
 `;
 
 const EditContainer = ({ handleAdd, index }) => {
@@ -64,7 +111,7 @@ const EditContainer = ({ handleAdd, index }) => {
       <HighlightLine />
       <Container>
         {icons.map((icon, idx) => (
-          <img key={idx} src={icon.src} alt={icon.alt} onClick={icon.action} />
+          <Icon key={idx} src={icon.src} alt={icon.alt} onClick={icon.action} />
         ))}
       </Container>
     </>
