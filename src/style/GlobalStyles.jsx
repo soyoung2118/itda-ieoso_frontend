@@ -1,4 +1,4 @@
-import { createGlobalStyle } from 'styled-components'
+import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
     :root {
@@ -33,6 +33,7 @@ const GlobalStyle = createGlobalStyle`
     &::-webkit-scrollbar {
         display: none;
     }
-`
 
-export default GlobalStyle
+`;
+
+export default GlobalStyle;
