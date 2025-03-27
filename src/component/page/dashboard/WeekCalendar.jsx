@@ -156,9 +156,18 @@ const DateBox = styled.div`
   font-size: 16px;
   gap: 10px;
   cursor: pointer;
+
+  @media all and (max-width:479px) {
+    font-size: 12px;
+  }
 `;
 
-const DayLabel = styled.div`  font-size: 14px;
+const DayLabel = styled.div`
+  font-size: 14px;
+
+  @media all and (max-width:479px) {
+    font-size: 12px;
+  }
 `;
 
 const DateNumber = styled.div`
@@ -170,6 +179,12 @@ const DateNumber = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+
+  @media all and (max-width:479px) {
+    font-size: 12px;
+    width: 25px;
+    height: 25px;
+  }
 `;
 
 const DateTodo = styled.div`
@@ -185,6 +200,11 @@ const TodoCircle = styled.div`
   height: 8px;
   background-color: ${({ completed }) => (completed ? '#FF4747' : '#DEDEDE')};
   border-radius: 50%;
+
+  @media all and (max-width:479px) {
+    width: 6px;
+    height: 6px;
+  }
 `;
 
 export default WeeklyCalendar;

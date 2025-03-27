@@ -16,6 +16,7 @@ const Navbar = styled.div`
   align-items: center;
   border-radius: 15px;
   font-size: 1.3rem;
+  flex-direction: row;
 
   @media (max-width: 1024px) {
     font-size: 1.3rem;
@@ -27,6 +28,12 @@ const Navbar = styled.div`
 
   @media (max-width: 480px) {
     font-size: 1.1rem;
+  }
+
+  @media all and (max-width: 479px) {
+    font-size: 20px;
+    flex-direction: column;
+    align-items: flex-start;
   }
 `;
 
@@ -42,28 +49,20 @@ const ClassTitleContainer = styled.div`
   cursor: pointer;
   gap: 0.5rem;
 
-
-
-  .course-title{
+  .course-title {
     font-size: 1.3rem;
     font-weight: bold;
-  }
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
-  @media (max-width: 768px) {
-    .course-title {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 7ch;
+    @media (max-width: 768px) {
+        max-width: 13ch;
     }
-  }
 
-  @media (max-width: 480px) {
-    .course-title {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 3ch;
+    @media all and (max-width: 479px){
+      max-width: 18ch;
+      font-size: 18px;
     }
   }
 `;
@@ -76,6 +75,12 @@ const DropdownContainer = styled.div`
   min-width: 5rem;
   width: 10rem;
   z-index: 1000;
+
+  @media all and (max-width: 479px) {
+    top: 200px;
+    left: 50px;
+    width: 125px;
+  }
 `;
 
 const DropdownButton = styled.div`
@@ -139,6 +144,12 @@ const TabLinkContainer = styled.div`
   justify-content: flex-end;
   gap: clamp(1rem, 2vw, 2rem);
   white-space: nowrap;
+
+
+  @media all and (max-width: 479px) {
+    font-size: 16px;
+    gap: 7px;
+  }
 `;
 
 const TabLink = styled(NavLink)`
@@ -154,6 +165,10 @@ const TabLink = styled(NavLink)`
     color: var(--black-color);
     border-bottom: 3px solid var(--black-color);
     margin-bottom: -18px;
+
+    @media all and (max-width: 479px) {
+      margin-bottom: -5px;
+    }
   }
 
 /* 화면이 768px보다 작아지면 고정 너비 해제 + 최소 너비만 지정 */
@@ -161,7 +176,32 @@ const TabLink = styled(NavLink)`
     font-size: 18px;
     &.active {
       margin-bottom: -21px;
+
+      @media all and (max-width: 479px) {
+        margin-bottom: -10px;
+      }
     }
+  }
+
+  @media all and (max-width: 479px) {
+    font-size: 16px;
+  }
+`;
+
+const LeftContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
+
+const RightContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+
+  @media all and (max-width: 479px) {
+    margin-top: 8px;
+    justify-content: center;
   }
 `;
 
@@ -219,77 +259,81 @@ const ClassTopbar = ({ onCourseChange, isCreator }) => {
 
   return (
     <Navbar>
-      <Container style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-        <span
-          className="material-symbols-outlined"
-          style={{ fontSize: "1.8rem", cursor: "pointer" }}
-          onClick={() => navigate("/class/list")}
-        >
-          home
-        </span>
-        <VerticalLine />
-        <ClassTitleContainer onClick={handleDropdownToggle}>
-          <span className="course-title">
-            {classOptions.find(
-              (course) => String(course.courseId) === String(courseId)
-            )?.courseTitle || "강의실 선택"}
-          </span>
-          <DropdownButton>
-            <span>▼</span>
-          </DropdownButton>
-        </ClassTitleContainer>
-      </Container>
-      {isDropdownOpen && (
-        <DropdownContainer>
-          <DropdownMenu isOpen={isDropdownOpen}>
-            <MenuTitle>강의실 목록</MenuTitle>
-            {classOptions.map((course) => (
-              <MenuItem
-                key={course.courseId}
-                selected={String(courseId) === String(course.courseId)}
-                onClick={() => {
-                  onCourseChange(course.courseId);
-                  setIsDropdownOpen(false);
-                }}
-              >
-                <div>{course.courseTitle}</div>
-                {course.isCreator && <StarIcon className="star-icon" />}
-              </MenuItem>
-            ))}
-          </DropdownMenu>
-        </DropdownContainer>
-      )}
-      <TabLinkContainer
-        ref={tabRef}
-        className={isScrollable ? "scrolling" : ""}
-      >
-        <TabLink
-          to={`/class/${courseId}/overview/info`}
-          className={getActiveTab() === "info" ? "active" : ""}
-        >
-          개요
-        </TabLink>
-        <TabLink
-          to={`/class/${courseId}/overview/notice`}
-          className={getActiveTab() === "notice" ? "active" : ""}
-        >
-          공지
-        </TabLink>
-        <TabLink
-          to={`/class/${courseId}/curriculum/${lectureId || 1}`}
-          className={getActiveTab() === "curriculum" ? "active" : ""}
-        >
-          커리큘럼
-        </TabLink>
-        {(currentCourse?.isCreator || currentCourse?.isAssignmentPublic) && (
-          <TabLink
-            to={`/class/${courseId}/admin/summary`}
-            className={getActiveTab() === "admin" ? "active" : ""}
+      <LeftContainer>
+        <Container style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+          <span
+            className="material-symbols-outlined"
+            style={{ fontSize: "1.8rem", cursor: "pointer" }}
+            onClick={() => navigate("/class/list")}
           >
-            관리
-          </TabLink>
+            home
+          </span>
+          <VerticalLine />
+          <ClassTitleContainer onClick={handleDropdownToggle}>
+            <span className="course-title">
+              {classOptions.find(
+                (course) => String(course.courseId) === String(courseId)
+              )?.courseTitle || "강의실 선택"}
+            </span>
+            <DropdownButton>
+              <span>▼</span>
+            </DropdownButton>
+          </ClassTitleContainer>
+        </Container>
+        {isDropdownOpen && (
+          <DropdownContainer>
+            <DropdownMenu isOpen={isDropdownOpen}>
+              <MenuTitle>강의실 목록</MenuTitle>
+              {classOptions.map((course) => (
+                <MenuItem
+                  key={course.courseId}
+                  selected={String(courseId) === String(course.courseId)}
+                  onClick={() => {
+                    onCourseChange(course.courseId);
+                    setIsDropdownOpen(false);
+                  }}
+                >
+                  <div>{course.courseTitle}</div>
+                  {course.isCreator && <StarIcon className="star-icon" />}
+                </MenuItem>
+              ))}
+            </DropdownMenu>
+          </DropdownContainer>
         )}
-      </TabLinkContainer>
+      </LeftContainer>
+      <RightContainer>
+        <TabLinkContainer
+          ref={tabRef}
+          className={isScrollable ? "scrolling" : ""}
+        >
+          <TabLink
+            to={`/class/${courseId}/overview/info`}
+            className={getActiveTab() === "info" ? "active" : ""}
+          >
+            개요
+          </TabLink>
+          <TabLink
+            to={`/class/${courseId}/overview/notice`}
+            className={getActiveTab() === "notice" ? "active" : ""}
+          >
+            공지
+          </TabLink>
+          <TabLink
+            to={`/class/${courseId}/curriculum/${lectureId || 1}`}
+            className={getActiveTab() === "curriculum" ? "active" : ""}
+          >
+            커리큘럼
+          </TabLink>
+          {(currentCourse?.isCreator || currentCourse?.isAssignmentPublic) && (
+            <TabLink
+              to={`/class/${courseId}/admin/summary`}
+              className={getActiveTab() === "admin" ? "active" : ""}
+            >
+              관리
+            </TabLink>
+          )}
+        </TabLinkContainer>
+      </RightContainer>
     </Navbar>
   );
 };

@@ -35,7 +35,7 @@ const IconRow = styled.div`
 const Content = styled.div`
   width: 100%;
   border-radius: ${({ isEditing }) => (isEditing ? "0px" : "12px")};
-  min-height: 50vh;
+  min-height: 40vh;
   height: auto;
   background-color: #FFFFFF;
   box-sizing: border-box;

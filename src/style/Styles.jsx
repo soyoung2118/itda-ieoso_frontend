@@ -9,6 +9,11 @@ export const Container = styled.div`
     height: calc(100vh - 7vh);
     width: 100%;
     padding-top: 6vh;
+
+    /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+      padding-top: 3.5vh;
+    }
 `;
 
 export const Logo = styled.div`
@@ -55,8 +60,13 @@ export const LoginInput = styled.input`
 export const ResponsiveLabel = styled.span`
   font-size: 0.9rem;
 
-  @media (min-width: 600px) {
+  @media all and (min-width: 768px) {
     font-size: 1rem;
+  }
+
+  /* 모바일 세로 (해상도 ~ 479px)*/ 
+  @media all and (max-width:479px) {
+    font-size: 14px;
   }
 `;
 
@@ -68,6 +78,7 @@ export const CheckboxContainer = styled.div`
     margin-bottom: 1rem;
     font-size: 0.9rem;
     line-height: 1.5;
+
 `;
 
 export const CustomCheckboxSquare = (checked) => {
@@ -202,6 +213,11 @@ export const Step = styled.div`
   position: relative;
   transition: color 0.3s ease, border-image 0.5s ease;
 
+    /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+        margin: 0 30px;
+    }
+
   &:after {
     content: '${props => props.label}';
     position: absolute;
@@ -220,6 +236,11 @@ export const Step = styled.div`
     height: 2px;
     background: ${props => (props.completed ? '#474747' : '#C3C3C3')};
     transition: background 0.5s ease;
+
+    /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+        width: 65px;
+    }
   }
 `;
 
@@ -273,20 +294,34 @@ export const ValidateMessage = styled.div`
   width: 100%;
   margin-bottom: 10px;
   min-height: 15px;
+
+  /* 모바일 세로 (해상도 ~ 479px)*/ 
+  @media all and (max-width:479px) {
+    font-size: 11px;
+  }
 `;
 
 export const WelcomeMessage = styled.div`
+  min-width: 400px;
   width: 100%;
   max-width: 600px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 60px auto;
+  margin: 50px auto;
   padding: 45px 0;
   border: 1px solid #ddd;
   border-radius: 30px;
   background-color: #FFFFFF;
+
+  /* 모바일 세로 (해상도 ~ 479px)*/ 
+  @media all and (max-width:479px) {
+    min-width: 50px;
+    width: 100%;
+    font-size: 14px;
+    margin: 40px 0;
+  }
 `;
 
 export const NextButton = styled.button`
