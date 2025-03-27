@@ -9,7 +9,6 @@ import { UsersContext } from "../../contexts/usersContext";
 
 const Navbar = styled.div`
   background-color: var(--white-color);
-  min-width: 95%;
   padding: 0.5rem 1.3rem;
   display: flex;
   justify-content: space-between;
