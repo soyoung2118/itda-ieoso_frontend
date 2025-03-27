@@ -171,6 +171,10 @@ const TaskContainer = styled.div`
   background-color: transparent;
   border-radius: 10px;
   margin-left: 20px;
+
+  @media all and (max-width:479px) {
+    margin-left: 0;
+  }
 `;
 
 const HeaderContainer = styled.div`
@@ -180,17 +184,31 @@ const HeaderContainer = styled.div`
   padding: 5px;
   background-color: rgb(255, 255, 255);
   border-radius: 10px;
+
+  @media all and (max-width:479px) {
+    display: block;
+    padding: 5px;
+  }
 `;
 
-const HeaderTitle = styled.h2`
+const HeaderTitle = styled.div`
   font-size: 20px;
-  padding-left: 10px;
+  font-weight: 600;
+  padding: 10px 0 5px 10px;
+  
+  @media all and (max-width:479px) {
+    font-size: 16px;
+  }
 `;
 
 const TaskDate = styled.div`
   font-size: 14px;
   color: #ff4747;
   margin: 3px 10px 0 10px;
+
+  @media all and (max-width:479px) {
+    margin: 0 10px 10px; 
+  }
 `;
 
 const TaskListContainer = styled.div`
@@ -206,6 +224,10 @@ const SectionContainer = styled.div`
   padding: 5px 30px;
   background-color: rgb(255, 255, 255);
   border-radius: 10px;
+
+  @media all and (max-width:479px) {
+    padding: 5px 12px;
+  }
 `;
 
 const TaskTitle = styled.h3`
@@ -224,6 +246,10 @@ const TaskItem = styled.div`
   padding: 7px;
   margin-left: 5px;
   gap: 15px;
+
+  @media all and (max-width:479px) {
+    font-size: 12px;
+  }
 `;
 
 const CustomCheckboxCircle = (checked) => {

@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
 import styled from "styled-components";
-import Logo from '../img/logo/itda_logo.svg';
+import LogoImage from '../img/logo/itda_logo.svg';
 import userIcon from "../img/icon/usericon.svg";
 import { UsersContext } from "../contexts/usersContext";
 import { UsersInfoContainer } from '../page/users/UsersInfoContainer';
@@ -21,9 +21,8 @@ export default function TopBar() {
 
     return (
         <Wrapper>
-            <img 
-                src={Logo} 
-                style={{ width: "126px", height: "33px",cursor: "pointer" }} 
+            <Logo
+                src={LogoImage} 
                 alt="itda logo" 
                 onClick={isUser ? () => navigate('/class/list') : () => navigate('/')}
             />
@@ -64,8 +63,24 @@ const Wrapper = styled.div`
   height: 7vh;
   align-items: center;
   justify-content: space-between;
-  padding: 1px 10px 1px 25px;
+  padding: 1px 10px 1px 20px;
   background-color: #FFFFFF;
+
+    @media all and (max-width:479px) {
+        padding: 1px 2px 1px 18px;
+    }
+`;
+
+const Logo = styled.img`
+    width: 126px;
+    height: 33px;
+    cursor: pointer;
+    
+    /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+        padding: 0;
+        width: 75px;
+    }
 `;
 
 const Header = styled.header`
@@ -77,6 +92,12 @@ const Header = styled.header`
       display: flex;
       align-items: center;
       gap: 10px;
+
+          
+    /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+        padding: 0px;
+    }
     }
 
     .signup {
@@ -86,6 +107,12 @@ const Header = styled.header`
       border: none;
       padding: 10px 20px;
       cursor: pointer;
+
+    /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+        min-width: 50px;
+        font-size: 12px;
+    }
     }
 
     .login {
@@ -96,6 +123,13 @@ const Header = styled.header`
       padding: 10px 20px;
       border-radius: 50px;
       cursor: pointer;
+
+
+    /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+        min-width: 50px;
+        font-size: 12px;
+    }
     }
 
     .navigate-button{
@@ -106,6 +140,12 @@ const Header = styled.header`
       padding: 10px 20px;
       cursor: pointer;
       border-radius: 60px;
+          
+    }
+
+    @media all and (max-width:479px) {
+        min-width: 50px;
+        font-size: 12px;
     }
 `;
 
@@ -115,6 +155,7 @@ const UserContainer = styled.div`
     position: relative;
     padding: 10px;
     border-radius: 8px;
+
 `;
 
 const UserIcon = styled.img`
@@ -122,4 +163,9 @@ const UserIcon = styled.img`
     height: 40px;
     margin-right: 10px;
     cursor: pointer;
+
+    /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+        margin-right: 0px;
+    }
 `;

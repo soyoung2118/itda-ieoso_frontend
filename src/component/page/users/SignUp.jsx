@@ -13,7 +13,7 @@ import {
     Step,
     SignUpInput,
     NextButton,
-  InputContainer,
+    InputContainer,
     ValidateMessage,
     WelcomeMessage,
     InputEmailContainer
@@ -185,7 +185,7 @@ export default function SignUp() {
           {step === 1 && (
             <>
               <p style={{color: 'var(--guide-gray-color)', fontSize: '0.9rem'}}>※ itda 계정을 만들기 위해 약관에 동의해주세요.</p>
-              <div style={{minWidth: '300px', width: '100%', margin: '0 auto' }}>
+              <div style={{minWidth: '200px', width: '100%', margin: '0 auto' }}>
                 <TermsAgreement
                   isChecked={isChecked}
                   termsChecked={termsChecked}
@@ -272,7 +272,7 @@ export default function SignUp() {
             </>
           )}
           {step === 3 && (
-            <div style={{ minWidth: '400px',width: '100%', margin: '0 auto' }}>
+            <div style={{width: '100%', margin: '0 auto' }}>
               <WelcomeMessage>
                 <h2>itda에 오신 것을 환영합니다!</h2>
                 <p>첫 로그인하시겠어요?</p>

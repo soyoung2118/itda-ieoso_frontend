@@ -116,6 +116,10 @@ const SidebarContainer = styled.div`
     background-color: #fff;
     padding: 20px;
     border-radius: 20px;
+
+    @media all and (max-width:479px) {
+      display: none;
+    }
 `;
 
 const MenuItem = styled.div`

@@ -211,15 +211,21 @@ export default function Class() {
 }
 
 const Container = styled.div`
-    position: relative;
     display: flex;
+    position: relative;
     height: 100%;
     padding: 1.5rem 9vw;
     margin-bottom: 100px;
 
-    @media (min-width: 768px) {
-        padding: 0.5rem 5vw;
-        flex-direction: row;
+    @media all and (min-width: 768px) {
+        padding: 1vh 2.2vw;
+    }
+
+    /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+        display: flex;
+        flex-direction: column;
+        padding: 0 2vw;
     }
 `;
 
@@ -231,6 +237,21 @@ const Sidebar = styled.div`
     background-color: #fff;
     padding: 20px;
     border-radius: 20px;
+    
+    /* 노트북 & 태블릿 가로 (해상도 1024px ~ 1279px)*/ 
+    @media all and (min-width:1024px) and (max-width:1279px) {
+        max-width: 125px;
+    } 
+    /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        width: 90%;
+        height: 8vh;
+        margin: 25px 10px 5px;
+        padding: 8px;
+    }
 `;
 
 const MenuItem = styled.div`
@@ -242,11 +263,21 @@ const MenuItem = styled.div`
         props.active ? "var(--pink-color)" : "#FFFFFF"};
     border-radius: 10px;
     cursor: pointer;
+
+    /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+        padding: 15px 30px;
+        margin-bottom: 0;
+    }
 `;
 
 const Content = styled.div`
     flex: 1;
     padding: 20px;
+        /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+        padding: 0 15px 0 25px;
+    }
 `;
 
 const LectureCard = styled.div`

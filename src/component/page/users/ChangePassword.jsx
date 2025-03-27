@@ -6,10 +6,8 @@ import userIcon from "../../img/icon/usericon.svg";
 import {
     LogoImage,
     LogoText,
-    Form,
     Label,
     ValidateMessage,
-    NextButton,
 } from "../../../style/Styles";
 import { ModalOverlay, AlertModalContainer } from "../../ui/modal/ModalStyles";
 import { UsersContext } from "../../contexts/usersContext";
@@ -79,7 +77,7 @@ export default function ChangePassword() {
           <LogoImage src={logoImage} alt="logo" />
           <LogoText>비밀번호 변경</LogoText>
         </LogoContainer>
-          <div style={{ minWidth: '300px', width: '100%', margin: '0 auto' }}>
+          <div style={{ minWidth: '300px', margin: '0 auto' }}>
             <ChangePasswordInputContainer>
             <UserInfo>
               <img src={userIcon} alt="user icon" className="user-info-profile" />
@@ -126,7 +124,6 @@ export default function ChangePassword() {
                         : '')}
                 </ValidateMessage>
                 <NextButton
-                  style={{ fontSize: '1rem', marginTop: '1rem', backgroundColor: '#FF4747', cursor: 'pointer' }}
                   type="submit"
                 >비밀번호 변경 </NextButton>
               </Form>
@@ -137,7 +134,7 @@ export default function ChangePassword() {
       {isModalOpen && (
         <ModalOverlay>
           <AlertModalContainer>
-            <div className="text">비밀번호 변경을 완료했어요</div>
+            <div className="text" style={{ whiteSpace: 'pre-line' }}>비밀번호 변경을 완료했어요</div>
             <div className="close-button" onClick={closeModal}>확인</div>
           </AlertModalContainer>
         </ModalOverlay>
@@ -212,9 +209,19 @@ const ChangePasswordInputContainer = styled.div`
   text-align: left;
   width: 100%;
   padding: 0 20px;
+  
+      /* 모바일 세로 (해상도 ~ 479px)*/ 
+  @media all and (max-width:479px) {
+    padding: 0;
+  }
+`;
+
+const Form = styled.form`
+  font-size: 10px;
 `;
 
 const ChangeInput = styled.input`
+    width: 100%;
     padding: 0.7rem;
     border: 1px solid #CDCDCD;
     border-radius: 15px;
@@ -224,4 +231,23 @@ const ChangeInput = styled.input`
     &::placeholder {
         color: #CDCDCD;
     }
+
+    /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+        width: 300px;
+    }
+`;
+
+const NextButton = styled.button`
+  width: 100%;
+  background-color: #FF4747;
+  color: white;
+  border: none;
+  padding: 0.75rem;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 15px;
+  margin: 10px 0;
+  background-color: #FF4747;
+  cursor: pointer;
 `;
