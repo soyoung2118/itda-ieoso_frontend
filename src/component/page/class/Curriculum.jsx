@@ -30,11 +30,12 @@ const CurriculmContainer = styled.main`
   border-radius: 8px;
 
   @media (max-width: 1024px) {
-    padding: 2.5vh;
+    padding: 3.25vh;
+    padding-left: 1.5vh;
   }
 
-  @media (max-width: 768px) {
-    padding: 3vh 2.3vh;
+  @media (max-width: 480px) {
+    padding: 3vh 3vh;
   }
 `;
 const Section = styled.div`
@@ -55,6 +56,12 @@ const Section = styled.div`
     padding: 1.3vh 1.4vh;
     width: 100%;
   }
+  @media (max-width: 480px) {
+    margin: 2vh 0vh;
+    width: 103%;
+    padding: 2.5vh 3vh;
+    border-radius: 6px;
+  }
 `;
 
 const LectureTitle = styled.h1`
@@ -69,6 +76,11 @@ const LectureTitle = styled.h1`
   }
   @media (max-width: 768px) {
     font-size: 24.5px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 18px;
+    font-weight: 650;
   }
 `;
 
@@ -89,6 +101,11 @@ const LectureDate = styled.span`
     font-size: 15.5px;
     margin-left: 1vh;
   }
+
+  @media (max-width: 480px) {
+    font-size: 11px;
+    font-weight: 500;
+  }
 `;
 
 const LectureDescription = styled.span`
@@ -100,8 +117,12 @@ const LectureDescription = styled.span`
   }
 
   @media (max-width: 768px) {
-    font-size: 17px;
+    font-size: 16.5px;
     font-weight: 670;
+  }
+  @media (max-width: 480px) {
+    font-size: 11.5px;
+    font-weight: 600;
   }
 `;
 
@@ -118,14 +139,20 @@ const LectureDescriptionSection = styled.div`
   padding: 2vh 2.5vh;
 
   @media (max-width: 1024px) {
-    padding: 1.2vh 1.7vh;
+    padding: 1vh 1.7vh;
     width: 98%;
   }
 
   @media (max-width: 768px) {
-    padding: 1.5vh 2.3vh;
     width: 99%;
     border-radius: 9px;
+  }
+
+  @media (max-width: 480px) {
+    width: 106%;
+    padding: 1.7vh 2vh;
+    margin: 2vh 0vh;
+    border-radius: 7px;
   }
 `;
 
@@ -138,49 +165,46 @@ const CurriculumTitle = styled.h3`
 
   @media (max-width: 1024px) {
     font-size: 21px;
-    height: 4.5vh;
   }
 
   @media (max-width: 768px) {
-    font-size: 18.5px;
-    height: 3vh;
+    font-size: 16.5px;
     margin-left: -2vh;
   }
 
   @media (max-width: 480px) {
     font-size: 11px;
     padding: 0.3vh 1vh;
-    height: 4.7vh;
+    font-weight: 630;
   }
 `;
 
 const VideoContainer = styled.div`
   position: relative;
-  width: 25.5vh;
+  width: 22%;
+  aspect-ratio: 4 / 2.6;
   border-radius: 8px;
 
-  @media (max-width: 1200px) {
-    width: 20vh;
-  }
-
   @media (max-width: 1024px) {
-    width: 17vh;
+    width: 30%;
   }
 
   @media (max-width: 768px) {
-    width: 11vh;
+    width: 27%;
   }
-
   @media (max-width: 480px) {
-    font-size: 11px;
-    padding: 0.3vh 1vh;
+    width: 30%;
   }
 `;
 
 const VideoThumbnail = styled.img`
   width: 100%;
-  object-fit: cover;
+  height: 100%;
   border-radius: 8px;
+
+  @media (max-width: 480px) {
+    border-radius: 4.5px;
+  }
 `;
 
 const MaterialSection = styled.div`
@@ -198,16 +222,20 @@ const MaterialSection = styled.div`
   @media (max-width: 768px) {
     padding: 1.5vh;
   }
+  @media (max-width: 480px) {
+    border-radius: 4px;
+  }
 `;
 
 const Icon = styled.img`
   width: 4.3vh;
-  height: 50%;
-  marginleft: 1rem;
-  marginright: 1rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
 
   @media (max-width: 1024px) {
     width: 2.1vh;
+    margin-left: 0.6vh;
+    margin-right: 1.1vh;
   }
 
   @media (max-width: 768px) {
@@ -215,8 +243,8 @@ const Icon = styled.img`
   }
 
   @media (max-width: 480px) {
-    width: 15px;
-    padding: 0.3vh 1vh;
+    width: 3vh;
+    margin-right: 0.8vh;
   }
 `;
 
@@ -231,13 +259,13 @@ const SectionIcon = styled.img`
   }
 
   @media (max-width: 768px) {
+    width: 1.9vh;
     margin-right: 1vh;
   }
 
   @media (max-width: 480px) {
-    font-size: 11px;
-    padding: 0.3vh 1vh;
-    height: 4.7vh;
+    width: 2.5vh;
+    margin-right: 1vh;
   }
 `;
 
@@ -258,13 +286,13 @@ const VideoInformation = styled.div`
   }
 
   @media (max-width: 768px) {
-    margin-left: 3.1vh;
+    margin-left: 3vh;
   }
 `;
 
 const VideoDetails = styled.p`
   font-size: 17.3px;
-  color: #909090;
+  color: var(--black-color);
   display: flex;
   gap: 1vh;
 
@@ -274,11 +302,16 @@ const VideoDetails = styled.p`
 
   @media (max-width: 1024px) {
     font-size: 13.5px;
-    gap: 0vh;
+    gap: 0.5vh;
   }
   @media (max-width: 768px) {
-    font-size: 11.8px;
+    font-size: 11px;
     margin-left: -2vh;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 7px;
+    margin-left: -1vh;
   }
 
   & > div {
@@ -296,45 +329,17 @@ const VideoDetails = styled.p`
   }
 `;
 
-const SectionTitle = styled.span`
-  margin-right: 0.6rem;
-  cursor: pointer;
-  display: inline-block;
-  flex-shrink: 1;
-  white-space: nowrap;
-  overflow: hidden;
+const BlackLine = styled.span`
+  border-left: 1.5px solid black;
+  height: 1rem;
 
-  @media (max-width: 1024px) {
-    font-size: 15.7px;
-  }
   @media (max-width: 768px) {
-    font-size: 13.6px;
+    border-left: 1px solid black;
+    height: 1.3vh;
   }
-`;
 
-const FileSize = styled.span`
-  color: var(--main-color);
-  font-size: 0.9rem;
-
-  @media (max-width: 1024px) {
-    font-size: 14px;
-  }
-  @media (max-width: 768px) {
-    font-size: 11px;
-  }
-`;
-
-const AssignmentDate = styled.span`
-  color: var(--main-color);
-  margintop: 0.3rem;
-  whitespace: nowrap;
-  flexshrink: 0;
-
-  @media (max-width: 1024px) {
-    font-size: 14.5px;
-  }
-  @media (max-width: 768px) {
-    font-size: 12px;
+  @media (max-width: 480px) {
+    border-left: 0.5px solid black;
   }
 `;
 
@@ -347,6 +352,63 @@ const PlayButton = styled.img`
   height: auto;
   cursor: pointer;
   z-index: 10;
+
+  @media (max-width: 1024px) {
+    width: 2.3vh;
+  }
+  @media (max-width: 480px) {
+    width: 3vh;
+  }
+`;
+
+const SectionTitle = styled.span`
+  margin-right: 0.6rem;
+  cursor: pointer;
+  display: inline-block;
+  flex-shrink: 1;
+  overflow: hidden;
+
+  @media (max-width: 1024px) {
+    font-size: 15.7px;
+  }
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
+  @media (max-width: 480px) {
+    font-size: 8.5px;
+  }
+`;
+
+const FileSize = styled.span`
+  color: var(--main-color);
+  font-size: 0.9rem;
+
+  @media (max-width: 1024px) {
+    font-size: 14px;
+  }
+  @media (max-width: 768px) {
+    font-size: 10.5px;
+  }
+  @media (max-width: 480px) {
+    font-size: 8px;
+  }
+`;
+
+const AssignmentDate = styled.span`
+  color: var(--main-color);
+  margintop: 0.3rem;
+  // whitespace: nowrap;
+  flexshrink: 0;
+
+  @media (max-width: 1024px) {
+    font-size: 14.5px;
+  }
+  @media (max-width: 768px) {
+    font-size: 10px;
+  }
+  @media (max-width: 480px) {
+    font-size: 7px;
+  }
 `;
 
 const CheckIcon = styled.img`
@@ -355,6 +417,9 @@ const CheckIcon = styled.img`
 
   @media (max-width: 768px) {
     width: 1.5vh;
+  }
+  @media (max-width: 480px) {
+    width: 1.8vh;
   }
 `;
 
@@ -426,15 +491,6 @@ const Curriculum = () => {
         );
 
         if (curriculumRes.data.success) {
-          // const lectures = curriculumRes.data.data || [];
-          // const lectures = curriculumRes.data.data?.curriculumResponses || [];
-
-          // setCurriculumData(lectures);
-
-          // const defaultLecture =
-          //   lectures.find((lec) => lec.lectureId === Number(lectureId)) ||
-          //   lectures[0];
-
           const { curriculumResponses, instructorName } =
             curriculumRes.data.data || {};
           const lectures = curriculumResponses || [];
@@ -490,7 +546,6 @@ const Curriculum = () => {
   useEffect(() => {
     if (!activeLecture || !historyData) return;
 
-    // 변경 사항이 없으면 업데이트하지 않도록 최적화
     const updatedSubSections = activeLecture.subSections.map((sub) => {
       let isChecked = false;
 
@@ -654,12 +709,31 @@ const Curriculum = () => {
         Object.values(sub).every((value) => value !== null)
       );
 
-  function truncateText(text) {
-    if (text.length > 30) {
-      return text.slice(0, 30) + "...";
-    }
-    return text;
-  }
+  const truncatedText = (text) => {
+    if (!text) return "";
+
+    const width = window.innerWidth;
+
+    let maxLength = 10;
+    if (width >= 1024) maxLength = 11;
+    else if (width >= 768) maxLength = 11;
+    else if (width >= 480) maxLength = 9;
+
+    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+  };
+
+  const materialTruncatedText = (text) => {
+    if (!text) return "";
+
+    const width = window.innerWidth;
+
+    let maxLength = 10;
+    if (width >= 1024) maxLength = 30;
+    else if (width >= 768) maxLength = 20;
+    else if (width >= 480) maxLength = 15;
+
+    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+  };
 
   return (
     <div style={{ display: "flex" }}>
@@ -699,10 +773,7 @@ const Curriculum = () => {
           <div key={sub.id}>
             <div>
               {sub.contentType === "video" && (
-                <Section
-                  style={{ display: "flex" }}
-                  onClick={() => handleSectionClick(sub)}
-                >
+                <Section onClick={() => handleSectionClick(sub)}>
                   <VideoContainer>
                     {sub.thumbnail ? (
                       <div>
@@ -722,30 +793,12 @@ const Curriculum = () => {
                   <VideoInformation>
                     <CurriculumTitle>{sub.title}</CurriculumTitle>
                     <VideoDetails>
-                      <div
-                      // style={{
-                      //   display: "flex",
-                      //   alignItems: "center",
-                      //   gap:"1.3vh"
-                      // }}
-                      >
+                      <div style={{ whiteSpace: "nowrap" }}>
                         <span>{activeLecture.instructorName}</span>
-                        <span
-                          style={{
-                            borderLeft: "1.5px solid #909090",
-                            height: "1rem",
-                            // marginLeft: "1.3vh",
-                            marginRight: "0.5vh",
-                          }}
-                        ></span>
+                        <BlackLine />
                       </div>
 
-                      <span
-                      // style={{
-                      //   whiteSpace: "nowrap",
-                      //   flexShrink: 0,
-                      // }}
-                      >
+                      <span>
                         {formatDate(sub?.startDate)} ~{" "}
                         {formatDate(sub?.endDate)}
                       </span>
@@ -772,7 +825,7 @@ const Curriculum = () => {
                       }}
                     >
                       <SectionTitle onClick={() => handleMaterialClick(sub)}>
-                        {sub.title}
+                        {materialTruncatedText(sub.title)}
                       </SectionTitle>
                       <FileSize>{sub.fileSize || ""}</FileSize>
                     </div>
@@ -793,7 +846,6 @@ const Curriculum = () => {
                     display: "flex",
                     alignItems: "center",
                     gap: "1rem",
-                    marginBottom: "2rem",
                   }}
                   onClick={() => handleSectionClick(sub)}
                 >
@@ -803,7 +855,9 @@ const Curriculum = () => {
                       flexWrap: "wrap",
                     }}
                   >
-                    <SectionTitle>{truncateText(sub.title || "과제 없음")}</SectionTitle>
+                    <SectionTitle>
+                      {truncatedText(sub.title || "과제 없음")}
+                    </SectionTitle>
                     <AssignmentDate>
                       {formatDate(sub?.startDate)} ~ {formatDate(sub?.endDate)}
                     </AssignmentDate>

@@ -10,21 +10,56 @@ import api from "../../api/api";
 const DateTimeContainer = styled.div`
   display: flex;
   width: 100%;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
+
+  @media (max-width: 1024px) {
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    margin-bottom: 1rem;
+  }
+
+  @media (max-width: 480px) {
+    margin-bottom: 0.5rem;
+  }
 `;
 
 const DateRow = styled.div`
   display: flex;
   align-items: center;
-  gap: 2rem;
   width: 100%;
-  margin-bottom: 1rem;
+`;
+
+const DateTimeIcon = styled.img`
+  width: 2.5rem;
+  margin-left: 1rem;
+  margin-right: 5.5vh;
+  align-self: center;
+
+  @media (max-width: 1024px) {
+    margin-left: 0.5vh;
+    margin-right: 1.55vh;
+    width: 2.3vh;
+  }
+
+  @media (max-width: 768px) {
+    margin-left: 0.3vh;
+    margin-right: 1.5vh;
+    width: 2.4vh;
+  }
+
+  @media (max-width: 480px) {
+    margin-left: 0vh;
+    margin-right: 1.8vh;
+    width: 3.5vh;
+  }
 `;
 
 const InputBox = styled.div`
   display: flex;
   align-items: center;
-  width: 14rem;
+  width: 100%;
   border: 2px solid #c3c3c3;
   border-radius: 8px;
   color: #c3c3c3;
@@ -34,10 +69,39 @@ const InputBox = styled.div`
   cursor: pointer;
   flex: 1;
   justify-content: space-between;
+
+  @media (max-width: 1024px) {
+    font-size: 12px;
+    padding: 0.8vh 1vh;
+    border: 1.9px solid #c3c3c3;
+    border-radius: 7px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 10px;
+    padding: 0.9vh 0.9vh;
+    border: 1.4px solid #c3c3c3;
+    border-radius: 6.5px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 6.6px;
+    padding: 1.2vh 1.3vh;
+    border: 1px solid #c3c3c3;
+    border-radius: 4px;
+  }
 `;
 
 const Icon = styled.img`
   width: 1rem;
+
+  @media (max-width: 1024px) {
+    width: 0.9vh;
+  }
+
+  @media (max-width: 480px) {
+    width: 1.5vh;
+  }
 `;
 
 const ErrorText = styled.p`
@@ -102,7 +166,6 @@ const DateTimeEdit = ({
     // const localTime = new Date(date.getTime() + kstOffset);
     const formattedDate = formatToKST(dateValue);
 
-
     if (subSection.contentType === "video" && field === "startDate") {
       const videoId = Number(subSection.videoId);
       url = `/videos/${courseId}/${videoId}/${userId}`;
@@ -116,7 +179,6 @@ const DateTimeEdit = ({
       const formattedDatenoz = formattedDate.replace("Z", "");
       url = `/materials/${courseId}/${materialId}/${userId}?startDate=${formattedDatenoz}`;
     }
-
 
     try {
       const response = await api.patch(url, data);
@@ -140,7 +202,6 @@ const DateTimeEdit = ({
       return;
     }
 
-
     setDate(newDate);
 
     onDateChange(field, newDate);
@@ -151,15 +212,7 @@ const DateTimeEdit = ({
     <div className="datetime-edit">
       <DateTimeContainer>
         <DateRow>
-          <img
-            src={DateTime}
-            style={{
-              width: "2.5rem",
-              marginLeft: "1rem",
-              marginRight: "1rem",
-              alignSelf: "center",
-            }}
-          />
+          <DateTimeIcon src={DateTime} />
           <DatePicker
             selected={date}
             onChange={handleDateChange}

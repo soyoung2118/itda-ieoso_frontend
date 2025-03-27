@@ -7,8 +7,13 @@ const StyledButton = styled(Link)`
   position: fixed;
   bottom: 2rem;
   right: 2rem;
-  width: 3.8rem;
+  width: 6vh;
   cursor: pointer;
+
+  @media (max-width: 1024px) {
+    width: 4.5vh;
+  }
+
 `;
 
 const EditButton = ({ to, edit }) => {
