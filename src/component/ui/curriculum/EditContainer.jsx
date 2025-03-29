@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import VideoIcon from "../../img/class/edit/video.svg";
-import AssignmentIcon from "../../img/icon/docs.svg";
-import MaterialIcon from "../../img/icon/pdf.svg";
+import AssignmentIcon from "../../img/icon/curriculum/assignmenticon.svg";
+import MaterialIcon from "../../img/icon/curriculum/materialicon.svg";
 
 const Container = styled.div`
   display: flex;
