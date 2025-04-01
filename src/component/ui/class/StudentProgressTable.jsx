@@ -9,7 +9,6 @@ const ScrollableTableContainer = styled.div`
   width: 100%;
   position: relative;
 
-  /* 숨겨진 기본 스크롤바 */
   overflow-x: hidden;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE and Edge */
@@ -50,15 +49,31 @@ const Table = styled.table`
     padding: 0.7rem 6vh;
     width: 3rem;
     border-bottom: 1px solid #cdcdcd;
+
+    @media (max-width: 1024px) {
+      padding: 0.7rem 4vh;
+    }
+
+     @media (max-width: 768px) {
+      padding: 0.9vh 3.2vh;
+    }
   }
 
   th {
     font-size: 1.2rem;
-
     white-space: nowrap;
+
+    @media (max-width: 1024px) {
+      font-size: 17.5px;
+    }
+
+    @media (max-width: 768px) {
+      font-size: 14.5px;
+      font-weight: 650;
+    }
   }
 
-  th:first-child{
+  th:first-child {
     text-align: left;
   }
 
@@ -66,12 +81,25 @@ const Table = styled.table`
     font-size: 1.05rem;
     font-weight: bold;
     white-space: nowrap;
+
+    @media (max-width: 1024px) {
+      font-size: 16px;
+    }
+
+    @media (max-width: 768px) {
+      font-size: 13.5px;
+      font-weight: 650;
+    }
   }
 
   td:first-child {
     text-align: left !important;
     padding-left: 0rem !important;
     padding-right: 15vh;
+
+    @media (max-width: 1024px) {
+      padding-right: 9vh;
+    }
   }
 `;
 
@@ -86,11 +114,19 @@ const ProfileImage = styled.img`
   width: 32px;
   height: 32px;
   border-radius: 50%;
+
+  @media (max-width: 1024px) {
+    width: 2.2vh;
+    height: 2vh;
+  }
 `;
 
 const CheckMarkIcon = styled.img`
   width: 1.7rem;
   height: 1.7rem;
+  @media (max-width: 1024px) {
+    height: 1.8vh;
+  }
 `;
 
 const StudentProgressTable = ({ assignments }) => {
@@ -107,9 +143,7 @@ const StudentProgressTable = ({ assignments }) => {
           submissions: [],
         });
       }
-      studentsMap
-        .get(student.userId)
-        .submissions.push(student.status); // 상태를 그대로 저장
+      studentsMap.get(student.userId).submissions.push(student.status); // 상태를 그대로 저장
     });
   });
   const students = Array.from(studentsMap.values());
