@@ -50,6 +50,10 @@ const CurriculumTitle = styled.h3`
   @media (max-width: 480px) {
     font-size: 10px;
   }
+    
+  @media (max-width: 376px) {
+    font-size: 9.4px;
+  }
 `;
 
 const VideoContainer = styled.div`
@@ -323,7 +327,8 @@ const CurriculumSection = ({
               <MaterialIcon src={Material} />
               <MaterialSection>
                 <span style={{ marginRight: "0.6rem" }}>
-                  {materialTruncatedText(subSection.originalFilename) ?? "자료 없음"}
+                  {materialTruncatedText(subSection.originalFilename) ??
+                    "자료 없음"}
                 </span>
                 <span
                   style={{

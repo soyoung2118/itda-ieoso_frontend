@@ -82,6 +82,10 @@ const LectureTitle = styled.h1`
     font-size: 18px;
     font-weight: 650;
   }
+
+  @media (max-width: 376px) {
+    font-size: 17px;
+  }
 `;
 
 const LectureDate = styled.span`
@@ -106,6 +110,11 @@ const LectureDate = styled.span`
     font-size: 11px;
     font-weight: 500;
   }
+
+  @media (max-width: 376px) {
+    font-size: 9.5px;
+    font-weight: 500;
+  }
 `;
 
 const LectureDescription = styled.span`
@@ -123,6 +132,9 @@ const LectureDescription = styled.span`
   @media (max-width: 480px) {
     font-size: 11.5px;
     font-weight: 600;
+  }
+  @media (max-width: 376px) {
+    font-size: 10px;
   }
 `;
 
@@ -154,6 +166,10 @@ const LectureDescriptionSection = styled.div`
     margin: 2vh 0vh;
     border-radius: 7px;
   }
+
+   @media (max-width: 376px) {
+    margin: 2.3vh 0vh;
+  }
 `;
 
 const CurriculumTitle = styled.h3`
@@ -176,6 +192,10 @@ const CurriculumTitle = styled.h3`
     font-size: 11px;
     padding: 0.3vh 1vh;
     font-weight: 630;
+  }
+
+  @media (max-width: 376px) {
+    font-weight: 600;
   }
 `;
 
