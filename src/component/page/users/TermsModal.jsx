@@ -14,9 +14,19 @@ const ModalContainer = styled.div`
   flex-direction: column;
   height: 100%;
 
-  @media (max-width: 375px) {
-    width: 300px;
-    padding: 60px 25px 25px 25px;
+  /* 태블릿 가로 (해상도 768px ~ 1023px)*/ 
+  @media all and (min-width:768px) and (max-width:1023px) { 
+    width: 500px;
+    height: 400px;
+    padding: 40px 40px 15px;
+  } 
+
+  /* 모바일 세로 (해상도 ~ 479px)*/ 
+  @media all and (max-width:479px) {
+    width: 200px;
+    height: 350px;
+    padding: 30px;
+    font-size: 12px;
   }
 `;
 
@@ -25,6 +35,11 @@ const ModalHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+
+  /* 모바일 세로 (해상도 ~ 479px)*/ 
+  @media all and (max-width:479px) {
+    margin-bottom: 10px;
+  }
 `;
 
 const TermsTitle = styled.h2`
@@ -33,10 +48,16 @@ const TermsTitle = styled.h2`
 
 const CloseButton = styled.span`
   position: absolute;
-  top: 30px;
-  right: 40px;
+  top: 22px;
+  right: 30px;
   font-size: 1.5rem;
   cursor: pointer;
+    
+  /* 태블릿 가로 (해상도 768px ~ 1023px)*/ 
+  @media all and (min-width:768px) and (max-width:1023px) { 
+    top: 35px;
+    right: 45px;
+  } 
 `;
 
 const TermsContent = styled.div`
@@ -44,6 +65,13 @@ const TermsContent = styled.div`
   font-size: 1rem;
   line-height: 1.5;
   flex-grow: 1;
+  overflow-y: auto;
+  max-height: 400px;
+
+  /* 모바일 세로 (해상도 ~ 479px)*/ 
+  @media all and (max-width:479px) {
+    font-size: 12px;
+  }
 `;
 
 const TermsList = ({ text }) => {

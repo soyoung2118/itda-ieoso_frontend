@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState, useContext } from 'react';
 import TermsModal from './users/TermsModal';
 import { UsersContext } from '../contexts/usersContext';
+import { ModalOverlay, AlertModalContainer } from '../ui/modal/ModalStyles';
 
 const MainContainer = styled.div`
     text-align: center;
@@ -45,9 +46,14 @@ const ExplainContainer = styled.header`
 `;
 
 const TableImage = styled.img`
-    width: 100%;
-    margin-top: -10vh;
+    width: 75%;
+    margin: 0px 0px 40px;
     position: relative;
+
+    /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+        width: 90%;
+    }
 `;
 
 const Highlight = styled.span`
@@ -138,6 +144,11 @@ const BaseContainer = styled.div`
 const ExplainBottomImage = styled.img`
     width: 100%;
     margin: 20px 0px;
+
+        /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+        margin: 0px;
+    }
 `;
 
 const ActionButtonContainer = styled.div`
@@ -146,6 +157,7 @@ const ActionButtonContainer = styled.div`
     width: 100%;
     box-sizing: border-box;
     margin-top: 10px;
+
     @media (max-width: 768px) {
         justify-content: space-around;
     }
@@ -171,6 +183,11 @@ const ActionButton = styled.div`
     @media (max-width: 768px) {
         width: 30%;
     }
+
+        /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+        width: 40%;
+    }
 `;
 
 const ButtonText = styled.span`
@@ -179,6 +196,13 @@ const ButtonText = styled.span`
     left: 15px;
     font-size: clamp(0.75rem, 2vw, 1.1rem);
     font-weight: 500;
+
+    /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+        font-size: 8px;
+        top: 4px;
+        left: 7px;
+    }
 `;
 
 const ArrowIcon = styled.img`
@@ -187,6 +211,13 @@ const ArrowIcon = styled.img`
     right: 15px;
     width: clamp(10px, 2vw, 16px);
     height: clamp(10px, 2vw, 16px);
+
+    /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+        width: 7px;
+        bottom: 5px;
+        right: 8px;
+    }
 `;
 
 const AppDownloadContainer = styled.div`
@@ -200,6 +231,13 @@ const AppDownloadContainer = styled.div`
 const AppLogo = styled.img`
     width: clamp(70px, 10vw, 100px);
     margin-right: 10px;
+
+    /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+        width: 50px;
+        bottom: 5px;
+        right: 8px;
+    }
 `;
 
 const AppDescription = styled.div`
@@ -211,12 +249,18 @@ const AppDescription = styled.div`
         font-size: 0.8rem;
         white-space: pre-wrap;
     }
+
+    /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+        font-size: 10px;
+    }
 `;
 
 const AppDownloadLinks = styled.div`
     display: flex;
     gap: 10px;
     margin-top: 15px;
+    
 `;
 
 const AppDownloadLink = styled.a`
@@ -237,6 +281,11 @@ const AppDownloadLink = styled.a`
         @media (max-width: 720px){
             widht: 12px;
         }
+    /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+        width: 12px;
+        font-size: 10px;
+    }
     }
 
     span {
@@ -245,6 +294,11 @@ const AppDownloadLink = styled.a`
         @media (max-width: 720px) {
             font-size: 0.7rem;
         }
+
+    /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+        font-size: 10px;
+    }
     }
 `;
 
@@ -254,10 +308,15 @@ const Footer = styled.footer`
     align-items: flex-start;
     padding: 0 30px 80px ;
     background-color: #FFFFFF;
+
+    /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+        padding: 10px 15px;
+        font-size: 12px;
+    }
 `;
 
 const FooterLinks = styled.div`
-    display: flex;
     align-items: center;
 `;
 
@@ -273,18 +332,20 @@ const FooterLink = styled.a`
     @media (max-width: 720px){
         font-size: 0.7rem;
     }
+
+    /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+        font-size: 9px;
+    }
 `;
 
 const FooterSection = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
 `;
 
 const FooterInfoContainer = styled.div`
     display: flex;
-    justify-content: flex-end;
     gap: 10px;
+    align-items: flex-start;
 `;
 
 const FooterTerms = styled.a`
@@ -299,52 +360,72 @@ const FooterTerms = styled.a`
         font-size: 0.7rem;
     }
 
+    /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+        font-size: 9px;
+    }
+
 `;
 
 const FooterInfo = styled.p`
     font-size: 0.8rem;
-    margin: 10px 0;
     color: #AAAAAA;
 
     @media (max-width: 720px){
         font-size: 0.7rem;
     }
+
+    /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+        font-size: 9px;
+    }
 `;
 
-function renderActionButtons(navigate, isLoggedIn) {
-    const buttons = [
-        { text: "강의실 바로가기", src: arrowIcon, path: "/class/list" },
-        { text: "내 대시보드 바로가기", src: arrowIcon, path: "/dashboard" },
-        { text: "내 강의실 생성하기", src: arrowIcon, path: "/class/create" },
-    ];
+const ResponsiveText = styled.div`
+    font-size: 3.2rem;
+    font-weight: 500;
 
-    const handleClick = (path) => {
-        if (isLoggedIn) {
-            navigate(path);
-        } else {
-            alert('로그인 후 사용해주세요.');
-        }
-    };
+    /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+        font-size: 2rem;
+    }
+`;
 
-    return (
-        <ActionButtonContainer>
-            {buttons.map((button, index) => (
-                <ActionButton key={index} onClick={() => handleClick(button.path)}>
-                    <ButtonText>{button.text}</ButtonText>
-                    <ArrowIcon src={button.src} alt="arrow icon" />
-                </ActionButton>
-            ))}
-        </ActionButtonContainer>
-    );
-}
+const ResponsiveHeading = styled.h2`
+    font-size: 3.2rem;
+    font-weight: bold;
+    margin: 10px;
+
+    @media all and (max-width:479px) {
+        font-size: 2rem;
+    }
+`;
+
+const ResponsiveDescription = styled.div`
+    font-size: 1.4rem;
+    margin-top: 10px;
+
+    @media all and (max-width:479px) {
+        font-size: 1rem;
+    }
+`;
 
 export default function LandingPage() {
     const navigate = useNavigate();
-    const [modalOpen, setModalOpen] = useState(false);
+    const [loginModalOpen, setLoginModalOpen] = useState(false);
+    const [termsModalOpen, setTermsModalOpen] = useState(false);
     const [modalContent, setModalContent] = useState({ title: '', content: '' });
     const { isUser: isLoggedIn } = useContext(UsersContext);
 
-    const handleOpenModal = (type) => {
+    const handleOpenLoginModal = () => {
+        setLoginModalOpen(true);
+    };
+
+    const handleCloseLoginModal = () => {
+        setLoginModalOpen(false);
+    };
+
+    const handleOpenTermsModal = (type) => {
         let content;
         switch (type) {
             case 'service':
@@ -363,11 +444,11 @@ export default function LandingPage() {
                 content = { title: '', content: '' };
         }
         setModalContent(content);
-        setModalOpen(true);
+        setTermsModalOpen(true);
     };
-  
-    const handleCloseModal = () => {
-        setModalOpen(false);
+
+    const handleCloseTermsModal = () => {
+        setTermsModalOpen(false);
     };
 
     const explain = {
@@ -388,25 +469,52 @@ export default function LandingPage() {
         },
     };
 
+    function renderActionButtons(navigate, isLoggedIn) {
+        const buttons = [
+            { text: "강의실 바로가기", src: arrowIcon, path: "/class/list" },
+            { text: "내 대시보드 바로가기", src: arrowIcon, path: "/dashboard" },
+            { text: "내 강의실 생성하기", src: arrowIcon, path: "/class/create" },
+        ];
+
+        const handleClick = (path) => {
+            if (isLoggedIn) {
+                navigate(path);
+            } else {
+                handleOpenLoginModal();
+            }
+        };
+
+        return (
+            <ActionButtonContainer>
+                {buttons.map((button, index) => (
+                    <ActionButton key={index} onClick={() => handleClick(button.path)}>
+                        <ButtonText>{button.text}</ButtonText>
+                        <ArrowIcon src={button.src} alt="arrow icon" />
+                    </ActionButton>
+                ))}
+            </ActionButtonContainer>
+        );
+    }
+
     return (
       <>
         <TopBar />
         <MainContainer>
           <ExplainContainer>
-                <div style={{ fontSize: "3.2rem", fontWeight: 500 }}>쉬운 챌린지 운영,</div>
-                <h2 style={{ fontSize: "3.2rem", fontWeight: "bold", margin: "10px" }}>
+                <ResponsiveText>쉬운 챌린지 운영,</ResponsiveText>
+                <ResponsiveHeading>
                     지금 <Highlight>‘itda’</Highlight>에서 시작하세요!
-                </h2>
-                <div style={{ fontSize: "1.4rem", marginTop: "10px"}}>
+                </ResponsiveHeading>
+                <ResponsiveDescription>
                     <strong>3분만에</strong> 강의실 개설,
                         <strong>한 눈에 확인</strong> 하는 과제 제출 현황
-                </div>
+                </ResponsiveDescription>
                 <StartButton onClick={() => navigate(isLoggedIn ? '/class/list' : '/login')}>
                     <img src={itdaLogoWhite} alt="itda logo" style={{ width: "24px" }} />
                     {isLoggedIn ? '강의실 바로가기' : '무료로 시작하기'}
                 </StartButton>
             </ExplainContainer>
-            <TableImage src={landingTable} alt="itda logo" style={{ width: "75%", margin: "60px 0px 40px" }} />
+            <TableImage src={landingTable} alt="itda logo" />
           <Features>
             {Object.values(explain).map((feature, index) => (
               <FeatureCard key={index}>
@@ -441,7 +549,7 @@ export default function LandingPage() {
                 </div>
             </AppDownloadContainer>
         </BaseContainer>
-          <hr style={{ width: "100%", margin: "10px 0px 30px", border: "1px solid #CDCDC" }} />
+          <hr style={{ width: "100%", margin: "1vh 0px 3vh", border: "1px solid #CDCDC" }} />
           <Footer>
             <FooterLinks>
               <FooterLink href="https://www.instagram.com/eduitda?igsh=NDV3bWk0dTkzbmMz">Instagram</FooterLink>
@@ -449,8 +557,8 @@ export default function LandingPage() {
             </FooterLinks>
             <FooterSection>
               <div>
-              <FooterTerms onClick={() => handleOpenModal('service')}>이용약관</FooterTerms>
-              <FooterTerms onClick={() => handleOpenModal('privacy')}>개인정보처리방침</FooterTerms>
+                <FooterTerms onClick={() => handleOpenTermsModal('service')}>이용약관</FooterTerms>
+                <FooterTerms onClick={() => handleOpenTermsModal('privacy')}>개인정보처리방침</FooterTerms>
               </div>
               <FooterInfoContainer>
                 <FooterInfo>CEO: 김효정</FooterInfo>
@@ -459,11 +567,21 @@ export default function LandingPage() {
             </FooterSection>
             </Footer>
         </MainContainer>
-        {modalOpen && (
+        {loginModalOpen && (
+          <ModalOverlay>
+            <AlertModalContainer>
+              <div className="text">로그인 후 사용해주세요.</div>
+              <div className="button-container">
+                <button className="close-button" onClick={handleCloseLoginModal}>확인</button>
+              </div>
+            </AlertModalContainer>
+          </ModalOverlay>
+        )}
+        {termsModalOpen && (
           <TermsModal 
             title={modalContent.title} 
             content={modalContent.content} 
-            onClose={handleCloseModal}
+            onClose={handleCloseTermsModal}
           />
         )}
       </>
