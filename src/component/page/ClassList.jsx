@@ -3,8 +3,6 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import TopBar from "../ui/TopBar";
 import LogoGray from "../img/logo/itda_logo_gray.svg";
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import ClassThumbnail from "../img/class/classlist_thumbnail.svg";
 import { ModalOverlay, ModalContent, AlertModalContainer } from "../ui/modal/ModalStyles";
 import api from "../api/api";
@@ -170,11 +168,15 @@ export default function Class() {
             {showPopup && (
                 <PopupMenu>
                     <PopupItem onClick={() => navigate("/class/create")}>
-                        <OpenInNewIcon style={{ marginRight: "15px" }} />
+                        <span className="material-symbols-outlined" style={{ fontSize: "24px",marginRight: "10px" }}>
+                            new_window
+                        </span>
                         강의실 만들기
                     </PopupItem>
                     <PopupItem onClick={() => navigate("/class/participate")}>
-                        <ExitToAppIcon style={{ marginRight: "15px" }} />
+                        <span className="material-symbols-outlined" style={{ fontSize: "24px",marginRight: "10px" }}>
+                            login
+                        </span>
                         강의실 입장하기
                     </PopupItem>
                 </PopupMenu>
