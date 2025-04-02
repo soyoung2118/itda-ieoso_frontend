@@ -133,7 +133,7 @@ const Td = styled.td`
   text-align: center;
 
   @media (max-width: 1024px) {
-    padding: 0.6vh 2vh;
+    padding: 0.4vh 1.5vh;
   }
 
   @media (max-width: 768px) {
@@ -176,9 +176,9 @@ const Badge = styled.div`
   @media (max-width: 1024px) {
     border-radius: 12px;
     padding: 0.8vh 1.3vh;
-    max-width: 15vh;
+    max-width: 10vh;
   }
-     @media (max-width: 768px) {
+  @media (max-width: 768px) {
     border-radius: 9px;
     padding: 0.6vh 1.1vh;
     max-width: 13vh;

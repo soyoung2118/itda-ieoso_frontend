@@ -51,7 +51,7 @@ const Table = styled.table`
     border-bottom: 1px solid #cdcdcd;
 
     @media (max-width: 1024px) {
-      padding: 0.7rem 4vh;
+      padding: 0.7rem 3.3vh;
     }
 
      @media (max-width: 768px) {
@@ -64,7 +64,7 @@ const Table = styled.table`
     white-space: nowrap;
 
     @media (max-width: 1024px) {
-      font-size: 17.5px;
+      font-size: 17px;
     }
 
     @media (max-width: 768px) {
@@ -83,7 +83,7 @@ const Table = styled.table`
     white-space: nowrap;
 
     @media (max-width: 1024px) {
-      font-size: 16px;
+      font-size: 15px;
     }
 
     @media (max-width: 768px) {
@@ -98,7 +98,7 @@ const Table = styled.table`
     padding-right: 15vh;
 
     @media (max-width: 1024px) {
-      padding-right: 9vh;
+      padding-right: 6vh;
     }
   }
 `;

@@ -19,8 +19,8 @@ const MobileToggleButton = styled.button`
   @media (max-width: 376px) {
     display: block;
     position: fixed;
-    bottom: 2%;
-    left: 4%;
+    bottom: 4.6%;
+    left: 5%;
     z-index: 1300;
     background: white;
     border: 1px solid #ccc;
@@ -29,7 +29,6 @@ const MobileToggleButton = styled.button`
     font-size: 0.5vh;
     cursor: pointer;
     color: var(--main-color);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   }
 `;
 
@@ -372,9 +371,9 @@ const CurriculumSidebar = ({
       {isMobile && (
         <MobileToggleButton type="button" onClick={toggleSidebar}>
           {showSidebar ? (
-            <CloseIcon style={{ fontSize: "15px" }} />
+            <CloseIcon style={{ fontSize: "2.8vh" }} />
           ) : (
-            <MenuIcon style={{ fontSize: "15px" }} />
+            <MenuIcon style={{ fontSize: "2.8vh" }} />
           )}
         </MobileToggleButton>
       )}

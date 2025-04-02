@@ -23,6 +23,7 @@ const DateTimeContainer = styled.div`
   @media (max-width: 480px) {
     margin-bottom: 0.5rem;
   }
+
 `;
 
 const DateRow = styled.div`
@@ -53,6 +54,11 @@ const DateTimeIcon = styled.img`
     margin-left: 0vh;
     margin-right: 1.8vh;
     width: 3.5vh;
+  }
+
+  @media (max-width: 376px) {
+    margin-right: 1.2vh;
+    width: 2.5vh;
   }
 `;
 
@@ -90,6 +96,12 @@ const InputBox = styled.div`
     border: 1px solid #c3c3c3;
     border-radius: 4px;
   }
+
+  @media (max-width: 376px) {
+    font-size: 6px;
+    padding: 0.7vh 1vh;
+    border-radius: 3.4px;
+  }
 `;
 
 const Icon = styled.img`
@@ -101,6 +113,10 @@ const Icon = styled.img`
 
   @media (max-width: 480px) {
     width: 1.5vh;
+  }
+
+  @media (max-width: 480px) {
+    width: 1.2vh;
   }
 `;
 

@@ -99,7 +99,8 @@ const LectureSection = styled.div`
     border-radius: 8px;
   }
   @media (max-width: 376px) {
-    padding: 1.8vh 2.5vh;
+    padding: 1.2vh 2vh;
+    border-radius: 7px;
   }
 `;
 
@@ -121,8 +122,8 @@ const LectureTitle = styled.h1`
   }
 
   @media (max-width: 376px) {
-    font-size: 13.5px;
-    font-weight: 630;
+    font-size: 12.8px;
+    font-weight: 600;
   }
 `;
 
@@ -159,9 +160,9 @@ const LectureDescriptionSection = styled.div`
   }
 
   @media (max-width: 376px) {
-    padding: 0.5vh 2vh;
-    margin: 1.2vh 0vh;
-    border-radius: 8px;
+    padding: 0.3vh 2vh;
+    margin: 1vh 0vh;
+    border-radius: 7px;
   }
 `;
 
