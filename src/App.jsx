@@ -25,6 +25,7 @@ import Dashboard from "./component/page/dashboard/Dashboard.jsx";
 import ClassPlaying from "./component/page/class/Playing.jsx";
 import ClassAssignmentSubmit from "./component/page/class/AssignmentSubmit.jsx";
 import StudentDetail from "./component/page/class/StudentDetail.jsx";
+import GoogleAuthCallback from "./component/page/users/GoogleAuthCallback.jsx";
 
 function LogoutHandler() {
   const navigate = useNavigate();
@@ -102,6 +103,9 @@ function App() {
         <LogoutHandler />
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/api/oauth/return/uri" element={<GoogleAuthCallback />} />
+          <Route path="oauth/callback" element={<GoogleAuthCallback />} />
+          <Route path="/oauth/callback" element={<GoogleAuthCallback />} />
           <Route path="/login" element={<LogIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/find-password" element={<FindPassword />} />

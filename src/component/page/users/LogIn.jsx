@@ -2,7 +2,6 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import TopBar from "../../ui/TopBar";
 import logoImage from "../../img/logo/itda_logo_symbol.svg";
-//import { Checkbox, FormControlLabel } from '@mui/material';
 import {
     Container,
     LogoImage,
@@ -12,9 +11,12 @@ import {
     Label,
     LoginInput,
     CheckboxContainer,
-    //CustomCheckboxSquare,
     LoginButton,
     SignUpLink,
+    Divider,
+    Line,
+    SocialLoginButton,
+    GoogleButton
 } from "../../../style/Styles";
 import { login, getUsersInfo } from "../../api/usersApi";
 import { UsersContext } from "../../contexts/usersContext";
@@ -22,9 +24,9 @@ import { UsersContext } from "../../contexts/usersContext";
 export default function LogIn() {
     const { setUser, setIsUser } = useContext(UsersContext);
     const navigate = useNavigate();
-    //const [isChecked, setIsChecked] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -43,12 +45,10 @@ export default function LogIn() {
             setUser(userInfo.data);
             localStorage.setItem('user', JSON.stringify(userInfo.data));
             
-            // 로그인 성공 시에만 리다이렉트
             window.location.href = '/class/list';
         } catch (error) {
             console.error('로그인 실패:', error);
 
-            // 로그인 API에서 발생한 에러일 경우
             if (error.config && error.config.url.includes('/login')) {
                 if (error.response?.status === 401) {
                     alert('이메일 또는 비밀번호가 잘못되었습니다.');
@@ -56,11 +56,23 @@ export default function LogIn() {
                     alert(error.response?.data?.message || '로그인 중 오류가 발생했습니다.');
                 }
             } else {
-                // 다른 API 호출에서 발생한 에러일 경우
                 alert('다른 API 호출 중 오류가 발생했습니다. 메인 페이지로 이동합니다.');
                 window.location.href = '/';
             }
         }
+    };
+
+    const handleGoogleLogin = () => {
+        setIsLoading(true);
+        
+        // 리디렉션 후 돌아올 URL 설정
+        const redirectUri = encodeURIComponent(`${window.location.origin}/oauth/callback`);
+        
+        // 구글 로그인 URL에 리디렉션 URI 추가
+        const googleLoginUrl = `https://staging.eduitda.com/api/oauth/google/login?redirect_uri=${redirectUri}`;
+        
+        // 새 창에서 열기
+        window.location.href = googleLoginUrl;
     };
 
     return (
@@ -69,6 +81,19 @@ export default function LogIn() {
             <Container>
                 <LogoImage src={logoImage} alt="logo" />
                 <LogoText>로그인</LogoText>
+                <SocialLoginButton>
+                    <GoogleButton 
+                        onClick={handleGoogleLogin}
+                        disabled={isLoading}
+                    >
+                        {isLoading ? '처리 중...' : '구글 로그인하기'}
+                    </GoogleButton>
+                </SocialLoginButton>
+                <Divider>
+                    <Line />
+                    <span>또는</span>
+                    <Line />
+                </Divider>
                 <SignUpContainer>
                     <Form onSubmit={handleLogin}>
                         <Label>이메일</Label>
@@ -85,21 +110,6 @@ export default function LogIn() {
                             onChange={(e) => setPassword(e.target.value)}
                         />
                         <CheckboxContainer style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'end' }}>
-                            {/*
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        icon={CustomCheckboxSquare(false)}
-                                        checkedIcon={CustomCheckboxSquare(true)}
-                                        checked={isChecked}
-                                        onChange={() => setIsChecked(!isChecked)}
-                                    />
-                                }
-                                label="자동 로그인"
-                                style={{ margin: 0 }}  // 여백 제거로 높이 일치
-                            />
-                            */}
-                            
                             <span 
                                 onClick={() => navigate('/find-password')} 
                                 style={{ 
@@ -107,9 +117,9 @@ export default function LogIn() {
                                     marginRight: '10px', 
                                     textDecoration: 'none', 
                                     color: '#909090',
-                                    fontSize: '0.9rem',  // 폰트 크기 일치
-                                    lineHeight: '1.5',   // 라인 높이 일치
-                                    cursor: 'pointer'    // 클릭 가능한 커서
+                                    fontSize: '0.9rem',
+                                    lineHeight: '1.5',
+                                    cursor: 'pointer'
                                 }}
                             >
                                 비밀번호 찾기
@@ -119,9 +129,10 @@ export default function LogIn() {
                             style={{ fontSize: '1rem', marginTop: '15px' }}
                             type="submit"
                         >로그인</LoginButton>
-                    <SignUpLink>
-                        계정이 없으신가요? <a href="/signup">회원가입하기</a>
-                    </SignUpLink>
+
+                        <SignUpLink>
+                            계정이 없으신가요? <a href="/signup">회원가입하기</a>
+                        </SignUpLink>
                     </Form>
                 </SignUpContainer>
             </Container>

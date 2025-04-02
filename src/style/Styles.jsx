@@ -47,10 +47,12 @@ export const Label = styled.div`
 `;
 
 export const LoginInput = styled.input`
+    width: 100%;
     padding: 0.7rem;
     border: 1px solid #CDCDCD;
     border-radius: 15px;
     font-size: 1rem;
+    box-sizing: border-box;
 
     &::placeholder {
         color: #CDCDCD;
@@ -149,7 +151,7 @@ export const SignUpContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 80%;
+  width: 70%;
   max-width: 550px;
   margin: 0 auto;
 `;
@@ -334,5 +336,46 @@ export const NextButton = styled.button`
   font-size: 1rem;
   cursor: pointer;
   border-radius: 15px;
+  margin: 10px auto;
+`;
+
+export const Divider = styled.div`
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 20px 0;
+    color: #909090;
+    font-size: 0.9rem;
+    width: 100%;
+    justify-content: center;
+
+    span {
+        padding: 0 20px;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+`;
+
+export const Line = styled.hr`
+    width: 30%;
+    border: 1px solid #CDCDCD;
+    margin: 0;
+    max-width: 240px;
+`;
+
+export const SocialLoginButton = styled.div`
+  width: 70%;
+  max-width: 550px;
+  margin-bottom: 1rem;
+`;
+
+export const GoogleButton = styled.button`
+  width: 70%;
+  max-width: 550px;
+  border: 1px solid #CDCDCD;
+  border-radius: 15px;
+  padding: 0.75rem;
+  font-size: 1rem;
+  cursor: pointer;
   margin: 10px auto;
 `;
