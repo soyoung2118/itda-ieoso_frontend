@@ -211,7 +211,7 @@ export default function Setting() {
                 name="coursename"
                 value={form.coursename}
                 onChange={(e) => {handleFormChange(e); onTitleInputHandler(e);}}
-                style={{width: '329px'}}
+                style={{width: '100%'}}
                 autoComplete='off'
               />
             </FormItem>
@@ -229,7 +229,7 @@ export default function Setting() {
                 placeholder="ex. 김잇다"
                 value={form.instructor}
                 onChange={(e) => {handleFormChange(e); onInstructorInputHandler(e);}}
-                style={{width: '165px'}}
+                style={{width: '100%'}}
                 autoComplete='off'
               />
             </FormItem>
@@ -242,7 +242,7 @@ export default function Setting() {
                 <CodeInput
                     value={form.entrycode}
                     disabled
-                    style={{width: '165px', marginRight: '10px', color: '#FF4747'}}
+                    style={{marginRight: '10px', color: '#FF4747'}}
                 />
                 <RadioButton 
                     active={true}
@@ -267,7 +267,7 @@ export default function Setting() {
               <DisableInput
                 value={new Date(form.startDate).toLocaleDateString()}
                 disabled
-                style={{width: '289px'}}
+                style={{width: '100%'}}
               />
             </FormHalfItem>
 
@@ -280,7 +280,7 @@ export default function Setting() {
               <DisableInput
                 value={form.durationWeeks}
                 disabled
-                style={{width: '165px'}}
+                style={{width: '100%'}}
                 />
                 <Label style={{marginTop: '0px', marginLeft: '5px'}}>주</Label>
               </CuliculumGroup>
@@ -306,7 +306,7 @@ export default function Setting() {
                 <TimeGroup>
                 <DisableInput
                   name='lectureTime'
-                  style={{width: '289px'}}
+                  style={{width: '100%'}}
                   value={isLecturePending ? '' : formatTimeWithMeridiem(form.lectureTime)}
                   active={isLecturePending}
                   disabled
@@ -345,7 +345,7 @@ export default function Setting() {
                 <TimeGroup>
                 <DisableInput
                   name='assignmentTime'
-                  style={{width: '289px'}}
+                  style={{width: '100%'}}
                   value={isAssignmentPending ? '' : formatTimeWithMeridiem(form.assignmentTime)}
                   active={isAssignmentPending}
                   disabled
@@ -461,7 +461,7 @@ const PendingButton = styled.button`
   color: #909090;
 
   @media (max-width: 900px) { 
-    width: 289px;
+    width: 100%;
   }
 `
 
@@ -509,6 +509,10 @@ const Title = styled.div`
   font-size: 21px;
   font-weight: 700;
   margin-top: 30px;
+
+  @media all and (max-width:479px) {
+    font-size: 18px;
+  }
 `;
 
 const FormGroup = styled.div`
@@ -567,7 +571,6 @@ const FormInput = styled.input`
   width: 100%;
   box-sizing: border-box;
   font-size: 13px;
-  font-weight: 500;
   padding: 8px 12px;
   border: 2px solid #C3C3C3;
   border-radius: 10px;
@@ -594,6 +597,10 @@ const CodeInput = styled.input`
   border: 2px solid #C3C3C3;
   border-radius: 10px;
   margin-right: 10px;
+
+  @media all and (max-width:479px) {
+    width: 60%;
+  }
 `
 
 const GreyHelpText = styled.div`
@@ -639,6 +646,11 @@ const CuliculumGroup = styled.div`
 const CopyGrop = styled.div`
   display: flex;
   flex-direction: row;
+  width: 100%;
+
+  @media all and (max-width:479px) {
+    font-size: 18px;
+  }
 `
 
 const HalfGroup = styled.div`
