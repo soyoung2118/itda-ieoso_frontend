@@ -1,7 +1,6 @@
 import { useEffect, useState, useContext, useRef } from "react";
 import { useParams, useOutletContext, useLocation } from "react-router-dom";
 import styled from "styled-components";
-//import ClassSidebar from "../../ui/class/ClassSidebar";
 import ClassThumbnail from "../../img/class/class_thumbnail_background.svg";
 import VideoIcon from "../../img/icon/videocam.svg";
 import EditBtn from "../../img/class/edit_btn.svg";
@@ -68,13 +67,33 @@ const StyledQuill = styled(ReactQuill)`
 
 const StyledButton = styled.a`
   position: fixed;
-  justify-content: center;
   bottom: 2rem;
   right: 2rem;
-  width: 3.8rem;
   cursor: pointer;
   border: none;
   background-color: transparent;
+
+  .img {
+    width: 65px;
+
+    @media (max-width: 376px) {
+      width: 40px;
+    } 
+  }
+
+  @media all and (max-width:1024px) {
+    right: 2rem;
+    width: 80px;
+  }
+
+  @media all and (max-width:768px) {
+    right: 0.2rem;
+    width: 75px;
+  }
+
+  @media all and (max-width:479px) {
+    right: 0;
+  }
 `;
 
 const ImageContainer = styled.div`
@@ -268,7 +287,6 @@ const ClassOverview = () => {
 
   return (
     <div style={{ display: "flex", marginTop: "2rem" }}>
-      {/*<ClassSidebar style={{ marginRight: "2rem" }} />*/}
       <main
         style={{
           flex: 1,
@@ -340,7 +358,7 @@ const ClassOverview = () => {
         <img
           src={isEditing ? EditedBtn : EditBtn}
           alt="Edit Button"
-          style={{ width: "100%" }}
+          className="img"
           />
         </StyledButton>
       )}
