@@ -147,12 +147,12 @@ const TabLinkContainer = styled.div`
 
   @media all and (max-width: 479px) {
     font-size: 16px;
-    gap: 7px;
+    gap: 15px;
   }
 `;
 
 const TabLink = styled(NavLink)`
-  width: clamp(3em, 7vw, 6rem);
+  width: clamp(3rem, 7vw, 6rem);
   text-align: center;
   padding: 5px 10px;
   text-decoration: none;
@@ -184,6 +184,7 @@ const TabLink = styled(NavLink)`
 
   @media all and (max-width: 479px) {
     font-size: 16px;
+    width: 40%;
   }
 `;
 
