@@ -24,6 +24,10 @@ const HeaderTitleRow = styled.div`
   display: flex;
   align-items: baseline;
   margin-left: 2.5vh;
+
+  @media (max-width: 376px) {
+    margin-left: 1.8vh;
+  }
 `;
 
 const HeaderTitle = styled.h3`

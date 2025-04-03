@@ -91,6 +91,17 @@ const CalendarWrapper = styled.div`
     color: #aaa; 
   }
 `;
+
+const SummarySection = styled.div`
+  display: flex;
+  align-items: baseline;
+  margin-left: 2.5vh;
+
+  @media (max-width: 1024px) {
+    margin-left: 2vh;
+  }
+`;
+
 const Summary = styled.h3`
   font-size: 24px;
   font-weight: 700;
@@ -137,7 +148,7 @@ const Section = styled.div`
     padding: 5.5vh 5vh;
   }
 
-  @media (max-width:376px) {
+  @media (max-width: 376px) {
     padding: 2vh 3vh;
   }
 `;
@@ -193,16 +204,10 @@ const ClassSummary = () => {
     >
       <AdminTopBar />
       <div style={{ margin: "1vh 0vh" }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "baseline",
-            marginLeft: "2.5vh",
-          }}
-        >
+        <SummarySection>
           <Summary>요약</Summary>
           <CurrentTime>{currentTime} 기준</CurrentTime>
-        </div>
+        </SummarySection>
         <Section>
           {/* <div
                 style={{ display: "flex", gap: "2rem", marginBottom: "4rem" }}
