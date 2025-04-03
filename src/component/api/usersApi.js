@@ -41,6 +41,7 @@ export const logout = async () => {
         window.location.href = '/';
 
         localStorage.removeItem('token');
+        localStorage.removeItem('tokenExpiration');
         localStorage.removeItem('user');
         return response;
     } catch (error) {
@@ -50,7 +51,7 @@ export const logout = async () => {
 };
 
 // 자동 로그아웃 타이머 설정 함수
-const startLogoutTimer = () => {
+export const startLogoutTimer = () => {
     if (window.autoLogoutTimer) {
         clearTimeout(window.autoLogoutTimer);
     }
