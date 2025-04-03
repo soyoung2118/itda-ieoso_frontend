@@ -16,7 +16,7 @@ const StyledButton = styled(Link)`
   @media (max-width: 376px) {
     width: 4vh;
     bottom: 4.6%;
-    right: 5]%;
+    right: 5%;
   }
 `;
 
