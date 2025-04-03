@@ -16,6 +16,10 @@ const Container = styled.div`
   @media (max-width: 768px) {
     padding: 0 0.5rem;
   }
+
+  @media all and (max-width:479px) {
+    padding: 0;
+  }
 `;
 
 const Title = styled.h1`
@@ -42,6 +46,7 @@ const NavbarContent = styled.div`
   overflow-x: auto;
   min-width: min-content;
   gap: 2rem;
+  flex-wrap: wrap;
 
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -52,6 +57,11 @@ const NavbarContent = styled.div`
   @media (max-width: 768px) {
     gap: 1rem;
   }
+
+  @media all and (max-width: 479px) {
+    gap: 0;
+    padding: 0.4rem 0.5rem;
+  }
 `;
 
 const TabContainer = styled.nav`
@@ -61,6 +71,11 @@ const TabContainer = styled.nav`
 
   @media (max-width: 768px) {
     gap: 0.5rem;
+  }
+
+  @media all and (max-width:479px) {
+    gap: 0.2rem;
+    margin-bottom: 5px;
   }
 `;
 
@@ -85,12 +100,21 @@ const TabLink = styled(NavLink)`
       height: 0.2rem;
       background-color: var(--main-color);
       border-radius: 5px;
+
+      @media (max-width: 479px) {
+        bottom: -0.6rem;
+      }
     }
   }
 
   @media (max-width: 768px) {
     width: 70px;
     font-size: 16px;
+  }
+
+  @media (max-width: 479px) {
+    width: 45px;
+    font-size: 14px;
   }
 `;
 
@@ -114,6 +138,11 @@ const Icon = styled.img`
 
   &.delete-icon {
     height: 37px;
+  }
+
+  @media (max-width: 479px) {
+    width: 24px;
+    height: 24px;
   }
 `;
 
@@ -167,6 +196,12 @@ const ShareDropdownContainer = styled.div`
     padding: 10px 0;
     margin-top: 5px;
     border-radius: 15px;
+  }
+  
+
+  @media all and (max-width:479px) {
+      top: 350px;
+      right: 40px;
   }
 `;
 
