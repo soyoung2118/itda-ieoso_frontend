@@ -30,6 +30,19 @@ const HeaderTitle = styled.h3`
   font-size: 24px;
   font-weight: 700;
   color: var(--black-color);
+
+  @media (max-width: 1024px) {
+    font-size: 21px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 15px;
+  }
+
+  @media (max-width: 376px) {
+    font-size: 13px;
+    font-weight: 680;
+  }
 `;
 
 const HeaderTime = styled.p`
@@ -37,13 +50,36 @@ const HeaderTime = styled.p`
   font-size: 15px;
   margin-left: 1.5vh;
   font-weight: 500;
+
+  @media (max-width: 1024px) {
+    font-size: 14.5px;
+    margin-left: 1vh;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 10px;
+    margin-left: 1.8vh;
+  }
+
+  @media (max-width: 376px) {
+    font-size: 9px;
+    margin-left: 1vh;
+  }
 `;
 
 const SectionWrap = styled.div`
   padding: 2vh 3.5vh;
 
   @media (max-width: 1024px) {
-    padding: 1.5vh 1.7vh;
+    padding: 1.3vh 1.2vh;
+  }
+
+  @media (max-width: 480px) {
+    padding: 3.5vh 3vh;
+  }
+
+  @media (max-width: 376px) {
+    padding: 2.8vh 2vh;
   }
 `;
 
@@ -60,6 +96,15 @@ const ScrollBar = styled.div`
   background: #f1f1f1;
   border-radius: 10px;
   overflow: hidden;
+
+  @media (max-width: 1024px) {
+    height: 6.5px;
+  }
+
+  @media (max-width: 480px) {
+    margin-top: 1.8vh;
+    height: 4px;
+  }
 `;
 
 const ScrollThumb = styled.div`
@@ -82,6 +127,15 @@ const ProfileImg = styled.img`
     width: 22.5px;
     height: 22.5px;
   }
+
+  @media (max-width: 480px) {
+    width: 3.5vh;
+  }
+
+  @media (max-width: 376px) {
+    width: 2.1vh;
+    margin-right: 0.6vh;
+  }
 `;
 
 const Table = styled.table`
@@ -90,11 +144,21 @@ const Table = styled.table`
   border-collapse: separate;
   border-spacing: 0;
   font-size: 17.5px;
+
   @media (max-width: 1024px) {
-    font-size: 15px;
+    font-size: 14.5px;
   }
   @media (max-width: 768px) {
-    font-size: 12.3px;
+    font-size: 12px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 8.5px;
+  }
+
+  @media (max-width: 376px) {
+    font-size: 8.3px;
+    font-weight: 500;
   }
 `;
 
@@ -106,13 +170,22 @@ const Th = styled.th`
   text-align: center;
 
   @media (max-width: 1024px) {
-    padding: 0.8vh 1.3vh;
-    font-size: 17px;
+    padding: 0.45vh 1vh;
+    font-size: 16px;
   }
 
   @media (max-width: 768px) {
-    font-size: 14.3px;
-    font-weight: 650;
+    font-size: 13.3px;
+    font-weight: 600;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 9px;
+    padding: 0.2vh 5vh;
+  }
+  @media (max-width: 376px) {
+    font-size: 8.5px;
+    padding: 0.2vh 5vh;
   }
 `;
 
@@ -122,7 +195,16 @@ const ThName = styled(Th)`
   padding-left: 5vh;
 
   @media (max-width: 1024px) {
-    min-width: 10.5vh;
+    min-width: 8.5vh;
+  }
+
+  @media (max-width: 480px) {
+    min-width: 7vh;
+  }
+
+  @media (max-width: 376px) {
+    min-width: 3vh;
+    padding-left: 3.4vh;
   }
 `;
 
@@ -133,11 +215,19 @@ const Td = styled.td`
   text-align: center;
 
   @media (max-width: 1024px) {
-    padding: 0.4vh 1.5vh;
+    padding: 0.3vh 1.3vh;
   }
 
   @media (max-width: 768px) {
-    padding: 0.3vh 1.5vh;
+    padding: 0.3vh 1.2vh;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1vh 0.3vh;
+  }
+
+  @media (max-width: 376px) {
+    padding: 0.6vh 0.3vh;
   }
 `;
 
@@ -145,6 +235,10 @@ const TdName = styled(Td)`
   text-align: left;
   padding-left: 2vh;
   font-weight: 600;
+
+  @media (max-width: 376px) {
+    padding-left: 0.8vh;
+  }
 `;
 
 const Row = styled.tr`
@@ -166,7 +260,7 @@ const Badge = styled.div`
   border: 1.5px solid #e6e6e6;
   border-radius: 14px;
   padding: 1vh 1.4vh;
-  display: block;
+  display: inline-block;
   margin: 0.3vh 0;
   max-width: 20vh;
   overflow: hidden;
@@ -174,15 +268,36 @@ const Badge = styled.div`
   white-space: nowrap;
 
   @media (max-width: 1024px) {
-    border-radius: 12px;
-    padding: 0.8vh 1.3vh;
+    border-radius: 10px;
+    padding: 0.55vh 1vh;
     max-width: 10vh;
+    margin: 0.15vh 0;
   }
   @media (max-width: 768px) {
-    border-radius: 9px;
-    padding: 0.6vh 1.1vh;
-    max-width: 13vh;
+    border-radius: 8px;
+    padding: 0.45vh 0.9vh;
+    font-size: 11px;
   }
+
+  @media (max-width: 480px) {
+    max-width: 16vh;
+    padding: 0.8vh 1.3vh;
+    border: 1.3px solid #e6e6e6;
+    border-radius: 6px;
+    font-size: 8px;
+  }
+
+  @media (max-width: 376px) {
+    max-width: 9.5vh;
+    padding: 0.6vh 1vh;
+    border-radius: 5px;
+  }
+`;
+
+const BadgeGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const ClassStudents = () => {
@@ -366,20 +481,22 @@ const ClassStudents = () => {
                         </TdName>
                         {student.assignments.map((a, j) => (
                           <Td key={j}>
-                            {a.value.files.length > 0 &&
-                              a.value.files.map((file, k) => (
-                                <Badge
-                                  key={k}
-                                  style={{ color: "var(--main-color)" }}
-                                >
-                                  {file.fileName}
+                            <BadgeGroup>
+                              {a.value.files.length > 0 &&
+                                a.value.files.map((file, k) => (
+                                  <Badge
+                                    key={k}
+                                    style={{ color: "var(--main-color)" }}
+                                  >
+                                    {file.fileName}
+                                  </Badge>
+                                ))}
+                              {a.value.textContent && (
+                                <Badge style={{ color: "black" }}>
+                                  {a.value.textContent}
                                 </Badge>
-                              ))}
-                            {a.value.textContent && (
-                              <Badge style={{ color: "black" }}>
-                                {a.value.textContent}
-                              </Badge>
-                            )}
+                              )}
+                            </BadgeGroup>
                           </Td>
                         ))}
                       </RowComponent>

@@ -23,6 +23,20 @@ const ScrollableTableContainer = styled.div`
     background: #f1f1f1;
     border-radius: 10px;
     overflow: hidden;
+
+    @media (max-width: 1024px) {
+      margin-top: 2.8vh;
+      height: 6.8px;
+    }
+    @media (max-width: 768px) {
+      margin-top: 2.2vh;
+      height: 5.3px;
+    }
+
+    @media (max-width: 480px) {
+      margin-top: 3vh;
+      height: 3.8px;
+    }
   }
 
   .custom-scrollbar-thumb {
@@ -51,11 +65,18 @@ const Table = styled.table`
     border-bottom: 1px solid #cdcdcd;
 
     @media (max-width: 1024px) {
-      padding: 0.7rem 3.3vh;
+      padding: 0.75vh 2.9vh;
     }
 
-     @media (max-width: 768px) {
+    @media (max-width: 768px) {
       padding: 0.9vh 3.2vh;
+    }
+
+    @media (max-width: 480px) {
+      padding: 1.4vh 3.2vh;
+    }
+      @media (max-width: 376px) {
+      padding: 0.8vh 2.5vh;
     }
   }
 
@@ -64,12 +85,21 @@ const Table = styled.table`
     white-space: nowrap;
 
     @media (max-width: 1024px) {
-      font-size: 17px;
+      font-size: 16px;
+      font-weight: 700;
     }
 
     @media (max-width: 768px) {
-      font-size: 14.5px;
-      font-weight: 650;
+      font-size: 13.3px;
+      font-weight: 600;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 9.3px;
+    }
+
+    @media (max-width: 376px) {
+      font-size: 9px;
     }
   }
 
@@ -84,11 +114,18 @@ const Table = styled.table`
 
     @media (max-width: 1024px) {
       font-size: 15px;
+      font-weight: 600;
     }
 
     @media (max-width: 768px) {
-      font-size: 13.5px;
-      font-weight: 650;
+      font-size: 13px;
+    }
+    @media (max-width: 480px) {
+      font-size: 8.6px;
+    }
+
+    @media (max-width: 376px) {
+      font-size: 8.3px;
     }
   }
 
@@ -100,6 +137,10 @@ const Table = styled.table`
     @media (max-width: 1024px) {
       padding-right: 6vh;
     }
+
+     @media (max-width: 376px) {
+      padding-right: 4.2vh;
+    }
   }
 `;
 
@@ -108,6 +149,10 @@ const ProfileContainer = styled.div`
   align-items: center;
   gap: 0.6rem;
   justify-content: flex-start;
+
+  @media (max-width: 480px) {
+    gap: 0.35rem;
+  }
 `;
 
 const ProfileImage = styled.img`
@@ -116,16 +161,35 @@ const ProfileImage = styled.img`
   border-radius: 50%;
 
   @media (max-width: 1024px) {
-    width: 2.2vh;
-    height: 2vh;
+    width: 2vh;
+    height: 1.8vh;
+  }
+
+  @media (max-width: 480px) {
+    width: 3.2vh;
+    height: 3vh;
+  }
+
+   @media (max-width: 376px) {
+    width: 2.5vh;
+    height: 2.3vh;
   }
 `;
 
 const CheckMarkIcon = styled.img`
   width: 1.7rem;
   height: 1.7rem;
+
   @media (max-width: 1024px) {
-    height: 1.8vh;
+    height: 1.6vh;
+  }
+
+  @media (max-width: 480px) {
+    height: 2.7vh;
+  }
+
+   @media (max-width: 376px) {
+    height: 2vh;
   }
 `;
 
