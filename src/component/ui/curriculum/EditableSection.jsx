@@ -4,8 +4,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import DateTimeEdit from "../../ui/curriculum/DateTimeEdit";
 import VideoIcon from "../../img/class/edit/video.svg";
-import Material from "../../img/icon/pdf.svg";
-import Assignment from "../../img/icon/docs.svg";
+import Material from "../../img/icon/curriculum/materialicon.svg";
+import Assignment from "../../img/icon/curriculum/assignmenticon.svg";
 import Delete from "../../img/class/edit/delete.svg";
 import Upload from "../../img/class/edit/upload.svg";
 import { toLocalDateTime } from "../../page/class/CurriculumEdit";
@@ -28,8 +28,10 @@ const Section = styled.div`
 `;
 
 const VideoThumbnail = styled.div`
-  width: 23vh;
-  height: 14.5vh;
+  // width: 23vh;
+  // height: 14.5vh;
+  width: 22%;
+  aspect-ratio: 4 / 2.6;
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -42,22 +44,23 @@ const VideoThumbnail = styled.div`
   font-size: 1.1rem;
 
   @media (max-width: 1024px) {
-    width: 11.3vh;
-    height: 7.7vh;
+    width: 30%;
     font-size: 13.5px;
   }
 
   @media (max-width: 768px) {
-    width: 10.6vh;
-    height: 7.4vh;
+    width: 27%;
     font-size: 11.5px;
   }
 
   @media (max-width: 480px) {
-    width: 16vh;
-    height: 13vh;
     font-size: 7px;
     border-radius: 5.5px;
+  }
+
+  @media (max-width: 376px) {
+    width: 32%;
+    border-radius: 3px;
   }
 `;
 
@@ -80,6 +83,12 @@ const VideoIconImg = styled.img`
     margin-left: 0vh;
     margin-right: 1.8vh;
     width: 3.7vh;
+  }
+
+  @media (max-width: 376px) {
+    margin-left: 0vh;
+    margin-right: 1.2vh;
+    width: 2.5vh;
   }
 `;
 
@@ -133,6 +142,13 @@ const VideoTitleInput = styled.input`
     border: 1px solid #c3c3c3;
     border-radius: 4.5px;
   }
+
+  @media (max-width: 376px) {
+    font-size: 6px;
+    padding: 1vh;
+    border: 1px solid #c3c3c3;
+    border-radius: 3.4px;
+  }
 `;
 
 const VideoLinkInput = styled.input`
@@ -166,6 +182,12 @@ const VideoLinkInput = styled.input`
     border: 1px solid #c3c3c3;
     border-radius: 4px;
   }
+
+  @media (max-width: 376px) {
+    font-size: 6px;
+    padding: 1vh;
+    border-radius: 3.4px;
+  }
 `;
 
 const VideoConfirmButton = styled.button`
@@ -197,6 +219,13 @@ const VideoConfirmButton = styled.button`
     font-size: 5.2px;
     border-radius: 3px;
   }
+
+  @media (max-width: 376px) {
+    width: 33%;
+    font-size: 4.7px;
+    padding: 0px;
+    border-radius: 2.8px;
+  }
 `;
 
 const UploadIcon = styled.img`
@@ -216,6 +245,11 @@ const UploadIcon = styled.img`
   @media (max-width: 480px) {
     width: 2vh;
     margin-right: 1vh;
+  }
+
+  @media (max-width: 376px) {
+    width: 1vh;
+    margin-right: 0.7vh;
   }
 `;
 
@@ -240,6 +274,12 @@ const MaterialIcon = styled.img`
     margin-left: 0vh;
     margin-right: 1.8vh;
     width: 3.5vh;
+  }
+
+  @media (max-width: 376px) {
+    margin-left: 0.1vh;
+    margin-right: 1.3vh;
+    width: 2.3vh;
   }
 `;
 
@@ -281,6 +321,13 @@ const AssignmentInput = styled.input`
     border: 1px solid #c3c3c3;
     border-radius: 4px;
     width: calc(100% - 1vh);
+  }
+
+  @media (max-width: 376px) {
+    font-size: 6.5px;
+    font-weight: 600;
+    padding: 0.85vh;
+    border-radius: 3.4px;
   }
 `;
 
@@ -327,11 +374,18 @@ const TextArea = styled.textarea`
     height: 8vh;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 480px) {
     font-size: 6.6px;
     border: 1px solid #c3c3c3;
     border-radius: 4px;
     height: 9vh;
+  }
+
+  @media (max-width: 376px) {
+    font-size: 6.5px;
+    font-weight: 600;
+    width: calc(100% - 3vh);
+    height: 7vh;
   }
 `;
 
@@ -379,6 +433,11 @@ const GrayLine = styled.div`
   @media (max-width: 480px) {
     margin-bottom: 0.4rem;
   }
+
+  @media (max-width: 376px) {
+    margin-bottom: 0.2rem;
+    height: 0.7px;
+  }
 `;
 
 const Submission = styled.h3`
@@ -396,6 +455,10 @@ const Submission = styled.h3`
 
   @media (max-width: 480px) {
     font-size: 7px;
+  }
+
+  @media (max-width: 376px) {
+    font-size: 6px;
   }
 `;
 
@@ -430,6 +493,11 @@ const DeleteIcon = styled.img`
 
   @media (max-width: 480px) {
     width: 0.4rem;
+    margin-right: 0.3rem;
+  }
+
+  @media (max-width: 376px) {
+    width: 0.5rem;
     margin-right: 0.3rem;
   }
 `;
@@ -467,6 +535,13 @@ const SectionButton = styled.button.attrs((props) => ({
     font-size: 6.6px;
     width: 10vh;
     height: 3.3vh;
+    border-radius: 2px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 5.8px;
+    width: 6.3vh;
+    height: 2.3vh;
     border-radius: 2px;
   }
 `;
