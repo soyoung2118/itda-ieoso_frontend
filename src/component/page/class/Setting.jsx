@@ -599,7 +599,7 @@ const CodeInput = styled.input`
   margin-right: 10px;
 
   @media all and (max-width:479px) {
-    width: 60%;
+    width: 58%;
   }
 `
 
