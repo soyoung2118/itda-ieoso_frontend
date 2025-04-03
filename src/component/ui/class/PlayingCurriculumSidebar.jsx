@@ -277,7 +277,9 @@ const PlayingCurriculumSidebar = ({
                                                   }}
                                               />
                                               <TextContainer>
-                                                <BlackText>{truncate(content.videoTitle, 25)}</BlackText>
+                                                <BlackText width="3rem">
+                                                    {content.videoTitle}
+                                                </BlackText>
                                                 <RedText>{dateText(content.startDate)} - {dateText(content.endDate)}</RedText>
                                               </TextContainer>
                                             </ContentItem> 
@@ -294,7 +296,6 @@ const PlayingCurriculumSidebar = ({
                                                   }}
                                               />
                                               <TextContainer>
-                                                {/* <BlackText>{truncate(content.originalFilename, 20)}</BlackText> */}
                                                 <RowContainer>
                                                     <BlackText style={{marginRight: '5px'}}>{content.originalFilename}</BlackText>
                                                     <GreyText>{content.fileSize}</GreyText>
@@ -373,6 +374,12 @@ const CurriculumItem = styled.div`
 const ItemTitle = styled.span`
     font-size: 17px;
     font-weight: 700;
+    display: inline-block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
 `;
 
 const SubItem = styled.div`
@@ -413,20 +420,29 @@ const IconContainer = styled.div`
     margin-left: auto;
 `
 
-const BlackText = styled.div`
-  font-size: 12px;
-  color: #474747;
-  white-space: pre-wrap;
-`
-
 const RedText = styled.div`
   font-size: 10px;
   color: #FF4747;
-  white-space: pre-wrap;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
 `
 
 const GreyText = styled.div`
     font-size: 11px;
     color: #909090;
 `
+
+const BlackText = styled.span`
+  font-size: 12px;
+  color: #474747;
+  display: inline-block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+`;
 export default PlayingCurriculumSidebar;
