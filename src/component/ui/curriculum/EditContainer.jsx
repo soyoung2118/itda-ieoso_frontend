@@ -17,7 +17,7 @@ const Container = styled.div`
   border-radius: 0.5rem;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
   padding: 1rem;
-  z-index: 10;
+  z-index: 1;
 
   @media (max-width: 1024px) {
     padding: 1vh;
@@ -64,7 +64,7 @@ const HighlightLine = styled.div`
   height: 84%;
   background-color: var(--main-color);
 
-  z-index: 9;
+  z-index: 1;
 
   @media (max-width: 1024px) {
     width: 0.35vh;
