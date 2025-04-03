@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { NavLink, useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import PropTypes from "prop-types";
@@ -129,6 +129,11 @@ const IconContainer = styled.nav`
     justify-content: center;
     margin-left: 0;
   }
+
+  @media (max-width: 479px) {
+    margin-right: 8px;
+    gap: 10px;
+  }
 `;
 
 const Icon = styled.img`
@@ -216,8 +221,10 @@ const AdminTopBar = ({ activeTab }) => {
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [courseName, setCourseName] = useState("");
   const [entryCode, setEntryCode] = useState("");
-  const [classOptions, setClassOptions] = useState(null);
+  const [, setClassOptions] = useState(null);
   const [currentCourse, setCurrentCourse] = useState(null);
+  const dropdownRef = useRef(null);
+  const iconRef = useRef(null);
   
   useEffect(() => {
     if (!user?.userId) return;
@@ -245,6 +252,29 @@ const AdminTopBar = ({ activeTab }) => {
 
     fetchCourseDetails();
   }, [courseId]);
+
+  // 공유 버튼 클릭 시 드롭다운 표시
+  const handleIconClick = () => {
+    setShowDropdown((prev) => !prev);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        dropdownRef.current && 
+        !dropdownRef.current.contains(event.target) &&
+        iconRef.current &&
+        !iconRef.current.contains(event.target)
+      ) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleDeleteLecture = async (courseId) => {
     console.log('Deleting course with ID:', courseId);
@@ -325,10 +355,11 @@ const AdminTopBar = ({ activeTab }) => {
             className="material-icons" 
             src={Share} 
             alt="share icon" 
-            onClick={() => setShowDropdown(!showDropdown)}
+            onClick={handleIconClick}
+            ref={iconRef}
           />
           {showDropdown && (
-            <ShareDropdownContainer>
+            <ShareDropdownContainer ref={dropdownRef}>
               <text>강의실 링크</text>
               <div className="shareinfo">
                 <span>www.eduitda.com</span>
@@ -341,7 +372,7 @@ const AdminTopBar = ({ activeTab }) => {
               </div>
               <button className="invite-button" onClick={handleShare}>강의실 초대하기</button>
             </ShareDropdownContainer>
-              )}  
+          )}  
           </>
           )}
         </IconContainer>
