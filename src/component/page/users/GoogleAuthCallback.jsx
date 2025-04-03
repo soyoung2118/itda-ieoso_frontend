@@ -116,25 +116,14 @@ export default function GoogleAuthCallback() {
     
     const processToken = async (token) => {
       try {
-        // Direct localStorage testing
         const testValue = "test-" + new Date().getTime();
         localStorage.setItem('test-item', testValue);
-        console.log('테스트 아이템 저장:', testValue);
-        console.log('테스트 아이템 확인:', localStorage.getItem('test-item'));
-        
         localStorage.setItem('token', token);
-        console.log('토큰 저장 확인:', localStorage.getItem('token') ? '성공' : '실패');
-        
-        // Set token expiration time (10 hours)
+      
         const expirationTime = new Date().getTime() + 36000000; // 10시간
         localStorage.setItem('tokenExpiration', expirationTime);
-        console.log('토큰 만료 시간 설정:', new Date(expirationTime).toLocaleString(), '(10시간 후)');
-        console.log('tokenExpiration 저장 확인:', localStorage.getItem('tokenExpiration') ? '성공' : '실패');
-        
-        // Start logout timer
-        console.log('자동 로그아웃 타이머 시작...');
+
         startLogoutTimer();
-        console.log('자동 로그아웃 타이머 시작 완료');
         
         api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         setIsUser(true);
@@ -142,8 +131,7 @@ export default function GoogleAuthCallback() {
         const userInfo = await getUsersInfo();
         setUser(userInfo.data);
         localStorage.setItem('user', JSON.stringify(userInfo.data));
-        
-        console.log('사용자 정보 로드 성공, 로그인 완료');
+      
         setStatus('success');
         
         setTimeout(() => {

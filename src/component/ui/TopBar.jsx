@@ -5,6 +5,7 @@ import LogoImage from '../img/logo/itda_logo.svg';
 import userIcon from "../img/icon/usericon.svg";
 import { UsersContext } from "../contexts/usersContext";
 import { UsersInfoContainer } from '../page/users/UsersInfoContainer';
+import api from "../api/api";
 
 export default function TopBar() {
 
@@ -17,6 +18,48 @@ export default function TopBar() {
 
     const handleUserIconClick = () => {
         setShowUsersInfoContainer(prev => !prev);  // 드롭다운 토글
+    };
+
+    const handleGoogleAuth = () => {
+        try {
+            // 현재 로그인된 사용자의 토큰 가져오기
+            const currentToken = localStorage.getItem('token');
+            if (!currentToken) {
+                alert('로그인이 필요합니다.');
+                return;
+            }
+            
+            const redirectUri = encodeURIComponent(`${window.location.origin}/oauth/account/link`);
+            const jwtToken = currentToken.replace('Bearer ', '');
+            
+            sessionStorage.setItem('auth_token_for_google', jwtToken);
+            
+            const googleLoginUrl = `https://staging.eduitda.com/api/oauth/google/login/temp?redirect_uri=${redirectUri}`;
+            
+            // 디버깅 메시지 개선
+            console.log('==== 구글 연동 요청 디버그 정보 ====');
+            console.log('토큰 값:', jwtToken.substring(0, 20) + '...');
+            console.log('리디렉션 URI:', decodeURIComponent(redirectUri));
+            console.log('요청 URL:', googleLoginUrl.substring(0, 100) + '...');
+            
+            // 디버깅 정보를 세션 스토리지에 저장
+            const debugInfo = {
+                time: new Date().toISOString(),
+                token: jwtToken.substring(0, 20) + '...',
+                redirectUri: decodeURIComponent(redirectUri),
+                requestUrl: googleLoginUrl
+            };
+            sessionStorage.setItem('google_auth_debug', JSON.stringify(debugInfo));
+            
+            // 먼저 alert으로 토큰 정보 확인 (브라우저 리다이렉트 전)
+            alert('구글 연동을 시작합니다. 브라우저 콘솔(F12)에서 디버그 정보를 확인하세요.');
+            
+            // URL로 직접 이동
+            window.location.href = googleLoginUrl;
+        } catch (error) {
+            console.error('구글 연동 시작 중 오류 발생:', error);
+            alert('구글 계정 연동을 시작할 수 없습니다. 다시 시도해주세요.');
+        }
     };
 
     return (
@@ -34,7 +77,10 @@ export default function TopBar() {
                                 {location.pathname === '/dashboard' ? (
                                     <button className="navigate-button" onClick={() => navigate('/class/list')}>강의실 입장하기</button>
                                 ) : (
+                                    <>
                                     <button className="navigate-button" onClick={() => navigate('/dashboard')}>대시보드로 가기</button>
+                                    <button className="navigate-button" onClick={handleGoogleAuth}>구글 연동하기</button>
+                                    </>
                                 )}
                                 <UserIcon src={userIcon} alt="user icon" onClick={handleUserIconClick} />
                                 {showUsersInfoContainer && (
