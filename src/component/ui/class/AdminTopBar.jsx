@@ -4,7 +4,11 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 import Delete from "../../img/icon/bin.svg";
 import Share from "../../img/icon/share.svg";
-import { ModalOverlay, ModalContent, AlertModalContainer } from "../../ui/modal/ModalStyles";
+import {
+  ModalOverlay,
+  ModalContent,
+  AlertModalContainer,
+} from "../../ui/modal/ModalStyles";
 import api from "../../api/api";
 import { getMyCoursesTitles } from "../../api/classApi";
 import { UsersContext } from "../../contexts/usersContext";
@@ -24,8 +28,7 @@ const Title = styled.h1`
   color: var(--black-color);
   margin-top: 2rem;
   margin-bottom: 1.8vh;
-  margin-left:2.5vh;
-
+  margin-left: 2.5vh;
 
   @media (max-width: 768px) {
     font-size: 24px;
@@ -133,16 +136,16 @@ const ShareDropdownContainer = styled.div`
     display: flex;
     justify-content: space-between;
     margin: 8px 0 12px;
-    background-color: #EDEDED;
+    background-color: #ededed;
     border-radius: 10px;
   }
 
-  text{
+  text {
     height: 100%;
     font-weight: 700;
   }
 
-  .shareinfo{
+  .shareinfo {
     margin-bottom: 12px;
   }
 
@@ -151,7 +154,7 @@ const ShareDropdownContainer = styled.div`
   }
 
   button {
-    background-color: #F7F7F7;
+    background-color: #f7f7f7;
     color: var(--black-color);
     border: none;
     border-radius: 0 15px 15px 0;
@@ -160,7 +163,7 @@ const ShareDropdownContainer = styled.div`
     transition: background-color 0.3s;
   }
 
-  .invite-button{
+  .invite-button {
     width: 100%;
     font-weight: 600;
     background-color: var(--pink-color);
@@ -169,7 +172,6 @@ const ShareDropdownContainer = styled.div`
     border-radius: 15px;
   }
 `;
-
 
 const AdminTopBar = ({ activeTab }) => {
   const { courseId } = useParams();
@@ -183,21 +185,23 @@ const AdminTopBar = ({ activeTab }) => {
   const [entryCode, setEntryCode] = useState("");
   const [classOptions, setClassOptions] = useState(null);
   const [currentCourse, setCurrentCourse] = useState(null);
-  
+
   useEffect(() => {
     if (!user?.userId) return;
-  
+
     const fetchClasses = async () => {
       const courses = await getMyCoursesTitles(user.userId);
       setClassOptions(courses);
-  
-      const current = courses.find(course => String(course.courseId) === String(courseId));
+
+      const current = courses.find(
+        (course) => String(course.courseId) === String(courseId),
+      );
       setCurrentCourse(current);
       console.log(current);
     };
-  
+
     fetchClasses();
-  }, [user?.userId, courseId]); 
+  }, [user?.userId, courseId]);
 
   useEffect(() => {
     const fetchCourseDetails = async () => {
@@ -212,20 +216,21 @@ const AdminTopBar = ({ activeTab }) => {
   }, [courseId]);
 
   const handleDeleteLecture = async (courseId) => {
-    console.log('Deleting course with ID:', courseId);
+    console.log("Deleting course with ID:", courseId);
     try {
-        await api.delete(`/courses/${courseId}?userId=${user.userId}`);
-        navigate("/class/list");
+      await api.delete(`/courses/${courseId}?userId=${user.userId}`);
+      navigate("/class/list");
     } catch (error) {
-        console.error('강의실 삭제 중 오류 발생:', error);
+      console.error("강의실 삭제 중 오류 발생:", error);
     }
   };
-  
+
   const handleShare = () => {
     const inviteText = `[${courseName}] 강의실에 초대합니다!\n\n🔗 강의실 링크: https://eduitda.com\n📌 강의실 코드: ${entryCode}\n\n1. itda 로그인\n2. + 버튼 클릭 > 강의실 입장하기\n3. 강의실 코드 입력\n\n지금 바로 참여하고 함께 배워요! 😊`;
-    navigator.clipboard.writeText(inviteText)
+    navigator.clipboard
+      .writeText(inviteText)
       .then(() => setShowInviteModal(true))
-      .catch(err => console.error('복사 실패:', err));
+      .catch((err) => console.error("복사 실패:", err));
   };
 
   return (
@@ -235,22 +240,22 @@ const AdminTopBar = ({ activeTab }) => {
         <TabContainer>
           {!currentCourse?.isCreator && currentCourse?.isAssignmentPublic && (
             <>
-            <TabLink
-              to={`/class/${courseId}/admin/summary`}
-              className={activeTab === "summary" ? "active" : ""}
-            >
-              요약
-            </TabLink>
+              <TabLink
+                to={`/class/${courseId}/admin/summary`}
+                className={activeTab === "summary" ? "active" : ""}
+              >
+                요약
+              </TabLink>
 
-            <TabLink
-            to={`/class/${courseId}/admin/students`}
-            className={activeTab === "students" ? "active" : ""}
-            >
-            과제 보기
-            </TabLink>
+              <TabLink
+                to={`/class/${courseId}/admin/students`}
+                className={activeTab === "students" ? "active" : ""}
+              >
+                과제 보기
+              </TabLink>
             </>
           )}
-  
+
           {currentCourse?.isCreator && (
             <>
               <TabLink
@@ -274,44 +279,56 @@ const AdminTopBar = ({ activeTab }) => {
             </>
           )}
         </TabContainer>
-  
+
         <IconContainer>
           {currentCourse?.isCreator && (
             <>
-          <Icon 
-            className="material-icons" 
-            src={Delete} 
-            alt="delete icon" 
-            onClick={() => {
-              setShowDeleteModal(true);
-            }}
-          />
-          <Icon 
-            className="material-icons" 
-            src={Share} 
-            alt="share icon" 
-            onClick={() => setShowDropdown(!showDropdown)}
-          />
-          {showDropdown && (
-            <ShareDropdownContainer>
-              <text>강의실 링크</text>
-              <div className="shareinfo">
-                <span>www.eduitda.com</span>
-                <button onClick={() => navigator.clipboard.writeText('www.eduitda.com')}>URL 복사</button>
-              </div>
-              <text>강의실 코드</text>
-              <div className="shareinfo">
-                <span>{entryCode}</span>
-                <button onClick={() => navigator.clipboard.writeText(entryCode)}>코드 복사</button>
-              </div>
-              <button className="invite-button" onClick={handleShare}>강의실 초대하기</button>
-            </ShareDropdownContainer>
-              )}  
-          </>
+              <Icon
+                className="material-icons"
+                src={Delete}
+                alt="delete icon"
+                onClick={() => {
+                  setShowDeleteModal(true);
+                }}
+              />
+              <Icon
+                className="material-icons"
+                src={Share}
+                alt="share icon"
+                onClick={() => setShowDropdown(!showDropdown)}
+              />
+              {showDropdown && (
+                <ShareDropdownContainer>
+                  <text>강의실 링크</text>
+                  <div className="shareinfo">
+                    <span>www.eduitda.com</span>
+                    <button
+                      onClick={() =>
+                        navigator.clipboard.writeText("www.eduitda.com")
+                      }
+                    >
+                      URL 복사
+                    </button>
+                  </div>
+                  <text>강의실 코드</text>
+                  <div className="shareinfo">
+                    <span>{entryCode}</span>
+                    <button
+                      onClick={() => navigator.clipboard.writeText(entryCode)}
+                    >
+                      코드 복사
+                    </button>
+                  </div>
+                  <button className="invite-button" onClick={handleShare}>
+                    강의실 초대하기
+                  </button>
+                </ShareDropdownContainer>
+              )}
+            </>
           )}
         </IconContainer>
       </NavbarContent>
-  
+
       {showDeleteModal && (
         <ModalOverlay>
           <ModalContent>
@@ -339,13 +356,18 @@ const AdminTopBar = ({ activeTab }) => {
         <ModalOverlay>
           <AlertModalContainer>
             <div className="text">초대 메시지가 복사되었습니다!</div>
-            <div className="close-button" onClick={() => setShowInviteModal(false)}>확인</div>
+            <div
+              className="close-button"
+              onClick={() => setShowInviteModal(false)}
+            >
+              확인
+            </div>
           </AlertModalContainer>
         </ModalOverlay>
       )}
     </Container>
   );
-};  
+};
 
 AdminTopBar.propTypes = {
   activeTab: PropTypes.string.isRequired,

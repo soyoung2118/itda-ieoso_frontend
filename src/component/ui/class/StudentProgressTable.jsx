@@ -58,7 +58,7 @@ const Table = styled.table`
     white-space: nowrap;
   }
 
-  th:first-child{
+  th:first-child {
     text-align: left;
   }
 
@@ -107,9 +107,7 @@ const StudentProgressTable = ({ assignments }) => {
           submissions: [],
         });
       }
-      studentsMap
-        .get(student.userId)
-        .submissions.push(student.status); // 상태를 그대로 저장
+      studentsMap.get(student.userId).submissions.push(student.status); // 상태를 그대로 저장
     });
   });
   const students = Array.from(studentsMap.values());

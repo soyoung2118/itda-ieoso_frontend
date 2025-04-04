@@ -9,7 +9,7 @@ const SidebarContainer = styled.aside`
   border-radius: 0.5rem;
   padding: 1rem;
   margin-right: 2.5rem;
-  margin-top:0.4rem;
+  margin-top: 0.4rem;
 `;
 
 const ListItem = styled.li`
@@ -19,21 +19,27 @@ const ListItem = styled.li`
   margin-bottom: 0.5rem;
   border-radius: 0.5rem;
   cursor: pointer;
-  background-color: ${(props) => (props.$active ? "var(--pink-color)" : "white")};
+  background-color: ${(props) =>
+    props.$active ? "var(--pink-color)" : "white"};
   &:hover {
     background-color: var(--pink-color);
   }
 `;
 
 const ClassSidebar = () => {
-  const { courseId } = useParams(); 
+  const { courseId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
 
   const items = ["강의 개요", "강의 공지"];
-  const routes = [`/class/${courseId}/overview/info`, `/class/${courseId}/overview/notice`];
+  const routes = [
+    `/class/${courseId}/overview/info`,
+    `/class/${courseId}/overview/notice`,
+  ];
 
-  const activeIndex = routes.findIndex((route) => location.pathname.startsWith(route));
+  const activeIndex = routes.findIndex((route) =>
+    location.pathname.startsWith(route),
+  );
   const activeItem = activeIndex !== -1 ? items[activeIndex] : null;
 
   return (
@@ -42,7 +48,7 @@ const ClassSidebar = () => {
         {items.map((item, index) => (
           <ListItem
             key={index}
-            $active={activeItem === item} 
+            $active={activeItem === item}
             onClick={() => navigate(routes[index])}
           >
             {item}

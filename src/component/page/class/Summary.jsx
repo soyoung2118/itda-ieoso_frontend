@@ -100,7 +100,9 @@ const ClassSummary = () => {
     const updateTime = () => {
       const now = new Date();
       const formattedTime = `${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()}`;
-      setCurrentTime(`${formattedTime} ${now.getHours()}:${String(now.getMinutes()).padStart(2, "0")}`);
+      setCurrentTime(
+        `${formattedTime} ${now.getHours()}:${String(now.getMinutes()).padStart(2, "0")}`,
+      );
     };
 
     updateTime();
@@ -111,7 +113,7 @@ const ClassSummary = () => {
     const fetchAssignmentStats = async () => {
       try {
         const response = await api.get(
-          `/statistics/courses/${courseId}/assignments`
+          `/statistics/courses/${courseId}/assignments`,
         );
         if (response.data.success) {
           setAssignments(response.data.data);
@@ -127,43 +129,43 @@ const ClassSummary = () => {
   }, [courseId]);
 
   return (
-        <main
+    <main
+      style={{
+        flex: 1,
+        borderRadius: "8px",
+      }}
+    >
+      <AdminTopBar />
+      <div style={{ margin: "1vh 0vh" }}>
+        <div
           style={{
-            flex: 1,
-            borderRadius: "8px",
+            display: "flex",
+            alignItems: "baseline",
+            marginLeft: "2.5vh",
           }}
         >
-          <AdminTopBar />
-          <div  style={{margin:"1vh 0vh"}}>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "baseline",
-                marginLeft: "2.5vh"
-              }}
-            >
-              <h3
-                style={{
-                  fontSize: "24px",
-                  fontWeight: "700",
-                  color: "var(--black-color)",
-                }}
-              >
-                요약
-              </h3>
-              <p
-                style={{
-                  color: "var(--darkgrey-color)",
-                  fontSize: "15px",
-                  marginLeft: "1.5vh",
-                  fontWeight: "500",
-                }}
-              >
-                {currentTime} 기준
-              </p>
-            </div>
-            <Section style={{ padding: "2.2vh 4.8vh", paddingBottom: "3rem" }}>
-              {/* <div
+          <h3
+            style={{
+              fontSize: "24px",
+              fontWeight: "700",
+              color: "var(--black-color)",
+            }}
+          >
+            요약
+          </h3>
+          <p
+            style={{
+              color: "var(--darkgrey-color)",
+              fontSize: "15px",
+              marginLeft: "1.5vh",
+              fontWeight: "500",
+            }}
+          >
+            {currentTime} 기준
+          </p>
+        </div>
+        <Section style={{ padding: "2.2vh 4.8vh", paddingBottom: "3rem" }}>
+          {/* <div
                 style={{ display: "flex", gap: "2rem", marginBottom: "4rem" }}
               >
                 <CalendarWrapper>
@@ -203,10 +205,10 @@ const ClassSummary = () => {
                   </StatBox>
                 </StatsContainer>
               </div> */}
-              <StudentProgressTable assignments={assignments} />
-            </Section>
-          </div>
-        </main>
+          <StudentProgressTable assignments={assignments} />
+        </Section>
+      </div>
+    </main>
   );
 };
 

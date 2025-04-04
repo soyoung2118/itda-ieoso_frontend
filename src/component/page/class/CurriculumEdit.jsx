@@ -242,14 +242,14 @@ const CurriculumEdit = () => {
   const [activeLectureId, setActiveLectureId] = useState(lectureId);
   const [activeLecture, setActiveLecture] = useState(null);
   const [subSections, setSubSections] = useState(
-    activeLecture?.subSections || []
+    activeLecture?.subSections || [],
   );
   const [editTarget, setEditTarget] = useState(null);
   const [activeSection, setActiveSection] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [lectureDescription, setLectureDescription] = useState(
-    activeLecture?.lectureDescription || ""
+    activeLecture?.lectureDescription || "",
   );
   const [movedItem, setMovedItem] = useState(null);
 
@@ -263,7 +263,7 @@ const CurriculumEdit = () => {
       if (!userId) return;
       try {
         const response = await api.get(
-          `/lectures/curriculum/${courseId}/${userId}`
+          `/lectures/curriculum/${courseId}/${userId}`,
         );
         if (!response.data || !response.data.success) {
           console.error("API 요청 실패:", response.data);
@@ -296,7 +296,7 @@ const CurriculumEdit = () => {
             isEditing: false,
           })),
         ].sort(
-          (a, b) => (a.contentOrderIndex || 0) - (b.contentOrderIndex || 0)
+          (a, b) => (a.contentOrderIndex || 0) - (b.contentOrderIndex || 0),
         );
 
         const editingSectionId =
@@ -308,7 +308,7 @@ const CurriculumEdit = () => {
           subSections: sortedSubSections.map((s) =>
             newSectionId && String(s.contentOrderId) === String(newSectionId)
               ? { ...s, isEditing: true }
-              : { ...s, isEditing: false }
+              : { ...s, isEditing: false },
           ),
         });
 
@@ -321,7 +321,7 @@ const CurriculumEdit = () => {
         console.error("커리큘럼 불러오기 실패:", error);
       }
     },
-    [courseId, lectureId, userId]
+    [courseId, lectureId, userId],
   );
 
   useEffect(() => {
@@ -337,7 +337,7 @@ const CurriculumEdit = () => {
   // 드래그 시작 시 이동할 아이템을 고정
   const handleDragStart = (start) => {
     const draggedItem = subSections.find(
-      (item) => item.contentOrderId === start.draggableId
+      (item) => item.contentOrderId === start.draggableId,
     );
     if (draggedItem) {
       setMovedItem(draggedItem);
@@ -435,7 +435,7 @@ const CurriculumEdit = () => {
             subSections: prev.subSections.map((s) =>
               String(s.contentOrderId) === newSectionId
                 ? { ...s, isEditing: true }
-                : { ...s, isEditing: false }
+                : { ...s, isEditing: false },
             ),
           };
         });
@@ -488,7 +488,7 @@ const CurriculumEdit = () => {
     }
 
     const clickedSectionId = String(
-      activeLecture?.subSections[index]?.contentOrderId
+      activeLecture?.subSections[index]?.contentOrderId,
     );
 
     // 현재 편집 중이던 섹션 저장
@@ -502,7 +502,7 @@ const CurriculumEdit = () => {
           {
             contentOrderId: editingSection.contentOrderId,
             updatedData: editingSection,
-          }
+          },
         );
       } catch (error) {
         console.error("수정사항 저장 실패:", error);
@@ -521,7 +521,7 @@ const CurriculumEdit = () => {
           subSections: prev.subSections.map((s) =>
             String(s.contentOrderId) === clickedSectionId
               ? { ...s, isEditing: true }
-              : s
+              : s,
           ),
         };
       });
@@ -537,7 +537,7 @@ const CurriculumEdit = () => {
       if (isDragging) return;
 
       const lectureDescriptionElement = document.querySelector(
-        ".lecture-description-edit"
+        ".lecture-description-edit",
       );
 
       if (lectureDescriptionElement?.contains(event.target)) {
@@ -553,7 +553,7 @@ const CurriculumEdit = () => {
       }
 
       const editingSection = activeLectureRef.current?.subSections.find(
-        (s) => s.isEditing
+        (s) => s.isEditing,
       );
 
       if (editingSection) {
@@ -572,7 +572,7 @@ const CurriculumEdit = () => {
               lectureDescription: lectureDescription, // 변경된 설명 저장
               startDate: activeLecture.startDate,
               endDate: activeLecture.endDate,
-            }
+            },
           );
 
           if (response.data.success) {
@@ -616,7 +616,7 @@ const CurriculumEdit = () => {
       if (!prev) return prev;
 
       const updatedSubSections = prev.subSections.map((s, i) =>
-        i === index ? { ...s, [field]: newDate } : s
+        i === index ? { ...s, [field]: newDate } : s,
       );
 
       return { ...prev, subSections: updatedSubSections };

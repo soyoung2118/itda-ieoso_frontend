@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
+import styled from "styled-components";
 
 function WeeklyCalendar({ currentWeek, setSelectedDate, lectures, userId }) {
   const [selectedDay, setSelectedDay] = useState(new Date().getDate());
@@ -17,45 +17,52 @@ function WeeklyCalendar({ currentWeek, setSelectedDate, lectures, userId }) {
   };
 
   const weekDates = getWeekDates(new Date(currentWeek));
-  const days = ['일', '월', '화', '수', '목', '금', '토'];
+  const days = ["일", "월", "화", "수", "목", "금", "토"];
 
   const getIconType = (lecture, formattedDate) => {
     const isOwnLecture = String(userId) === String(lecture.creatorId);
-    if (isOwnLecture) return 'MY_LECTURE';
+    if (isOwnLecture) return "MY_LECTURE";
 
     // 해당 날짜에 있는 과제가 SUBMITTED 상태인지 확인
-    const assignmentsOnDate = (lecture.assignmentDtos || []).filter(task => 
-      new Date(task.endDate).toLocaleDateString('en-CA') === formattedDate
+    const assignmentsOnDate = (lecture.assignmentDtos || []).filter(
+      (task) =>
+        new Date(task.endDate).toLocaleDateString("en-CA") === formattedDate,
     );
-    const allAssignmentsSubmitted = assignmentsOnDate.every(task => 
-      task.submissionStatus === 'SUBMITTED' || task.submissionStatus === 'LATE'
+    const allAssignmentsSubmitted = assignmentsOnDate.every(
+      (task) =>
+        task.submissionStatus === "SUBMITTED" ||
+        task.submissionStatus === "LATE",
     );
 
     // 해당 날짜에 있는 자료가 활성화 상태인지 확인
-    const materialsOnDate = (lecture.materialDtos || []).filter(material => 
-      new Date(material.startDate).toLocaleDateString('en-CA') === formattedDate
+    const materialsOnDate = (lecture.materialDtos || []).filter(
+      (material) =>
+        new Date(material.startDate).toLocaleDateString("en-CA") ===
+        formattedDate,
     );
-    const allMaterialsActive = materialsOnDate.every(material => 
-      material.materialHistoryStatus === true
+    const allMaterialsActive = materialsOnDate.every(
+      (material) => material.materialHistoryStatus === true,
     );
 
     // 존재하는 항목들끼리만 조건을 만족하면 DONE
-    if ((assignmentsOnDate.length === 0 || allAssignmentsSubmitted) &&
-        (materialsOnDate.length === 0 || allMaterialsActive)) {
-      return 'DONE';
+    if (
+      (assignmentsOnDate.length === 0 || allAssignmentsSubmitted) &&
+      (materialsOnDate.length === 0 || allMaterialsActive)
+    ) {
+      return "DONE";
     }
 
-    return 'NOT_DONE';
+    return "NOT_DONE";
   };
 
   const getIconColor = (iconType) => {
     switch (iconType) {
-      case 'MY_LECTURE':
-        return 'var(--guide-green-color)';
-      case 'DONE':
-        return 'var(--main-color)';
-      case 'NOT_DONE':
-        return '#DEDEDE';
+      case "MY_LECTURE":
+        return "var(--guide-green-color)";
+      case "DONE":
+        return "var(--main-color)";
+      case "NOT_DONE":
+        return "#DEDEDE";
       default:
         return null;
     }
@@ -63,33 +70,54 @@ function WeeklyCalendar({ currentWeek, setSelectedDate, lectures, userId }) {
 
   useEffect(() => {
     const newTasks = weekDates.reduce((acc, date) => {
-      const formattedDate = date.toLocaleDateString('en-CA');
+      const formattedDate = date.toLocaleDateString("en-CA");
       const dayLectures = lectures[formattedDate] || [];
 
-      const dayTasks = dayLectures.filter(lecture => {
-        const isOwnLecture = String(userId) === String(lecture.creatorId);
+      const dayTasks = dayLectures
+        .filter((lecture) => {
+          const isOwnLecture = String(userId) === String(lecture.creatorId);
 
-        const hasContent = (Array.isArray(lecture.assignmentDtos) && lecture.assignmentDtos.some(assignment => {
-          const assignmentEndDate = new Date(assignment.endDate).toLocaleDateString('en-CA');
-          return assignmentEndDate === formattedDate && (isOwnLecture || !Object.values(assignment).includes(null));
-        })) ||
-        (Array.isArray(lecture.materialDtos) && lecture.materialDtos.some(material => {
-          const materialStartDate = new Date(material.startDate).toLocaleDateString('en-CA');
-          return materialStartDate === formattedDate && (isOwnLecture || !Object.values(material).includes(null));
-        })) ||
-        (Array.isArray(lecture.videoDtos) && lecture.videoDtos.some(video => {
-          const videoStartDate = new Date(video.startDate).toLocaleDateString('en-CA');
-          return videoStartDate === formattedDate && (isOwnLecture || !Object.values(video).includes(null));
-        }));
-        
-        return hasContent;
-      }).map(lecture => {
-        const iconType = getIconType(lecture, formattedDate);
-        return {
-          courseId: lecture.courseId,
-          iconColor: getIconColor(iconType),
-        };
-      });
+          const hasContent =
+            (Array.isArray(lecture.assignmentDtos) &&
+              lecture.assignmentDtos.some((assignment) => {
+                const assignmentEndDate = new Date(
+                  assignment.endDate,
+                ).toLocaleDateString("en-CA");
+                return (
+                  assignmentEndDate === formattedDate &&
+                  (isOwnLecture || !Object.values(assignment).includes(null))
+                );
+              })) ||
+            (Array.isArray(lecture.materialDtos) &&
+              lecture.materialDtos.some((material) => {
+                const materialStartDate = new Date(
+                  material.startDate,
+                ).toLocaleDateString("en-CA");
+                return (
+                  materialStartDate === formattedDate &&
+                  (isOwnLecture || !Object.values(material).includes(null))
+                );
+              })) ||
+            (Array.isArray(lecture.videoDtos) &&
+              lecture.videoDtos.some((video) => {
+                const videoStartDate = new Date(
+                  video.startDate,
+                ).toLocaleDateString("en-CA");
+                return (
+                  videoStartDate === formattedDate &&
+                  (isOwnLecture || !Object.values(video).includes(null))
+                );
+              }));
+
+          return hasContent;
+        })
+        .map((lecture) => {
+          const iconType = getIconType(lecture, formattedDate);
+          return {
+            courseId: lecture.courseId,
+            iconColor: getIconColor(iconType),
+          };
+        });
 
       if (dayTasks.length > 0) {
         acc[date.getDate()] = dayTasks;
@@ -112,7 +140,9 @@ function WeeklyCalendar({ currentWeek, setSelectedDate, lectures, userId }) {
           isSelected={selectedDay === date.getDate()}
         >
           <DayLabel>{days[index]}</DayLabel>
-          <DateNumber isSelected={selectedDay === date.getDate()}>{date.getDate()}</DateNumber>
+          <DateNumber isSelected={selectedDay === date.getDate()}>
+            {date.getDate()}
+          </DateNumber>
           <DateTodo>
             {(tasks[date.getDate()] || []).map((task, i) => (
               <React.Fragment key={i}>
@@ -157,7 +187,7 @@ const DateBox = styled.div`
   gap: 10px;
   cursor: pointer;
 
-  @media all and (max-width:479px) {
+  @media all and (max-width: 479px) {
     font-size: 12px;
   }
 `;
@@ -165,14 +195,15 @@ const DateBox = styled.div`
 const DayLabel = styled.div`
   font-size: 14px;
 
-  @media all and (max-width:479px) {
+  @media all and (max-width: 479px) {
     font-size: 12px;
   }
 `;
 
 const DateNumber = styled.div`
   color: #000;
-  background-color: ${({ isSelected }) => (isSelected ? '#FFD1D1' : 'transparent')};
+  background-color: ${({ isSelected }) =>
+    isSelected ? "#FFD1D1" : "transparent"};
   border-radius: 50%;
   width: 35px;
   height: 35px;
@@ -180,7 +211,7 @@ const DateNumber = styled.div`
   align-items: center;
   justify-content: center;
 
-  @media all and (max-width:479px) {
+  @media all and (max-width: 479px) {
     font-size: 12px;
     width: 25px;
     height: 25px;
@@ -198,14 +229,13 @@ const DateTodo = styled.div`
 const TodoCircle = styled.div`
   width: 8px;
   height: 8px;
-  background-color: ${({ completed }) => (completed ? '#FF4747' : '#DEDEDE')};
+  background-color: ${({ completed }) => (completed ? "#FF4747" : "#DEDEDE")};
   border-radius: 50%;
 
-  @media all and (max-width:479px) {
+  @media all and (max-width: 479px) {
     width: 6px;
     height: 6px;
   }
 `;
 
 export default WeeklyCalendar;
-

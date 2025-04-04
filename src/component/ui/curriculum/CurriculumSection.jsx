@@ -323,7 +323,8 @@ const CurriculumSection = ({
               <MaterialIcon src={Material} />
               <MaterialSection>
                 <span style={{ marginRight: "0.6rem" }}>
-                  {materialTruncatedText(subSection.originalFilename) ?? "자료 없음"}
+                  {materialTruncatedText(subSection.originalFilename) ??
+                    "자료 없음"}
                 </span>
                 <span
                   style={{

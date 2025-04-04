@@ -18,14 +18,9 @@ const ClassStudents = () => {
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      const formattedTime = `${now.getFullYear()}.${
-        now.getMonth() + 1
-      }.${now.getDate()}`;
+      const formattedTime = `${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()}`;
       setCurrentTime(
-        `${formattedTime} ${now.getHours()}:${String(now.getMinutes()).padStart(
-          2,
-          "0"
-        )}`
+        `${formattedTime} ${now.getHours()}:${String(now.getMinutes()).padStart(2, "0")}`,
       );
     };
 
@@ -39,7 +34,7 @@ const ClassStudents = () => {
     const fetchAssignments = async () => {
       try {
         const response = await api.get(
-          `/statistics/courses/${courseId}/assignments/submissions`
+          `/statistics/courses/${courseId}/assignments/submissions`,
         );
 
         if (response.data.success) {
@@ -56,7 +51,7 @@ const ClassStudents = () => {
           });
 
           setStudents(
-            [...studentMap].map(([userId, name]) => ({ userId, name }))
+            [...studentMap].map(([userId, name]) => ({ userId, name })),
           );
 
           // 특정 studentId의 과제 제출 내역 필터링
@@ -70,7 +65,7 @@ const ClassStudents = () => {
                 submittedAt: result.submittedAt,
                 status: result.status,
                 textContent: result.textContent,
-              }))
+              })),
           );
 
           if (studentAssignments.length > 0) {
@@ -194,7 +189,7 @@ const ClassStudents = () => {
                 key={student.userId}
                 onClick={() =>
                   navigate(
-                    `/class/${courseId}/admin/students/${student.userId}`
+                    `/class/${courseId}/admin/students/${student.userId}`,
                   )
                 }
                 style={{
@@ -257,7 +252,7 @@ const ClassStudents = () => {
                         <p style={{ fontSize: "15px", color: "#c3c3c3" }}>
                           {submission.submittedAt
                             ? new Date(
-                                submission.submittedAt
+                                submission.submittedAt,
                               ).toLocaleDateString()
                             : ""}
                         </p>

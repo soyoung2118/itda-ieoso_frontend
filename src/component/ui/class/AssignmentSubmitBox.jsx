@@ -56,8 +56,8 @@ const AssignmentSubmitBox = ({
         });
       }
 
-      if(!submissionId){
-        alert('강의자는 과제를 제출할 수 없습니다.');
+      if (!submissionId) {
+        alert("강의자는 과제를 제출할 수 없습니다.");
         return;
       }
 
@@ -70,7 +70,7 @@ const AssignmentSubmitBox = ({
               headers: {
                 "Content-Type": "multipart/form-data",
               },
-            }
+            },
           );
           break;
         }
@@ -96,14 +96,14 @@ const AssignmentSubmitBox = ({
               headers: {
                 "Content-Type": "multipart/form-data",
               },
-            }
+            },
           );
           break;
         }
       }
       if (response.data.success) {
         const statusResponse = await api.get(
-          `/assignments/${assignmentId}/submissions/${submissionId}/${user.userId}`
+          `/assignments/${assignmentId}/submissions/${submissionId}/${user.userId}`,
         );
 
         if (statusResponse.data.success) {
@@ -140,7 +140,11 @@ const AssignmentSubmitBox = ({
   };
 
   return (
-    <Wrapper isBoth={submissionType === "BOTH"} isText={submissionType === "TEXT"} fileCount={files?.length || 0}>
+    <Wrapper
+      isBoth={submissionType === "BOTH"}
+      isText={submissionType === "TEXT"}
+      fileCount={files?.length || 0}
+    >
       {(submissionType === "TEXT" || submissionType === "BOTH") && (
         <Box>
           <FormTitle>내용</FormTitle>
@@ -204,9 +208,9 @@ const FormTitle = styled.div`
 
 const Wrapper = styled.div`
   border-radius: 20px;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   height: ${(props) =>
-    props.isText 
+    props.isText
       ? "32vh"
       : props.isBoth
         ? `calc(58vh + ${props.fileCount * 50}px)`

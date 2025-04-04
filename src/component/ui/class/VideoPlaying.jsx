@@ -9,18 +9,18 @@ const VideoPlaying = ({ videoUrl }) => {
   try {
     const url = new URL(videoUrl);
 
-    if (url.hostname === 'www.youtube.com') {
-        videoKey = url.searchParams.get("v");
-    } else if (url.hostname === 'youtu.be') {
-        videoKey = url.pathname.substring(1);
+    if (url.hostname === "www.youtube.com") {
+      videoKey = url.searchParams.get("v");
+    } else if (url.hostname === "youtu.be") {
+      videoKey = url.pathname.substring(1);
     }
   } catch (error) {
-      alert('강의 URL에 문제가 생겼습니다. 강의자에게 강좌 주소를 확인해보세요.');
+    alert("강의 URL에 문제가 생겼습니다. 강의자에게 강좌 주소를 확인해보세요.");
   }
 
   const opts = {
     height: 500,
-    width: '100%',
+    width: "100%",
     playerVars: {
       autoplay: 0, // 자동 재생 off
       rel: 0, // 관련 동영상 표시하지 않음
@@ -31,8 +31,8 @@ const VideoPlaying = ({ videoUrl }) => {
   const onReady = (event) => {
     event.target.pauseVideo();
   };
-  
+
   return <YouTube videoId={videoKey} opts={opts} onReady={onReady} />;
-}
+};
 
 export default VideoPlaying;

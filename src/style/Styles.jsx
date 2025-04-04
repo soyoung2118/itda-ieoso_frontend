@@ -1,19 +1,19 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    background-color: #FFFFFF;
-    height: calc(100vh - 7vh);
-    width: 100%;
-    padding-top: 6vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: #ffffff;
+  height: calc(100vh - 7vh);
+  width: 100%;
+  padding-top: 6vh;
 
-    /* 모바일 세로 (해상도 ~ 479px)*/ 
-    @media all and (max-width:479px) {
-      padding-top: 3.5vh;
-    }
+  /* 모바일 세로 (해상도 ~ 479px)*/
+  @media all and (max-width: 479px) {
+    padding-top: 3.5vh;
+  }
 `;
 
 export const Logo = styled.div`
@@ -23,38 +23,38 @@ export const Logo = styled.div`
 `;
 
 export const LogoImage = styled.img`
-    width: 50px;
-    margin-bottom: 1rem;
+  width: 50px;
+  margin-bottom: 1rem;
 `;
 
 export const LogoText = styled.div`
-    font-size: 1.7rem;
-    font-weight: bold;
-    margin-bottom: 1.5rem;
+  font-size: 1.7rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
 `;
 
 export const Form = styled.form`
-    width: 100%;
-    display: flex;
-    flex-direction: column;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 `;
 
 export const Label = styled.div`
-    margin-top: 0.7rem;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-    font-weight: 600;
+  margin-top: 0.7rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
 `;
 
 export const LoginInput = styled.input`
-    padding: 0.7rem;
-    border: 1px solid #CDCDCD;
-    border-radius: 15px;
-    font-size: 1rem;
+  padding: 0.7rem;
+  border: 1px solid #cdcdcd;
+  border-radius: 15px;
+  font-size: 1rem;
 
-    &::placeholder {
-        color: #CDCDCD;
-    }
+  &::placeholder {
+    color: #cdcdcd;
+  }
 `;
 
 export const ResponsiveLabel = styled.span`
@@ -64,21 +64,20 @@ export const ResponsiveLabel = styled.span`
     font-size: 1rem;
   }
 
-  /* 모바일 세로 (해상도 ~ 479px)*/ 
-  @media all and (max-width:479px) {
+  /* 모바일 세로 (해상도 ~ 479px)*/
+  @media all and (max-width: 479px) {
     font-size: 14px;
   }
 `;
 
 export const CheckboxContainer = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
-    line-height: 1.5;
-
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
 `;
 
 export const CustomCheckboxSquare = (checked) => {
@@ -142,7 +141,7 @@ export const CustomCheckboxTransparent = (checked) => {
       check
     </span>
   );
-};  
+};
 
 export const SignUpContainer = styled.div`
   display: flex;
@@ -155,39 +154,39 @@ export const SignUpContainer = styled.div`
 `;
 
 export const SignUpInput = styled.input`
-    width: 100%;
-    padding: 0.7rem;
-    border: 1px solid #CDCDCD;
-    border-radius: 15px;
-    font-size: 0.9rem;
-    box-sizing: border-box;
+  width: 100%;
+  padding: 0.7rem;
+  border: 1px solid #cdcdcd;
+  border-radius: 15px;
+  font-size: 0.9rem;
+  box-sizing: border-box;
 
-    &::placeholder {
-        color: #CDCDCD;
-    }
+  &::placeholder {
+    color: #cdcdcd;
+  }
 `;
 
 export const SignUpLink = styled.div`
-    margin-top: 0.5rem;
-    font-size: 0.9rem;
-    color: var(--guide-gray-color);
-    text-align: center;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--guide-gray-color);
+  text-align: center;
 
-    a {
-        margin-left: 0.5rem;
-        color: var(--main-color);
-        text-decoration: underline;
-    }
+  a {
+    margin-left: 0.5rem;
+    color: var(--main-color);
+    text-decoration: underline;
+  }
 `;
 
 export const LoginButton = styled.button`
-    padding: 0.8rem;
-    background-color: #FF4747;
-    color: white;
-    border: none;
-    border-radius: 15px;
-    cursor: pointer;
-    margin-bottom: 1rem;
+  padding: 0.8rem;
+  background-color: #ff4747;
+  color: white;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  margin-bottom: 1rem;
 `;
 
 export const Progress = styled.div`
@@ -203,43 +202,47 @@ export const Step = styled.div`
   width: 35px;
   height: 35px;
   border-radius: 50%;
-  background-color: #FFFFFF;
-  color: ${props => (props.active || props.completed ? 'black' : '#C3C3C3')};
+  background-color: #ffffff;
+  color: ${(props) => (props.active || props.completed ? "black" : "#C3C3C3")};
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 50px;
-  border: 2px solid ${props => (props.active || props.completed ? '#474747' : '#C3C3C3')};
+  border: 2px solid
+    ${(props) => (props.active || props.completed ? "#474747" : "#C3C3C3")};
   position: relative;
-  transition: color 0.3s ease, border-image 0.5s ease;
+  transition:
+    color 0.3s ease,
+    border-image 0.5s ease;
 
-    /* 모바일 세로 (해상도 ~ 479px)*/ 
-    @media all and (max-width:479px) {
-        margin: 0 30px;
-    }
+  /* 모바일 세로 (해상도 ~ 479px)*/
+  @media all and (max-width: 479px) {
+    margin: 0 30px;
+  }
 
   &:after {
-    content: '${props => props.label}';
+    content: "${(props) => props.label}";
     position: absolute;
     top: 52px;
     font-size: 0.8rem;
-    color: ${props => (props.active || props.completed ? '#474747' : '#C3C3C3')};
+    color: ${(props) =>
+      props.active || props.completed ? "#474747" : "#C3C3C3"};
     width: max-content;
   }
 
   &:not(:last-child):before {
-    content: '';
+    content: "";
     position: absolute;
     top: 20px;
     left: 35px;
     width: 103px;
     height: 2px;
-    background: ${props => (props.completed ? '#474747' : '#C3C3C3')};
+    background: ${(props) => (props.completed ? "#474747" : "#C3C3C3")};
     transition: background 0.5s ease;
 
-    /* 모바일 세로 (해상도 ~ 479px)*/ 
-    @media all and (max-width:479px) {
-        width: 65px;
+    /* 모바일 세로 (해상도 ~ 479px)*/
+    @media all and (max-width: 479px) {
+      width: 65px;
     }
   }
 `;
@@ -249,9 +252,9 @@ export const Terms = styled.div`
   margin: 20px auto;
   width: 100%;
   max-width: 600px;
-  border: 1px solid #CDCDCD;
+  border: 1px solid #cdcdcd;
   border-radius: 10px;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   padding: 20px;
   box-sizing: border-box;
 `;
@@ -295,8 +298,8 @@ export const ValidateMessage = styled.div`
   margin-bottom: 10px;
   min-height: 15px;
 
-  /* 모바일 세로 (해상도 ~ 479px)*/ 
-  @media all and (max-width:479px) {
+  /* 모바일 세로 (해상도 ~ 479px)*/
+  @media all and (max-width: 479px) {
     font-size: 11px;
   }
 `;
@@ -313,10 +316,10 @@ export const WelcomeMessage = styled.div`
   padding: 45px 0;
   border: 1px solid #ddd;
   border-radius: 30px;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
 
-  /* 모바일 세로 (해상도 ~ 479px)*/ 
-  @media all and (max-width:479px) {
+  /* 모바일 세로 (해상도 ~ 479px)*/
+  @media all and (max-width: 479px) {
     min-width: 50px;
     width: 100%;
     font-size: 14px;
@@ -327,7 +330,7 @@ export const WelcomeMessage = styled.div`
 export const NextButton = styled.button`
   width: 100%;
   display: block;
-  background-color: #FF4747;
+  background-color: #ff4747;
   color: white;
   border: none;
   padding: 0.75rem;

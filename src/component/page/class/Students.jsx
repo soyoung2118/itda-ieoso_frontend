@@ -21,14 +21,9 @@ const ClassStudents = () => {
 
   useEffect(() => {
     const now = new Date();
-    const formatted = `${now.getFullYear()}.${
-      now.getMonth() + 1
-    }.${now.getDate()}`;
+    const formatted = `${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()}`;
     setCurrentTime(
-      `${formatted} ${now.getHours()}:${String(now.getMinutes()).padStart(
-        2,
-        "0"
-      )}`
+      `${formatted} ${now.getHours()}:${String(now.getMinutes()).padStart(2, "0")}`,
     );
   }, []);
 
@@ -36,7 +31,7 @@ const ClassStudents = () => {
     const fetchAssignments = async () => {
       try {
         const res = await api.get(
-          `/statistics/courses/${courseId}/assignments/submissions`
+          `/statistics/courses/${courseId}/assignments/submissions`,
         );
         if (res.data.success) {
           const data = res.data.data;
@@ -171,7 +166,7 @@ const ClassStudents = () => {
                       onClick={() => {
                         setActiveRow(i);
                         navigate(
-                          `/class/${courseId}/admin/students/${student.userId}`
+                          `/class/${courseId}/admin/students/${student.userId}`,
                         );
                       }}
                       style={{
