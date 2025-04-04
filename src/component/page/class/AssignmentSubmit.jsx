@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import MenuIcon from '@mui/icons-material/Menu';
+import MenuIcon from "@mui/icons-material/Menu";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import api from "../../api/api";
 import PlayingCurriculumSidebar from "../../ui/class/PlayingCurriculumSidebar";
@@ -9,12 +9,13 @@ import { UsersContext } from "../../contexts/usersContext";
 import AssignmentSubmitBox from "../../ui/class/AssignmentSubmitBox";
 import AssignmentShowBox from "../../ui/class/AssignmentShowBox";
 import { ModalOverlay } from "../../ui/modal/ModalStyles";
+import CloseIcon from "@mui/icons-material/Close";
 
 const ClassAssignmentSubmit = () => {
   const navigate = useNavigate();
   const isMobile = window.screen.width <= 480;
   const [isVisible, setIsVisible] = useState(!isMobile);
-  
+
   const [previousFiles, setPreviousFiles] = useState([]);
   const [deletedFiles, setDeletedFiles] = useState([]);
   const { courseId, lectureId, assignmentId } = useParams();
@@ -36,6 +37,12 @@ const ClassAssignmentSubmit = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [canEdit, setCanEdit] = useState(false);
 
+  const toggleSidebar = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsVisible((prev) => !prev);
+  };
+
   const handleNavigationCurriculum = () => {
     navigate(`/class/${courseId}/curriculum/${lectureId}`);
   };
@@ -43,26 +50,26 @@ const ClassAssignmentSubmit = () => {
   useEffect(() => {
     const fetchCurriculumAndAssignmentData = async () => {
       if (!courseId || !user || !lectureId || !assignmentId) return;
-  
+
       try {
         const curriculumResponse = await api.get(
           `/lectures/curriculum/${courseId}/${user.userId}`
         );
-  
+
         if (curriculumResponse.data.success) {
           const curriculum = curriculumResponse.data.data.curriculumResponses;
           setCurriculumData(curriculum);
-  
+
           const currentLecture = curriculum.find(
-            lecture => lecture.lectureId === Number(lectureId)
+            (lecture) => lecture.lectureId === Number(lectureId)
           );
-  
+
           if (currentLecture) {
             setCurrentLectureInfo(currentLecture);
             const currentAssignment = currentLecture.assignments.find(
-              assignment => assignment.assignmentId === Number(assignmentId)
+              (assignment) => assignment.assignmentId === Number(assignmentId)
             );
-  
+
             if (currentAssignment) {
               setCurrentAssignmentInfo(currentAssignment);
               setSubmissionType(currentAssignment.submissionType);
@@ -73,12 +80,12 @@ const ClassAssignmentSubmit = () => {
         const lectureResponse = await api.get(
           `/lectures/history/${courseId}/${user.userId}`
         );
-        
+
         if (lectureResponse.data.success) {
           const submission = lectureResponse.data.data.submissions.find(
             (submission) => submission.assignmentId === parseInt(assignmentId)
           );
-          
+
           if (submission) {
             setSubmissionId(submission.submissionId);
             setSubmissionStatus(submission.submissionStatus);
@@ -87,12 +94,11 @@ const ClassAssignmentSubmit = () => {
             setSubmissionStatus("NOT_SUBMITTED");
           }
         }
-  
       } catch (error) {
         console.error("데이터 로딩 오류:", error);
       }
     };
-  
+
     fetchCurriculumAndAssignmentData();
   }, [courseId, lectureId, assignmentId, user]);
 
@@ -117,7 +123,7 @@ const ClassAssignmentSubmit = () => {
 
           setFiles(filesData);
           setPreviousFiles(filesData);
-          if(statusResponse.data.data.textContent === "null") setContent("");
+          if (statusResponse.data.data.textContent === "null") setContent("");
           else setContent(statusResponse.data.data.textContent);
         }
       } catch (error) {
@@ -141,42 +147,42 @@ const ClassAssignmentSubmit = () => {
   }, [currentLectureInfo, assignmentId]);
 
   useEffect(() => {
-      const fetchSubmissionType = async () => {
-        if (!assignmentId || !courseId || !user) return;
-  
-        try {
-          const response = await api.get(
-            `/lectures/curriculum/${courseId}/${user.userId}`
-          );
-  
-          if (response.data.success) {
-            const curriculum = response.data.data.curriculumResponses;
-            
-            let foundType = null;
-            for (const lecture of curriculum) {
-              const assignment = lecture.assignments.find(
-                (a) => a.assignmentId === parseInt(assignmentId)
-              );
-              if (assignment) {
-                foundType = assignment.submissionType;
-                console.log(foundType);
-                break;
-              }
-            }
-  
-            if (foundType) {
-              setSubmissionType(foundType);
-            } else {
-              console.warn("해당 과제의 submissionType을 찾을 수 없습니다.");
+    const fetchSubmissionType = async () => {
+      if (!assignmentId || !courseId || !user) return;
+
+      try {
+        const response = await api.get(
+          `/lectures/curriculum/${courseId}/${user.userId}`
+        );
+
+        if (response.data.success) {
+          const curriculum = response.data.data.curriculumResponses;
+
+          let foundType = null;
+          for (const lecture of curriculum) {
+            const assignment = lecture.assignments.find(
+              (a) => a.assignmentId === parseInt(assignmentId)
+            );
+            if (assignment) {
+              foundType = assignment.submissionType;
+              console.log(foundType);
+              break;
             }
           }
-        } catch (error) {
-          console.error("과제 유형 로딩 오류:", error);
+
+          if (foundType) {
+            setSubmissionType(foundType);
+          } else {
+            console.warn("해당 과제의 submissionType을 찾을 수 없습니다.");
+          }
         }
-      };
-  
-      fetchSubmissionType();
-    }, [assignmentId, courseId, user]);
+      } catch (error) {
+        console.error("과제 유형 로딩 오류:", error);
+      }
+    };
+
+    fetchSubmissionType();
+  }, [assignmentId, courseId, user]);
 
   useEffect(() => {
     if (submissionStatus === "NOT_SUBMITTED") {
@@ -195,126 +201,148 @@ const ClassAssignmentSubmit = () => {
 
   const setIsVisibleHandler = () => {
     setIsVisible(!isVisible);
-  }
+  };
 
   return (
-      <Container>
-        <LeftSide>
-          <TopContainer>
-            <TitleContainer>
-              <MainTitle>
-                {currentLectureInfo?.lectureTitle} {" "}
-                {truncateText(currentAssignmentInfo?.assignmentTitle || "과제 제목")}
-              </MainTitle>
+    <Container>
+      <LeftSide>
+        <TopContainer>
+          <TitleContainer>
+            <MainTitle>
+              {currentLectureInfo?.lectureTitle}{" "}
+              {truncateText(
+                currentAssignmentInfo?.assignmentTitle || "과제 제목"
+              )}
+            </MainTitle>
 
-              <ClickContainer onClick={handleNavigationCurriculum}>
-                <ArrowForwardIosIcon
-                  style={{ width: "13px", marginLeft: "15px" }}
-                />
-              </ClickContainer>
-            </TitleContainer>
+            <ClickContainer onClick={handleNavigationCurriculum}>
+              <ArrowForwardIosIcon
+                style={{ width: "13px", marginLeft: "15px" }}
+              />
+            </ClickContainer>
+          </TitleContainer>
 
-            { isMobile && (
-            <MenuContainer>
-              <MenuIcon onClick={setIsVisibleHandler} className="menu-icon" />
-            </MenuContainer>
-            )}
-          </TopContainer>
-
-          <WhiteBoxComponent>
-            <NoticeContentContainer>
-              {currentAssignmentInfo?.assignmentDescription || "과제 설명"}
-            </NoticeContentContainer>
-          </WhiteBoxComponent>
-
-          {submissionStatus === "NOT_SUBMITTED" || canEdit ? (
-            <AssignmentSubmitBox
-              courseId={courseId}
-              userId={user?.userId}
-              canEdit={canEdit}
-              setCanEdit={setCanEdit}
-              content={content}
-              setContent={setContent}
-              files={files}
-              setFiles={setFiles}
-              submissionId={submissionId}
-              submissionStatus={submissionStatus}
-              submissionType={submissionType}
-              setIsSubmittedModalOpen={setIsSubmittedModalOpen}
-              setIsReSubmittedModalOpen={setIsReSubmittedModalOpen}
-            />
-          ) : (
-            <AssignmentShowBox
-              setCanEdit={setCanEdit}
-              content={content}
-              files={files}
-              submissionId={submissionId}
-              submissionStatus={submissionStatus}
-              submissionType={submissionType}
-              setIsDeleteModalOpen={setIsDeleteModalOpen}
-            />
+          {isMobile && (
+            <MobileToggleButton type="button" onClick={toggleSidebar}>
+              {isVisible ? (
+                <CloseIcon style={{ fontSize: "2.8vh" }} />
+              ) : (
+                <MenuIcon style={{ fontSize: "2.8vh" }} />
+              )}
+            </MobileToggleButton>
           )}
-        </LeftSide>
+        </TopContainer>
 
-        { (!isMobile || isVisible) && (
-          <>
-            {isVisible && (
-              <RightSide isVisible={isVisible}>
-                <PlayingCurriculumSidebar
-                  curriculumData={curriculumData}
-                  setCurriculumData={setCurriculumData}
-                  currentLectureInfo={currentLectureInfo}
-                  setCurrentLectureInfo={setCurrentLectureInfo}
-                />
-            </RightSide>
-            )}
-          </>
-        )}
+        <WhiteBoxComponent>
+          <NoticeContentContainer>
+            {currentAssignmentInfo?.assignmentDescription || "과제 설명"}
+          </NoticeContentContainer>
+        </WhiteBoxComponent>
 
-        {isSubmittedModalOpen && (
-          <ModalOverlay>
-            <ModalContainer>
-              <Message>과제 제출이 완료되었어요</Message>
-              <CloseButton
-                onClick={() => {
-                  setIsSubmittedModalOpen(false);
-                  window.location.reload();
-                }}>확인</CloseButton>
-            </ModalContainer>
-          </ModalOverlay>
+        {submissionStatus === "NOT_SUBMITTED" || canEdit ? (
+          <AssignmentSubmitBox
+            courseId={courseId}
+            userId={user?.userId}
+            canEdit={canEdit}
+            setCanEdit={setCanEdit}
+            content={content}
+            setContent={setContent}
+            files={files}
+            setFiles={setFiles}
+            submissionId={submissionId}
+            submissionStatus={submissionStatus}
+            submissionType={submissionType}
+            setIsSubmittedModalOpen={setIsSubmittedModalOpen}
+            setIsReSubmittedModalOpen={setIsReSubmittedModalOpen}
+          />
+        ) : (
+          <AssignmentShowBox
+            setCanEdit={setCanEdit}
+            content={content}
+            files={files}
+            submissionId={submissionId}
+            submissionStatus={submissionStatus}
+            submissionType={submissionType}
+            setIsDeleteModalOpen={setIsDeleteModalOpen}
+          />
         )}
-        {isReSubmittedModalOpen && (
-          <ModalOverlay>
-            <ModalContainer>
-              <Message>과제가 수정되었어요</Message>
-              <CloseButton
-                onClick={() => {
-                  setIsReSubmittedModalOpen(false);
-                  window.location.reload();
-                }}>확인</CloseButton>
-            </ModalContainer>
-          </ModalOverlay>
-        )}
-        {isDeleteModalOpen && (
-          <ModalOverlay>
-            <ModalContainer>
-              <Message>과제가 삭제되었어요</Message>
-              <CloseButton
-                onClick={() => {
-                  setIsDeleteModalOpen(false);
-                  window.location.reload();
-                }}>확인</CloseButton>
-            </ModalContainer>
-          </ModalOverlay>
-        )}
-      </Container>
+      </LeftSide>
+
+      {!isMobile ? (
+        <RightSide>
+          <PlayingCurriculumSidebar
+            curriculumData={curriculumData}
+            setCurriculumData={setCurriculumData}
+            currentLectureInfo={currentLectureInfo}
+            setCurrentLectureInfo={setCurrentLectureInfo}
+          />
+        </RightSide>
+      ) : (
+        <SidebarSlideWrapper show={isVisible}>
+          <RightSide>
+            <PlayingCurriculumSidebar
+              curriculumData={curriculumData}
+              setCurriculumData={setCurriculumData}
+              currentLectureInfo={currentLectureInfo}
+              setCurrentLectureInfo={setCurrentLectureInfo}
+            />
+          </RightSide>
+        </SidebarSlideWrapper>
+      )}
+
+      {isSubmittedModalOpen && (
+        <ModalOverlay>
+          <ModalContainer>
+            <Message>과제 제출이 완료되었어요</Message>
+            <CloseButton
+              onClick={() => {
+                setIsSubmittedModalOpen(false);
+                window.location.reload();
+              }}
+            >
+              확인
+            </CloseButton>
+          </ModalContainer>
+        </ModalOverlay>
+      )}
+      {isReSubmittedModalOpen && (
+        <ModalOverlay>
+          <ModalContainer>
+            <Message>과제가 수정되었어요</Message>
+            <CloseButton
+              onClick={() => {
+                setIsReSubmittedModalOpen(false);
+                window.location.reload();
+              }}
+            >
+              확인
+            </CloseButton>
+          </ModalContainer>
+        </ModalOverlay>
+      )}
+      {isDeleteModalOpen && (
+        <ModalOverlay>
+          <ModalContainer>
+            <Message>과제가 삭제되었어요</Message>
+            <CloseButton
+              onClick={() => {
+                setIsDeleteModalOpen(false);
+                window.location.reload();
+              }}
+            >
+              확인
+            </CloseButton>
+          </ModalContainer>
+        </ModalOverlay>
+      )}
+    </Container>
   );
 };
 
 const Container = styled.div`
   display: flex;
   margin-top: 30px;
-  background-color: #F6F7F9;
+  background-color: #f6f7f9;
 `;
 
 const LeftSide = styled.div`
@@ -352,13 +380,45 @@ const TitleContainer = styled.div`
 
 const MenuContainer = styled.div`
   margin-top: 3px;
-`
+`;
+
+const MobileToggleButton = styled.button`
+  display: none;
+
+  @media (max-width: 480px) {
+    display: block;
+    position: fixed;
+    bottom: 4.6%;
+    right: 5%;
+    z-index: 1300;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    padding: 0.8vh;
+    font-size: 0.5vh;
+    cursor: pointer;
+    color: var(--main-color);
+  }
+`;
+
+const SidebarSlideWrapper = styled.div`
+  @media (max-width: 480px) {
+    position: fixed;
+    top: 0;
+    right: ${(props) => (props.show ? "0" : "-100%")};
+    width: 55%;
+    height: 100%;
+    background-color: white;
+    transition: right 0.3s ease-in-out;
+    box-shadow: -2px 0px 10px rgba(0, 0, 0, 0.1);
+  }
+`;
 
 const TopContainer = styled.div`
   margin-bottom: 26px;
   display: flex;
   justify-content: space-between;
-`
+`;
 
 const MainTitle = styled.div`
   font-size: 24px;
@@ -378,23 +438,17 @@ const RightSide = styled.div`
   height: 70vh;
   overflow-y: auto;
   padding: 25px 20px;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   border-radius: 20px;
-
-  @media (max-width: 480px) {
-    display: ${(props) => (props.isVisible ? "block" : "none")};
-    position: absolute;
-    width: 60vw !important;
-    right: 0;
-    margin-top: 35px;
-    margin-right: 25px;
-    background: white;
-    z-index: 1000;
-    border: 2px solid #e0e0e0;
-  }
 
   @media (max-width: 768px) {
     width: 25vw;
+  }
+
+  @media (max-width: 480px) {
+    display: block;
+    width: 100%;
+    height: 100%;
   }
 `;
 
