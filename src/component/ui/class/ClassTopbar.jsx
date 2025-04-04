@@ -215,6 +215,8 @@ const ClassTopbar = ({ onCourseChange, isCreator }) => {
   const [isScrollable, setIsScrollable] = useState(false);
   const [currentCourse, setCurrentCourse] = useState(null);
   const tabRef = useRef(null);
+  const dropdownRef = useRef(null);
+  const iconRef = useRef(null);
 
   useEffect(() => {
     const fetchClasses = async () => {
@@ -245,6 +247,24 @@ const ClassTopbar = ({ onCourseChange, isCreator }) => {
     return () => window.removeEventListener("resize", checkScrollable);
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target) &&
+        iconRef.current &&
+        !iconRef.current.contains(event.target)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const handleDropdownToggle = () => {
     setIsDropdownOpen((prev) => !prev);
   };
@@ -269,7 +289,7 @@ const ClassTopbar = ({ onCourseChange, isCreator }) => {
             home
           </span>
           <VerticalLine />
-          <ClassTitleContainer onClick={handleDropdownToggle}>
+          <ClassTitleContainer onClick={handleDropdownToggle} ref={iconRef}>
             <span className="course-title">
               {classOptions.find(
                 (course) => String(course.courseId) === String(courseId)
@@ -281,7 +301,7 @@ const ClassTopbar = ({ onCourseChange, isCreator }) => {
           </ClassTitleContainer>
         </Container>
         {isDropdownOpen && (
-          <DropdownContainer>
+          <DropdownContainer ref={dropdownRef}>
             <DropdownMenu isOpen={isDropdownOpen}>
               <MenuTitle>강의실 목록</MenuTitle>
               {classOptions.map((course) => (
