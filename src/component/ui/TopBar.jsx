@@ -70,7 +70,7 @@ export default function TopBar() {
                                 ) : (
                                     <>
                                     <button className="navigate-button" onClick={() => navigate('/dashboard')}>대시보드로 가기</button>
-                                    {isGoogleLinked === false && <button className="navigate-button" onClick={handleGoogleAuth}>구글 연동하기</button>}
+                                    {isGoogleLinked === false && <button className="navigate-button" onClick={handleGoogleAuth}>구글 계정 연동하기</button>}
                                     </>
                                 )}
                                 <UserIcon src={userIcon} alt="user icon" onClick={handleUserIconClick} />
