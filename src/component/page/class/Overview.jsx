@@ -74,15 +74,27 @@ const StyledButton = styled.a`
   background-color: transparent;
 
   .img {
-    width: 65px;
+    width: 49px;
+    
+    @media (max-width: 1024px) {
+      width: 35px;
+    }
+
+    @media (max-width: 768px) {
+      width: 45px;
+    }
+
+    @media (max-width: 480px) {
+      width: 42px;
+    } 
 
     @media (max-width: 376px) {
-      width: 40px;
+      width: 32px;
     } 
   }
 
   @media all and (max-width:1024px) {
-    right: 2rem;
+    right: -0.8rem;
     width: 80px;
   }
 
@@ -92,7 +104,7 @@ const StyledButton = styled.a`
   }
 
   @media all and (max-width:479px) {
-    right: 0;
+    right: -1.5rem;
   }
 `;
 
