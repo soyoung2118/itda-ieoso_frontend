@@ -59,6 +59,10 @@ import { ModalOverlay, ModalContent } from "../../ui/modal/ModalStyles";
     font-weight: 550;
     color: var(--black-color);
     margin-bottom: 0.8rem;
+
+    @media (max-width: 480px) {
+      font-size: 1.2rem;
+    }
   `;
 
   const NoticeMeta = styled.div`
@@ -70,7 +74,7 @@ import { ModalOverlay, ModalContent } from "../../ui/modal/ModalStyles";
     font-weight: semi-bold;
     flex-wrap: wrap;
 
-    @media (max-width: 500px) {
+    @media (max-width: 480px) {
       flex-direction: column;
       align-items: flex-start;
 
@@ -90,6 +94,10 @@ import { ModalOverlay, ModalContent } from "../../ui/modal/ModalStyles";
       font-size: 0.875rem;
       color: #474747;
       margin-top: 0.25rem;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 1rem;
     }
   `;
 
@@ -117,6 +125,14 @@ import { ModalOverlay, ModalContent } from "../../ui/modal/ModalStyles";
       border: none;
       font-weight: 500;
       cursor: pointer;
+
+      @media (max-width: 480px) {
+        font-size: 0.8rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      font-size: 0.9rem;
     }
   `;
 
