@@ -370,12 +370,28 @@ export const SocialLoginButton = styled.div`
 `;
 
 export const GoogleButton = styled.button`
-  width: 70%;
-  max-width: 550px;
-  border: 1px solid #CDCDCD;
+  width: 100%;
+  padding: 0.7rem;
+  border: 1px solid #909090;
   border-radius: 15px;
   padding: 0.75rem;
-  font-size: 1rem;
+  font-size: 15px;
   cursor: pointer;
   margin: 10px auto;
+  background-color: #FFFFFF;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
+
+export const GoogleIcon = styled.img`
+  display: block;
+  width: 52px;
+  height: 40px;
+  position: absolute;
+  left: 10px;
+  margin-right: 0;
+`;
+
+

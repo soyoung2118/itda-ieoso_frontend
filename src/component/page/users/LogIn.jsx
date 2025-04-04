@@ -2,6 +2,8 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import TopBar from "../../ui/TopBar";
 import logoImage from "../../img/logo/itda_logo_symbol.svg";
+import googleIcon from "../../img/icon/google.svg";
+
 import {
     Container,
     LogoImage,
@@ -16,7 +18,8 @@ import {
     Divider,
     Line,
     SocialLoginButton,
-    GoogleButton
+    GoogleButton,
+    GoogleIcon,
 } from "../../../style/Styles";
 import { login, getUsersInfo } from "../../api/usersApi";
 import { UsersContext } from "../../contexts/usersContext";
@@ -80,7 +83,8 @@ export default function LogIn() {
                         onClick={handleGoogleLogin}
                         disabled={isLoading}
                     >
-                        {isLoading ? '처리 중...' : '구글 로그인하기'}
+                        <GoogleIcon src={googleIcon} alt="logo" />
+                        {isLoading ? '처리 중...' : 'Google로 계속하기'}
                     </GoogleButton>
                 </SocialLoginButton>
                 <Divider>
