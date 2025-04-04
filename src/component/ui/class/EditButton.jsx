@@ -13,6 +13,11 @@ const StyledButton = styled(Link)`
   @media (max-width: 1024px) {
     width: 4.5vh;
   }
+  @media (max-width: 376px) {
+    width: 4vh;
+    bottom: 4.6%;
+    right: 5%;
+  }
 `;
 
 const EditButton = ({ to, edit }) => {

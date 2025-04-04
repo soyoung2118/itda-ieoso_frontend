@@ -98,6 +98,10 @@ const LectureSection = styled.div`
     padding: 1.8vh 3vh;
     border-radius: 8px;
   }
+  @media (max-width: 376px) {
+    padding: 1.2vh 2vh;
+    border-radius: 7px;
+  }
 `;
 
 const LectureTitle = styled.h1`
@@ -116,31 +120,13 @@ const LectureTitle = styled.h1`
   @media (max-width: 480px) {
     font-size: 15px;
   }
-`;
 
-const LecturePeriod = styled.p`
-  color: var(--white-color);
-  font-size: 1.2rem;
-
-  font-weight: 540;
-  margin: 0.2rem 1rem;
-  margin-left: 1.8vh;
-
-  @media (max-width: 1024px) {
-    font-size: 19px;
-    margin-left: 1.2vh;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 14.5px;
-    margin-left: 1vh;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 11.5px;
-    margin-left: 1.5vh;
+  @media (max-width: 376px) {
+    font-size: 12.8px;
+    font-weight: 600;
   }
 `;
+
 
 const LectureDescriptionSection = styled.div`
   display: flex;
@@ -172,6 +158,12 @@ const LectureDescriptionSection = styled.div`
     padding: 0.3vh 3vh;
     margin: 1.2vh 0vh;
   }
+
+  @media (max-width: 376px) {
+    padding: 0.3vh 2vh;
+    margin: 1vh 0vh;
+    border-radius: 7px;
+  }
 `;
 
 const EditingDescription = styled.input`
@@ -195,6 +187,14 @@ const EditingDescription = styled.input`
   @media (max-width: 768px) {
     font-size: 15.5px;
   }
+
+  @media (max-width: 376px) {
+    font-size: 9.5px;
+    border: 1.3px solid var(--darkgrey-color);
+    border-radius: 6px;
+    font-weight: 600;
+    padding: 1vh 1vh;
+  }
 `;
 
 const LectureDescription = styled.h1`
@@ -212,6 +212,10 @@ const LectureDescription = styled.h1`
 
   @media (max-width: 480px) {
     font-size: 11.5px;
+  }
+
+  @media (max-width: 376px) {
+    font-size: 10px;
   }
 `;
 
@@ -626,12 +630,14 @@ const CurriculumEdit = () => {
   return (
     <div>
       <CurriculumPage>
+        
         <CurriculumSidebar
           sections={curriculumData}
           activeItem={activeLectureId}
           setActiveItem={setActiveLectureId}
           edit={true}
         />
+       
         <Curriculum>
           <LectureSection>
             <LectureTitle>

@@ -4,6 +4,305 @@ import AdminTopBar from "../../ui/class/AdminTopBar";
 import { Section } from "../../ui/class/ClassLayout";
 import profileIcon from "../../img/icon/usericon.svg";
 import api from "../../api/api";
+import styled from "styled-components";
+
+const Main = styled.main`
+  flex: 1;
+`;
+
+const TableWrapper = styled.div`
+  overflow-x: auto;
+  position: relative;
+  width: 100%;
+`;
+
+const HeaderWrap = styled.div`
+  margin: 1vh 0;
+`;
+
+const HeaderTitleRow = styled.div`
+  display: flex;
+  align-items: baseline;
+  margin-left: 2.5vh;
+
+  @media (max-width: 376px) {
+    margin-left: 1.8vh;
+  }
+`;
+
+const HeaderTitle = styled.h3`
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--black-color);
+
+  @media (max-width: 1024px) {
+    font-size: 21px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 15px;
+  }
+
+  @media (max-width: 376px) {
+    font-size: 13px;
+    font-weight: 680;
+  }
+`;
+
+const HeaderTime = styled.p`
+  color: var(--darkgrey-color);
+  font-size: 15px;
+  margin-left: 1.5vh;
+  font-weight: 500;
+
+  @media (max-width: 1024px) {
+    font-size: 14.5px;
+    margin-left: 1vh;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 10px;
+    margin-left: 1.8vh;
+  }
+
+  @media (max-width: 376px) {
+    font-size: 9px;
+    margin-left: 1vh;
+  }
+`;
+
+const SectionWrap = styled.div`
+  padding: 2vh 3.5vh;
+
+  @media (max-width: 1024px) {
+    padding: 1.3vh 1.2vh;
+  }
+
+  @media (max-width: 480px) {
+    padding: 3.5vh 3vh;
+  }
+
+  @media (max-width: 376px) {
+    padding: 2.8vh 2vh;
+  }
+`;
+
+const ScrollWrapper = styled.div`
+  width: 100%;
+  position: relative;
+  overflow-x: hidden;
+`;
+
+const ScrollBar = styled.div`
+  margin-top: 1rem;
+  height: 8px;
+  width: 100%;
+  background: #f1f1f1;
+  border-radius: 10px;
+  overflow: hidden;
+
+  @media (max-width: 1024px) {
+    height: 6.5px;
+  }
+
+  @media (max-width: 480px) {
+    margin-top: 1.8vh;
+    height: 4px;
+  }
+`;
+
+const ScrollThumb = styled.div`
+  height: 100%;
+  background: #c4c4c4;
+  border-radius: 10px;
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.3s ease;
+`;
+
+const ProfileImg = styled.img`
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  vertical-align: middle;
+  margin-right: 8px;
+
+  @media (max-width: 768px) {
+    width: 22.5px;
+    height: 22.5px;
+  }
+
+  @media (max-width: 480px) {
+    width: 3.5vh;
+  }
+
+  @media (max-width: 376px) {
+    width: 2.1vh;
+    margin-right: 0.6vh;
+  }
+`;
+
+const Table = styled.table`
+  width: 100%;
+  min-width: 1600px;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 17.5px;
+
+  @media (max-width: 1024px) {
+    font-size: 14.5px;
+  }
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 8.5px;
+  }
+
+  @media (max-width: 376px) {
+    font-size: 8.3px;
+    font-weight: 500;
+  }
+`;
+
+const Th = styled.th`
+  padding: 2vh 2.3vh;
+  white-space: nowrap;
+  font-size: 18.5px;
+  font-weight: 700;
+  text-align: center;
+
+  @media (max-width: 1024px) {
+    padding: 0.45vh 1vh;
+    font-size: 16px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 13.3px;
+    font-weight: 600;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 9px;
+    padding: 0.2vh 5vh;
+  }
+  @media (max-width: 376px) {
+    font-size: 8.5px;
+    padding: 0.2vh 5vh;
+  }
+`;
+
+const ThName = styled(Th)`
+  min-width: 20vh;
+  text-align: left;
+  padding-left: 5vh;
+
+  @media (max-width: 1024px) {
+    min-width: 8.5vh;
+  }
+
+  @media (max-width: 480px) {
+    min-width: 7vh;
+  }
+
+  @media (max-width: 376px) {
+    min-width: 3vh;
+    padding-left: 3.4vh;
+  }
+`;
+
+const Td = styled.td`
+  padding: 1vh 2vh;
+  vertical-align: middle;
+  white-space: nowrap;
+  text-align: center;
+
+  @media (max-width: 1024px) {
+    padding: 0.3vh 1.3vh;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.3vh 1.2vh;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1vh 0.3vh;
+  }
+
+  @media (max-width: 376px) {
+    padding: 0.6vh 0.3vh;
+  }
+`;
+
+const TdName = styled(Td)`
+  text-align: left;
+  padding-left: 2vh;
+  font-weight: 600;
+
+  @media (max-width: 376px) {
+    padding-left: 0.8vh;
+  }
+`;
+
+const Row = styled.tr`
+  background-color: white;
+  cursor: pointer;
+`;
+
+const RowAlt = styled(Row)`
+  background-color: #ffffff;
+`;
+
+const RowActive = styled(Row)`
+  background-color: #f6f7f9;
+  transition: background-color 0.2s ease-in-out;
+`;
+
+const Badge = styled.div`
+  background: #fdfdfd;
+  border: 1.5px solid #e6e6e6;
+  border-radius: 14px;
+  padding: 1vh 1.4vh;
+  display: inline-block;
+  margin: 0.3vh 0;
+  max-width: 20vh;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  @media (max-width: 1024px) {
+    border-radius: 10px;
+    padding: 0.55vh 1vh;
+    max-width: 10vh;
+    margin: 0.15vh 0;
+  }
+  @media (max-width: 768px) {
+    border-radius: 8px;
+    padding: 0.45vh 0.9vh;
+    font-size: 11px;
+  }
+
+  @media (max-width: 480px) {
+    max-width: 16vh;
+    padding: 0.8vh 1.3vh;
+    border: 1.3px solid #e6e6e6;
+    border-radius: 6px;
+    font-size: 8px;
+  }
+
+  @media (max-width: 376px) {
+    max-width: 9.5vh;
+    padding: 0.6vh 1vh;
+    border-radius: 5px;
+  }
+`;
+
+const BadgeGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
 
 const ClassStudents = () => {
   const { courseId } = useParams();
@@ -136,212 +435,86 @@ const ClassStudents = () => {
   }, []);
 
   return (
-    <main style={mainStyle}>
+    <Main>
       <AdminTopBar />
-      <div style={headerWrapStyle}>
-        <div style={headerTitleRowStyle}>
-          <h3 style={headerTitleStyle}>전체 과제 보기</h3>
-          <p style={headerTimeStyle}>{currentTime} 기준</p>
-        </div>
-        <Section style={sectionStyle}>
-          <div style={scrollWrapperStyle}>
-            <div ref={tableRef} style={tableWrapperStyle}>
-              <table style={tableStyle}>
+      <HeaderWrap>
+        <HeaderTitleRow>
+          <HeaderTitle>전체 과제 보기</HeaderTitle>
+          <HeaderTime>{currentTime} 기준</HeaderTime>
+        </HeaderTitleRow>
+        <SectionWrap as={Section}>
+          <ScrollWrapper>
+            <TableWrapper ref={tableRef}>
+              <Table>
                 <thead>
                   <tr>
-                    <th style={thNameStyle}>이름</th>
+                    <ThName>이름</ThName>
                     {rowData[0]?.assignments.map((a, i) => (
-                      <th key={i} style={thStyle}>
-                        {a.title}
-                      </th>
+                      <Th key={i}>{a.title}</Th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {rowData.map((student, i) => (
-                    <tr
-                      key={i}
-                      onMouseEnter={() => setHoveredRow(i)}
-                      onMouseLeave={() => setHoveredRow(null)}
-                      onClick={() => {
-                        setActiveRow(i);
-                        navigate(
-                          `/class/${courseId}/admin/students/${student.userId}`,
-                        );
-                      }}
-                      style={{
-                        ...(i % 2 === 1 ? rowAltStyle : rowStyle),
-                        ...(activeRow === i || hoveredRow === i
-                          ? rowActiveStyle
-                          : {}),
-                      }}
-                    >
-                      <td style={tdNameStyle}>
-                        <img src={profileIcon} alt="프로필" style={imgStyle} />
-                        {student.name}
-                      </td>
-                      {student.assignments.map((a, j) => (
-                        <td key={j} style={tdStyle}>
-                          {a.value.files.length > 0 &&
-                            a.value.files.map((file, k) => (
-                              <div
-                                key={k}
-                                style={{
-                                  ...badgeStyle,
-                                  color: "var(--main-color)",
-                                }}
-                              >
-                                {file.fileName}
-                              </div>
-                            ))}
-
-                          {a.value.textContent && (
-                            <div style={{ ...badgeStyle, color: "black" }}>
-                              {a.value.textContent}
-                            </div>
-                          )}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
+                  {rowData.map((student, i) => {
+                    const isActive = activeRow === i || hoveredRow === i;
+                    const RowComponent = isActive
+                      ? RowActive
+                      : i % 2 === 1
+                      ? RowAlt
+                      : Row;
+                    return (
+                      <RowComponent
+                        key={i}
+                        onMouseEnter={() => setHoveredRow(i)}
+                        onMouseLeave={() => setHoveredRow(null)}
+                        onClick={() => {
+                          setActiveRow(i);
+                          navigate(
+                            `/class/${courseId}/admin/students/${student.userId}`
+                          );
+                        }}
+                      >
+                        <TdName>
+                          <ProfileImg src={profileIcon} alt="프로필" />
+                          {student.name}
+                        </TdName>
+                        {student.assignments.map((a, j) => (
+                          <Td key={j}>
+                            <BadgeGroup>
+                              {a.value.files.length > 0 &&
+                                a.value.files.map((file, k) => (
+                                  <Badge
+                                    key={k}
+                                    style={{ color: "var(--main-color)" }}
+                                  >
+                                    {file.fileName}
+                                  </Badge>
+                                ))}
+                              {a.value.textContent && (
+                                <Badge style={{ color: "black" }}>
+                                  {a.value.textContent}
+                                </Badge>
+                              )}
+                            </BadgeGroup>
+                          </Td>
+                        ))}
+                      </RowComponent>
+                    );
+                  })}
                 </tbody>
-              </table>
-            </div>
-
-            <div style={scrollBarStyle}>
-              <div
+              </Table>
+            </TableWrapper>
+            <ScrollBar>
+              <ScrollThumb
                 ref={scrollbarThumbRef}
-                style={scrollThumbStyle}
                 onMouseDown={handleMouseDown}
               />
-            </div>
-          </div>
-        </Section>
-      </div>
-    </main>
+            </ScrollBar>
+          </ScrollWrapper>
+        </SectionWrap>
+      </HeaderWrap>
+    </Main>
   );
-};
-
-const mainStyle = { flex: 1 };
-const tableWrapperStyle = {
-  overflowX: "auto",
-  position: "relative",
-  width: "100%",
-};
-const headerWrapStyle = { margin: "1vh 0" };
-const headerTitleRowStyle = {
-  display: "flex",
-  alignItems: "baseline",
-  marginLeft: "2.5vh",
-};
-const headerTitleStyle = {
-  fontSize: "24px",
-  fontWeight: "700",
-  color: "var(--black-color)",
-};
-const headerTimeStyle = {
-  color: "var(--darkgrey-color)",
-  fontSize: "15px",
-  marginLeft: "1.5vh",
-  fontWeight: "500",
-};
-const sectionStyle = { padding: "2vh 3.5vh" };
-
-const scrollWrapperStyle = {
-  width: "100%",
-  position: "relative",
-  overflowX: "hidden",
-};
-
-const scrollBarStyle = {
-  marginTop: "1rem",
-  height: "8px",
-  width: "100%",
-  background: "#f1f1f1",
-  borderRadius: "10px",
-  overflow: "hidden",
-};
-
-const scrollThumbStyle = {
-  height: "100%",
-  background: "#c4c4c4",
-  borderRadius: "10px",
-  cursor: "pointer",
-  position: "relative",
-  transition: "background-color 0.3s ease",
-};
-
-const imgStyle = {
-  width: "28px",
-  height: "28px",
-  borderRadius: "50%",
-  verticalAlign: "middle",
-  marginRight: "8px",
-};
-
-const tableStyle = {
-  width: "100%",
-  minWidth: "1600px",
-  borderCollapse: "separate",
-  borderSpacing: 0,
-  fontSize: "17.5px",
-};
-
-const thStyle = {
-  padding: "2vh 2.3vh",
-  whiteSpace: "nowrap",
-  fontSize: "18.5px",
-  fontWeight: "700",
-  textAlign: "center",
-};
-
-const thNameStyle = {
-  ...thStyle,
-  minWidth: "20vh",
-  textAlign: "left",
-  paddingLeft: "5vh",
-};
-
-const tdStyle = {
-  padding: "1vh 2vh",
-  verticalAlign: "middle",
-  whiteSpace: "nowrap",
-  textAlign: "center",
-};
-
-const tdNameStyle = {
-  ...tdStyle,
-  textAlign: "left",
-  paddingLeft: "2vh",
-  fontWeight: "600",
-};
-
-const rowStyle = {
-  backgroundColor: "white",
-  cursor: "pointer",
-};
-
-const rowAltStyle = {
-  backgroundColor: "#ffffff",
-  cursor: "pointer",
-};
-
-const rowActiveStyle = {
-  backgroundColor: "#F6F7F9",
-  transition: "background-color 0.2s ease-in-out",
-};
-
-const badgeStyle = {
-  background: "#fdfdfd",
-  border: "1.5px solid #E6E6E6",
-  borderRadius: "14px",
-  padding: "1vh 1.4vh",
-  display: "block",
-  margin: "0.3vh 0",
-  maxWidth: "20vh",
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  whiteSpace: "nowrap",
 };
 
 export default ClassStudents;

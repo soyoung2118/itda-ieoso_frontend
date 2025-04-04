@@ -1,15 +1,51 @@
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import Assignment from "../../img/icon/docs.svg";
-import Material from "../../img/icon/pdf.svg";
-import Class from "../../img/class/class.svg";
+import Assignment from "../../img/icon/curriculum/assignmenticon.svg";
+import Material from "../../img/icon/curriculum/materialicon.svg";
+import Class from "../../img/icon/curriculum/videoicon.svg";
 import SelectedSection from "../../img/class/check/sel_sec.svg";
 import UnselectedSection from "../../img/class/check/unsel_sec.svg";
 import DoneSection from "../../img/class/check/done_sec.svg";
 import Check from "../../img/class/check/check.svg";
+import MenuIcon from "@mui/icons-material/Menu";
+import CloseIcon from "@mui/icons-material/Close";
 import { useState, useEffect, useContext } from "react";
 import { useParams, useOutletContext, useNavigate } from "react-router-dom";
 import { UsersContext } from "../../contexts/usersContext";
+
+const MobileToggleButton = styled.button`
+  display: none;
+
+  @media (max-width: 376px) {
+    display: block;
+    position: fixed;
+    bottom: 4.6%;
+    left: 5%;
+    z-index: 1300;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    padding: 0.8vh;
+    font-size: 0.5vh;
+    cursor: pointer;
+    color: var(--main-color);
+  }
+`;
+
+const SidebarSlideWrapper = styled.div`
+  @media (max-width: 376px) {
+    position: fixed;
+    top: 0;
+    left: ${(props) => (props.show ? "0" : "-100%")};
+    width: 20%;
+    padding: 1rem 0.8rem;
+    height: 100%;
+    background-color: white;
+    z-index: 1100;
+    transition: left 0.3s ease-in-out;
+    box-shadow: 2px 0px 10px rgba(0, 0, 0, 0.1);
+  }
+`;
 
 const SidebarContainer = styled.aside`
   width: 17%;
@@ -32,6 +68,12 @@ const SidebarContainer = styled.aside`
 
   @media (max-width: 480px) {
     width: 20%;
+  }
+
+  @media (max-width: 376px) {
+    width: 90%;
+    height: 100%;
+    margin-top: 2vh;
   }
 `;
 
@@ -208,15 +250,40 @@ const CurriculumSidebar = ({
   const { courseId } = useParams();
   const { user } = useContext(UsersContext);
   const navigate = useNavigate();
+  const [showSidebar, setShowSidebar] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 376);
+
+  useEffect(() => {
+    const isMobileView = window.matchMedia("(max-width: 376px)").matches;
+    setIsMobile(isMobileView);
+    setShowSidebar(!isMobileView);
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const isMobileView = window.matchMedia("(max-width: 376px)").matches;
+      setIsMobile(isMobileView);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const toggleSidebar = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowSidebar((prev) => !prev);
+  };
 
   const handleItemClick = (lectureId) => {
     setActiveItem(lectureId);
     navigate(`/class/${courseId}/curriculum/${lectureId}`);
+    if (isMobile) setShowSidebar(false);
   };
 
-  return (
-    <SidebarContainer>
-      {sections.map((section, lectureIndex) => {
+  const renderSidebarContent = () => (
+    <>
+      {sections.map((section) => {
         const subSections = [
           ...(section.videos || []).map((v) => ({
             ...v,
@@ -240,7 +307,6 @@ const CurriculumSidebar = ({
           (a, b) => (a.contentOrderIndex || 0) - (b.contentOrderIndex || 0),
         );
 
-        // 학생들에게 보일 섹션 / 교육자에게 보일 섹션 필터링
         const filteredSubSections = isCreator
           ? subSections
           : subSections.filter((sub) =>
@@ -297,7 +363,29 @@ const CurriculumSidebar = ({
           </ListSection>
         );
       })}
-    </SidebarContainer>
+    </>
+  );
+
+  return (
+    <>
+      {isMobile && (
+        <MobileToggleButton type="button" onClick={toggleSidebar}>
+          {showSidebar ? (
+            <CloseIcon style={{ fontSize: "2.8vh" }} />
+          ) : (
+            <MenuIcon style={{ fontSize: "2.8vh" }} />
+          )}
+        </MobileToggleButton>
+      )}
+
+      {isMobile ? (
+        <SidebarSlideWrapper show={showSidebar}>
+          <SidebarContainer>{renderSidebarContent()}</SidebarContainer>
+        </SidebarSlideWrapper>
+      ) : (
+        <SidebarContainer>{renderSidebarContent()}</SidebarContainer>
+      )}
+    </>
   );
 };
 

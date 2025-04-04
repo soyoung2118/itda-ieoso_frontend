@@ -9,6 +9,7 @@ import { UsersContext } from "../../contexts/usersContext";
 import AssignmentSubmitBox from "../../ui/class/AssignmentSubmitBox";
 import AssignmentShowBox from "../../ui/class/AssignmentShowBox";
 import { ModalOverlay } from "../../ui/modal/ModalStyles";
+import CloseIcon from "@mui/icons-material/Close";
 
 const ClassAssignmentSubmit = () => {
   const navigate = useNavigate();
@@ -36,6 +37,12 @@ const ClassAssignmentSubmit = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [canEdit, setCanEdit] = useState(false);
 
+  const toggleSidebar = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsVisible((prev) => !prev);
+  };
+
   const handleNavigationCurriculum = () => {
     navigate(`/class/${courseId}/curriculum/${lectureId}`);
   };
@@ -54,13 +61,13 @@ const ClassAssignmentSubmit = () => {
           setCurriculumData(curriculum);
 
           const currentLecture = curriculum.find(
-            (lecture) => lecture.lectureId === Number(lectureId),
+            (lecture) => lecture.lectureId === Number(lectureId)
           );
 
           if (currentLecture) {
             setCurrentLectureInfo(currentLecture);
             const currentAssignment = currentLecture.assignments.find(
-              (assignment) => assignment.assignmentId === Number(assignmentId),
+              (assignment) => assignment.assignmentId === Number(assignmentId)
             );
 
             if (currentAssignment) {
@@ -145,7 +152,7 @@ const ClassAssignmentSubmit = () => {
 
       try {
         const response = await api.get(
-          `/lectures/curriculum/${courseId}/${user.userId}`,
+          `/lectures/curriculum/${courseId}/${user.userId}`
         );
 
         if (response.data.success) {
@@ -154,7 +161,7 @@ const ClassAssignmentSubmit = () => {
           let foundType = null;
           for (const lecture of curriculum) {
             const assignment = lecture.assignments.find(
-              (a) => a.assignmentId === parseInt(assignmentId),
+              (a) => a.assignmentId === parseInt(assignmentId)
             );
             if (assignment) {
               foundType = assignment.submissionType;
@@ -204,7 +211,7 @@ const ClassAssignmentSubmit = () => {
             <MainTitle>
               {currentLectureInfo?.lectureTitle}{" "}
               {truncateText(
-                currentAssignmentInfo?.assignmentTitle || "과제 제목",
+                currentAssignmentInfo?.assignmentTitle || "과제 제목"
               )}
             </MainTitle>
 
@@ -216,9 +223,13 @@ const ClassAssignmentSubmit = () => {
           </TitleContainer>
 
           {isMobile && (
-            <MenuContainer>
-              <MenuIcon onClick={setIsVisibleHandler} className="menu-icon" />
-            </MenuContainer>
+            <MobileToggleButton type="button" onClick={toggleSidebar}>
+              {isVisible ? (
+                <CloseIcon style={{ fontSize: "2.8vh" }} />
+              ) : (
+                <MenuIcon style={{ fontSize: "2.8vh" }} />
+              )}
+            </MobileToggleButton>
           )}
         </TopContainer>
 
@@ -257,19 +268,26 @@ const ClassAssignmentSubmit = () => {
         )}
       </LeftSide>
 
-      {(!isMobile || isVisible) && (
-        <>
-          {isVisible && (
-            <RightSide isVisible={isVisible}>
-              <PlayingCurriculumSidebar
-                curriculumData={curriculumData}
-                setCurriculumData={setCurriculumData}
-                currentLectureInfo={currentLectureInfo}
-                setCurrentLectureInfo={setCurrentLectureInfo}
-              />
-            </RightSide>
-          )}
-        </>
+      {!isMobile ? (
+        <RightSide>
+          <PlayingCurriculumSidebar
+            curriculumData={curriculumData}
+            setCurriculumData={setCurriculumData}
+            currentLectureInfo={currentLectureInfo}
+            setCurrentLectureInfo={setCurrentLectureInfo}
+          />
+        </RightSide>
+      ) : (
+        <SidebarSlideWrapper show={isVisible}>
+          <RightSide>
+            <PlayingCurriculumSidebar
+              curriculumData={curriculumData}
+              setCurriculumData={setCurriculumData}
+              currentLectureInfo={currentLectureInfo}
+              setCurrentLectureInfo={setCurrentLectureInfo}
+            />
+          </RightSide>
+        </SidebarSlideWrapper>
       )}
 
       {isSubmittedModalOpen && (
@@ -364,6 +382,38 @@ const MenuContainer = styled.div`
   margin-top: 3px;
 `;
 
+const MobileToggleButton = styled.button`
+  display: none;
+
+  @media (max-width: 480px) {
+    display: block;
+    position: fixed;
+    bottom: 4.6%;
+    right: 5%;
+    z-index: 1300;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    padding: 0.8vh;
+    font-size: 0.5vh;
+    cursor: pointer;
+    color: var(--main-color);
+  }
+`;
+
+const SidebarSlideWrapper = styled.div`
+  @media (max-width: 480px) {
+    position: fixed;
+    top: 0;
+    right: ${(props) => (props.show ? "0" : "-100%")};
+    width: 55%;
+    height: 100%;
+    background-color: white;
+    transition: right 0.3s ease-in-out;
+    box-shadow: -2px 0px 10px rgba(0, 0, 0, 0.1);
+  }
+`;
+
 const TopContainer = styled.div`
   margin-bottom: 26px;
   display: flex;
@@ -391,20 +441,14 @@ const RightSide = styled.div`
   background-color: #ffffff;
   border-radius: 20px;
 
-  @media (max-width: 480px) {
-    display: ${(props) => (props.isVisible ? "block" : "none")};
-    position: absolute;
-    width: 60vw !important;
-    right: 0;
-    margin-top: 35px;
-    margin-right: 25px;
-    background: white;
-    z-index: 1000;
-    border: 2px solid #e0e0e0;
-  }
-
   @media (max-width: 768px) {
     width: 25vw;
+  }
+
+  @media (max-width: 480px) {
+    display: block;
+    width: 100%;
+    height: 100%;
   }
 `;
 
