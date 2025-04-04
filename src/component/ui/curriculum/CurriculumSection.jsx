@@ -50,7 +50,7 @@ const CurriculumTitle = styled.h3`
   @media (max-width: 480px) {
     font-size: 10px;
   }
-    
+
   @media (max-width: 376px) {
     font-size: 9.4px;
   }

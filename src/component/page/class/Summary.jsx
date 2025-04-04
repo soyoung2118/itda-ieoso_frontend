@@ -167,8 +167,8 @@ const ClassSummary = () => {
       setCurrentTime(
         `${formattedTime} ${now.getHours()}:${String(now.getMinutes()).padStart(
           2,
-          "0"
-        )}`
+          "0",
+        )}`,
       );
     };
 

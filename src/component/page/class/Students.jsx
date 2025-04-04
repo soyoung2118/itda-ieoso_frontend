@@ -460,8 +460,8 @@ const ClassStudents = () => {
                     const RowComponent = isActive
                       ? RowActive
                       : i % 2 === 1
-                      ? RowAlt
-                      : Row;
+                        ? RowAlt
+                        : Row;
                     return (
                       <RowComponent
                         key={i}
@@ -470,7 +470,7 @@ const ClassStudents = () => {
                         onClick={() => {
                           setActiveRow(i);
                           navigate(
-                            `/class/${courseId}/admin/students/${student.userId}`
+                            `/class/${courseId}/admin/students/${student.userId}`,
                           );
                         }}
                       >

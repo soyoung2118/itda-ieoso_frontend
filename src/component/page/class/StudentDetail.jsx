@@ -157,7 +157,7 @@ const ClassStudents = () => {
                       <p>
                         {submission.submittedAt
                           ? new Date(
-                              submission.submittedAt
+                              submission.submittedAt,
                             ).toLocaleDateString()
                           : ""}
                       </p>
@@ -581,7 +581,7 @@ const TextContent = styled.div`
   @media (max-width: 376px) {
     margin-top: -0.5vh;
     padding: 1.4vh 1.1vh;
-    font-size:7.6px;
+    font-size: 7.6px;
     border-radius: 4px;
   }
 `;

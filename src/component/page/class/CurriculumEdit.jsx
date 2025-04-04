@@ -127,7 +127,6 @@ const LectureTitle = styled.h1`
   }
 `;
 
-
 const LectureDescriptionSection = styled.div`
   display: flex;
   border-radius: 12px;
@@ -630,14 +629,13 @@ const CurriculumEdit = () => {
   return (
     <div>
       <CurriculumPage>
-        
         <CurriculumSidebar
           sections={curriculumData}
           activeItem={activeLectureId}
           setActiveItem={setActiveLectureId}
           edit={true}
         />
-       
+
         <Curriculum>
           <LectureSection>
             <LectureTitle>

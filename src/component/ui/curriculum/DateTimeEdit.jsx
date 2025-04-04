@@ -161,7 +161,7 @@ const DateTimeContainer = styled.div`
     }
   }
 
-  .react-datepicker__time /{
+  .react-datepicker__time / {
     border-top: 1px solid #eee;
     height: 80%;
 

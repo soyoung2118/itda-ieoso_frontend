@@ -61,13 +61,13 @@ const ClassAssignmentSubmit = () => {
           setCurriculumData(curriculum);
 
           const currentLecture = curriculum.find(
-            (lecture) => lecture.lectureId === Number(lectureId)
+            (lecture) => lecture.lectureId === Number(lectureId),
           );
 
           if (currentLecture) {
             setCurrentLectureInfo(currentLecture);
             const currentAssignment = currentLecture.assignments.find(
-              (assignment) => assignment.assignmentId === Number(assignmentId)
+              (assignment) => assignment.assignmentId === Number(assignmentId),
             );
 
             if (currentAssignment) {
@@ -152,7 +152,7 @@ const ClassAssignmentSubmit = () => {
 
       try {
         const response = await api.get(
-          `/lectures/curriculum/${courseId}/${user.userId}`
+          `/lectures/curriculum/${courseId}/${user.userId}`,
         );
 
         if (response.data.success) {
@@ -161,7 +161,7 @@ const ClassAssignmentSubmit = () => {
           let foundType = null;
           for (const lecture of curriculum) {
             const assignment = lecture.assignments.find(
-              (a) => a.assignmentId === parseInt(assignmentId)
+              (a) => a.assignmentId === parseInt(assignmentId),
             );
             if (assignment) {
               foundType = assignment.submissionType;
@@ -211,7 +211,7 @@ const ClassAssignmentSubmit = () => {
             <MainTitle>
               {currentLectureInfo?.lectureTitle}{" "}
               {truncateText(
-                currentAssignmentInfo?.assignmentTitle || "과제 제목"
+                currentAssignmentInfo?.assignmentTitle || "과제 제목",
               )}
             </MainTitle>
 

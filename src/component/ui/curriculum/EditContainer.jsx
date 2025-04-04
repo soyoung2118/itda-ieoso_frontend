@@ -37,7 +37,7 @@ const Container = styled.div`
     border-radius: 4px;
   }
 
-   @media (max-width: 376px) {
+  @media (max-width: 376px) {
     padding: 1vh;
     left: -12%;
     border-radius: 4px;
@@ -95,7 +95,7 @@ const Icon = styled.img`
     margin: 1.5vh 0vh !important;
   }
 
-   @media (max-width: 376px) {
+  @media (max-width: 376px) {
     width: 2.1vh !important;
     margin: 0.7vh 0vh !important;
   }

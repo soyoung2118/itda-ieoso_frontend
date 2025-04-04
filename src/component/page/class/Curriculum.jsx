@@ -167,7 +167,7 @@ const LectureDescriptionSection = styled.div`
     border-radius: 7px;
   }
 
-   @media (max-width: 376px) {
+  @media (max-width: 376px) {
     margin: 2.3vh 0vh;
   }
 `;
