@@ -20,6 +20,11 @@ export const login = async (credentials) => {
     }
 };
 
+export const checkExist = async () => {
+    const response = await api.get('/oauth/social/linked');
+    return response.data;
+};
+
 export const findpassword = async (name, email) => {
     const response = await api.post(`/users/reset/password?email=${email}&name=${name}`);
     return response.data;

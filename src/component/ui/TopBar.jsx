@@ -1,24 +1,39 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
 import styled from "styled-components";
 import LogoImage from '../img/logo/itda_logo.svg';
 import userIcon from "../img/icon/usericon.svg";
 import { UsersContext } from "../contexts/usersContext";
 import { UsersInfoContainer } from '../page/users/UsersInfoContainer';
+import { checkExist } from '../api/usersApi';
 import api from "../api/api";
 
 export default function TopBar() {
-
     const navigate = useNavigate();
     const location = useLocation();
     const { isUser } = useContext(UsersContext);
     
     // 드롭다운 상태 추가
     const [showUsersInfoContainer, setShowUsersInfoContainer] = useState(false);
+    const [isGoogleLinked, setIsGoogleLinked] = useState(null);
 
     const handleUserIconClick = () => {
         setShowUsersInfoContainer(prev => !prev);  // 드롭다운 토글
     };
+
+    useEffect(() => {
+        const handleCheckExist = async () => {
+            const response = await checkExist();
+
+            if(response.data === 'NONE'){
+                setIsGoogleLinked(false);
+            } else {
+                setIsGoogleLinked(true);
+            }
+        };
+
+        handleCheckExist();
+    }, [isGoogleLinked]);
 
     const handleGoogleAuth = () => {
         try {
@@ -28,33 +43,9 @@ export default function TopBar() {
                 alert('로그인이 필요합니다.');
                 return;
             }
-            
+
             const redirectUri = encodeURIComponent(`${window.location.origin}/oauth/account/link`);
-            const jwtToken = currentToken.replace('Bearer ', '');
-            
-            sessionStorage.setItem('auth_token_for_google', jwtToken);
-            
             const googleLoginUrl = `https://staging.eduitda.com/api/oauth/google/login/temp?redirect_uri=${redirectUri}`;
-            
-            // 디버깅 메시지 개선
-            console.log('==== 구글 연동 요청 디버그 정보 ====');
-            console.log('토큰 값:', jwtToken.substring(0, 20) + '...');
-            console.log('리디렉션 URI:', decodeURIComponent(redirectUri));
-            console.log('요청 URL:', googleLoginUrl.substring(0, 100) + '...');
-            
-            // 디버깅 정보를 세션 스토리지에 저장
-            const debugInfo = {
-                time: new Date().toISOString(),
-                token: jwtToken.substring(0, 20) + '...',
-                redirectUri: decodeURIComponent(redirectUri),
-                requestUrl: googleLoginUrl
-            };
-            sessionStorage.setItem('google_auth_debug', JSON.stringify(debugInfo));
-            
-            // 먼저 alert으로 토큰 정보 확인 (브라우저 리다이렉트 전)
-            alert('구글 연동을 시작합니다. 브라우저 콘솔(F12)에서 디버그 정보를 확인하세요.');
-            
-            // URL로 직접 이동
             window.location.href = googleLoginUrl;
         } catch (error) {
             console.error('구글 연동 시작 중 오류 발생:', error);
@@ -79,7 +70,7 @@ export default function TopBar() {
                                 ) : (
                                     <>
                                     <button className="navigate-button" onClick={() => navigate('/dashboard')}>대시보드로 가기</button>
-                                    <button className="navigate-button" onClick={handleGoogleAuth}>구글 연동하기</button>
+                                    {isGoogleLinked === false && <button className="navigate-button" onClick={handleGoogleAuth}>구글 연동하기</button>}
                                     </>
                                 )}
                                 <UserIcon src={userIcon} alt="user icon" onClick={handleUserIconClick} />
