@@ -55,9 +55,7 @@ export default function GoogleAccountLink() {
   useEffect(() => {
     const processAccountLinking = async () => {
       try {
-        console.log('구글 계정 연동 처리 시작');
         const currentToken = localStorage.getItem('token');
-        console.log('현재 로그인 토큰:', currentToken ? currentToken.substring(0, 20) + '...' : 'null');
 
         if (!currentToken) {
           throw new Error('로그인 상태가 아닙니다. 먼저 로그인해주세요.');
@@ -67,38 +65,15 @@ export default function GoogleAccountLink() {
         const code = urlParams.get('code');
         
         if (code && currentToken) {
-          console.log('==== 구글 계정 연동 콜백 처리 ====');
-          console.log('로컬 스토리지 토큰:', currentToken.substring(0, 20) + '...');
-          console.log('인증 코드 추출 성공:', code.substring(0, 10) + '...');
-          
           try {
-            console.log('요청에 사용되는 토큰:', currentToken ? `${currentToken.substring(0, 20)}...` : '토큰 없음');
-            
-            // 요청 헤더 전체를 로깅
-            console.log('요청 헤더:', {
-              "Content-Type": "application/json",
-              "Authorization": currentToken ? `Bearer ${currentToken}` : '토큰 없음',
-              // 기타 헤더들...
-            });
-
             const response = await api.get(`/oauth/return/uri/temp?code=${code}`);
-            
-            console.log('API 응답 받음:', response.status);
-            console.log('응답 헤더:', response.headers);
-            console.log('응답 데이터:', response.data);
-            
+
             if (!response.data) {
               throw new Error('응답 데이터가 없습니다');
             }
-            
-            console.log('구글 계정 연동 성공');
-
-            // 응답에서 JWT 토큰 추출 (대소문자 구분 없이 확인)
             const newToken = response.headers?.authorization || 
                             response.headers?.Authorization || 
                             response.data?.jwtToken;
-                            
-            console.log('추출된 새 토큰:', newToken ? '있음' : '없음');
             
             if (newToken && newToken !== currentToken) {
               const finalToken = newToken.startsWith('Bearer ') ? newToken.replace('Bearer ', '') : newToken;
