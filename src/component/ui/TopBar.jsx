@@ -80,7 +80,7 @@ export default function TopBar() {
                             </UserContainer>
                         ) : (
                             <>
-                                <button className="signup" onClick={() => navigate('/signup')}>회원가입</button>
+                                {/* <button className="signup" onClick={() => navigate('/signup')}>회원가입</button> */}
                                 <button className="login" onClick={() => navigate('/login')}>로그인</button>
                                 <UserContainer>
                                     <UserIcon src={userIcon} alt="user icon" />

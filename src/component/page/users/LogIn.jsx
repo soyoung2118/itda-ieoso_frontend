@@ -64,14 +64,8 @@ export default function LogIn() {
 
     const handleGoogleLogin = () => {
         setIsLoading(true);
-        
-        // 리디렉션 후 돌아올 URL 설정
         const redirectUri = encodeURIComponent(`${window.location.origin}/oauth/callback`);
-        
-        // 구글 로그인 URL에 리디렉션 URI 추가
         const googleLoginUrl = `https://staging.eduitda.com/api/oauth/google/login?redirect_uri=${redirectUri}`;
-        
-        // 새 창에서 열기
         window.location.href = googleLoginUrl;
     };
 
@@ -130,9 +124,9 @@ export default function LogIn() {
                             type="submit"
                         >로그인</LoginButton>
 
-                        <SignUpLink>
+                        {/* <SignUpLink>
                             계정이 없으신가요? <a href="/signup">회원가입하기</a>
-                        </SignUpLink>
+                        </SignUpLink> */}
                     </Form>
                 </SignUpContainer>
             </Container>
