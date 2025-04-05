@@ -35,7 +35,7 @@ const CurriculmContainer = styled.main`
   }
 
   @media (max-width: 480px) {
-    padding: 3vh 3vh;
+    padding: 3vh 1vh;
   }
 `;
 const Section = styled.div`
@@ -58,9 +58,10 @@ const Section = styled.div`
   }
   @media (max-width: 480px) {
     margin: 2vh 0vh;
-    width: 103%;
+    /* width: 103%; */
     padding: 2.5vh 3vh;
     border-radius: 6px;
+    box-sizing: border-box;
   }
 `;
 
@@ -161,10 +162,11 @@ const LectureDescriptionSection = styled.div`
   }
 
   @media (max-width: 480px) {
-    width: 106%;
+    width: 100%;
     padding: 1.7vh 2vh;
     margin: 2vh 0vh;
     border-radius: 7px;
+    box-sizing: border-box;
   }
 
    @media (max-width: 376px) {
