@@ -108,6 +108,20 @@ export default function LogIn() {
                             onChange={(e) => setPassword(e.target.value)}
                         />
                         <CheckboxContainer style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'end' }}>
+                            {/*
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        icon={CustomCheckboxSquare(false)}
+                                        checkedIcon={CustomCheckboxSquare(true)}
+                                        checked={isChecked}
+                                        onChange={() => setIsChecked(!isChecked)}
+                                    />
+                                }
+                                label="자동 로그인"
+                                style={{ margin: 0 }}  // 여백 제거로 높이 일치
+                            />
+                            */}
                             <span 
                                 onClick={() => navigate('/find-password')} 
                                 style={{ 
