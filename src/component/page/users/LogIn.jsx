@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import TopBar from "../../ui/TopBar";
 import logoImage from "../../img/logo/itda_logo_symbol.svg";
+import { Checkbox, FormControlLabel } from "@mui/material";
 import googleIcon from "../../img/icon/google.svg";
 
 import {
@@ -13,6 +14,7 @@ import {
     Label,
     LoginInput,
     CheckboxContainer,
+    CustomCheckboxSquare,
     LoginButton,
     SignUpLink,
     Divider,
