@@ -25,6 +25,8 @@ import Dashboard from "./component/page/dashboard/Dashboard.jsx";
 import ClassPlaying from "./component/page/class/Playing.jsx";
 import ClassAssignmentSubmit from "./component/page/class/AssignmentSubmit.jsx";
 import StudentDetail from "./component/page/class/StudentDetail.jsx";
+import GoogleAuthCallback from "./component/page/users/GoogleAuthCallback.jsx";
+import GoogleAccountLink from "./component/page/users/GoogleAccountLink.jsx";
 
 // 페이지 이동 시 스크롤을 맨 위로 이동시키는 컴포넌트
 function ScrollToTop() {
@@ -113,6 +115,8 @@ function App() {
         <ScrollToTop /> {/* 필요 없으면 지우면 됨 */}
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/oauth/callback" element={<GoogleAuthCallback />} />
+          <Route path="/oauth/account/link" element={<GoogleAccountLink />} />
           <Route path="/login" element={<LogIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/find-password" element={<FindPassword />} />
