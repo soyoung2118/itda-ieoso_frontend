@@ -75,7 +75,10 @@ export default function TopBar() {
                                 )}
                                 <UserIcon src={userIcon} alt="user icon" onClick={handleUserIconClick} />
                                 {showUsersInfoContainer && (
-                                    <UsersInfoContainer setShowUsersInfoContainer={setShowUsersInfoContainer} />
+                                    <UsersInfoContainer 
+                                        setShowUsersInfoContainer={setShowUsersInfoContainer} 
+                                        isGoogleLinked={isGoogleLinked}
+                                    />
                                 )}
                             </UserContainer>
                         ) : (
