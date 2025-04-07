@@ -50,6 +50,11 @@ const DateTimeContainer = styled.div`
       border-radius: 5px;
     }
 
+    @media (max-width: 440px) {
+      width: 24vh;
+      border-radius: 5px;
+    }
+
     @media (max-width: 376px) {
       width: 28vh;
       border-radius: 3px;
