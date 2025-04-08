@@ -55,12 +55,17 @@ const ClassTitleContainer = styled.div`
     overflow: hidden;
     text-overflow: ellipsis;
 
+    @media (max-width: 1024px) {
+      max-width: 11ch;
+    }
+
     @media (max-width: 768px) {
-      max-width: 13ch;
+      max-width: 10ch;
+      font-size: 18px;
     }
 
     @media all and (max-width: 479px) {
-      max-width: 18ch;
+      max-width: 10ch;
       font-size: 18px;
     }
   }
@@ -141,8 +146,15 @@ const MenuItem = styled.div`
 const TabLinkContainer = styled.div`
   display: flex;
   justify-content: flex-end;
-  gap: clamp(1rem, 2vw, 2rem);
   white-space: nowrap;
+
+  @media (max-width: 1024px) {
+    gap: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    gap: 0.5rem;
+  }
 
   @media all and (max-width: 479px) {
     font-size: 16px;

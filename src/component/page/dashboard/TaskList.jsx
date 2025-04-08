@@ -334,6 +334,10 @@ const TaskTitle = styled.h3`
   background-color: #f5f5f5;
   border-radius: 10px;
   padding: 10px;
+
+  @media all and (max-width: 479px) {
+    font-size: 14px;
+  }
 `;
 
 const TaskItem = styled.div`

@@ -164,8 +164,10 @@ const NoticeContent = styled.div`
 
   @media all and (max-width: 479px) {
     font-size: 0.8rem;
-    white-space: normal;
+    white-space: pre-wrap;
+    word-break: break-all;
   }
+
 `;
 
 const Pagination = styled.div`
