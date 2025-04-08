@@ -25,6 +25,19 @@ import Dashboard from "./component/page/dashboard/Dashboard.jsx";
 import ClassPlaying from "./component/page/class/Playing.jsx";
 import ClassAssignmentSubmit from "./component/page/class/AssignmentSubmit.jsx";
 import StudentDetail from "./component/page/class/StudentDetail.jsx";
+import GoogleAuthCallback from "./component/page/users/GoogleAuthCallback.jsx";
+import GoogleAccountLink from "./component/page/users/GoogleAccountLink.jsx";
+
+// 페이지 이동 시 스크롤을 맨 위로 이동시키는 컴포넌트
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
 
 function LogoutHandler() {
   const navigate = useNavigate();
@@ -96,12 +109,14 @@ function LogoutHandler() {
 
 function App() {
   return (
-    <>
-      <BrowserRouter>
+    <BrowserRouter>
       <UsersProvider>
         <LogoutHandler />
+        <ScrollToTop /> {/* 필요 없으면 지우면 됨 */}
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/oauth/callback" element={<GoogleAuthCallback />} />
+          <Route path="/oauth/account/link" element={<GoogleAccountLink />} />
           <Route path="/login" element={<LogIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/find-password" element={<FindPassword />} />
@@ -122,14 +137,13 @@ function App() {
             <Route path="admin/students/:studentId" element={<StudentDetail />} />
             <Route path="admin/setting" element={<Setting />} />
             <Route path="playing/:lectureId/:videoId" element={<ClassPlaying />} />
-            <Route path="assignment/submit/:lectureId/:assignmentId" element={<ClassAssignmentSubmit />}/>
+            <Route path="assignment/submit/:lectureId/:assignmentId" element={<ClassAssignmentSubmit />} />
           </Route>
 
           <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </UsersProvider>
     </BrowserRouter>
-    </>
   );
 }
 

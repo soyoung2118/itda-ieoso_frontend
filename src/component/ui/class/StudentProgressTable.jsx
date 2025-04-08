@@ -9,7 +9,6 @@ const ScrollableTableContainer = styled.div`
   width: 100%;
   position: relative;
 
-  /* 숨겨진 기본 스크롤바 */
   overflow-x: hidden;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE and Edge */
@@ -24,6 +23,20 @@ const ScrollableTableContainer = styled.div`
     background: #f1f1f1;
     border-radius: 10px;
     overflow: hidden;
+
+    @media (max-width: 1024px) {
+      margin-top: 2.8vh;
+      height: 6.8px;
+    }
+    @media (max-width: 768px) {
+      margin-top: 2.2vh;
+      height: 5.3px;
+    }
+
+    @media (max-width: 480px) {
+      margin-top: 3vh;
+      height: 3.8px;
+    }
   }
 
   .custom-scrollbar-thumb {
@@ -50,15 +63,47 @@ const Table = styled.table`
     padding: 0.7rem 6vh;
     width: 3rem;
     border-bottom: 1px solid #cdcdcd;
+
+    @media (max-width: 1024px) {
+      padding: 0.75vh 2.9vh;
+    }
+
+    @media (max-width: 768px) {
+      padding: 0.9vh 3.2vh;
+    }
+
+    @media (max-width: 480px) {
+      padding: 1.4vh 3.2vh;
+    }
+      @media (max-width: 376px) {
+      padding: 0.8vh 2.5vh;
+    }
   }
 
   th {
     font-size: 1.2rem;
-
     white-space: nowrap;
+
+    @media (max-width: 1024px) {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    @media (max-width: 768px) {
+      font-size: 13.3px;
+      font-weight: 600;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 9.3px;
+    }
+
+    @media (max-width: 376px) {
+      font-size: 9px;
+    }
   }
 
-  th:first-child{
+  th:first-child {
     text-align: left;
   }
 
@@ -66,12 +111,36 @@ const Table = styled.table`
     font-size: 1.05rem;
     font-weight: bold;
     white-space: nowrap;
+
+    @media (max-width: 1024px) {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+      font-size: 13px;
+    }
+    @media (max-width: 480px) {
+      font-size: 8.6px;
+    }
+
+    @media (max-width: 376px) {
+      font-size: 8.3px;
+    }
   }
 
   td:first-child {
     text-align: left !important;
     padding-left: 0rem !important;
     padding-right: 15vh;
+
+    @media (max-width: 1024px) {
+      padding-right: 6vh;
+    }
+
+     @media (max-width: 376px) {
+      padding-right: 4.2vh;
+    }
   }
 `;
 
@@ -80,17 +149,48 @@ const ProfileContainer = styled.div`
   align-items: center;
   gap: 0.6rem;
   justify-content: flex-start;
+
+  @media (max-width: 480px) {
+    gap: 0.35rem;
+  }
 `;
 
 const ProfileImage = styled.img`
   width: 32px;
   height: 32px;
   border-radius: 50%;
+
+  @media (max-width: 1024px) {
+    width: 2vh;
+    height: 1.8vh;
+  }
+
+  @media (max-width: 480px) {
+    width: 3.2vh;
+    height: 3vh;
+  }
+
+   @media (max-width: 376px) {
+    width: 2.5vh;
+    height: 2.3vh;
+  }
 `;
 
 const CheckMarkIcon = styled.img`
   width: 1.7rem;
   height: 1.7rem;
+
+  @media (max-width: 1024px) {
+    height: 1.6vh;
+  }
+
+  @media (max-width: 480px) {
+    height: 2.7vh;
+  }
+
+   @media (max-width: 376px) {
+    height: 2vh;
+  }
 `;
 
 const StudentProgressTable = ({ assignments }) => {
@@ -107,9 +207,7 @@ const StudentProgressTable = ({ assignments }) => {
           submissions: [],
         });
       }
-      studentsMap
-        .get(student.userId)
-        .submissions.push(student.status); // 상태를 그대로 저장
+      studentsMap.get(student.userId).submissions.push(student.status); // 상태를 그대로 저장
     });
   });
   const students = Array.from(studentsMap.values());

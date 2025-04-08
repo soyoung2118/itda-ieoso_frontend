@@ -20,6 +20,11 @@ export const login = async (credentials) => {
     }
 };
 
+export const checkExist = async () => {
+    const response = await api.get('/oauth/social/linked');
+    return response.data;
+};
+
 export const findpassword = async (name, email) => {
     const response = await api.post(`/users/reset/password?email=${email}&name=${name}`);
     return response.data;
@@ -41,6 +46,7 @@ export const logout = async () => {
         window.location.href = '/';
 
         localStorage.removeItem('token');
+        localStorage.removeItem('tokenExpiration');
         localStorage.removeItem('user');
         return response;
     } catch (error) {
@@ -50,7 +56,7 @@ export const logout = async () => {
 };
 
 // 자동 로그아웃 타이머 설정 함수
-const startLogoutTimer = () => {
+export const startLogoutTimer = () => {
     if (window.autoLogoutTimer) {
         clearTimeout(window.autoLogoutTimer);
     }

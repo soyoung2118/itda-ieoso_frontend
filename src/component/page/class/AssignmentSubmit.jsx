@@ -221,6 +221,15 @@ const ClassAssignmentSubmit = () => {
               />
             </ClickContainer>
           </TitleContainer>
+          {isMobile && (
+            <MobileToggleButton type="button" onClick={toggleSidebar}>
+              {isVisible ? (
+                <CloseIcon style={{ fontSize: "2.8vh" }} />
+              ) : (
+                <MenuIcon style={{ fontSize: "2.8vh" }} />
+              )}
+            </MobileToggleButton>
+          )}
         </TopContainer>
 
         <WhiteBoxComponent>
@@ -255,18 +264,6 @@ const ClassAssignmentSubmit = () => {
             submissionType={submissionType}
             setIsDeleteModalOpen={setIsDeleteModalOpen}
           />
-        )}
-
-        {isMobile && (
-          <MobileToggleButtonWrapper>
-            <MobileToggleButton type="button" onClick={toggleSidebar}>
-              {isVisible ? (
-                <CloseIcon style={{ fontSize: "3.7vh" }} />
-              ) : (
-                <MenuIcon style={{ fontSize: "3.7vh" }} />
-              )}
-            </MobileToggleButton>
-          </MobileToggleButtonWrapper>
         )}
       </LeftSide>
 

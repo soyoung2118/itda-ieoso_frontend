@@ -5,8 +5,9 @@ import AdminTopBar from "../../ui/class/AdminTopBar";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import styled from "styled-components";
-import { PageLayout, Section } from "../../ui/class/ClassLayout";
 import StudentProgressTable from "../../ui/class/StudentProgressTable";
+import { StyledEngineProvider } from "@mui/material";
+import { style } from "@mui/system";
 
 const StatsContainer = styled.div`
   display: flex;
@@ -91,6 +92,67 @@ const CalendarWrapper = styled.div`
   }
 `;
 
+const SummarySection = styled.div`
+  display: flex;
+  align-items: baseline;
+  margin-left: 2.5vh;
+
+  @media (max-width: 1024px) {
+    margin-left: 2vh;
+  }
+`;
+
+const Summary = styled.h3`
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--black-color);
+
+  @media (max-width: 768px) {
+    font-size: 19px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 14px;
+  }
+`;
+
+const CurrentTime = styled.p`
+  color: var(--darkgrey-color);
+  font-size: 15px;
+  margin-left: 1.5vh;
+  font-weight: 500;
+
+  @media (max-width: 768px) {
+    font-size: 11px;
+    margin-left: 1vh;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 9px;
+    margin-left: 1.2vh;
+  }
+`;
+
+const Section = styled.div`
+  background-color: #ffffff;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  padding: 2.2vh 4.8vh;
+  padding-bottom: 3rem;
+
+  @media (max-width: 1024px) {
+    padding: 2.2vh 3.3vh;
+  }
+
+  @media (max-width: 480px) {
+    padding: 5.5vh 5vh;
+  }
+
+  @media (max-width: 376px) {
+    padding: 2vh 3vh;
+  }
+`;
+
 const ClassSummary = () => {
   const { courseId } = useParams();
   const [assignments, setAssignments] = useState([]);
@@ -99,8 +161,15 @@ const ClassSummary = () => {
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      const formattedTime = `${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()}`;
-      setCurrentTime(`${formattedTime} ${now.getHours()}:${String(now.getMinutes()).padStart(2, "0")}`);
+      const formattedTime = `${now.getFullYear()}.${
+        now.getMonth() + 1
+      }.${now.getDate()}`;
+      setCurrentTime(
+        `${formattedTime} ${now.getHours()}:${String(now.getMinutes()).padStart(
+          2,
+          "0"
+        )}`
+      );
     };
 
     updateTime();
@@ -127,43 +196,20 @@ const ClassSummary = () => {
   }, [courseId]);
 
   return (
-        <main
-          style={{
-            flex: 1,
-            borderRadius: "8px",
-          }}
-        >
-          <AdminTopBar />
-          <div  style={{margin:"1vh 0vh"}}>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "baseline",
-                marginLeft: "2.5vh"
-              }}
-            >
-              <h3
-                style={{
-                  fontSize: "24px",
-                  fontWeight: "700",
-                  color: "var(--black-color)",
-                }}
-              >
-                요약
-              </h3>
-              <p
-                style={{
-                  color: "var(--darkgrey-color)",
-                  fontSize: "15px",
-                  marginLeft: "1.5vh",
-                  fontWeight: "500",
-                }}
-              >
-                {currentTime} 기준
-              </p>
-            </div>
-            <Section style={{ padding: "2.2vh 4.8vh", paddingBottom: "3rem" }}>
-              {/* <div
+    <main
+      style={{
+        flex: 1,
+        borderRadius: "8px",
+      }}
+    >
+      <AdminTopBar />
+      <div style={{ margin: "1vh 0vh" }}>
+        <SummarySection>
+          <Summary>요약</Summary>
+          <CurrentTime>{currentTime} 기준</CurrentTime>
+        </SummarySection>
+        <Section>
+          {/* <div
                 style={{ display: "flex", gap: "2rem", marginBottom: "4rem" }}
               >
                 <CalendarWrapper>
@@ -203,10 +249,10 @@ const ClassSummary = () => {
                   </StatBox>
                 </StatsContainer>
               </div> */}
-              <StudentProgressTable assignments={assignments} />
-            </Section>
-          </div>
-        </main>
+          <StudentProgressTable assignments={assignments} />
+        </Section>
+      </div>
+    </main>
   );
 };
 

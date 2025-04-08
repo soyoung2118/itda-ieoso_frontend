@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { NavLink, useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import PropTypes from "prop-types";
@@ -15,6 +15,10 @@ const Container = styled.div`
 
   @media (max-width: 768px) {
     padding: 0 0.5rem;
+  }
+
+  @media all and (max-width:479px) {
+    padding: 0;
   }
 `;
 
@@ -42,6 +46,7 @@ const NavbarContent = styled.div`
   overflow-x: auto;
   min-width: min-content;
   gap: 2rem;
+  flex-wrap: wrap;
 
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -52,6 +57,11 @@ const NavbarContent = styled.div`
   @media (max-width: 768px) {
     gap: 1rem;
   }
+
+  @media all and (max-width: 479px) {
+    gap: 0;
+    padding: 0.4rem 0.5rem;
+  }
 `;
 
 const TabContainer = styled.nav`
@@ -61,6 +71,11 @@ const TabContainer = styled.nav`
 
   @media (max-width: 768px) {
     gap: 0.5rem;
+  }
+
+  @media all and (max-width:479px) {
+    gap: 0.2rem;
+    margin-bottom: 5px;
   }
 `;
 
@@ -85,12 +100,21 @@ const TabLink = styled(NavLink)`
       height: 0.2rem;
       background-color: var(--main-color);
       border-radius: 5px;
+
+      @media (max-width: 479px) {
+        bottom: -0.6rem;
+      }
     }
   }
 
   @media (max-width: 768px) {
     width: 70px;
     font-size: 16px;
+  }
+
+  @media (max-width: 479px) {
+    width: 45px;
+    font-size: 14px;
   }
 `;
 
@@ -105,6 +129,11 @@ const IconContainer = styled.nav`
     justify-content: center;
     margin-left: 0;
   }
+
+  @media (max-width: 479px) {
+    margin-right: 8px;
+    gap: 10px;
+  }
 `;
 
 const Icon = styled.img`
@@ -114,6 +143,11 @@ const Icon = styled.img`
 
   &.delete-icon {
     height: 37px;
+  }
+
+  @media (max-width: 479px) {
+    width: 24px;
+    height: 24px;
   }
 `;
 
@@ -168,6 +202,12 @@ const ShareDropdownContainer = styled.div`
     margin-top: 5px;
     border-radius: 15px;
   }
+  
+
+  @media all and (max-width:479px) {
+      top: 350px;
+      right: 40px;
+  }
 `;
 
 
@@ -181,8 +221,10 @@ const AdminTopBar = ({ activeTab }) => {
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [courseName, setCourseName] = useState("");
   const [entryCode, setEntryCode] = useState("");
-  const [classOptions, setClassOptions] = useState(null);
+  const [, setClassOptions] = useState(null);
   const [currentCourse, setCurrentCourse] = useState(null);
+  const dropdownRef = useRef(null);
+  const iconRef = useRef(null);
   
   useEffect(() => {
     if (!user?.userId) return;
@@ -210,6 +252,29 @@ const AdminTopBar = ({ activeTab }) => {
 
     fetchCourseDetails();
   }, [courseId]);
+
+  // 공유 버튼 클릭 시 드롭다운 표시
+  const handleIconClick = () => {
+    setShowDropdown((prev) => !prev);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        dropdownRef.current && 
+        !dropdownRef.current.contains(event.target) &&
+        iconRef.current &&
+        !iconRef.current.contains(event.target)
+      ) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleDeleteLecture = async (courseId) => {
     console.log('Deleting course with ID:', courseId);
@@ -290,10 +355,11 @@ const AdminTopBar = ({ activeTab }) => {
             className="material-icons" 
             src={Share} 
             alt="share icon" 
-            onClick={() => setShowDropdown(!showDropdown)}
+            onClick={handleIconClick}
+            ref={iconRef}
           />
           {showDropdown && (
-            <ShareDropdownContainer>
+            <ShareDropdownContainer ref={dropdownRef}>
               <text>강의실 링크</text>
               <div className="shareinfo">
                 <span>www.eduitda.com</span>
@@ -306,7 +372,7 @@ const AdminTopBar = ({ activeTab }) => {
               </div>
               <button className="invite-button" onClick={handleShare}>강의실 초대하기</button>
             </ShareDropdownContainer>
-              )}  
+          )}  
           </>
           )}
         </IconContainer>

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import AdminTopBar from "../../ui/class/AdminTopBar";
 import { Section } from "../../ui/class/ClassLayout";
+import styled from "styled-components";
 
 import assignmentIcon from "../../img/admin/student_assignment.svg";
 import api from "../../api/api";
@@ -34,7 +35,6 @@ const ClassStudents = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // API 호출하여 데이터 가져오기
   useEffect(() => {
     const fetchAssignments = async () => {
       try {
@@ -44,8 +44,6 @@ const ClassStudents = () => {
 
         if (response.data.success) {
           const assignments = response.data.data;
-
-          // 학생 목록 추출 (중복 제거)
           const studentMap = new Map();
           assignments.forEach((assignment) => {
             assignment.studentResults.forEach((result) => {
@@ -59,7 +57,6 @@ const ClassStudents = () => {
             [...studentMap].map(([userId, name]) => ({ userId, name }))
           );
 
-          // 특정 studentId의 과제 제출 내역 필터링
           const studentAssignments = assignments.flatMap((assignment) =>
             assignment.studentResults
               .filter((result) => result.userId.toString() === studentId)
@@ -105,24 +102,18 @@ const ClassStudents = () => {
       const fileExtension = file.fileName.split(".").pop().toLowerCase();
       let mimeType = "application/octet-stream";
 
-      if (fileExtension === "pdf") {
-        mimeType = "application/pdf";
-      } else if (fileExtension === "txt") {
-        mimeType = "text/plain";
-      } else if (["jpg", "jpeg", "png", "gif"].includes(fileExtension)) {
+      if (fileExtension === "pdf") mimeType = "application/pdf";
+      else if (fileExtension === "txt") mimeType = "text/plain";
+      else if (["jpg", "jpeg", "png", "gif"].includes(fileExtension))
         mimeType = `image/${fileExtension}`;
-      } else if (fileExtension === "zip") {
-        mimeType = "application/zip";
-      }
+      else if (fileExtension === "zip") mimeType = "application/zip";
 
       const blob = new Blob([arrayBuffer], { type: mimeType });
-
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
       a.download = file.fileName;
       a.click();
-
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error("파일 다운로드 중 오류 발생:", error);
@@ -130,196 +121,472 @@ const ClassStudents = () => {
   };
 
   return (
-    <main style={{ flex: 1, borderRadius: "8px" }}>
+    <MainWrapper>
       <AdminTopBar />
-      <div style={{ margin: "1vh 0vh" }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "baseline",
-            marginLeft: "2.5vh",
-          }}
-        >
-          <h3
-            style={{
-              fontSize: "23px",
-              fontWeight: "900",
-              color: "var(--black-color)",
-            }}
-          >
-            학생별 과제 보기
-          </h3>
-          <p
-            style={{
-              color: "var(--darkgrey-color)",
-              fontSize: "15px",
-              marginLeft: "1.5vh",
-              fontWeight: "500",
-            }}
-          >
-            {currentTime} 기준
-          </p>
-          {/* 제출 현황 보기 버튼 */}
-          <button
+      <div>
+        <TopBar>
+          <Title>학생별 과제 보기</Title>
+          <TimeText>{currentTime} 기준</TimeText>
+          <NavButton
             onClick={() => navigate(`/class/${courseId}/admin/students`)}
-            style={{
-              padding: "1.5vh 3vh",
-              backgroundColor: "var(--main-color)",
-              color: "white",
-              fontSize: "15px",
-              fontWeight: "bold",
-              borderRadius: "8px",
-              border: "none",
-              cursor: "pointer",
-              marginLeft: "auto",
-            }}
           >
             과제 보기
-          </button>
-        </div>
+          </NavButton>
+        </TopBar>
 
-        <div style={{ display: "flex", margin: "2vh 0vh" }}>
-          {/*  Sidebar (학생 목록) */}
-          <aside
-            style={{
-              width: "13%",
-              backgroundColor: "white",
-              padding: "2.5vh 1.8vh",
-              overflowY: "auto",
-              borderRadius: "20px",
-            }}
-          >
+        <ContentWrapper>
+          <Sidebar>
             {students.map((student) => (
-              <div
+              <StudentItem
                 key={student.userId}
                 onClick={() =>
                   navigate(
                     `/class/${courseId}/admin/students/${student.userId}`
                   )
                 }
-                style={{
-                  padding: "1.15vh 2.6vh",
-                  fontSize: "16px",
-                  marginBottom: "5px",
-                  cursor: "pointer",
-                  borderRadius: "10px",
-                  backgroundColor:
-                    student.userId.toString() === studentId
-                      ? "var(--pink-color)"
-                      : "transparent",
-                  fontWeight: "550",
-                }}
+                selected={student.userId.toString() === studentId}
               >
                 {student.name}
-              </div>
+              </StudentItem>
             ))}
-          </aside>
+          </Sidebar>
 
-          <div style={{ flex: 1, paddingLeft: "6vh", marginBottom: "5vh" }}>
+          <StudentContent>
             {studentData ? (
-              <div>
-                {studentData.submissions.map((submission, idx) => (
-                  <div
-                    key={idx}
-                    style={{
-                      backgroundColor: "white",
-                      padding: "0vh 3.5vh",
-                      paddingTop: "1.8vh",
-                      paddingBottom: "3vh",
-                      borderRadius: "20px",
-                      marginBottom: "3vh",
-                    }}
-                  >
-                    {/* 과제 제목 + 제출 날짜 + 파일 (한 줄 배치) */}
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "1.5vh",
-                        }}
-                      >
-                        <img
-                          src={assignmentIcon}
-                          alt="과제 아이콘"
-                          width="35"
-                          height="35"
-                        />
-                        <p style={{ fontSize: "18px", fontWeight: "bold" }}>
-                          {submission.assignmentTitle}
-                        </p>
-                        <p style={{ fontSize: "15px", color: "#c3c3c3" }}>
-                          {submission.submittedAt
-                            ? new Date(
-                                submission.submittedAt
-                              ).toLocaleDateString()
-                            : ""}
-                        </p>
-                      </div>
-
-                      {/* 제출 파일 */}
-                      <div style={{ display: "flex", gap: "2vh" }}>
-                        {submission.files.length > 0 ? (
-                          submission.files.map((file, fileIdx) => (
-                            <a
-                              key={fileIdx}
-                              onClick={() => handleDownload(file)}
-                              style={{
-                                color: "var(--main-color)",
-                                textDecoration: "underline",
-                                fontSize: "16px",
-                                cursor: "pointer",
-                              }}
-                            >
-                              {file.fileName}
-                            </a>
-                          ))
-                        ) : submission.textContent &&
-                          submission.textContent !== "null" ? null : (
-                          <p
-                            style={{
-                              color: "var(--main-color)",
-                              fontSize: "16px",
-                            }}
+              studentData.submissions.map((submission, idx) => (
+                <SubmissionBox key={idx}>
+                  <SubmissionHeader>
+                    <AssignmentInfo>
+                      <AssignmentIcon src={assignmentIcon} alt="과제 아이콘" />
+                      <h4>{submission.assignmentTitle}</h4>
+                      <p>
+                        {submission.submittedAt
+                          ? new Date(
+                              submission.submittedAt
+                            ).toLocaleDateString()
+                          : ""}
+                      </p>
+                    </AssignmentInfo>
+                    <FileList>
+                      {submission.files.length > 0 ? (
+                        submission.files.map((file, fileIdx) => (
+                          <DownloadLink
+                            key={fileIdx}
+                            onClick={() => handleDownload(file)}
                           >
-                            미제출
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* 텍스트 제출 내용 */}
-                    {submission.textContent &&
-                      submission.textContent !== "null" && (
-                        <div
-                          style={{
-                            marginTop: "1.5vh",
-                            padding: "2.5vh 3.5vh",
-                            backgroundColor: "#F6F7F9",
-                            borderRadius: "8px",
-                            whiteSpace: "pre-wrap",
-                          }}
-                        >
-                          {submission.textContent}
-                        </div>
+                            {file.fileName}
+                          </DownloadLink>
+                        ))
+                      ) : submission.textContent &&
+                        submission.textContent !== "null" ? null : (
+                        <span>미제출</span>
                       )}
-                  </div>
-                ))}
-              </div>
+                    </FileList>
+                  </SubmissionHeader>
+
+                  {submission.textContent &&
+                    submission.textContent !== "null" && (
+                      <TextContent>{submission.textContent}</TextContent>
+                    )}
+                </SubmissionBox>
+              ))
             ) : (
               <p>학생 데이터를 불러오는 중...</p>
             )}
-          </div>
-        </div>
+          </StudentContent>
+        </ContentWrapper>
       </div>
-    </main>
+    </MainWrapper>
   );
 };
 
 export default ClassStudents;
+
+const MainWrapper = styled.main`
+  flex: 1;
+  border-radius: 8px;
+`;
+
+const TopBar = styled.div`
+  display: flex;
+  align-items: baseline;
+  margin-left: 2.5vh;
+
+  @media (max-width: 1024px) {
+    margin-left: 2vh;
+  }
+
+  @media (max-width: 768px) {
+    margin-left: 1.5vh;
+  }
+`;
+
+const Title = styled.h3`
+  font-size: 23px;
+  font-weight: 800;
+  color: var(--black-color);
+
+  @media (max-width: 1024px) {
+    font-size: 22px;
+    font-weight: 750;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 19px;
+    font-weight: 700;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 16px;
+    font-weight: 650;
+  }
+
+  @media (max-width: 376px) {
+    font-size: 12.8px;
+  }
+`;
+
+const TimeText = styled.p`
+  color: var(--darkgrey-color);
+  font-size: 15px;
+  margin-left: 1.5vh;
+  font-weight: 500;
+
+  @media (max-width: 1024px) {
+    margin-left: 1vh;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 12.5px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 10px;
+  }
+
+  @media (max-width: 376px) {
+    font-size: 8.5px;
+  }
+`;
+
+const NavButton = styled.button`
+  padding: 1.5vh 3vh;
+  background-color: var(--main-color);
+  color: white;
+  font-size: 15px;
+  font-weight: bold;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  margin-left: auto;
+
+  @media (max-width: 1024px) {
+    padding: 0.85vh 1.7vh;
+    border-radius: 6px;
+    font-size: 13.5px;
+    font-weight: 600;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.8vh 1.8vh;
+    border-radius: 5px;
+    font-size: 11.5px;
+    font-weight: 550;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1.1vh 2vh;
+    border-radius: 4px;
+    font-size: 9.3px;
+    font-weight: 550;
+  }
+
+  @media (max-width: 376px) {
+    padding: 0.65vh 1.35vh;
+    border-radius: 3px;
+    font-size: 7.7px;
+  }
+`;
+
+const ContentWrapper = styled.div`
+  display: flex;
+  margin: 2vh 0;
+
+  @media (max-width: 1024px) {
+    margin: 1.3vh 0;
+  }
+
+  @media (max-width: 768px) {
+    margin: 0.7vh 0;
+  }
+  @media (max-width: 376px) {
+    margin: 0.35vh 0;
+  }
+`;
+
+const Sidebar = styled.aside`
+  width: 13%;
+  background-color: white;
+  padding: 2.5vh 1.8vh;
+  overflow-y: auto;
+  border-radius: 20px;
+
+  @media (max-width: 1024px) {
+    width: 16%;
+    padding: 1.8vh 1.5vh;
+  }
+
+  @media (max-width: 768px) {
+    padding: 1.55vh 1.4vh;
+    border-radius: 16px;
+  }
+  @media (max-width: 480px) {
+    width: 17%;
+    padding: 2vh 1.5vh;
+    border-radius: 13px;
+  }
+  @media (max-width: 376px) {
+    width: 16%;
+    padding: 1.3vh 1vh;
+    border-radius: 9px;
+  }
+`;
+
+const StudentItem = styled.div`
+  padding: 1.15vh 2.6vh;
+  font-size: 16px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  border-radius: 10px;
+  font-weight: 550;
+  background-color: ${(props) =>
+    props.selected ? "var(--pink-color)" : "transparent"};
+
+  @media (max-width: 1024px) {
+    padding: 0.9vh 1.3vh;
+    border-radius: 8px;
+    font-size: 15px;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.8vh 1vh;
+    border-radius: 7.3px;
+    font-size: 12px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1vh 2vh;
+    border-radius: 6.3px;
+    font-size: 10px;
+  }
+
+  @media (max-width: 376px) {
+    padding: 0.7vh 1.2vh;
+    border-radius: 6px;
+    font-size: 8px;
+  }
+`;
+
+const StudentContent = styled.div`
+  flex: 1;
+  padding-left: 6vh;
+  margin-bottom: 5vh;
+
+  @media (max-width: 1024px) {
+    padding-left: 2vh;
+  }
+
+  @media (max-width: 768px) {
+    padding-left: 1.7vh;
+  }
+
+  @media (max-width: 376px) {
+    padding-left: 1.3vh;
+  }
+`;
+
+const AssignmentIcon = styled.img`
+  width: 35px;
+  height: 35px;
+
+  @media (max-width: 1024px) {
+    width: 2.35vh;
+  }
+
+  @media (max-width: 768px) {
+    width: 2.1vh;
+  }
+
+  @media (max-width: 480px) {
+    width: 2.7vh;
+  }
+
+  @media (max-width: 376px) {
+    width: 1.9vh;
+  }
+`;
+
+const SubmissionBox = styled.div`
+  background-color: white;
+  padding: 1.8vh 3.5vh 3vh;
+  border-radius: 20px;
+  margin-bottom: 3vh;
+
+  @media (max-width: 1024px) {
+    padding: 1vh 2vh 2.5vh;
+    border-radius: 15px;
+    margin-bottom: 2vh;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.6vh 1.9vh 2.1vh;
+    border-radius: 12px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0.5vh 2.5vh 2.3vh;
+    border-radius: 12px;
+  }
+
+  @media (max-width: 376px) {
+    padding: 0.25vh 1.7vh 1.8vh;
+    border-radius: 8.5 px;
+  }
+`;
+
+const SubmissionHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const AssignmentInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1.5vh;
+
+  @media (max-width: 1024px) {
+    gap: 0.9vh;
+  }
+
+  @media (max-width: 768px) {
+    gap: 0.7vh;
+  }
+
+  @media (max-width: 376px) {
+    gap: 0.55vh;
+  }
+
+  & h4 {
+    font-size: 18px;
+    font-weight: bold;
+
+    @media (max-width: 1024px) {
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    @media (max-width: 768px) {
+      font-size: 13.5px;
+      font-weight: 600;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 10.5px;
+    }
+
+    @media (max-width: 376px) {
+      font-size: 9px;
+      font-weight: 550;
+    }
+  }
+
+  & p {
+    font-size: 15px;
+    color: #c3c3c3;
+
+    @media (max-width: 1024px) {
+      font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+      font-size: 11.5px;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 9px;
+    }
+
+    @media (max-width: 376px) {
+      font-size: 7.2px;
+    }
+  }
+`;
+
+const FileList = styled.div`
+  display: flex;
+  gap: 2vh;
+  font-size: 16px;
+  color: var(--main-color);
+
+  @media (max-width: 1024px) {
+    font-size: 13.5px;
+    max-width: 40%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 11.3px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 8.5px;
+  }
+
+  @media (max-width: 376px) {
+    font-size: 7px;
+  }
+`;
+
+const DownloadLink = styled.a`
+  text-decoration: underline;
+  cursor: pointer;
+`;
+
+const TextContent = styled.div`
+  margin-top: 1.5vh;
+  padding: 2.5vh 3.5vh;
+  background-color: #f6f7f9;
+  border-radius: 8px;
+  white-space: pre-wrap;
+
+  @media (max-width: 1024px) {
+    margin-top: 0.5vh;
+    padding: 2vh 2vh;
+    font-size: 13.5px;
+  }
+
+  @media (max-width: 768px) {
+    margin-top: 0.3vh;
+    padding: 1.5vh 1.3vh;
+    font-size: 11.5px;
+    border-radius: 7px;
+  }
+
+  @media (max-width: 480px) {
+    margin-top: -0.5vh;
+    padding: 1.6vh 1.3vh;
+    font-size: 9.3px;
+    border-radius: 6px;
+  }
+
+  @media (max-width: 376px) {
+    margin-top: -0.5vh;
+    padding: 1.4vh 1.1vh;
+    font-size:7.6px;
+    border-radius: 4px;
+  }
+`;

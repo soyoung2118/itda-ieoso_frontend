@@ -2,8 +2,8 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 import ClassThumbnail from "../../img/class/class_thumbnail.svg";
 import PlayIcon from "../../img/class/play_icon.svg";
-import Material from "../../img/icon/pdf.svg";
-import Assignment from "../../img/icon/docs.svg";
+import Material from "../../img/icon/curriculum/materialicon.svg";
+import Assignment from "../../img/icon/curriculum/assignmenticon.svg";
 import EditContainer from "../../ui/curriculum/EditContainer";
 import EditableSection from "./EditableSection";
 import { getYouTubeThumbnail } from "./EditableSection";
@@ -49,6 +49,10 @@ const CurriculumTitle = styled.h3`
 
   @media (max-width: 480px) {
     font-size: 10px;
+  }
+    
+  @media (max-width: 376px) {
+    font-size: 9.4px;
   }
 `;
 
@@ -323,7 +327,8 @@ const CurriculumSection = ({
               <MaterialIcon src={Material} />
               <MaterialSection>
                 <span style={{ marginRight: "0.6rem" }}>
-                  {materialTruncatedText(subSection.originalFilename) ?? "자료 없음"}
+                  {materialTruncatedText(subSection.originalFilename) ??
+                    "자료 없음"}
                 </span>
                 <span
                   style={{

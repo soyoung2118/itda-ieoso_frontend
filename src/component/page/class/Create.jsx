@@ -200,7 +200,7 @@ const handleAssignmentTimeChange = (timeString) => {
         value={value}
         placeholder="커리큘럼 시작을 설정해주세요."
         readOnly
-        style={{width: '329px'}}
+        style={{width: '230px'}}
       />
       <CalendarIcon>
         <img src={Calendar} style={{width: 18}} alt="캘린더" />
@@ -472,6 +472,10 @@ const RadioButton = styled.button`
   background-color: ${props => props.active ? '#F6F6F6' : '#FF4747'};
   color: ${props => props.active ? '#909090' : '#FFFFFF'};
   width: 149px;
+
+  @media all and (max-width:479px) {
+    margin: 10px 0;
+  }
 `;
 
 const LevelButton = styled.button`
@@ -517,6 +521,10 @@ const Section = styled.div`
 const Title = styled.div`
   font-size: 21px;
   font-weight: 700;
+
+  @media all and (max-width:479px) {
+    font-size: 18px;
+  }
 `;
 
 const FormGroup = styled.div`
@@ -628,6 +636,11 @@ const TimePickerWrapper = styled.div`
 
   @media (max-width: 900px) { 
     margin-right: 0px;
+  }
+
+  @media all and (max-width:479px) {
+    flex-direction: column;
+    align-items: flex-start;
   }
 `
 

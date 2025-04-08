@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import VideoIcon from "../../img/class/edit/video.svg";
-import AssignmentIcon from "../../img/icon/docs.svg";
-import MaterialIcon from "../../img/icon/pdf.svg";
+import AssignmentIcon from "../../img/icon/curriculum/assignmenticon.svg";
+import MaterialIcon from "../../img/icon/curriculum/materialicon.svg";
 
 const Container = styled.div`
   display: flex;
@@ -17,7 +17,7 @@ const Container = styled.div`
   border-radius: 0.5rem;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
   padding: 1rem;
-  z-index: 10;
+  z-index: 1;
 
   @media (max-width: 1024px) {
     padding: 1vh;
@@ -34,6 +34,12 @@ const Container = styled.div`
   @media (max-width: 480px) {
     padding: 1.5vh;
     left: -9vh;
+    border-radius: 4px;
+  }
+
+   @media (max-width: 376px) {
+    padding: 1vh;
+    left: -12%;
     border-radius: 4px;
   }
 
@@ -58,7 +64,7 @@ const HighlightLine = styled.div`
   height: 84%;
   background-color: var(--main-color);
 
-  z-index: 9;
+  z-index: 1;
 
   @media (max-width: 1024px) {
     width: 0.35vh;
@@ -87,6 +93,11 @@ const Icon = styled.img`
   @media (max-width: 480px) {
     width: 3.5vh !important;
     margin: 1.5vh 0vh !important;
+  }
+
+   @media (max-width: 376px) {
+    width: 2.1vh !important;
+    margin: 0.7vh 0vh !important;
   }
 `;
 

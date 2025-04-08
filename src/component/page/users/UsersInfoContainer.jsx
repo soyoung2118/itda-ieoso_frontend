@@ -6,8 +6,7 @@ import { logout } from "../../api/usersApi";
 import { UsersContext } from "../../contexts/usersContext";
 import PropTypes from 'prop-types';
 
-export function UsersInfoContainer({ setShowUsersInfoContainer }) {
-
+export function UsersInfoContainer({ setShowUsersInfoContainer, isGoogleLinked }) {
     const { user, setUser, setIsUser } = useContext(UsersContext);
     const navigate = useNavigate();
 
@@ -49,7 +48,7 @@ export function UsersInfoContainer({ setShowUsersInfoContainer }) {
                     </UserText>
                 </UserInfo>
                 <div className="button-container">
-                    <button className="user-button" onClick={handleChangePassword}>비밀번호 변경</button>
+                    {isGoogleLinked === false && <button className="user-button" onClick={handleChangePassword}>비밀번호 변경</button>}
                     <button className="user-button" onClick={handleLogout}>로그아웃 하기</button>
                 </div>
             </DropdownContainer>
@@ -126,4 +125,5 @@ const UserText = styled.div`
 // PropTypes 설정
 UsersInfoContainer.propTypes = {
     setShowUsersInfoContainer: PropTypes.func.isRequired,
+    isGoogleLinked: PropTypes.bool.isRequired,
 };
