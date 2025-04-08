@@ -397,6 +397,14 @@ const AddButton = styled.button`
     font-size: 44px;
     cursor: pointer;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+    @media all and (max-width: 479px) {
+        width: 3rem;
+        height: 3rem;
+        bottom: 35px;
+        right: 35px;
+        font-size: 37px;
+    }
 `;
 
 const PopupMenu = styled.div`
@@ -407,6 +415,11 @@ const PopupMenu = styled.div`
     border-radius: 20px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     padding: 10px;
+
+    @media all and (max-width: 479px) {
+        bottom: 90px;
+        right: 85px;
+    }
 `;
 
 const PopupItem = styled.div`
