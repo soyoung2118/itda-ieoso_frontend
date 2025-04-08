@@ -143,9 +143,9 @@ export default function Setting() {
         startDate: form.startDate,
         durationWeeks: Number(form.durationWeeks),
         lectureDay: form.lectureDays,
-        lectureTime: form.lectureTime + ':00',
+        lectureTime: isLecturePending ? null : form.lectureTime + ':00',
         assignmentDueDay: form.assignmentDays,
-        assignmentDueTime: form.assignmentTime + ':00',
+        assignmentDueTime: isAssignmentPending ? null : form.assignmentTime + ':00',
         difficultyLevel: form.difficulty.toUpperCase(),
         isAssignmentPublic: form.isAssignmentPublic
       };
