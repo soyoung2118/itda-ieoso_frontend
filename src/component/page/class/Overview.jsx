@@ -6,12 +6,12 @@ import VideoIcon from "../../img/icon/videocam.svg";
 import EditBtn from "../../img/class/edit_btn.svg";
 import EditedBtn from "../../img/class/edited_btn.svg";
 import { Section } from "../../ui/class/ClassLayout";
-import ReactQuill from "react-quill-new"; 
+import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import api from "../../api/api";
 import { UsersContext } from "../../contexts/usersContext";
 import EntryCodeModal from "../../ui/class/EntryCodeModal";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 const IconRow = styled.div`
   display: flex;
@@ -36,7 +36,7 @@ const Content = styled.div`
   border-radius: ${({ isEditing }) => (isEditing ? "0px" : "12px")};
   min-height: 40vh;
   height: auto;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   box-sizing: border-box;
   padding: ${({ isEditing }) => (isEditing ? "0px" : "42px 0px")};
   box-shadow: ${({ isEditing }) => (isEditing ? "-4px 0 0 #FF4747" : "none")};
@@ -46,7 +46,7 @@ const StyledQuill = styled(ReactQuill)`
   width: 100%;
   max-width: 1200px;
   min-height: 450px;
-  
+
   .ql-toolbar {
     order: 2;
   }
@@ -59,7 +59,7 @@ const StyledQuill = styled(ReactQuill)`
 
   .ql-editor {
     font-size: 1rem;
-    font-family: 'Pretendard', sans-serif !important;
+    font-family: "Pretendard", sans-serif !important;
     padding: 10px 33px !important;
     line-height: 2.2 !important;
   }
@@ -75,7 +75,7 @@ const StyledButton = styled.a`
 
   .img {
     width: 49px;
-    
+
     @media (max-width: 1024px) {
       width: 35px;
     }
@@ -86,24 +86,24 @@ const StyledButton = styled.a`
 
     @media (max-width: 480px) {
       width: 42px;
-    } 
+    }
 
     @media (max-width: 376px) {
       width: 32px;
-    } 
+    }
   }
 
-  @media all and (max-width:1024px) {
+  @media all and (max-width: 1024px) {
     right: -0.8rem;
     width: 80px;
   }
 
-  @media all and (max-width:768px) {
+  @media all and (max-width: 768px) {
     right: 0.2rem;
     width: 75px;
   }
 
-  @media all and (max-width:479px) {
+  @media all and (max-width: 479px) {
     right: -1.5rem;
   }
 `;
@@ -146,7 +146,8 @@ const ImageContainer = styled.div`
     left: 50%;
     transform: translate(-50%, -50%);
     width: 3.5rem;
-    display: ${({ isEditing, hasThumbnail }) => (!isEditing && !hasThumbnail ? "block" : "none")};
+    display: ${({ isEditing, hasThumbnail }) =>
+      !isEditing && !hasThumbnail ? "block" : "none"};
     pointer-events: none;
   }
 `;
@@ -155,7 +156,7 @@ const Title = styled.div`
   font-size: 26px;
   font-weight: 800;
   text-align: left;
-`
+`;
 
 const EditableSectionContent = ({ content, onChange, isEditing }) => {
   const modules = {
@@ -233,8 +234,7 @@ const ClassOverview = () => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = () => {
-      };
+      reader.onload = () => {};
       reader.readAsDataURL(file);
 
       const imageUrl = URL.createObjectURL(file);
@@ -255,10 +255,10 @@ const ClassOverview = () => {
     if (!user) return;
 
     const formData = new FormData();
-    formData.append('textContent', sectionContent);
+    formData.append("textContent", sectionContent);
 
     if (files && files.length > 0) {
-      formData.append('courseThumbnail', files[0]);
+      formData.append("courseThumbnail", files[0]);
     }
 
     try {
@@ -267,9 +267,9 @@ const ClassOverview = () => {
         formData,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
 
       if (response.status === 200) {
@@ -291,11 +291,11 @@ const ClassOverview = () => {
   }
 
   const changeDifficultly = (difficulty) => {
-    if(difficulty === 'HARD') return '상'
-    if(difficulty === 'MEDIUM') return '중'
-    if(difficulty === 'EASY') return '하'
-    return null
-  }
+    if (difficulty === "HARD") return "상";
+    if (difficulty === "MEDIUM") return "중";
+    if (difficulty === "EASY") return "하";
+    return null;
+  };
 
   return (
     <div style={{ display: "flex", marginTop: "2rem" }}>
@@ -310,8 +310,13 @@ const ClassOverview = () => {
           hasThumbnail={!!(newThumbnail || courseThumbnail)}
           onClick={handleImageClick}
         >
-          <img src={newThumbnail || courseThumbnail || ClassThumbnail} alt="Class Thumbnail" />
-          <span className="material-symbols-outlined camera-icon">camera_alt</span>
+          <img
+            src={newThumbnail || courseThumbnail || ClassThumbnail}
+            alt="Class Thumbnail"
+          />
+          <span className="material-symbols-outlined camera-icon">
+            camera_alt
+          </span>
           <img src={VideoIcon} alt="Video Icon" className="video-icon" />
           <input
             type="file"
@@ -341,41 +346,48 @@ const ClassOverview = () => {
             <span className="material-symbols-outlined">person</span>
             <span>{courseData.instructorName}</span>
           </IconRow>
-          <IconRow style={{gap: '0rem'}}>
+          <IconRow style={{ gap: "0rem" }}>
             <span className="material-symbols-outlined">star</span>
-            <span style={{margin: '0rem 0.3rem 0rem 1rem'}}>강의 난이도</span>
-            <span style={{marginLeft: 0, fontWeight: 800}}>{changeDifficultly(courseData.difficultyLevel)}</span>
+            <span style={{ margin: "0rem 0.3rem 0rem 1rem" }}>강의 난이도</span>
+            <span style={{ marginLeft: 0, fontWeight: 800 }}>
+              {changeDifficultly(courseData.difficultyLevel)}
+            </span>
           </IconRow>
         </Section>
 
-        <Title style={{margin: '10px 5px'}}>강의 소개</Title>
+        <Title style={{ margin: "10px 5px" }}>강의 소개</Title>
         <Content isEditing={isEditing}>
           <EditableSectionContent
             content={sectionContent}
             onChange={setSectionContent}
             isEditing={isEditing}
           />
-        </Content>        
+        </Content>
       </main>
       {isCreator && (
-      <StyledButton
-        onClick={() => {
-          if (isEditing) {
-            handleSaveClick();
-          } else {
-            setIsEditing(true);
-          }
-        }}
-      >
-        <img
-          src={isEditing ? EditedBtn : EditBtn}
-          alt="Edit Button"
-          className="img"
+        <StyledButton
+          onClick={() => {
+            if (isEditing) {
+              handleSaveClick();
+            } else {
+              setIsEditing(true);
+            }
+          }}
+        >
+          <img
+            src={isEditing ? EditedBtn : EditBtn}
+            alt="Edit Button"
+            className="img"
           />
         </StyledButton>
       )}
 
-      {isEntryCodeModalOpen && <EntryCodeModal entrycode={entrycode} onClose={() => setIsEntryCodeModalOpen(false)} />}
+      {isEntryCodeModalOpen && (
+        <EntryCodeModal
+          entrycode={entrycode}
+          onClose={() => setIsEntryCodeModalOpen(false)}
+        />
+      )}
     </div>
   );
 };

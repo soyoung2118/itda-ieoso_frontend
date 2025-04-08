@@ -1,8 +1,17 @@
 import { useEffect, useRef, useCallback, useState } from "react";
-import { BrowserRouter, Route, Routes, useNavigate, useLocation } from "react-router-dom";
+import {
+  BrowserRouter,
+  Route,
+  Routes,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 import { UsersProvider } from "./component/contexts/usersContext.jsx";
 import { logout } from "./component/api/usersApi.js";
-import { ModalOverlay, AlertModalContainer } from "./component/ui/modal/ModalStyles.jsx";
+import {
+  ModalOverlay,
+  AlertModalContainer,
+} from "./component/ui/modal/ModalStyles.jsx";
 
 import LandingPage from "./component/page/LandingPage.jsx";
 import LogIn from "./component/page/users/LogIn.jsx";
@@ -57,7 +66,7 @@ function LogoutHandler() {
   }, [navigate]);
 
   const checkExpiration = useCallback(() => {
-    const expirationTime = localStorage.getItem('tokenExpiration');
+    const expirationTime = localStorage.getItem("tokenExpiration");
     if (expirationTime && new Date().getTime() > expirationTime) {
       setModalIsOpen(true);
     }
@@ -66,7 +75,7 @@ function LogoutHandler() {
   useEffect(() => {
     checkExpiration();
 
-    const expirationTime = localStorage.getItem('tokenExpiration');
+    const expirationTime = localStorage.getItem("tokenExpiration");
     if (expirationTime) {
       const timeLeft = expirationTime - new Date().getTime();
 
@@ -94,12 +103,20 @@ function LogoutHandler() {
     <>
       {modalIsOpen && (
         <ModalOverlay>
-          <AlertModalContainer isOpen={modalIsOpen} onRequestClose={() => setModalIsOpen(false)}>
+          <AlertModalContainer
+            isOpen={modalIsOpen}
+            onRequestClose={() => setModalIsOpen(false)}
+          >
             <div className="text">로그인 시간이 만료되어 로그아웃합니다.</div>
-            <div className="close-button" onClick={() => {
-              setModalIsOpen(false);
-              handleLogout();
-            }}>확인</div>
+            <div
+              className="close-button"
+              onClick={() => {
+                setModalIsOpen(false);
+                handleLogout();
+              }}
+            >
+              확인
+            </div>
           </AlertModalContainer>
         </ModalOverlay>
       )}
@@ -129,15 +146,30 @@ function App() {
             <Route path="overview/info" element={<ClassOverview />} />
             <Route path="overview/notice" element={<ClassNotice />} />
             <Route path="overview/notice/create" element={<NoticeCreate />} />
-            <Route path="overview/notice/edit/:noticeId" element={<NoticeCreate />} />
+            <Route
+              path="overview/notice/edit/:noticeId"
+              element={<NoticeCreate />}
+            />
             <Route path="curriculum/:lectureId" element={<ClassCurriculum />} />
-            <Route path="curriculum/:lectureId/edit" element={<ClassCurriculumEdit />} />
+            <Route
+              path="curriculum/:lectureId/edit"
+              element={<ClassCurriculumEdit />}
+            />
             <Route path="admin/summary" element={<ClassSummary />} />
             <Route path="admin/students" element={<ClassStudents />} />
-            <Route path="admin/students/:studentId" element={<StudentDetail />} />
+            <Route
+              path="admin/students/:studentId"
+              element={<StudentDetail />}
+            />
             <Route path="admin/setting" element={<Setting />} />
-            <Route path="playing/:lectureId/:videoId" element={<ClassPlaying />} />
-            <Route path="assignment/submit/:lectureId/:assignmentId" element={<ClassAssignmentSubmit />} />
+            <Route
+              path="playing/:lectureId/:videoId"
+              element={<ClassPlaying />}
+            />
+            <Route
+              path="assignment/submit/:lectureId/:assignmentId"
+              element={<ClassAssignmentSubmit />}
+            />
           </Route>
 
           <Route path="/dashboard" element={<Dashboard />} />

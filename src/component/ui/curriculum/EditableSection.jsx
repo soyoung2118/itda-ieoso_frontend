@@ -304,9 +304,9 @@ const AssignmentInput = styled.input`
   font-weight: bold;
   box-sizing: border-box;
   margin-bottom: 1rem;
-  font-family: Pretendard, Pretendard-Bold, Pretendard-ExtraBold,
-    Pretendard-Light, Pretendard-Medium, Pretendard-SemiBold, Pretendard-Thin,
-    sans-serif;
+  font-family:
+    Pretendard, Pretendard-Bold, Pretendard-ExtraBold, Pretendard-Light,
+    Pretendard-Medium, Pretendard-SemiBold, Pretendard-Thin, sans-serif;
 
   @media (max-width: 1024px) {
     font-size: 11.5px;
@@ -350,9 +350,9 @@ const Input = styled.input`
 `;
 
 const TextArea = styled.textarea`
-  font-family: Pretendard, Pretendard-Bold, Pretendard-ExtraBold,
-    Pretendard-Light, Pretendard-Medium, Pretendard-SemiBold, Pretendard-Thin,
-    sans-serif;
+  font-family:
+    Pretendard, Pretendard-Bold, Pretendard-ExtraBold, Pretendard-Light,
+    Pretendard-Medium, Pretendard-SemiBold, Pretendard-Thin, sans-serif;
   width: calc(100% - 3.5vh);
   font-size: 16.5px;
   border: 2px solid #c3c3c3;
@@ -560,7 +560,7 @@ export const getYouTubeThumbnail = (url) => {
     if (!url || typeof url !== "string") return null;
 
     const videoIdMatch = url.match(
-      /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/
+      /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/,
     );
     if (!videoIdMatch) return null;
     return `https://img.youtube.com/vi/${videoIdMatch[1]}/0.jpg`;
@@ -586,19 +586,19 @@ const EditableSection = ({
   const [period, setPeriod] = useState(
     subSection?.startDate && subSection?.endDate
       ? `${subSection.startDate} ~ ${subSection.endDate}`
-      : "기간 미정"
+      : "기간 미정",
   );
   const [startDate, setStartDate] = useState(
-    subSection?.startDate ? new Date(subSection.startDate) : null
+    subSection?.startDate ? new Date(subSection.startDate) : null,
   );
   const [endDate, setEndDate] = useState(
-    subSection?.endDate ? new Date(subSection.endDate) : null
+    subSection?.endDate ? new Date(subSection.endDate) : null,
   );
   const [submissionType, setSubmissionType] = useState(
-    subSection?.submissionType || "text"
+    subSection?.submissionType || "text",
   );
   const [assignmentDescription, setAssignmentDescription] = useState(
-    subSection?.assignmentDescription || ""
+    subSection?.assignmentDescription || "",
   );
   const { user } = useContext(UsersContext);
   const userId = user.userId;
@@ -644,10 +644,10 @@ const EditableSection = ({
     try {
       const response = await api.patch(
         `/materials/${courseId}/${materialId}/${userIdNum}?materialTitle=${encodeURIComponent(
-          subSection.originalFilename || ""
+          subSection.originalFilename || "",
         )}`,
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        { headers: { "Content-Type": "multipart/form-data" } },
       );
     } catch (error) {
       console.error("파일 업로드 실패:", error);

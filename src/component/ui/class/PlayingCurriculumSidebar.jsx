@@ -33,7 +33,7 @@ const PlayingCurriculumSidebar = ({
         if (!courseId || !user) return;
 
         const curriculumResponse = await api.get(
-          `/lectures/curriculum/${courseId}/${user.userId}`
+          `/lectures/curriculum/${courseId}/${user.userId}`,
         );
         const cleanedData = {
           ...curriculumResponse.data.data,
@@ -43,29 +43,29 @@ const PlayingCurriculumSidebar = ({
                 ...lecture,
                 videos:
                   lecture.videos?.filter((video) =>
-                    Object.values(video).every((value) => value !== null)
+                    Object.values(video).every((value) => value !== null),
                   ) || [],
                 assignments:
                   lecture.assignments?.filter((assignment) =>
-                    Object.values(assignment).every((value) => value !== null)
+                    Object.values(assignment).every((value) => value !== null),
                   ) || [],
                 materials:
                   lecture.materials?.filter((material) =>
-                    Object.values(material).every((value) => value !== null)
+                    Object.values(material).every((value) => value !== null),
                   ) || [],
-              })
+              }),
             ) || [],
         };
 
         setCurriculumData(cleanedData.curriculumResponses);
 
         const historyResponse = await api.get(
-          `/lectures/history/${courseId}/${user.userId}`
+          `/lectures/history/${courseId}/${user.userId}`,
         );
 
         if (historyResponse.data.success) {
           const submissions = Array.isArray(
-            historyResponse.data.data.submissions
+            historyResponse.data.data.submissions,
           )
             ? historyResponse.data.data.submissions
             : [];
@@ -106,7 +106,7 @@ const PlayingCurriculumSidebar = ({
     if (!curriculumData?.length || !lectureId) return;
 
     const foundLecture = curriculumData.find(
-      (lecture) => lecture.lectureId === Number(lectureId)
+      (lecture) => lecture.lectureId === Number(lectureId),
     );
 
     if (foundLecture) {
@@ -197,7 +197,9 @@ const PlayingCurriculumSidebar = ({
       now.getTime() < startDate.getTime() ||
       now.getTime() > endDate.getTime()
     ) {
-      setAlertMessage(`이 콘텐츠는 ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()} 까지만 접근 가능합니다.`);
+      setAlertMessage(
+        `이 콘텐츠는 ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()} 까지만 접근 가능합니다.`,
+      );
       setShowAlertModal(true);
       return;
     }
@@ -215,7 +217,9 @@ const PlayingCurriculumSidebar = ({
       now.getTime() < startDate.getTime() ||
       now.getTime() > endDate.getTime()
     ) {
-      setAlertMessage(`이 자료는 ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()}까지만 다운로드 가능합니다.`);
+      setAlertMessage(
+        `이 자료는 ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()}까지만 다운로드 가능합니다.`,
+      );
       setShowAlertModal(true);
       return;
     }
@@ -272,7 +276,9 @@ const PlayingCurriculumSidebar = ({
     const endDate = new Date(assignment.endDate);
 
     if (now.getTime() < startDate.getTime()) {
-      setAlertMessage(`이 콘텐츠는 ${startDate.toLocaleString()} 부터 접근 가능합니다.`);
+      setAlertMessage(
+        `이 콘텐츠는 ${startDate.toLocaleString()} 부터 접근 가능합니다.`,
+      );
       setShowAlertModal(true);
       return;
     }
@@ -280,7 +286,7 @@ const PlayingCurriculumSidebar = ({
     setSelectedContentId(goAssignment);
     setSelectedType("assignment");
     navigate(
-      `/class/${courseId}/assignment/submit/${goLecture}/${goAssignment}`
+      `/class/${courseId}/assignment/submit/${goLecture}/${goAssignment}`,
     );
   };
 
@@ -333,7 +339,7 @@ const PlayingCurriculumSidebar = ({
                                 handleVideoClick(
                                   lecture.lectureId,
                                   content.videoId,
-                                  content
+                                  content,
                                 )
                               }
                             >
@@ -385,7 +391,7 @@ const PlayingCurriculumSidebar = ({
                               <IconContainer>
                                 {getStatusIcon(
                                   content.contentType,
-                                  content.materialId
+                                  content.materialId,
                                 )}
                               </IconContainer>
                             </ContentItem>
@@ -396,7 +402,7 @@ const PlayingCurriculumSidebar = ({
                                 handleAssignmentClick(
                                   lecture.lectureId,
                                   content.assignmentId,
-                                  content
+                                  content,
                                 )
                               }
                             >
@@ -419,7 +425,7 @@ const PlayingCurriculumSidebar = ({
                               <IconContainer>
                                 {getStatusIcon(
                                   content.contentType,
-                                  content.assignmentId
+                                  content.assignmentId,
                                 )}
                               </IconContainer>
                             </ContentItem>
@@ -438,7 +444,12 @@ const PlayingCurriculumSidebar = ({
           <AlertModalContainer>
             <div className="text">{alertMessage}</div>
             <div className="button-container">
-              <button className="close-button" onClick={() => setShowAlertModal(false)}>확인</button>
+              <button
+                className="close-button"
+                onClick={() => setShowAlertModal(false)}
+              >
+                확인
+              </button>
             </div>
           </AlertModalContainer>
         </ModalOverlay>

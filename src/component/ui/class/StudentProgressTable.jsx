@@ -75,7 +75,7 @@ const Table = styled.table`
     @media (max-width: 480px) {
       padding: 1.4vh 3.2vh;
     }
-      @media (max-width: 376px) {
+    @media (max-width: 376px) {
       padding: 0.8vh 2.5vh;
     }
   }
@@ -138,7 +138,7 @@ const Table = styled.table`
       padding-right: 6vh;
     }
 
-     @media (max-width: 376px) {
+    @media (max-width: 376px) {
       padding-right: 4.2vh;
     }
   }
@@ -170,7 +170,7 @@ const ProfileImage = styled.img`
     height: 3vh;
   }
 
-   @media (max-width: 376px) {
+  @media (max-width: 376px) {
     width: 2.5vh;
     height: 2.3vh;
   }
@@ -188,7 +188,7 @@ const CheckMarkIcon = styled.img`
     height: 2.7vh;
   }
 
-   @media (max-width: 376px) {
+  @media (max-width: 376px) {
     height: 2vh;
   }
 `;

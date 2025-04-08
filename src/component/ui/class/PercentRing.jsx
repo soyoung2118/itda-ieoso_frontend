@@ -23,7 +23,7 @@ const CircleBackground = styled.circle`
 
 const CircleProgress = styled.circle`
   fill: none;
-  stroke:var(--main-color);
+  stroke: var(--main-color);
   stroke-width: 14;
   stroke-dasharray: 314; /* 2 * Math.PI * R (R=50) */
   stroke-dashoffset: ${(props) => 314 - (314 * props.percent) / 100};
@@ -34,7 +34,7 @@ const PercentageText = styled.div`
   position: absolute;
   font-size: 3.5rem;
   font-weight: bold;
-  color:var(--main-color);
+  color: var(--main-color);
 `;
 
 const PercentRing = ({ percent }) => {
@@ -42,22 +42,15 @@ const PercentRing = ({ percent }) => {
     <CircleContainer>
       <CircleSVG viewBox="0 0 120 120">
         <CircleBackground cx="60" cy="60" r="50" />
-        <CircleProgress
-          cx="60"
-          cy="60"
-          r="50"
-          percent={percent}
-        />
+        <CircleProgress cx="60" cy="60" r="50" percent={percent} />
       </CircleSVG>
       <PercentageText>{percent}%</PercentageText>
     </CircleContainer>
   );
 };
 
-
 PercentRing.propTypes = {
   percent: PropTypes.number.isRequired, // percent는 필수 값이며 숫자 타입이어야 합니다.
 };
-
 
 export default PercentRing;

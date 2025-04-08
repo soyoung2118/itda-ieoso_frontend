@@ -53,7 +53,7 @@ const ClassAssignmentSubmit = () => {
 
       try {
         const curriculumResponse = await api.get(
-          `/lectures/curriculum/${courseId}/${user.userId}`
+          `/lectures/curriculum/${courseId}/${user.userId}`,
         );
 
         if (curriculumResponse.data.success) {
@@ -61,13 +61,13 @@ const ClassAssignmentSubmit = () => {
           setCurriculumData(curriculum);
 
           const currentLecture = curriculum.find(
-            (lecture) => lecture.lectureId === Number(lectureId)
+            (lecture) => lecture.lectureId === Number(lectureId),
           );
 
           if (currentLecture) {
             setCurrentLectureInfo(currentLecture);
             const currentAssignment = currentLecture.assignments.find(
-              (assignment) => assignment.assignmentId === Number(assignmentId)
+              (assignment) => assignment.assignmentId === Number(assignmentId),
             );
 
             if (currentAssignment) {
@@ -78,12 +78,12 @@ const ClassAssignmentSubmit = () => {
         }
 
         const lectureResponse = await api.get(
-          `/lectures/history/${courseId}/${user.userId}`
+          `/lectures/history/${courseId}/${user.userId}`,
         );
 
         if (lectureResponse.data.success) {
           const submission = lectureResponse.data.data.submissions.find(
-            (submission) => submission.assignmentId === parseInt(assignmentId)
+            (submission) => submission.assignmentId === parseInt(assignmentId),
           );
 
           if (submission) {
@@ -108,7 +108,7 @@ const ClassAssignmentSubmit = () => {
 
       try {
         const statusResponse = await api.get(
-          `/assignments/${assignmentId}/submissions/${submissionId}/${user.userId}`
+          `/assignments/${assignmentId}/submissions/${submissionId}/${user.userId}`,
         );
 
         if (statusResponse.data.success) {
@@ -118,7 +118,7 @@ const ClassAssignmentSubmit = () => {
               name: fileName,
               size: statusResponse.data.data.fileSizes[index],
               fileUrl: statusResponse.data.data.fileUrls[index],
-            })
+            }),
           );
 
           setFiles(filesData);
@@ -138,7 +138,7 @@ const ClassAssignmentSubmit = () => {
     if (!currentLectureInfo?.videos || !assignmentId) return;
 
     const foundAssignment = currentLectureInfo.assignments.find(
-      (assignment) => assignment.assignmentId === Number(assignmentId)
+      (assignment) => assignment.assignmentId === Number(assignmentId),
     );
 
     if (foundAssignment) {
@@ -152,7 +152,7 @@ const ClassAssignmentSubmit = () => {
 
       try {
         const response = await api.get(
-          `/lectures/curriculum/${courseId}/${user.userId}`
+          `/lectures/curriculum/${courseId}/${user.userId}`,
         );
 
         if (response.data.success) {
@@ -161,7 +161,7 @@ const ClassAssignmentSubmit = () => {
           let foundType = null;
           for (const lecture of curriculum) {
             const assignment = lecture.assignments.find(
-              (a) => a.assignmentId === parseInt(assignmentId)
+              (a) => a.assignmentId === parseInt(assignmentId),
             );
             if (assignment) {
               foundType = assignment.submissionType;
@@ -211,7 +211,7 @@ const ClassAssignmentSubmit = () => {
             <MainTitle>
               {currentLectureInfo?.lectureTitle}{" "}
               {truncateText(
-                currentAssignmentInfo?.assignmentTitle || "과제 제목"
+                currentAssignmentInfo?.assignmentTitle || "과제 제목",
               )}
             </MainTitle>
 
@@ -227,7 +227,7 @@ const ClassAssignmentSubmit = () => {
                 {isVisible ? (
                   <CloseIcon style={{ fontSize: "3.7vh" }} />
                 ) : (
-                <MenuIcon style={{ fontSize: "3.7vh" }} />
+                  <MenuIcon style={{ fontSize: "3.7vh" }} />
                 )}
               </MobileToggleButton>
             </MobileToggleButtonWrapper>

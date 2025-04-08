@@ -98,12 +98,12 @@ const CancelButton = styled.button`
 const CountContainer = styled.div`
   display: flex;
   flex-direction: row;
-`
+`;
 
 const Text = styled.div`
   font-size: 13px;
   color: var(--main-color);
-`
+`;
 
 const NoticeCreateModal = ({ isOpen, onClose, isEditMode }) => {
   NoticeCreateModal.propTypes = {
@@ -118,9 +118,13 @@ const NoticeCreateModal = ({ isOpen, onClose, isEditMode }) => {
     <ModalOverlay>
       <ModalContent>
         <h2>{isEditMode ? "공지사항 수정" : "공지사항 등록"}</h2>
-        <span>{isEditMode ? "공지사항이 수정되었어요." : "공지사항이 게시되었어요."}</span>
+        <span>
+          {isEditMode ? "공지사항이 수정되었어요." : "공지사항이 게시되었어요."}
+        </span>
         <div className="button-container">
-          <button className="close-button" onClick={onClose}>확인</button>
+          <button className="close-button" onClick={onClose}>
+            확인
+          </button>
         </div>
       </ModalContent>
     </ModalOverlay>
@@ -143,7 +147,9 @@ const NoticeCreateForm = () => {
       setIsEditMode(true);
       const fetchNoticeData = async () => {
         try {
-          const response = await api.get(`/announcements/${courseId}/${user.userId}/${noticeId}`);
+          const response = await api.get(
+            `/announcements/${courseId}/${user.userId}/${noticeId}`,
+          );
           if (response.data.success) {
             setTitle(response.data.data.announcementTitle);
             setContent(response.data.data.announcementContent);
@@ -180,10 +186,13 @@ const NoticeCreateForm = () => {
       let response;
       if (noticeId) {
         // 수정 모드: PATCH 요청
-        response = await api.patch(`/announcements/${courseId}/${user.userId}/${noticeId}`, {
-          title,
-          content,
-        });
+        response = await api.patch(
+          `/announcements/${courseId}/${user.userId}/${noticeId}`,
+          {
+            title,
+            content,
+          },
+        );
       } else {
         // 생성 모드: POST 요청
         response = await api.post(`/announcements/${courseId}/${user.userId}`, {
@@ -195,11 +204,15 @@ const NoticeCreateForm = () => {
       if (response.data.success) {
         setIsCreateModalOpen(true); // 모달 열기
       } else {
-        alert(`공지 ${noticeId ? "수정" : "작성"} 실패: ${response.data.message}`);
+        alert(
+          `공지 ${noticeId ? "수정" : "작성"} 실패: ${response.data.message}`,
+        );
       }
     } catch (error) {
       console.error(`공지 ${noticeId ? "수정" : "작성"} 오류:`, error);
-      alert(`공지사항을 ${noticeId ? "수정" : "작성"}하는 중 오류가 발생했습니다.`);
+      alert(
+        `공지사항을 ${noticeId ? "수정" : "작성"}하는 중 오류가 발생했습니다.`,
+      );
     }
   };
 
@@ -218,57 +231,70 @@ const NoticeCreateForm = () => {
 
   return (
     <div>
-        <div style={{ display: "flex", marginTop: "1rem" }}>
+      <div style={{ display: "flex", marginTop: "1rem" }}>
         {/*<ClassSidebar style={{ marginRight: "2rem" }} />*/}
-          <main
-            style={{ display: "flex", flexDirection: "column", width: "100%" }}
-          >
-            <NoticeTitle>{noticeId ? "공지사항 수정" : "공지사항 작성"}</NoticeTitle>
-            <Container style={{ padding: "2rem", paddingRight: "4.3rem" }}>
-              <form onSubmit={handleSubmit}>
-                <label
-                  htmlFor="title"
-                  style={{ fontSize: "18px", fontWeight: "600" }}
-                >
-                  제목
-                </label>
-                <CountContainer>
-                  <Text>{inputCount}</Text>
-                  <Text>/30 자</Text>
-                </CountContainer>
-                <StyledInput
-                  id="title"
-                  type="text"
-                  value={title}
-                  maxLength="30"
-                  onChange={(e) => {setTitle(e.target.value); onInputHandler(e);}}
-                  required
-                />
-                <label
-                  htmlFor="content"
-                  style={{ fontSize: "18px", fontWeight: "600" }}
-                >
-                  내용
-                </label>
-                <StyledTextarea
-                  id="content"
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  rows="15"
-                  required
-                  wrap:hard
+        <main
+          style={{ display: "flex", flexDirection: "column", width: "100%" }}
+        >
+          <NoticeTitle>
+            {noticeId ? "공지사항 수정" : "공지사항 작성"}
+          </NoticeTitle>
+          <Container style={{ padding: "2rem", paddingRight: "4.3rem" }}>
+            <form onSubmit={handleSubmit}>
+              <label
+                htmlFor="title"
+                style={{ fontSize: "18px", fontWeight: "600" }}
+              >
+                제목
+              </label>
+              <CountContainer>
+                <Text>{inputCount}</Text>
+                <Text>/30 자</Text>
+              </CountContainer>
+              <StyledInput
+                id="title"
+                type="text"
+                value={title}
+                maxLength="30"
+                onChange={(e) => {
+                  setTitle(e.target.value);
+                  onInputHandler(e);
+                }}
+                required
+              />
+              <label
+                htmlFor="content"
+                style={{ fontSize: "18px", fontWeight: "600" }}
+              >
+                내용
+              </label>
+              <StyledTextarea
+                id="content"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                rows="15"
+                required
+                wrap:hard
               ></StyledTextarea>
               <ButtonContainer>
                 {noticeId && (
-                  <CancelButton type="button" onClick={handleCancel}>취소하기</CancelButton>
+                  <CancelButton type="button" onClick={handleCancel}>
+                    취소하기
+                  </CancelButton>
                 )}
-                <StyledButton type="submit">{noticeId ? "수정하기" : "게시하기"}</StyledButton>
+                <StyledButton type="submit">
+                  {noticeId ? "수정하기" : "게시하기"}
+                </StyledButton>
               </ButtonContainer>
-              </form>
-            </Container>
-          </main>
-        </div>
-        <NoticeCreateModal isOpen={isCreateModalOpen} onClose={handleCloseModal} isEditMode={isEditMode} />
+            </form>
+          </Container>
+        </main>
+      </div>
+      <NoticeCreateModal
+        isOpen={isCreateModalOpen}
+        onClose={handleCloseModal}
+        isEditMode={isEditMode}
+      />
     </div>
   );
 };

@@ -4,12 +4,12 @@ import api from "../api/api";
 import { UsersContext } from "../contexts/usersContext";
 import TopBar from "../ui/TopBar";
 import ClassTopbar from "../ui/class/ClassTopbar";
-import { PageLayout } from "../ui/class/ClassLayout";  
+import { PageLayout } from "../ui/class/ClassLayout";
 import { getMyCourses } from "../api/classApi";
 import { ModalOverlay, AlertModalContainer } from "../ui/modal/ModalStyles";
 
 export default function Class() {
-  const { courseId: paramCourseId } = useParams(); 
+  const { courseId: paramCourseId } = useParams();
   const navigate = useNavigate();
   const { user } = useContext(UsersContext);
 
@@ -35,21 +35,35 @@ export default function Class() {
           try {
             // 사용자가 수강 중인 강의 목록 가져오기
             const myCourses = await getMyCourses(user.userId);
-            const currentCourse = myCourses.find(course => course.courseId === Number(selectedCourseId));
+            const currentCourse = myCourses.find(
+              (course) => course.courseId === Number(selectedCourseId),
+            );
             const isEnrolled = !!currentCourse;
             const isAssignmentPublic = currentCourse?.isAssignmentPublic;
 
-            const restrictedPaths = ['/overview/info', '/overview/notice', '/curriculum/', '/admin/'];
+            const restrictedPaths = [
+              "/overview/info",
+              "/overview/notice",
+              "/curriculum/",
+              "/admin/",
+            ];
             const currentPath = window.location.pathname;
-            const isRestrictedPath = restrictedPaths.some(path => currentPath.includes(path));
+            const isRestrictedPath = restrictedPaths.some((path) =>
+              currentPath.includes(path),
+            );
 
             if (!isCreator && isRestrictedPath) {
-              const isOverviewOrCurriculum = ['/overview/', '/curriculum/'].some(path => currentPath.includes(path));
+              const isOverviewOrCurriculum = [
+                "/overview/",
+                "/curriculum/",
+              ].some((path) => currentPath.includes(path));
               if (isOverviewOrCurriculum && !isEnrolled) {
-                setModalMessage('강의 참여자가 아닙니다. 강의 목록으로 이동합니다.');
+                setModalMessage(
+                  "강의 참여자가 아닙니다. 강의 목록으로 이동합니다.",
+                );
                 setShowModal(true);
               } else if (!isOverviewOrCurriculum && !isAssignmentPublic) {
-                setModalMessage('접근오류로 강의 목록으로 이동합니다.');
+                setModalMessage("접근오류로 강의 목록으로 이동합니다.");
                 setShowModal(true);
               }
             }
@@ -74,7 +88,7 @@ export default function Class() {
 
   const handleModalClose = () => {
     setShowModal(false);
-    navigate('/class/list');
+    navigate("/class/list");
   };
 
   if (loading) return <div></div>;
@@ -84,17 +98,23 @@ export default function Class() {
     <div>
       <TopBar />
       <PageLayout>
-        <ClassTopbar selectedCourseId={selectedCourseId} onCourseChange={handleCourseChange} isCreator={isCreator} />
+        <ClassTopbar
+          selectedCourseId={selectedCourseId}
+          onCourseChange={handleCourseChange}
+          isCreator={isCreator}
+        />
         <Outlet context={{ courseData, isCreator }} />
       </PageLayout>
       {showModal && (
-            <ModalOverlay>
-              <AlertModalContainer>
-                <div className="text">{modalMessage}</div>
-                <div className="close-button" onClick={handleModalClose}>확인</div>
-              </AlertModalContainer>
-          </ModalOverlay>
-        )}
+        <ModalOverlay>
+          <AlertModalContainer>
+            <div className="text">{modalMessage}</div>
+            <div className="close-button" onClick={handleModalClose}>
+              확인
+            </div>
+          </AlertModalContainer>
+        </ModalOverlay>
+      )}
     </div>
   );
 }

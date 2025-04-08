@@ -167,8 +167,8 @@ const ClassSummary = () => {
       setCurrentTime(
         `${formattedTime} ${now.getHours()}:${String(now.getMinutes()).padStart(
           2,
-          "0"
-        )}`
+          "0",
+        )}`,
       );
     };
 
@@ -180,7 +180,7 @@ const ClassSummary = () => {
     const fetchAssignmentStats = async () => {
       try {
         const response = await api.get(
-          `/statistics/courses/${courseId}/assignments`
+          `/statistics/courses/${courseId}/assignments`,
         );
         if (response.data.success) {
           setAssignments(response.data.data);

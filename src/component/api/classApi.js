@@ -38,4 +38,3 @@ export const getCourseNameandEntryCode = async (courseId) => {
     return null;
   }
 };
-

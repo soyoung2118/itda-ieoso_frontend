@@ -56,10 +56,10 @@ const ClassTitleContainer = styled.div`
     text-overflow: ellipsis;
 
     @media (max-width: 768px) {
-        max-width: 13ch;
+      max-width: 13ch;
     }
 
-    @media all and (max-width: 479px){
+    @media all and (max-width: 479px) {
       max-width: 18ch;
       font-size: 18px;
     }
@@ -144,7 +144,6 @@ const TabLinkContainer = styled.div`
   gap: clamp(1rem, 2vw, 2rem);
   white-space: nowrap;
 
-
   @media all and (max-width: 479px) {
     font-size: 16px;
     gap: 15px;
@@ -160,7 +159,7 @@ const TabLink = styled(NavLink)`
   font-weight: bold;
   position: relative;
 
- &.active {
+  &.active {
     color: var(--black-color);
     border-bottom: 3px solid var(--black-color);
     margin-bottom: -18px;
@@ -170,7 +169,7 @@ const TabLink = styled(NavLink)`
     }
   }
 
-/* 화면이 768px보다 작아지면 고정 너비 해제 + 최소 너비만 지정 */
+  /* 화면이 768px보다 작아지면 고정 너비 해제 + 최소 너비만 지정 */
   @media (max-width: 768px) {
     font-size: 18px;
     &.active {
@@ -223,21 +222,21 @@ const ClassTopbar = ({ onCourseChange, isCreator }) => {
       if (!user?.userId) return;
       const courses = await getMyCoursesTitles(user.userId);
       setClassOptions(courses);
-  
+
       const foundCourse = courses.find(
-        (course) => String(course.courseId) === String(courseId)
+        (course) => String(course.courseId) === String(courseId),
       );
       setCurrentCourse(foundCourse || null);
     };
-  
+
     fetchClasses();
-  }, [user?.userId, courseId]);  
+  }, [user?.userId, courseId]);
 
   useEffect(() => {
     const checkScrollable = () => {
       if (tabRef.current) {
         setIsScrollable(
-          tabRef.current.scrollWidth > tabRef.current.clientWidth
+          tabRef.current.scrollWidth > tabRef.current.clientWidth,
         );
       }
     };
@@ -272,7 +271,12 @@ const ClassTopbar = ({ onCourseChange, isCreator }) => {
   const getActiveTab = () => {
     if (location.pathname.includes("/overview/info")) return "info";
     if (location.pathname.includes("/overview/notice")) return "notice";
-    if (location.pathname.includes("/curriculum") || location.pathname.includes("/playing") || location.pathname.includes("/submit")) return "curriculum";
+    if (
+      location.pathname.includes("/curriculum") ||
+      location.pathname.includes("/playing") ||
+      location.pathname.includes("/submit")
+    )
+      return "curriculum";
     if (location.pathname.includes("/admin")) return "admin";
     return "";
   };
@@ -280,7 +284,9 @@ const ClassTopbar = ({ onCourseChange, isCreator }) => {
   return (
     <Navbar>
       <LeftContainer>
-        <Container style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+        <Container
+          style={{ display: "flex", alignItems: "center", gap: "1rem" }}
+        >
           <span
             className="material-symbols-outlined"
             style={{ fontSize: "1.8rem", cursor: "pointer" }}
@@ -292,7 +298,7 @@ const ClassTopbar = ({ onCourseChange, isCreator }) => {
           <ClassTitleContainer onClick={handleDropdownToggle} ref={iconRef}>
             <span className="course-title">
               {classOptions.find(
-                (course) => String(course.courseId) === String(courseId)
+                (course) => String(course.courseId) === String(courseId),
               )?.courseTitle || "강의실 선택"}
             </span>
             <DropdownButton>

@@ -19,14 +19,9 @@ const ClassStudents = () => {
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      const formattedTime = `${now.getFullYear()}.${
-        now.getMonth() + 1
-      }.${now.getDate()}`;
+      const formattedTime = `${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()}`;
       setCurrentTime(
-        `${formattedTime} ${now.getHours()}:${String(now.getMinutes()).padStart(
-          2,
-          "0"
-        )}`
+        `${formattedTime} ${now.getHours()}:${String(now.getMinutes()).padStart(2, "0")}`,
       );
     };
 
@@ -39,7 +34,7 @@ const ClassStudents = () => {
     const fetchAssignments = async () => {
       try {
         const response = await api.get(
-          `/statistics/courses/${courseId}/assignments/submissions`
+          `/statistics/courses/${courseId}/assignments/submissions`,
         );
 
         if (response.data.success) {
@@ -54,7 +49,7 @@ const ClassStudents = () => {
           });
 
           setStudents(
-            [...studentMap].map(([userId, name]) => ({ userId, name }))
+            [...studentMap].map(([userId, name]) => ({ userId, name })),
           );
 
           const studentAssignments = assignments.flatMap((assignment) =>
@@ -67,7 +62,7 @@ const ClassStudents = () => {
                 submittedAt: result.submittedAt,
                 status: result.status,
                 textContent: result.textContent,
-              }))
+              })),
           );
 
           if (studentAssignments.length > 0) {
@@ -141,7 +136,7 @@ const ClassStudents = () => {
                 key={student.userId}
                 onClick={() =>
                   navigate(
-                    `/class/${courseId}/admin/students/${student.userId}`
+                    `/class/${courseId}/admin/students/${student.userId}`,
                   )
                 }
                 selected={student.userId.toString() === studentId}
@@ -162,7 +157,7 @@ const ClassStudents = () => {
                       <p>
                         {submission.submittedAt
                           ? new Date(
-                              submission.submittedAt
+                              submission.submittedAt,
                             ).toLocaleDateString()
                           : ""}
                       </p>
@@ -586,7 +581,7 @@ const TextContent = styled.div`
   @media (max-width: 376px) {
     margin-top: -0.5vh;
     padding: 1.4vh 1.1vh;
-    font-size:7.6px;
+    font-size: 7.6px;
     border-radius: 4px;
   }
 `;

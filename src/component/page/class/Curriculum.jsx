@@ -170,7 +170,7 @@ const LectureDescriptionSection = styled.div`
     box-sizing: border-box;
   }
 
-   @media (max-width: 376px) {
+  @media (max-width: 376px) {
     margin: 2.3vh 0vh;
   }
 `;
@@ -494,7 +494,7 @@ const Curriculum = () => {
     submissions: [],
   });
   const [activeLectureId, setActiveLectureId] = useState(
-    Number(lectureId) || 1
+    Number(lectureId) || 1,
   );
   const [activeLecture, setActiveLecture] = useState(null);
 
@@ -509,10 +509,10 @@ const Curriculum = () => {
     async function fetchData() {
       try {
         const curriculumRes = await api.get(
-          `/lectures/curriculum/${courseId}/${userId}`
+          `/lectures/curriculum/${courseId}/${userId}`,
         );
         const historyRes = await api.get(
-          `/lectures/history/${courseId}/${userId}`
+          `/lectures/history/${courseId}/${userId}`,
         );
 
         if (curriculumRes.data.success) {
@@ -554,7 +554,7 @@ const Curriculum = () => {
                 checked: false,
               })),
             ].sort(
-              (a, b) => (a.contentOrderIndex || 0) - (b.contentOrderIndex || 0)
+              (a, b) => (a.contentOrderIndex || 0) - (b.contentOrderIndex || 0),
             ),
           });
         }
@@ -576,12 +576,12 @@ const Curriculum = () => {
 
       if (sub.contentType === "material") {
         const materialHistory = historyData.materials.find(
-          (m) => m.materialId === sub.materialId
+          (m) => m.materialId === sub.materialId,
         );
         isChecked = materialHistory?.materialHistoryStatus || false;
       } else if (sub.contentType === "assignment") {
         const assignmentHistory = historyData.submissions.find(
-          (a) => a.assignmentId === sub.assignmentId
+          (a) => a.assignmentId === sub.assignmentId,
         );
         isChecked =
           assignmentHistory?.submissionStatus === "SUBMITTED" ||
@@ -616,8 +616,8 @@ const Curriculum = () => {
         historyData.materials.some(
           (history) =>
             history.materialId === material.materialId &&
-            history.materialHistoryStatus
-        )
+            history.materialHistoryStatus,
+        ),
       );
 
       const allAssignmentsSubmitted = lectureAssignments.every((assignment) =>
@@ -625,8 +625,8 @@ const Curriculum = () => {
           (history) =>
             history.assignmentId === assignment.assignmentId &&
             (history.submissionStatus === "SUBMITTED" ||
-              history.submissionStatus === "LATE")
-        )
+              history.submissionStatus === "LATE"),
+        ),
       );
 
       completedStatus[lecture.lectureId] =
@@ -646,7 +646,9 @@ const Curriculum = () => {
         now.getTime() < startDate.getTime() ||
         now.getTime() > endDate.getTime()
       ) {
-        setAlertMessage(`이 콘텐츠는 ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()}까지만 접근 가능합니다.`);
+        setAlertMessage(
+          `이 콘텐츠는 ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()}까지만 접근 가능합니다.`,
+        );
         setShowAlertModal(true);
         return;
       }
@@ -655,16 +657,18 @@ const Curriculum = () => {
     } else if (sub.contentType === "assignment") {
       if (isCreator) {
         navigate(
-          `/class/${courseId}/assignment/submit/${activeLectureId}/${sub.assignmentId}`
+          `/class/${courseId}/assignment/submit/${activeLectureId}/${sub.assignmentId}`,
         );
       }
       if (now.getTime() < startDate.getTime()) {
-        setAlertMessage(`이 과제는 ${startDate.toLocaleString()} 이후에 제출할 수 있습니다.`);
+        setAlertMessage(
+          `이 과제는 ${startDate.toLocaleString()} 이후에 제출할 수 있습니다.`,
+        );
         setShowAlertModal(true);
         return;
       }
       navigate(
-        `/class/${courseId}/assignment/submit/${activeLectureId}/${sub.assignmentId}`
+        `/class/${courseId}/assignment/submit/${activeLectureId}/${sub.assignmentId}`,
       );
     }
   };
@@ -678,7 +682,9 @@ const Curriculum = () => {
       now.getTime() < startDate.getTime() ||
       now.getTime() > endDate.getTime()
     ) {
-      setAlertMessage(`이 자료는 ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()}까지만 다운로드 가능합니다.`);
+      setAlertMessage(
+        `이 자료는 ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()}까지만 다운로드 가능합니다.`,
+      );
       setShowAlertModal(true);
       return;
     }
@@ -728,7 +734,7 @@ const Curriculum = () => {
   const filteredSubSections = isCreator
     ? activeLecture?.subSections
     : activeLecture?.subSections.filter((sub) =>
-        Object.values(sub).every((value) => value !== null)
+        Object.values(sub).every((value) => value !== null),
       );
 
   const truncatedText = (text) => {
@@ -908,7 +914,12 @@ const Curriculum = () => {
           <AlertModalContainer>
             <div className="text">{alertMessage}</div>
             <div className="button-container">
-              <button className="close-button" onClick={() => setShowAlertModal(false)}>확인</button>
+              <button
+                className="close-button"
+                onClick={() => setShowAlertModal(false)}
+              >
+                확인
+              </button>
             </div>
           </AlertModalContainer>
         </ModalOverlay>

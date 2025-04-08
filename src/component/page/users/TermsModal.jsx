@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import Modal from "react-modal";
 import styled from "styled-components";
 
@@ -14,15 +14,15 @@ const ModalContainer = styled.div`
   flex-direction: column;
   height: 100%;
 
-  /* 태블릿 가로 (해상도 768px ~ 1023px)*/ 
-  @media all and (min-width:768px) and (max-width:1023px) { 
+  /* 태블릿 가로 (해상도 768px ~ 1023px)*/
+  @media all and (min-width: 768px) and (max-width: 1023px) {
     width: 500px;
     height: 400px;
     padding: 40px 40px 15px;
-  } 
+  }
 
-  /* 모바일 세로 (해상도 ~ 479px)*/ 
-  @media all and (max-width:479px) {
+  /* 모바일 세로 (해상도 ~ 479px)*/
+  @media all and (max-width: 479px) {
     width: 200px;
     height: 350px;
     padding: 30px;
@@ -36,8 +36,8 @@ const ModalHeader = styled.div`
   align-items: center;
   margin-bottom: 20px;
 
-  /* 모바일 세로 (해상도 ~ 479px)*/ 
-  @media all and (max-width:479px) {
+  /* 모바일 세로 (해상도 ~ 479px)*/
+  @media all and (max-width: 479px) {
     margin-bottom: 10px;
   }
 `;
@@ -52,12 +52,12 @@ const CloseButton = styled.span`
   right: 30px;
   font-size: 1.5rem;
   cursor: pointer;
-    
-  /* 태블릿 가로 (해상도 768px ~ 1023px)*/ 
-  @media all and (min-width:768px) and (max-width:1023px) { 
+
+  /* 태블릿 가로 (해상도 768px ~ 1023px)*/
+  @media all and (min-width: 768px) and (max-width: 1023px) {
     top: 35px;
     right: 45px;
-  } 
+  }
 `;
 
 const TermsContent = styled.div`
@@ -68,8 +68,8 @@ const TermsContent = styled.div`
   overflow-y: auto;
   max-height: 400px;
 
-  /* 모바일 세로 (해상도 ~ 479px)*/ 
-  @media all and (max-width:479px) {
+  /* 모바일 세로 (해상도 ~ 479px)*/
+  @media all and (max-width: 479px) {
     font-size: 12px;
   }
 `;
@@ -77,9 +77,9 @@ const TermsContent = styled.div`
 const TermsList = ({ text }) => {
   const items = text
     .split(/\n\s*\n/)
-    .map(item => item.trim())
-    .filter(item => item !== '');
-    
+    .map((item) => item.trim())
+    .filter((item) => item !== "");
+
   return (
     <StyledList>
       {items.map((item, index) => (
@@ -111,17 +111,17 @@ const TermsModal = ({ title, content, onClose }) => {
       onRequestClose={onClose}
       style={{
         overlay: {
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         },
         content: {
-          inset: 'auto',
-          padding: '0',
-          border: 'none',
-          overflow: 'hidden',
-          borderRadius: '10px',
+          inset: "auto",
+          padding: "0",
+          border: "none",
+          overflow: "hidden",
+          borderRadius: "10px",
         },
       }}
     >

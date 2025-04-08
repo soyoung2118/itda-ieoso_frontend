@@ -312,13 +312,13 @@ const CurriculumSidebar = ({
             id: a.contentOrderId,
           })),
         ].sort(
-          (a, b) => (a.contentOrderIndex || 0) - (b.contentOrderIndex || 0)
+          (a, b) => (a.contentOrderIndex || 0) - (b.contentOrderIndex || 0),
         );
 
         const filteredSubSections = isCreator
           ? subSections
           : subSections.filter((sub) =>
-              Object.values(sub).every((value) => value !== null)
+              Object.values(sub).every((value) => value !== null),
             );
 
         return (
@@ -334,8 +334,8 @@ const CurriculumSidebar = ({
                     completedLectures[section.lectureId]
                       ? DoneSection
                       : activeItem === section.lectureId
-                      ? SelectedSection
-                      : UnselectedSection
+                        ? SelectedSection
+                        : UnselectedSection
                   }
                 />
               )}
@@ -409,9 +409,9 @@ CurriculumSidebar.propTypes = {
           videoTitle: PropTypes.string,
           materialTitle: PropTypes.string,
           assignmentTitle: PropTypes.string,
-        })
+        }),
       ).isRequired,
-    })
+    }),
   ).isRequired,
   activeItem: PropTypes.number,
   setActiveItem: PropTypes.func.isRequired,
