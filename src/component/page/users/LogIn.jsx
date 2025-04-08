@@ -23,6 +23,7 @@ import {
     GoogleButton,
     GoogleIcon,
 } from "../../../style/Styles";
+import { ModalOverlay, AlertModalContainer } from "../../ui/modal/ModalStyles";
 import { login, getUsersInfo } from "../../api/usersApi";
 import { UsersContext } from "../../contexts/usersContext";
 
@@ -32,6 +33,8 @@ export default function LogIn() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [showAlertModal, setShowAlertModal] = useState(false);
+    const [alertMessage, setAlertMessage] = useState("");
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -56,13 +59,15 @@ export default function LogIn() {
 
             if (error.config && error.config.url.includes('/login')) {
                 if (error.response?.status === 401) {
-                    alert('이메일 또는 비밀번호가 잘못되었습니다.');
+                    setAlertMessage('이메일 또는 비밀번호가 잘못되었습니다.');
+                    setShowAlertModal(true);
                 } else {
-                    alert(error.response?.data?.message || '로그인 중 오류가 발생했습니다.');
+                    setAlertMessage(error.response?.data?.message || '로그인 중 오류가 발생했습니다.');
+                    setShowAlertModal(true);
                 }
             } else {
-                alert('다른 API 호출 중 오류가 발생했습니다. 메인 페이지로 이동합니다.');
-                window.location.href = '/';
+                setAlertMessage('다른 API 호출 중 오류가 발생했습니다. 메인 페이지로 이동합니다.');
+                setShowAlertModal(true);
             }
         }
     };
@@ -150,6 +155,16 @@ export default function LogIn() {
                     </Form>
                 </SignUpContainer>
             </Container>
+            {showAlertModal && (
+                <ModalOverlay>
+                    <AlertModalContainer>
+                        <div className="text">{alertMessage}</div>
+                        <div className="button-container">
+                            <button className="close-button" onClick={() => setShowAlertModal(false)}>확인</button>
+                        </div>
+                    </AlertModalContainer>
+                </ModalOverlay>
+            )}
         </>
     );
 }

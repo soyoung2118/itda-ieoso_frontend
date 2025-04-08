@@ -90,6 +90,7 @@ export const AlertModalContainer = styled.div`
   max-width: 300px;
   font-size: 1rem;
   position: relative;
+  white-space: pre-wrap;
     
   /* 모바일 세로 (해상도 ~ 479px)*/ 
   @media all and (max-width:479px) {

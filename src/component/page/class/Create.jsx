@@ -8,6 +8,8 @@ import CustomTimePicker from "../../ui/CustomTimePicker";
 import "../../../style/react-datepicker.css";
 import api from "../../api/api";
 import { UsersContext } from '../../contexts/usersContext';
+import { ModalOverlay, AlertModalContainer } from '../../ui/modal/ModalStyles';
+import PropTypes from 'prop-types';
 
 export default function Create() {
   const navigate = useNavigate();
@@ -29,6 +31,8 @@ export default function Create() {
   });
   let [titleInputCount, setTitleInputCount] = useState(form.coursename.length);
   let [instructorInputCount, setInstructorInputCount] = useState(form.instructor.length);
+  const [showAlertModal, setShowAlertModal] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
 
   useEffect(() => {
     setTitleInputCount(form.coursename.length);
@@ -88,47 +92,56 @@ const handleAssignmentTimeChange = (timeString) => {
 
   const handleSubmit = async () => {
     if (!form.coursename.trim()) {
-      alert('강의명을 입력해주세요.');
+      setAlertMessage('강의명을 입력해주세요.');
+      setShowAlertModal(true);
       return;
     }
 
     if (!form.instructor.trim()) {
-      alert('강의자명을 입력해주세요.');
+      setAlertMessage('강의자명을 입력해주세요.');
+      setShowAlertModal(true);
       return;
     }
 
     if (!form.startDate) {
-      alert('커리큘럼 시작일을 선택해주세요.');
+      setAlertMessage('커리큘럼 시작일을 선택해주세요.');
+      setShowAlertModal(true);
       return;
     }
 
     if ((form.durationWeeks % 1)) {
-      alert('커리큘럼 주차는 정수로 입력해주세요.');
+      setAlertMessage('커리큘럼 주차는 정수로 입력해주세요.');
+      setShowAlertModal(true);
       return;
     }
 
     if (form.durationWeeks < 1 || form.durationWeeks > 12) {
-      alert('커리큘럼 주차는 1~12주차까지 입력 가능해요.');
+      setAlertMessage('커리큘럼 주차는 1~12주차까지 입력 가능해요.');
+      setShowAlertModal(true);
       return;
     }
 
     if(!isLecturePending && form.lectureDays.length === 0) {
-      alert('강의 요일을 선택하세요.');
+      setAlertMessage('강의 요일을 선택하세요.');
+      setShowAlertModal(true);
       return;
     }
 
     if(!isLecturePending && !form.lectureTime) {
-      alert('강의 시간을 선택하세요');
+      setAlertMessage('강의 시간을 선택하세요');
+      setShowAlertModal(true);
       return;
     }
 
     if(!isAssignmentPending && form.assignmentDays.length === 0) {
-      alert('과제 요일을 선택하세요.');
+      setAlertMessage('과제 요일을 선택하세요.');
+      setShowAlertModal(true);
       return;
     }
 
     if(!isAssignmentPending && !form.assignmentTime) {
-      alert('과제 시간을 선택하세요');
+      setAlertMessage('과제 시간을 선택하세요');
+      setShowAlertModal(true);
       return;
     }
 
@@ -181,7 +194,8 @@ const handleAssignmentTimeChange = (timeString) => {
   
     } catch (error) {
       console.error('강의실 생성 실패:', error);
-      alert(error.message || '강의실 생성 중 오류가 발생했습니다.');
+      setAlertMessage(error.message || '강의실 생성 중 오류가 발생했습니다.');
+      setShowAlertModal(true);
     }
   };
 
@@ -207,6 +221,13 @@ const handleAssignmentTimeChange = (timeString) => {
       </CalendarIcon>
     </InputGroup>
   ));
+
+  CustomInput.displayName = 'CustomInput';
+
+  CustomInput.propTypes = {
+    value: PropTypes.string.isRequired,
+    onClick: PropTypes.func.isRequired,
+  };
 
   return (
     <>
@@ -454,6 +475,16 @@ const handleAssignmentTimeChange = (timeString) => {
         </Section>
         <CreateButton onClick={handleSubmit}>강의실 만들기</CreateButton>
       </Container>
+      {showAlertModal && (
+        <ModalOverlay>
+          <AlertModalContainer>
+            <div className="text">{alertMessage}</div>
+            <div className="button-container">
+              <button className="close-button" onClick={() => setShowAlertModal(false)}>확인</button>
+            </div>
+          </AlertModalContainer>
+        </ModalOverlay>
+      )}
     </>
   );
 }

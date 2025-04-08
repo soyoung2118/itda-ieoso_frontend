@@ -23,6 +23,7 @@ import Close from "@mui/icons-material/Close";
 import api from "../../api/api";
 import { UsersContext } from "../../contexts/usersContext";
 import { getYouTubeThumbnail } from "../../ui/curriculum/EditableSection";
+import { ModalOverlay, AlertModalContainer } from "../../ui/modal/ModalStyles";
 
 const CurriculmContainer = styled.main`
   flex: 1;
@@ -501,6 +502,8 @@ const Curriculum = () => {
   const isCreator = context?.isCreator || false;
   const [allCompleted, setAllCompleted] = useState(false);
   const [allCompletedLectures, setAllCompletedLectures] = useState({});
+  const [showAlertModal, setShowAlertModal] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
 
   useEffect(() => {
     async function fetchData() {
@@ -643,9 +646,8 @@ const Curriculum = () => {
         now.getTime() < startDate.getTime() ||
         now.getTime() > endDate.getTime()
       ) {
-        alert(
-          `이 콘텐츠는 ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()}까지만 접근 가능합니다.`
-        );
+        setAlertMessage(`이 콘텐츠는 ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()}까지만 접근 가능합니다.`);
+        setShowAlertModal(true);
         return;
       }
 
@@ -657,9 +659,8 @@ const Curriculum = () => {
         );
       }
       if (now.getTime() < startDate.getTime()) {
-        alert(
-          `이 과제는 ${startDate.toLocaleString()} 이후에 제출할 수 있습니다.`
-        );
+        setAlertMessage(`이 과제는 ${startDate.toLocaleString()} 이후에 제출할 수 있습니다.`);
+        setShowAlertModal(true);
         return;
       }
       navigate(
@@ -677,9 +678,8 @@ const Curriculum = () => {
       now.getTime() < startDate.getTime() ||
       now.getTime() > endDate.getTime()
     ) {
-      alert(
-        `이 자료는 ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()}까지만 다운로드 가능합니다.`
-      );
+      setAlertMessage(`이 자료는 ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()}까지만 다운로드 가능합니다.`);
+      setShowAlertModal(true);
       return;
     }
 
@@ -901,6 +901,17 @@ const Curriculum = () => {
           to={`/class/${courseId}/curriculum/${activeLectureId}/edit`}
           edit={true}
         />
+      )}
+
+      {showAlertModal && (
+        <ModalOverlay>
+          <AlertModalContainer>
+            <div className="text">{alertMessage}</div>
+            <div className="button-container">
+              <button className="close-button" onClick={() => setShowAlertModal(false)}>확인</button>
+            </div>
+          </AlertModalContainer>
+        </ModalOverlay>
       )}
     </div>
   );
