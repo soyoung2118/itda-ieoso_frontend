@@ -186,6 +186,10 @@ const SectionIcon = styled.img`
   @media (max-width: 480px) {
     width: 2vh;
   }
+
+  @media (max-width: 440px) {
+    width: 1.2vh;
+  }
 `;
 
 const Icon = styled.img`
@@ -200,6 +204,10 @@ const Icon = styled.img`
 
   @media (max-width: 480px) {
     width: 2.2vh;
+  }
+
+  @media (max-width: 440px) {
+    width: 1.25vh;
   }
 `;
 
