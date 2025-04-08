@@ -1,8 +1,7 @@
   import { useState, useEffect, useContext } from "react";
   import { useParams, useOutletContext } from "react-router-dom";
-import styled from "styled-components";
-import { ModalOverlay, ModalContent } from "../../ui/modal/ModalStyles";
-  //import ClassSidebar from "../../ui/class/ClassSidebar";
+  import styled from "styled-components";
+  import { ModalOverlay, ModalContent } from "../../ui/modal/ModalStyles";
   import { Section } from "../../ui/class/ClassLayout";
   import EditButton from "../../ui/class/EditButton";
   import api from "../../api/api";
@@ -22,6 +21,22 @@ import { ModalOverlay, ModalContent } from "../../ui/modal/ModalStyles";
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1.5rem;
+  `;
+
+  const NoticeContainer = styled.div`
+    flex: 1;
+    padding: 3.5vh;
+    border-radius: 8px;
+
+    @media (max-width: 1024px) {
+      padding: 3.25vh;
+    }
+
+  @media all and (max-width: 479px) {
+    justify-content: center;
+    padding: 0vh;
+    width: 100%;
+  }
   `;
 
   const NoticeList = styled.div`
@@ -61,7 +76,7 @@ import { ModalOverlay, ModalContent } from "../../ui/modal/ModalStyles";
     margin-bottom: 0.8rem;
 
     @media (max-width: 480px) {
-      font-size: 1.2rem;
+      font-size: 1rem;
     }
   `;
 
@@ -82,6 +97,10 @@ import { ModalOverlay, ModalContent } from "../../ui/modal/ModalStyles";
         display: none;
       }
     }
+
+    @media all and (max-width: 479px) {
+      font-size: 0.8rem;
+    }
   `;
 
   const NoticeViews = styled.div`
@@ -94,9 +113,17 @@ import { ModalOverlay, ModalContent } from "../../ui/modal/ModalStyles";
       font-size: 0.875rem;
       color: #474747;
       margin-top: 0.25rem;
+
+      @media all and (max-width: 479px) {
+        font-size: 0.7rem;
+      }
     }
 
     @media (max-width: 480px) {
+      font-size: 1rem;
+    }
+
+    @media all and (max-width: 479px) {
       font-size: 1rem;
     }
   `;
@@ -134,6 +161,11 @@ import { ModalOverlay, ModalContent } from "../../ui/modal/ModalStyles";
     @media (max-width: 480px) {
       font-size: 0.9rem;
     }
+
+    @media all and (max-width: 479px) {
+      font-size: 0.8rem;
+      white-space: normal;
+    }
   `;
 
   const Pagination = styled.div`
@@ -142,6 +174,10 @@ import { ModalOverlay, ModalContent } from "../../ui/modal/ModalStyles";
     align-items: center;
     gap: 0.8rem;
     margin: 2rem;
+
+    @media all and (max-width: 479px) {
+      margin: 1rem;
+    }
   `;
 
   const PageButton = styled.button`
@@ -306,8 +342,7 @@ import { ModalOverlay, ModalContent } from "../../ui/modal/ModalStyles";
 
     return (
           <div style={{ display: "flex", marginTop: "2rem" }}>
-        {/*<ClassSidebar style={{ marginRight: "2rem" }} />*/}
-            <main
+            <NoticeContainer
               style={{
                 flex: 1,
                 borderRadius: "8px",
@@ -405,7 +440,7 @@ import { ModalOverlay, ModalContent } from "../../ui/modal/ModalStyles";
                   </Pagination>
                 )}
               </Section>
-            </main>
+            </NoticeContainer>
         {isCreator && (
           <EditButton
             to={`/class/${courseId}/overview/notice/create`}
