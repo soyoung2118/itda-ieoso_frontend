@@ -288,7 +288,6 @@ const HeaderContainer = styled.div`
   border-radius: 10px;
 
   @media all and (max-width: 479px) {
-    display: block;
     padding: 5px;
   }
 `;
@@ -306,11 +305,7 @@ const HeaderTitle = styled.div`
 const TaskDate = styled.div`
   font-size: 14px;
   color: #ff4747;
-  margin: 3px 10px 0 10px;
-
-  @media all and (max-width: 479px) {
-    margin: 0 10px 10px;
-  }
+  margin: 3px 10px -3px 10px;
 `;
 
 const TaskListContainer = styled.div`
