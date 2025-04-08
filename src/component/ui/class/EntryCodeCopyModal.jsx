@@ -54,6 +54,10 @@ export default function EntryCodeCopyModal({ entrycode, onClose }) {
   const ModalText = styled.div`
     font-size: 25px;
     font-weight: bold;
+
+    @media (max-width: 480px) {
+        font-size: 20px;
+    }
   `;
   
   const ModalSmallText = styled.div`

@@ -94,6 +94,7 @@ export const AlertModalContainer = styled.div`
   /* 모바일 세로 (해상도 ~ 479px)*/ 
   @media all and (max-width:479px) {
     width: 150px;
+    padding: 30px 60px;
   }
 
   .text {
@@ -103,6 +104,7 @@ export const AlertModalContainer = styled.div`
 
     /* 모바일 세로 (해상도 ~ 479px)*/ 
     @media all and (max-width:479px) {
+      width: 100%;
         font-size: 13px;
     }
   }
