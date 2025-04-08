@@ -222,13 +222,15 @@ const ClassAssignmentSubmit = () => {
             </ClickContainer>
           </TitleContainer>
           {isMobile && (
-            <MobileToggleButton type="button" onClick={toggleSidebar}>
-              {isVisible ? (
-                <CloseIcon style={{ fontSize: "2.8vh" }} />
-              ) : (
-                <MenuIcon style={{ fontSize: "2.8vh" }} />
-              )}
-            </MobileToggleButton>
+            <MobileToggleButtonWrapper>
+              <MobileToggleButton type="button" onClick={toggleSidebar}>
+                {isVisible ? (
+                  <CloseIcon style={{ fontSize: "3.7vh" }} />
+                ) : (
+                <MenuIcon style={{ fontSize: "3.7vh" }} />
+                )}
+              </MobileToggleButton>
+            </MobileToggleButtonWrapper>
           )}
         </TopContainer>
 
@@ -431,6 +433,12 @@ const TopContainer = styled.div`
   margin-bottom: 26px;
   display: flex;
   justify-content: space-between;
+
+  @media all and (max-width: 479px) {
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
 `;
 
 const MainTitle = styled.div`
@@ -439,6 +447,11 @@ const MainTitle = styled.div`
   display: flex;
   align-items: center;
   margin-right: 5px;
+
+  @media all and (max-width: 479px) {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
 `;
 
 const ClickContainer = styled.div`

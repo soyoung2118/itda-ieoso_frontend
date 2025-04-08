@@ -37,8 +37,8 @@ const SidebarSlideWrapper = styled.div`
     position: fixed;
     top: 0;
     left: ${(props) => (props.show ? "0" : "-100%")};
-    width: 20%;
-    padding: 1rem 0.8rem;
+    width: 35%;
+    padding: 1rem 0;
     height: 100%;
     background-color: white;
     z-index: 1100;
@@ -71,7 +71,7 @@ const SidebarContainer = styled.aside`
   }
 
   @media (max-width: 376px) {
-    width: 90%;
+    width: 80%;
     height: 100%;
     margin-top: 2vh;
   }

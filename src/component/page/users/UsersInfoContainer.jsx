@@ -67,6 +67,11 @@ const Dropdown = styled.div`
     padding: 10px 15px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     z-index: 1000;
+
+    @media (max-width: 480px) {
+        padding: 10px 7px;
+        right: 10px;
+    }
 `;
 
 const DropdownContainer = styled.div`

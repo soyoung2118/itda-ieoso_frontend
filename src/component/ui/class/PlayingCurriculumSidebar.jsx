@@ -464,7 +464,11 @@ const RightContainer = styled.div`
 `;
 
 const CurriculumList = styled.div`
-  padding: 0 20px;
+  padding: 0 15px;
+
+  @media all and (max-width: 376px) {
+    padding: 0;
+  }
 `;
 
 const CurriculumItem = styled.div`
