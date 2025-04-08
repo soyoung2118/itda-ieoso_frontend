@@ -360,7 +360,7 @@ const WhiteBoxComponent = styled.div`
   background-color: #ffffff;
   height: 30vh;
   margin-bottom: 50px;
-  padding: 10px;
+  padding: 20px 10px;
 `;
 
 const NoticeContentContainer = styled.div`
