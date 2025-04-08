@@ -146,15 +146,30 @@ function App() {
             <Route path="overview/info" element={<ClassOverview />} />
             <Route path="overview/notice" element={<ClassNotice />} />
             <Route path="overview/notice/create" element={<NoticeCreate />} />
-            <Route path="overview/notice/edit/:noticeId" element={<NoticeCreate />} />
+            <Route
+              path="overview/notice/edit/:noticeId"
+              element={<NoticeCreate />}
+            />
             <Route path="curriculum/:lectureId" element={<ClassCurriculum />} />
-            <Route path="curriculum/:lectureId/edit" element={<ClassCurriculumEdit />} />
+            <Route
+              path="curriculum/:lectureId/edit"
+              element={<ClassCurriculumEdit />}
+            />
             <Route path="admin/summary" element={<ClassSummary />} />
             <Route path="admin/students" element={<ClassStudents />} />
-            <Route path="admin/students/:studentId" element={<StudentDetail />} />
+            <Route
+              path="admin/students/:studentId"
+              element={<StudentDetail />}
+            />
             <Route path="admin/setting" element={<Setting />} />
-            <Route path="playing/:lectureId/:videoId" element={<ClassPlaying />} />
-            <Route path="assignment/submit/:lectureId/:assignmentId" element={<ClassAssignmentSubmit />} />
+            <Route
+              path="playing/:lectureId/:videoId"
+              element={<ClassPlaying />}
+            />
+            <Route
+              path="assignment/submit/:lectureId/:assignmentId"
+              element={<ClassAssignmentSubmit />}
+            />
           </Route>
 
           <Route path="/dashboard" element={<Dashboard />} />

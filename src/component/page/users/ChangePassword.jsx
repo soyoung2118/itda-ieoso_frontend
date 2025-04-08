@@ -75,77 +75,77 @@ export default function ChangePassword() {
       <TopBar />
       <ChangePasswordContainer>
         <Container>
-        <LogoContainer>
-          <LogoImage src={logoImage} alt="logo" />
-          <LogoText>비밀번호 변경</LogoText>
-        </LogoContainer>
-            <ChangePasswordInputContainer>
-              <UserInfo>
-                <img
-                  src={userIcon}
-                  alt="user icon"
-                  className="user-info-profile"
-                />
-                <UserText>
-                  <div className="user-info-name">
-                    {user ? user.name : "이름 없음"}
-                  </div>
-                  <div className="user-info-email">
-                    {user ? user.email : "이메일 없음"}
-                  </div>
-                </UserText>
-              </UserInfo>
-              <Form onSubmit={handleChangePassword}>
-                <Label>기존 비밀번호</Label>
-                <ChangeInput
-                  type="text"
-                  placeholder="비밀번호를 설정해주세요."
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                />
-                <Label>새 비밀번호</Label>
-                <ChangeInput
-                  type="text"
-                  placeholder="비밀번호를 설정해주세요."
-                  onChange={(e) => setNewPassword(e.target.value)}
-                />
-                <ValidateMessage
-                  style={{
-                    color:
-                      newpassword.length > 0 && !validatePassword(newpassword)
-                        ? "var(--guide-red-color)"
-                        : "var(--guide-gray-color)",
-                  }}
-                >
-                  {newpassword.length === 0
+          <LogoContainer>
+            <LogoImage src={logoImage} alt="logo" />
+            <LogoText>비밀번호 변경</LogoText>
+          </LogoContainer>
+          <ChangePasswordInputContainer>
+            <UserInfo>
+              <img
+                src={userIcon}
+                alt="user icon"
+                className="user-info-profile"
+              />
+              <UserText>
+                <div className="user-info-name">
+                  {user ? user.name : "이름 없음"}
+                </div>
+                <div className="user-info-email">
+                  {user ? user.email : "이메일 없음"}
+                </div>
+              </UserText>
+            </UserInfo>
+            <Form onSubmit={handleChangePassword}>
+              <Label>기존 비밀번호</Label>
+              <ChangeInput
+                type="text"
+                placeholder="비밀번호를 설정해주세요."
+                onChange={(e) => setCurrentPassword(e.target.value)}
+              />
+              <Label>새 비밀번호</Label>
+              <ChangeInput
+                type="text"
+                placeholder="비밀번호를 설정해주세요."
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+              <ValidateMessage
+                style={{
+                  color:
+                    newpassword.length > 0 && !validatePassword(newpassword)
+                      ? "var(--guide-red-color)"
+                      : "var(--guide-gray-color)",
+                }}
+              >
+                {newpassword.length === 0
+                  ? "영문 대/소문자, 숫자, 특수문자를 조합하여 8자 이상 입력해주세요."
+                  : !validatePassword(newpassword)
                     ? "영문 대/소문자, 숫자, 특수문자를 조합하여 8자 이상 입력해주세요."
-                    : !validatePassword(newpassword)
-                      ? "영문 대/소문자, 숫자, 특수문자를 조합하여 8자 이상 입력해주세요."
-                      : "영문 대/소문자, 숫자, 특수문자를 조합하여 8자 이상 입력해주세요."}
-                </ValidateMessage>
-                <Label>새 비밀번호 확인</Label>
-                <ChangeInput
-                  type="text"
-                  placeholder="설정하신 비밀번호를 입력해주세요."
-                  onChange={(e) => setCheckNewPassword(e.target.value)}
-                />
-                <ValidateMessage
-                  style={{
-                    color:
-                      checknewpassword.length > 0 &&
-                      newpassword !== checknewpassword
-                        ? "var(--guide-red-color)"
-                        : "var(--guide-gray-color)",
-                  }}
-                >
-                  {checknewpassword.length === 0
-                    ? ""
-                    : newpassword !== checknewpassword
-                      ? "비밀번호가 일치하지 않아요."
-                      : ""}
-                </ValidateMessage>
-                <NextButton type="submit">비밀번호 변경 </NextButton>
-              </Form>
-            </ChangePasswordInputContainer>
+                    : "영문 대/소문자, 숫자, 특수문자를 조합하여 8자 이상 입력해주세요."}
+              </ValidateMessage>
+              <Label>새 비밀번호 확인</Label>
+              <ChangeInput
+                type="text"
+                placeholder="설정하신 비밀번호를 입력해주세요."
+                onChange={(e) => setCheckNewPassword(e.target.value)}
+              />
+              <ValidateMessage
+                style={{
+                  color:
+                    checknewpassword.length > 0 &&
+                    newpassword !== checknewpassword
+                      ? "var(--guide-red-color)"
+                      : "var(--guide-gray-color)",
+                }}
+              >
+                {checknewpassword.length === 0
+                  ? ""
+                  : newpassword !== checknewpassword
+                    ? "비밀번호가 일치하지 않아요."
+                    : ""}
+              </ValidateMessage>
+              <NextButton type="submit">비밀번호 변경 </NextButton>
+            </Form>
+          </ChangePasswordInputContainer>
         </Container>
       </ChangePasswordContainer>
       {isModalOpen && (
@@ -165,7 +165,7 @@ export default function ChangePassword() {
 }
 
 const ChangePasswordContainer = styled.div`
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -183,13 +183,13 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   min-width: 300px;
   width: 100%;
   max-width: 500px;
   height: calc(100vh - 7vh);
 
-  @media all and (max-width:479px) {
+  @media all and (max-width: 479px) {
     max-width: 300px;
   }
 `;
@@ -234,9 +234,9 @@ const ChangePasswordInputContainer = styled.div`
   max-width: 700px;
   box-sizing: border-box;
   /* padding: 0 20px; */
-  
-  /* 모바일 세로 (해상도 ~ 479px)*/ 
-  @media all and (max-width:479px) {
+
+  /* 모바일 세로 (해상도 ~ 479px)*/
+  @media all and (max-width: 479px) {
     padding: 0;
   }
 `;
@@ -246,21 +246,21 @@ const Form = styled.div`
 `;
 
 const ChangeInput = styled.input`
-    width: 100%;
-    padding: 0.7rem;
-    border: 1px solid #CDCDCD;
-    border-radius: 15px;
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-    box-sizing: border-box;
+  width: 100%;
+  padding: 0.7rem;
+  border: 1px solid #cdcdcd;
+  border-radius: 15px;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  box-sizing: border-box;
 
-    &::placeholder {
-        color: #CDCDCD;
-    }
-    /* 모바일 세로 (해상도 ~ 479px)*/ 
-    @media all and (max-width:479px) {
-        width: 100%;
-    }
+  &::placeholder {
+    color: #cdcdcd;
+  }
+  /* 모바일 세로 (해상도 ~ 479px)*/
+  @media all and (max-width: 479px) {
+    width: 100%;
+  }
 `;
 
 const NextButton = styled.button`

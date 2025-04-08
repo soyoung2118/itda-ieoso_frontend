@@ -32,7 +32,7 @@ const ClassPlaying = () => {
 
       try {
         const curriculumResponse = await api.get(
-          `/lectures/curriculum/${courseId}/${user.userId}`
+          `/lectures/curriculum/${courseId}/${user.userId}`,
         );
 
         if (curriculumResponse.data.success) {
@@ -40,14 +40,14 @@ const ClassPlaying = () => {
           setCurriculumData(curriculum);
 
           const currentLecture = curriculum.find(
-            (lecture) => lecture.lectureId === Number(lectureId)
+            (lecture) => lecture.lectureId === Number(lectureId),
           );
 
           if (currentLecture) {
             setCurrentLectureInfo(currentLecture);
 
             const currentVideo = currentLecture.videos.find(
-              (video) => video.videoId === Number(videoId)
+              (video) => video.videoId === Number(videoId),
             );
 
             if (currentVideo) {

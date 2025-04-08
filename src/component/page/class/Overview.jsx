@@ -75,7 +75,7 @@ const StyledButton = styled.a`
 
   .img {
     width: 49px;
-    
+
     @media (max-width: 1024px) {
       width: 35px;
     }
@@ -86,24 +86,24 @@ const StyledButton = styled.a`
 
     @media (max-width: 480px) {
       width: 42px;
-    } 
+    }
 
     @media (max-width: 376px) {
       width: 32px;
-    } 
+    }
   }
 
-  @media all and (max-width:1024px) {
+  @media all and (max-width: 1024px) {
     right: -0.8rem;
     width: 80px;
   }
 
-  @media all and (max-width:768px) {
+  @media all and (max-width: 768px) {
     right: 0.2rem;
     width: 75px;
   }
 
-  @media all and (max-width:479px) {
+  @media all and (max-width: 479px) {
     right: -1.5rem;
   }
 `;
@@ -365,19 +365,19 @@ const ClassOverview = () => {
         </Content>
       </main>
       {isCreator && (
-      <StyledButton
-        onClick={() => {
-          if (isEditing) {
-            handleSaveClick();
-          } else {
-            setIsEditing(true);
-          }
-        }}
-      >
-        <img
-          src={isEditing ? EditedBtn : EditBtn}
-          alt="Edit Button"
-          className="img"
+        <StyledButton
+          onClick={() => {
+            if (isEditing) {
+              handleSaveClick();
+            } else {
+              setIsEditing(true);
+            }
+          }}
+        >
+          <img
+            src={isEditing ? EditedBtn : EditBtn}
+            alt="Edit Button"
+            className="img"
           />
         </StyledButton>
       )}

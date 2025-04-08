@@ -227,7 +227,7 @@ const ClassAssignmentSubmit = () => {
                 {isVisible ? (
                   <CloseIcon style={{ fontSize: "3.7vh" }} />
                 ) : (
-                <MenuIcon style={{ fontSize: "3.7vh" }} />
+                  <MenuIcon style={{ fontSize: "3.7vh" }} />
                 )}
               </MobileToggleButton>
             </MobileToggleButtonWrapper>

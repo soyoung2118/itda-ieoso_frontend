@@ -197,7 +197,9 @@ const PlayingCurriculumSidebar = ({
       now.getTime() < startDate.getTime() ||
       now.getTime() > endDate.getTime()
     ) {
-      setAlertMessage(`이 콘텐츠는 ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()} 까지만 접근 가능합니다.`);
+      setAlertMessage(
+        `이 콘텐츠는 ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()} 까지만 접근 가능합니다.`,
+      );
       setShowAlertModal(true);
       return;
     }
@@ -215,7 +217,9 @@ const PlayingCurriculumSidebar = ({
       now.getTime() < startDate.getTime() ||
       now.getTime() > endDate.getTime()
     ) {
-      setAlertMessage(`이 자료는 ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()}까지만 다운로드 가능합니다.`);
+      setAlertMessage(
+        `이 자료는 ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()}까지만 다운로드 가능합니다.`,
+      );
       setShowAlertModal(true);
       return;
     }
@@ -272,7 +276,9 @@ const PlayingCurriculumSidebar = ({
     const endDate = new Date(assignment.endDate);
 
     if (now.getTime() < startDate.getTime()) {
-      setAlertMessage(`이 콘텐츠는 ${startDate.toLocaleString()} 부터 접근 가능합니다.`);
+      setAlertMessage(
+        `이 콘텐츠는 ${startDate.toLocaleString()} 부터 접근 가능합니다.`,
+      );
       setShowAlertModal(true);
       return;
     }
@@ -438,7 +444,12 @@ const PlayingCurriculumSidebar = ({
           <AlertModalContainer>
             <div className="text">{alertMessage}</div>
             <div className="button-container">
-              <button className="close-button" onClick={() => setShowAlertModal(false)}>확인</button>
+              <button
+                className="close-button"
+                onClick={() => setShowAlertModal(false)}
+              >
+                확인
+              </button>
             </div>
           </AlertModalContainer>
         </ModalOverlay>

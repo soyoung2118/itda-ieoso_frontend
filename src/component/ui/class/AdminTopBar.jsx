@@ -21,7 +21,7 @@ const Container = styled.div`
     padding: 0 0.5rem;
   }
 
-  @media all and (max-width:479px) {
+  @media all and (max-width: 479px) {
     padding: 0;
   }
 `;
@@ -76,7 +76,7 @@ const TabContainer = styled.nav`
     gap: 0.5rem;
   }
 
-  @media all and (max-width:479px) {
+  @media all and (max-width: 479px) {
     gap: 0.2rem;
     margin-bottom: 5px;
   }
@@ -205,11 +205,10 @@ const ShareDropdownContainer = styled.div`
     margin-top: 5px;
     border-radius: 15px;
   }
-  
 
-  @media all and (max-width:479px) {
-      top: 350px;
-      right: 40px;
+  @media all and (max-width: 479px) {
+    top: 350px;
+    right: 40px;
   }
 `;
 
@@ -227,7 +226,7 @@ const AdminTopBar = ({ activeTab }) => {
   const [currentCourse, setCurrentCourse] = useState(null);
   const dropdownRef = useRef(null);
   const iconRef = useRef(null);
-  
+
   useEffect(() => {
     if (!user?.userId) return;
 
@@ -265,7 +264,7 @@ const AdminTopBar = ({ activeTab }) => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
-        dropdownRef.current && 
+        dropdownRef.current &&
         !dropdownRef.current.contains(event.target) &&
         iconRef.current &&
         !iconRef.current.contains(event.target)
@@ -348,37 +347,49 @@ const AdminTopBar = ({ activeTab }) => {
         <IconContainer>
           {currentCourse?.isCreator && (
             <>
-          <Icon 
-            className="material-icons" 
-            src={Delete} 
-            alt="delete icon" 
-            onClick={() => {
-              setShowDeleteModal(true);
-            }}
-          />
-          <Icon 
-            className="material-icons" 
-            src={Share} 
-            alt="share icon" 
-            onClick={handleIconClick}
-            ref={iconRef}
-          />
-          {showDropdown && (
-            <ShareDropdownContainer ref={dropdownRef}>
-              <text>강의실 링크</text>
-              <div className="shareinfo">
-                <span>www.eduitda.com</span>
-                <button onClick={() => navigator.clipboard.writeText('www.eduitda.com')}>URL 복사</button>
-              </div>
-              <text>강의실 코드</text>
-              <div className="shareinfo">
-                <span>{entryCode}</span>
-                <button onClick={() => navigator.clipboard.writeText(entryCode)}>코드 복사</button>
-              </div>
-              <button className="invite-button" onClick={handleShare}>강의실 초대하기</button>
-            </ShareDropdownContainer>
-          )}  
-          </>
+              <Icon
+                className="material-icons"
+                src={Delete}
+                alt="delete icon"
+                onClick={() => {
+                  setShowDeleteModal(true);
+                }}
+              />
+              <Icon
+                className="material-icons"
+                src={Share}
+                alt="share icon"
+                onClick={handleIconClick}
+                ref={iconRef}
+              />
+              {showDropdown && (
+                <ShareDropdownContainer ref={dropdownRef}>
+                  <text>강의실 링크</text>
+                  <div className="shareinfo">
+                    <span>www.eduitda.com</span>
+                    <button
+                      onClick={() =>
+                        navigator.clipboard.writeText("www.eduitda.com")
+                      }
+                    >
+                      URL 복사
+                    </button>
+                  </div>
+                  <text>강의실 코드</text>
+                  <div className="shareinfo">
+                    <span>{entryCode}</span>
+                    <button
+                      onClick={() => navigator.clipboard.writeText(entryCode)}
+                    >
+                      코드 복사
+                    </button>
+                  </div>
+                  <button className="invite-button" onClick={handleShare}>
+                    강의실 초대하기
+                  </button>
+                </ShareDropdownContainer>
+              )}
+            </>
           )}
         </IconContainer>
       </NavbarContent>

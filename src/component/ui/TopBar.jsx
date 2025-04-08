@@ -1,100 +1,127 @@
 import { useState, useContext, useEffect } from "react";
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import LogoImage from "../img/logo/itda_logo.svg";
 import userIcon from "../img/icon/usericon.svg";
 import { UsersContext } from "../contexts/usersContext";
-import { UsersInfoContainer } from '../page/users/UsersInfoContainer';
-import { checkExist } from '../api/usersApi';
+import { UsersInfoContainer } from "../page/users/UsersInfoContainer";
+import { checkExist } from "../api/usersApi";
 import api from "../api/api";
 
 export default function TopBar() {
-    const navigate = useNavigate();
-    const location = useLocation();
-    const { isUser } = useContext(UsersContext);
-    
-    // 드롭다운 상태 추가
-    const [showUsersInfoContainer, setShowUsersInfoContainer] = useState(false);
-    const [isGoogleLinked, setIsGoogleLinked] = useState(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { isUser } = useContext(UsersContext);
 
-    const handleUserIconClick = () => {
-        setShowUsersInfoContainer(prev => !prev);  // 드롭다운 토글
+  // 드롭다운 상태 추가
+  const [showUsersInfoContainer, setShowUsersInfoContainer] = useState(false);
+  const [isGoogleLinked, setIsGoogleLinked] = useState(null);
+
+  const handleUserIconClick = () => {
+    setShowUsersInfoContainer((prev) => !prev); // 드롭다운 토글
+  };
+
+  useEffect(() => {
+    const handleCheckExist = async () => {
+      const response = await checkExist();
+
+      if (response.data === "NONE") {
+        setIsGoogleLinked(false);
+      } else {
+        setIsGoogleLinked(true);
+      }
     };
 
-    useEffect(() => {
-        const handleCheckExist = async () => {
-            const response = await checkExist();
+    handleCheckExist();
+  }, [isGoogleLinked]);
 
-            if(response.data === 'NONE'){
-                setIsGoogleLinked(false);
-            } else {
-                setIsGoogleLinked(true);
-            }
-        };
+  const handleGoogleAuth = () => {
+    try {
+      // 현재 로그인된 사용자의 토큰 가져오기
+      const currentToken = localStorage.getItem("token");
+      if (!currentToken) {
+        alert("로그인이 필요합니다.");
+        return;
+      }
 
-        handleCheckExist();
-    }, [isGoogleLinked]);
+      const redirectUri = encodeURIComponent(
+        `${window.location.origin}/oauth/account/link`,
+      );
+      const googleLoginUrl = `https://staging.eduitda.com/api/oauth/google/login/temp?redirect_uri=${redirectUri}`;
+      window.location.href = googleLoginUrl;
+    } catch (error) {
+      console.error("구글 연동 시작 중 오류 발생:", error);
+      alert("구글 계정 연동을 시작할 수 없습니다. 다시 시도해주세요.");
+    }
+  };
 
-    const handleGoogleAuth = () => {
-        try {
-            // 현재 로그인된 사용자의 토큰 가져오기
-            const currentToken = localStorage.getItem('token');
-            if (!currentToken) {
-                alert('로그인이 필요합니다.');
-                return;
-            }
-
-            const redirectUri = encodeURIComponent(`${window.location.origin}/oauth/account/link`);
-            const googleLoginUrl = `https://staging.eduitda.com/api/oauth/google/login/temp?redirect_uri=${redirectUri}`;
-            window.location.href = googleLoginUrl;
-        } catch (error) {
-            console.error('구글 연동 시작 중 오류 발생:', error);
-            alert('구글 계정 연동을 시작할 수 없습니다. 다시 시도해주세요.');
-        }
-    };
-
-    return (
-        <Wrapper>
-            <Logo
-                src={LogoImage} 
-                alt="itda logo" 
-                onClick={isUser ? () => navigate('/class/list') : () => navigate('/')}
-            />
-            <Header>
-                {location.pathname !== '/login' && location.pathname !== '/signup' && location.pathname !=="/find-password" &&(
-                    <div className="header-right">
-                        {isUser ? (
-                            <UserContainer>
-                                {location.pathname === '/dashboard' ? (
-                                    <button className="navigate-button" onClick={() => navigate('/class/list')}>강의실 입장하기</button>
-                                ) : (
-                                    <>
-                                    <button className="navigate-button" onClick={() => navigate('/dashboard')}>대시보드로 가기</button>
-                                    {isGoogleLinked === false && <button className="navigate-button" onClick={handleGoogleAuth}>구글 계정 연동하기</button>}
-                                    </>
-                                )}
-                                <UserIcon src={userIcon} alt="user icon" onClick={handleUserIconClick} />
-                                {showUsersInfoContainer && (
-                                    <UsersInfoContainer 
-                                        setShowUsersInfoContainer={setShowUsersInfoContainer} 
-                                        isGoogleLinked={isGoogleLinked}
-                                    />
-                                )}
-                            </UserContainer>
-                        ) : (
-                            <>
-                                {/* <button className="signup" onClick={() => navigate('/signup')}>회원가입</button> */}
-                                <button className="login" onClick={() => navigate('/login')}>로그인</button>
-                                <UserContainer>
-                                    <UserIcon src={userIcon} alt="user icon" />
-                                </UserContainer>
-                            </>
-                        )}
-                    </div>
-                )}
-            </Header>
-        </Wrapper>
-    );
+  return (
+    <Wrapper>
+      <Logo
+        src={LogoImage}
+        alt="itda logo"
+        onClick={isUser ? () => navigate("/class/list") : () => navigate("/")}
+      />
+      <Header>
+        {location.pathname !== "/login" &&
+          location.pathname !== "/signup" &&
+          location.pathname !== "/find-password" && (
+            <div className="header-right">
+              {isUser ? (
+                <UserContainer>
+                  {location.pathname === "/dashboard" ? (
+                    <button
+                      className="navigate-button"
+                      onClick={() => navigate("/class/list")}
+                    >
+                      강의실 입장하기
+                    </button>
+                  ) : (
+                    <>
+                      <button
+                        className="navigate-button"
+                        onClick={() => navigate("/dashboard")}
+                      >
+                        대시보드로 가기
+                      </button>
+                      {isGoogleLinked === false && (
+                        <button
+                          className="navigate-button"
+                          onClick={handleGoogleAuth}
+                        >
+                          구글 계정 연동하기
+                        </button>
+                      )}
+                    </>
+                  )}
+                  <UserIcon
+                    src={userIcon}
+                    alt="user icon"
+                    onClick={handleUserIconClick}
+                  />
+                  {showUsersInfoContainer && (
+                    <UsersInfoContainer
+                      setShowUsersInfoContainer={setShowUsersInfoContainer}
+                      isGoogleLinked={isGoogleLinked}
+                    />
+                  )}
+                </UserContainer>
+              ) : (
+                <>
+                  {/* <button className="signup" onClick={() => navigate('/signup')}>회원가입</button> */}
+                  <button className="login" onClick={() => navigate("/login")}>
+                    로그인
+                  </button>
+                  <UserContainer>
+                    <UserIcon src={userIcon} alt="user icon" />
+                  </UserContainer>
+                </>
+              )}
+            </div>
+          )}
+      </Header>
+    </Wrapper>
+  );
 }
 
 const Wrapper = styled.div`
