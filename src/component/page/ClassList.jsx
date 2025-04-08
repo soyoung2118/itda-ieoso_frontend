@@ -3,8 +3,6 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import TopBar from "../ui/TopBar";
 import LogoGray from "../img/logo/itda_logo_gray.svg";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import ClassThumbnail from "../img/class/classlist_thumbnail.svg";
 import {
   ModalOverlay,
@@ -13,21 +11,24 @@ import {
 } from "../ui/modal/ModalStyles";
 import api from "../api/api";
 import { UsersContext } from "../contexts/usersContext";
-import DeleteIcon from "../img/icon/delete.svg";
+import { checkExist } from '../api/usersApi';
+import DeleteIcon from '../img/icon/delete.svg';
 
 export default function Class() {
-  const navigate = useNavigate();
-  const [selectedMenu, setSelectedMenu] = useState("전체 강의실");
-  const [showPopup, setShowPopup] = useState(false);
-  const { user } = useContext(UsersContext);
-  const [lectures, setLectures] = useState([]);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [selectedCourseId, setSelectedCourseId] = useState(null);
-  const [showAlertModal, setShowAlertModal] = useState(false);
-
-  const handleLectureClick = (id) => {
-    navigate(`/class/${id}/overview/info`);
-  };
+    const navigate = useNavigate();
+    const [selectedMenu, setSelectedMenu] = useState("전체 강의실");
+    const [showPopup, setShowPopup] = useState(false);
+    const { user } = useContext(UsersContext);
+    const [lectures, setLectures] = useState([]);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [selectedCourseId, setSelectedCourseId] = useState(null);
+    const [showAlertModal, setShowAlertModal] = useState(false);
+    const [showGoogleAlertModal, setShowGoogleAlertModal] = useState(false);
+    const [isGoogleLinked, setIsGoogleLinked] = useState(null);
+    
+    const handleLectureClick = (id) => {
+        navigate(`/class/${id}/overview/info`);
+    };
 
   const getAllLectures = async () => {
     try {
@@ -76,123 +77,133 @@ export default function Class() {
     }
   };
 
-  const confirmDelete = async () => {
-    if (selectedCourseId) {
-      await handleDeleteLecture(selectedCourseId);
-      setShowDeleteModal(false);
-      setSelectedCourseId(null);
-    }
-  };
+    const confirmDelete = async () => {
+        if (selectedCourseId) {
+            await handleDeleteLecture(selectedCourseId);
+            setShowDeleteModal(false);
+            setSelectedCourseId(null);
+        }
+    };
 
-  return (
-    <>
-      <TopBar />
-      <Container>
-        <Sidebar>
-          <MenuItem
-            active={selectedMenu === "전체 강의실"}
-            onClick={() => setSelectedMenu("전체 강의실")}
-          >
-            전체 강의실
-          </MenuItem>
-          <MenuItem
-            active={selectedMenu === "내 강의실"}
-            onClick={() => setSelectedMenu("내 강의실")}
-          >
-            내 강의실
-          </MenuItem>
-        </Sidebar>
-        <Content>
-          <h2>{selectedMenu}</h2>
-          {lecturesCount === 0 ? (
-            <NoLecturesMessage>
-              <img src={LogoGray} alt="LogoGray" width="40" height="40" />
-              <br />
-              현재 생성된 강의실이 없습니다 &#58;&#40;
-              <br />+ 버튼을 눌러 강의실을 생성해보세요!
-            </NoLecturesMessage>
-          ) : (
-            lecturesToDisplay?.map((lecture) => (
-              <LectureCard
-                key={lecture.courseId}
-                onClick={() => handleLectureClick(lecture.courseId)}
-              >
-                <LectureImage
-                  src={lecture.courseThumbnail || ClassThumbnail}
-                  alt="Lecture"
-                />
-                <LectureInfo>
-                  <LectureTitle>{lecture.courseTitle}</LectureTitle>
-                  <LectureDetail>
-                    <IconRow>
-                      <span className="material-symbols-outlined">event</span>
-                      <span>
-                        {lecture.startDate
-                          ? `${lecture.startDate} 시작`
-                          : "시작일 미정"}
-                      </span>
-                    </IconRow>
-                    <IconRow>
-                      <span className="material-symbols-outlined">
-                        video_library
-                      </span>
-                      <span>
-                        {lecture.durationWeeks > 0
-                          ? `${lecture.durationWeeks}주 커리큘럼`
-                          : "기간 미정"}
-                      </span>
-                    </IconRow>
-                    <IconRow>
-                      <span className="material-symbols-outlined">person</span>
-                      <span>{lecture.instructorName}</span>
-                    </IconRow>
-                    <IconRow style={{ gap: "0rem" }}>
-                      <span className="material-symbols-outlined">star</span>
-                      <span style={{ margin: "0rem 0.3rem 0rem 1rem" }}>
-                        강의 난이도
-                      </span>
-                      <span style={{ marginLeft: 0, fontWeight: 800 }}>
-                        {changeDifficultly(lecture.difficultyLevel)}
-                      </span>
-                    </IconRow>
-                  </LectureDetail>
-                </LectureInfo>
-                <DeleteIconWrapper
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedCourseId(lecture.courseId);
-                    setShowDeleteModal(true);
-                  }}
+    useEffect(() => {
+        const handleCheckExist = async () => {
+            const response = await checkExist();
+
+            if(response.data === 'NONE'){
+                setIsGoogleLinked(false);
+                setShowGoogleAlertModal(true);
+            } else {
+                setIsGoogleLinked(true);
+            }
+        };
+
+        handleCheckExist();
+    }, [isGoogleLinked]);
+
+    return (
+      <>
+        <TopBar />
+        <Container>
+            <Sidebar>
+                <MenuItem
+                    active={selectedMenu === "전체 강의실"}
+                    onClick={() => setSelectedMenu("전체 강의실")}
                 >
-                  <img
-                    src={DeleteIcon}
-                    alt="Delete Icon"
-                    style={{ width: "30px", height: "30px" }}
-                  />
-                </DeleteIconWrapper>
-              </LectureCard>
-            ))
-          )}
-        </Content>
-        <AddButton
-          onClick={() => setShowPopup(!showPopup)}
-          data-showpopup={showPopup}
-        >
-          {showPopup ? "×" : "+"}
-        </AddButton>
-        {showPopup && (
-          <PopupMenu>
-            <PopupItem onClick={() => navigate("/class/create")}>
-              <OpenInNewIcon style={{ marginRight: "15px" }} />
-              강의실 만들기
-            </PopupItem>
-            <PopupItem onClick={() => navigate("/class/participate")}>
-              <ExitToAppIcon style={{ marginRight: "15px" }} />
-              강의실 입장하기
-            </PopupItem>
-          </PopupMenu>
-        )}
-      </Container>
+                    전체 강의실
+                </MenuItem>
+                <MenuItem
+                    active={selectedMenu === "내 강의실"}
+                    onClick={() => setSelectedMenu("내 강의실")}
+                >
+                    내 강의실
+                </MenuItem>
+            </Sidebar>
+            <Content>
+               <h2>{selectedMenu}</h2>
+               {lecturesCount === 0 ? (
+                    <NoLecturesMessage>
+                        <img src={LogoGray} alt="LogoGray" width="40" height="40" />
+                        <br />
+                        현재 생성된 강의실이 없습니다 &#58;&#40;
+                        <br />
+                        + 버튼을 눌러 강의실을 생성해보세요!
+                    </NoLecturesMessage>
+               ) : (
+                lecturesToDisplay?.map((lecture) => (
+                    <LectureCard
+                        key={lecture.courseId}
+                        onClick={() => handleLectureClick(lecture.courseId)}
+                    >
+                        <LectureImage 
+                            src={lecture.courseThumbnail || ClassThumbnail} 
+                            alt="Lecture" 
+                        />
+                        <LectureInfo>
+                            <LectureTitle>{lecture.courseTitle}</LectureTitle>
+                            <LectureDetail>
+                                <IconRow>
+                                    <span className="material-symbols-outlined">event</span>
+                                    <span>
+                                        {lecture.startDate
+                                            ? `${lecture.startDate} 시작`
+                                            : "시작일 미정"}
+                                    </span>
+                                </IconRow>
+                                <IconRow>
+                                <span className="material-symbols-outlined">video_library</span>
+                                    <span>
+                                        {lecture.durationWeeks > 0
+                                            ? `${lecture.durationWeeks}주 커리큘럼`
+                                            : "기간 미정"}
+                                    </span>
+                                </IconRow>
+                                <IconRow>
+                                <span className="material-symbols-outlined">person</span>
+                                    <span>{lecture.instructorName}</span>
+                                </IconRow>
+                                <IconRow style={{gap: '0rem'}}>
+                                    <span className="material-symbols-outlined">star</span>
+                                    <span style={{margin: '0rem 0.3rem 0rem 1rem'}}>강의 난이도</span>
+                                    <span style={{marginLeft: 0, fontWeight: 800}}>{changeDifficultly(lecture.difficultyLevel)}</span>
+                                </IconRow>
+                            </LectureDetail>
+                        </LectureInfo>
+                        <DeleteIconWrapper 
+                            onClick={(e) => { 
+                                e.stopPropagation(); 
+                                setSelectedCourseId(lecture.courseId);
+                                setShowDeleteModal(true);
+                            }}
+                        >
+                            <img src={DeleteIcon} alt="Delete Icon" style={{ width: "30px", height: "30px" }} />
+                        </DeleteIconWrapper>
+                    </LectureCard>
+                ))
+               )}
+            </Content>
+            <AddButton
+                onClick={() => setShowPopup(!showPopup)}
+                data-showpopup={showPopup}
+            >
+                {showPopup ? "×" : "+"}
+            </AddButton>
+            {showPopup && (
+                <PopupMenu>
+                    <PopupItem onClick={() => navigate("/class/create")}>
+                        <span className="material-symbols-outlined" style={{ fontSize: "24px",marginRight: "10px" }}>
+                            new_window
+                        </span>
+                        강의실 만들기
+                    </PopupItem>
+                    <PopupItem onClick={() => navigate("/class/participate")}>
+                        <span className="material-symbols-outlined" style={{ fontSize: "24px",marginRight: "10px" }}>
+                            login
+                        </span>
+                        강의실 입장하기
+                    </PopupItem>
+                </PopupMenu>
+            )}
+        </Container>
 
       {/* 모달 */}
       {showDeleteModal && (
@@ -215,24 +226,32 @@ export default function Class() {
         </ModalOverlay>
       )}
 
-      {/* 새로운 알림 모달 */}
-      {showAlertModal && (
-        <ModalOverlay>
-          <AlertModalContainer>
-            <div className="text">강의 개설자는 강의실을 나갈 수 없어요.</div>
-            <div className="button-container">
-              <button
-                className="close-button"
-                onClick={() => setShowAlertModal(false)}
-              >
-                확인
-              </button>
-            </div>
-          </AlertModalContainer>
-        </ModalOverlay>
-      )}
-    </>
-  );
+        {/* 새로운 알림 모달 */}
+        {showAlertModal && (
+            <ModalOverlay>
+                <AlertModalContainer>
+                    <div className="text">강의 개설자는 강의실을 나갈 수 없어요.</div>
+                    <div className="button-container">
+                        <button className="close-button" onClick={() => setShowAlertModal(false)}>확인</button>
+                    </div>
+                </AlertModalContainer>
+            </ModalOverlay>
+        )}
+
+        {/* 새로운 알림 모달 */}
+        {showGoogleAlertModal && (
+            <ModalOverlay>
+                <AlertModalContainer>
+                    <div className="text">일반 로그인 서비스가 04/30 종료됩니다</div>
+                    <div className="text">상단 바에서 구글 계정을 연동해 주세요</div>
+                    <div className="button-container">
+                        <button className="close-button" onClick={() => setShowGoogleAlertModal(false)}>확인</button>
+                    </div>
+                </AlertModalContainer>
+            </ModalOverlay>
+        )}
+      </>
+    );
 }
 
 const Container = styled.div`
@@ -375,30 +394,43 @@ const IconRow = styled.div`
 `;
 
 const AddButton = styled.button`
-  position: fixed;
-  bottom: 2.5rem;
-  right: 6vw;
-  width: 3.8rem;
-  height: 60px;
-  padding-bottom: 15px;
-  background-color: ${(props) =>
-    props["data-showpopup"] ? "#000" : "var(--main-color)"};
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  font-size: 44px;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    position: fixed;
+    bottom: 2.5rem;
+    right: 6vw;
+    width: 3.8rem;
+    height: 60px;
+    padding-bottom: 15px;
+    background-color: ${(props) =>
+        props["data-showpopup"] ? "#000" : "var(--main-color)"};
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    font-size: 44px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+    @media all and (max-width: 479px) {
+        width: 3rem;
+        height: 3rem;
+        bottom: 35px;
+        right: 35px;
+        font-size: 37px;
+    }
 `;
 
 const PopupMenu = styled.div`
-  position: fixed;
-  bottom: 105px;
-  right: 95px;
-  background-color: #fff;
-  border-radius: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  padding: 10px;
+    position: fixed;
+    bottom: 105px;
+    right: 95px;
+    background-color: #fff;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+
+    @media all and (max-width: 479px) {
+        bottom: 90px;
+        right: 85px;
+    }
 `;
 
 const PopupItem = styled.div`

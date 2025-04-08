@@ -7,7 +7,7 @@ import Material from "../../img/icon/pdf.svg";
 import Video from "../../img/icon/videored.svg";
 import api from "../../api/api";
 import { UsersContext } from "../../contexts/usersContext";
-
+import { ModalOverlay, AlertModalContainer } from "../modal/ModalStyles";
 const PlayingCurriculumSidebar = ({
   curriculumData,
   setCurriculumData,
@@ -24,6 +24,8 @@ const PlayingCurriculumSidebar = ({
   const [materialIdList, setMaterialIdList] = useState([]);
   const [selectedContentId, setSelectedContentId] = useState(null);
   const [selectedType, setSelectedType] = useState(null);
+  const [showAlertModal, setShowAlertModal] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -195,9 +197,8 @@ const PlayingCurriculumSidebar = ({
       now.getTime() < startDate.getTime() ||
       now.getTime() > endDate.getTime()
     ) {
-      alert(
-        `이 콘텐츠는 ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()} 까지만 접근 가능합니다.`,
-      );
+      setAlertMessage(`이 콘텐츠는 ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()} 까지만 접근 가능합니다.`);
+      setShowAlertModal(true);
       return;
     }
     setSelectedContentId(goVideo);
@@ -214,9 +215,8 @@ const PlayingCurriculumSidebar = ({
       now.getTime() < startDate.getTime() ||
       now.getTime() > endDate.getTime()
     ) {
-      alert(
-        `이 자료는 ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()}까지만 다운로드 가능합니다.`,
-      );
+      setAlertMessage(`이 자료는 ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()}까지만 다운로드 가능합니다.`);
+      setShowAlertModal(true);
       return;
     }
 
@@ -272,7 +272,8 @@ const PlayingCurriculumSidebar = ({
     const endDate = new Date(assignment.endDate);
 
     if (now.getTime() < startDate.getTime()) {
-      alert(`이 콘텐츠는 ${startDate.toLocaleString()} 부터 접근 가능합니다.`);
+      setAlertMessage(`이 콘텐츠는 ${startDate.toLocaleString()} 부터 접근 가능합니다.`);
+      setShowAlertModal(true);
       return;
     }
 
@@ -432,6 +433,16 @@ const PlayingCurriculumSidebar = ({
           })}
         </CurriculumList>
       </RightContainer>
+      {showAlertModal && (
+        <ModalOverlay>
+          <AlertModalContainer>
+            <div className="text">{alertMessage}</div>
+            <div className="button-container">
+              <button className="close-button" onClick={() => setShowAlertModal(false)}>확인</button>
+            </div>
+          </AlertModalContainer>
+        </ModalOverlay>
+      )}
     </>
   );
 };
@@ -464,7 +475,11 @@ const RightContainer = styled.div`
 `;
 
 const CurriculumList = styled.div`
-  padding: 0 20px;
+  padding: 0 15px;
+
+  @media all and (max-width: 376px) {
+    padding: 0;
+  }
 `;
 
 const CurriculumItem = styled.div`

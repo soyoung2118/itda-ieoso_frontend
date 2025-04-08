@@ -146,12 +146,12 @@ const TabLinkContainer = styled.div`
 
   @media all and (max-width: 479px) {
     font-size: 16px;
-    gap: 7px;
+    gap: 15px;
   }
 `;
 
 const TabLink = styled(NavLink)`
-  width: clamp(3em, 7vw, 6rem);
+  width: clamp(3rem, 7vw, 6rem);
   text-align: center;
   padding: 5px 10px;
   text-decoration: none;
@@ -183,6 +183,7 @@ const TabLink = styled(NavLink)`
 
   @media all and (max-width: 479px) {
     font-size: 16px;
+    width: 40%;
   }
 `;
 
@@ -213,6 +214,8 @@ const ClassTopbar = ({ onCourseChange, isCreator }) => {
   const [isScrollable, setIsScrollable] = useState(false);
   const [currentCourse, setCurrentCourse] = useState(null);
   const tabRef = useRef(null);
+  const dropdownRef = useRef(null);
+  const iconRef = useRef(null);
 
   useEffect(() => {
     const fetchClasses = async () => {
@@ -241,6 +244,24 @@ const ClassTopbar = ({ onCourseChange, isCreator }) => {
     checkScrollable();
     window.addEventListener("resize", checkScrollable);
     return () => window.removeEventListener("resize", checkScrollable);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target) &&
+        iconRef.current &&
+        !iconRef.current.contains(event.target)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   const handleDropdownToggle = () => {
@@ -274,7 +295,7 @@ const ClassTopbar = ({ onCourseChange, isCreator }) => {
             home
           </span>
           <VerticalLine />
-          <ClassTitleContainer onClick={handleDropdownToggle}>
+          <ClassTitleContainer onClick={handleDropdownToggle} ref={iconRef}>
             <span className="course-title">
               {classOptions.find(
                 (course) => String(course.courseId) === String(courseId),
@@ -286,7 +307,7 @@ const ClassTopbar = ({ onCourseChange, isCreator }) => {
           </ClassTitleContainer>
         </Container>
         {isDropdownOpen && (
-          <DropdownContainer>
+          <DropdownContainer ref={dropdownRef}>
             <DropdownMenu isOpen={isDropdownOpen}>
               <MenuTitle>강의실 목록</MenuTitle>
               {classOptions.map((course) => (

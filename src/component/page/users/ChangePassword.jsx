@@ -75,11 +75,10 @@ export default function ChangePassword() {
       <TopBar />
       <ChangePasswordContainer>
         <Container>
-          <LogoContainer>
-            <LogoImage src={logoImage} alt="logo" />
-            <LogoText>비밀번호 변경</LogoText>
-          </LogoContainer>
-          <div style={{ minWidth: "300px", margin: "0 auto" }}>
+        <LogoContainer>
+          <LogoImage src={logoImage} alt="logo" />
+          <LogoText>비밀번호 변경</LogoText>
+        </LogoContainer>
             <ChangePasswordInputContainer>
               <UserInfo>
                 <img
@@ -147,7 +146,6 @@ export default function ChangePassword() {
                 <NextButton type="submit">비밀번호 변경 </NextButton>
               </Form>
             </ChangePasswordInputContainer>
-          </div>
         </Container>
       </ChangePasswordContainer>
       {isModalOpen && (
@@ -167,10 +165,8 @@ export default function ChangePassword() {
 }
 
 const ChangePasswordContainer = styled.div`
-  background-color: #ffffff;
-  min-width: 300px;
+  background-color: #FFFFFF;
   width: 100%;
-  margin: 0 auto;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -187,17 +183,21 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #ffffff;
-  height: calc(100vh - 7vh);
+  background-color: #FFFFFF;
   min-width: 300px;
   width: 100%;
   max-width: 500px;
+  height: calc(100vh - 7vh);
+
+  @media all and (max-width:479px) {
+    max-width: 300px;
+  }
 `;
 
 const UserInfo = styled.div`
   display: flex;
   justify-content: flext-start;
-  margin-bottom: 12px;
+  margin-bottom: 24px;
 
   .button-container {
     margin-top: 12px;
@@ -231,34 +231,36 @@ const UserText = styled.div`
 const ChangePasswordInputContainer = styled.div`
   text-align: left;
   width: 100%;
-  padding: 0 20px;
-
-  /* 모바일 세로 (해상도 ~ 479px)*/
-  @media all and (max-width: 479px) {
+  max-width: 700px;
+  box-sizing: border-box;
+  /* padding: 0 20px; */
+  
+  /* 모바일 세로 (해상도 ~ 479px)*/ 
+  @media all and (max-width:479px) {
     padding: 0;
   }
 `;
 
-const Form = styled.form`
+const Form = styled.div`
   font-size: 10px;
 `;
 
 const ChangeInput = styled.input`
-  width: 100%;
-  padding: 0.7rem;
-  border: 1px solid #cdcdcd;
-  border-radius: 15px;
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
+    width: 100%;
+    padding: 0.7rem;
+    border: 1px solid #CDCDCD;
+    border-radius: 15px;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    box-sizing: border-box;
 
-  &::placeholder {
-    color: #cdcdcd;
-  }
-
-  /* 모바일 세로 (해상도 ~ 479px)*/
-  @media all and (max-width: 479px) {
-    width: 300px;
-  }
+    &::placeholder {
+        color: #CDCDCD;
+    }
+    /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+        width: 100%;
+    }
 `;
 
 const NextButton = styled.button`
@@ -273,4 +275,5 @@ const NextButton = styled.button`
   margin: 10px 0;
   background-color: #ff4747;
   cursor: pointer;
+  box-sizing: border-box;
 `;

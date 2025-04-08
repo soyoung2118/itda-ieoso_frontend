@@ -48,22 +48,27 @@ const ModalWrapper = styled.div`
   @media (max-width: 1000px) {
     width: 70%;
   }
-`;
+  `;
+  
+  const ModalContent = styled.div`
+  `
+  
+  const ModalText = styled.div`
+    font-size: 25px;
+    font-weight: bold;
 
-const ModalContent = styled.div``;
-
-const ModalText = styled.div`
-  font-size: 25px;
-  font-weight: bold;
-`;
-
-const ModalSmallText = styled.div`
-  font-size: 10px;
-  margin-top: 20px;
-`;
-
-const CloseButton = styled.button`
-  background: #cecece;
+    @media (max-width: 480px) {
+        font-size: 20px;
+    }
+  `;
+  
+  const ModalSmallText = styled.div`
+    font-size: 10px;
+    margin-top: 20px;
+  `
+  
+  const CloseButton = styled.button`
+  background: #CECECE;
   color: white;
   border: none;
   border-radius: 10px;

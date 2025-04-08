@@ -90,10 +90,12 @@ export const AlertModalContainer = styled.div`
   max-width: 300px;
   font-size: 1rem;
   position: relative;
-
-  /* 모바일 세로 (해상도 ~ 479px)*/
-  @media all and (max-width: 479px) {
+  white-space: pre-wrap;
+    
+  /* 모바일 세로 (해상도 ~ 479px)*/ 
+  @media all and (max-width:479px) {
     width: 150px;
+    padding: 30px 60px;
   }
 
   .text {
@@ -101,9 +103,10 @@ export const AlertModalContainer = styled.div`
     font-weight: 700;
     margin-bottom: 20px;
 
-    /* 모바일 세로 (해상도 ~ 479px)*/
-    @media all and (max-width: 479px) {
-      font-size: 13px;
+    /* 모바일 세로 (해상도 ~ 479px)*/ 
+    @media all and (max-width:479px) {
+      width: 100%;
+        font-size: 13px;
     }
   }
   .close-button {

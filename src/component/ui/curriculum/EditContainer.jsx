@@ -37,6 +37,12 @@ const Container = styled.div`
     border-radius: 4px;
   }
 
+  @media (max-width: 440px) {
+    padding: 1.2vh;
+    left: -22%;
+    border-radius: 4px;
+  }
+
   @media (max-width: 376px) {
     padding: 1vh;
     left: -12%;
@@ -77,6 +83,10 @@ const HighlightLine = styled.div`
   @media (max-width: 480px) {
     width: 0.5vh;
   }
+
+  @media (max-width: 440px) {
+    width: 0.4vh;
+  }
 `;
 
 const Icon = styled.img`
@@ -93,6 +103,11 @@ const Icon = styled.img`
   @media (max-width: 480px) {
     width: 3.5vh !important;
     margin: 1.5vh 0vh !important;
+  }
+
+  @media (max-width: 440px) {
+    width: 2.4vh !important;
+    margin: 1vh 0vh !important;
   }
 
   @media (max-width: 376px) {

@@ -162,9 +162,9 @@ export default function Setting() {
         startDate: form.startDate,
         durationWeeks: Number(form.durationWeeks),
         lectureDay: form.lectureDays,
-        lectureTime: form.lectureTime + ":00",
+        lectureTime: isLecturePending ? null : form.lectureTime + ':00',
         assignmentDueDay: form.assignmentDays,
-        assignmentDueTime: form.assignmentTime + ":00",
+        assignmentDueTime: isAssignmentPending ? null : form.assignmentTime + ':00',
         difficultyLevel: form.difficulty.toUpperCase(),
         isAssignmentPublic: form.isAssignmentPublic,
       };
@@ -214,53 +214,45 @@ export default function Setting() {
             설정
           </h3>
         </div>
-        <Container>
-          <Section>
-            <Title style={{ marginTop: "6px" }}>
-              STEP 1. 강의실을 만들어볼까요?
-            </Title>
+      <Container>
+        <Section>
+          <Title style={{marginTop: '6px'}}>STEP 1. 강의실을 만들어볼까요?</Title>
+          
+          <FormGroup>
+            <FormItem>
+              <Label>
+                강의명
+                <Required>*</Required>
+                <Text>{titleInputCount}</Text>
+                <Text>/30 자</Text>
+              </Label>
+              <FormInput
+                type="text"
+                name="coursename"
+                value={form.coursename}
+                onChange={(e) => {handleFormChange(e); onTitleInputHandler(e);}}
+                style={{width: '100%'}}
+                autoComplete='off'
+              />
+            </FormItem>
 
-            <FormGroup>
-              <FormItem>
-                <Label>
-                  강의명
-                  <Required>*</Required>
-                  <Text>{titleInputCount}</Text>
-                  <Text>/30 자</Text>
-                </Label>
-                <FormInput
-                  type="text"
-                  name="coursename"
-                  value={form.coursename}
-                  onChange={(e) => {
-                    handleFormChange(e);
-                    onTitleInputHandler(e);
-                  }}
-                  style={{ width: "329px" }}
-                  autoComplete="off"
-                />
-              </FormItem>
-
-              <FormItem>
-                <Label>
-                  강의자명
-                  <Required>*</Required>
-                  <Text>{instructorInputCount}</Text>
-                  <Text>/5 자</Text>
-                </Label>
-                <FormInput
-                  type="text"
-                  name="instructor"
-                  placeholder="ex. 김잇다"
-                  value={form.instructor}
-                  onChange={(e) => {
-                    handleFormChange(e);
-                    onInstructorInputHandler(e);
-                  }}
-                  style={{ width: "165px" }}
-                  autoComplete="off"
-                />
-              </FormItem>
+            <FormItem>
+              <Label>
+                강의자명
+                <Required>*</Required>
+                <Text>{instructorInputCount}</Text>
+                <Text>/5 자</Text>
+              </Label>
+              <FormInput
+                type="text"
+                name="instructor"
+                placeholder="ex. 김잇다"
+                value={form.instructor}
+                onChange={(e) => {handleFormChange(e); onInstructorInputHandler(e);}}
+                style={{width: '100%'}}
+                autoComplete='off'
+              />
+            </FormItem>
 
               <FormItem>
                 <Label>강의코드</Label>
@@ -268,13 +260,9 @@ export default function Setting() {
                   <CodeInput
                     value={form.entrycode}
                     disabled
-                    style={{
-                      width: "165px",
-                      marginRight: "10px",
-                      color: "#FF4747",
-                    }}
-                  />
-                  <RadioButton
+                    style={{marginRight: '10px', color: '#FF4747'}}
+                />
+                <RadioButton 
                     active={true}
                     onClick={() => handleCopy(form.entrycode)}
                   >
@@ -285,40 +273,38 @@ export default function Setting() {
             </FormGroup>
           </Section>
 
-          <Section>
-            <Title>STEP 2. 수강생이 얼마나 강의를 들어야 하나요?</Title>
+        <Section>
+          <Title>STEP 2. 수강생이 얼마나 강의를 들어야 하나요?</Title>
+          
+          <FormGroup>
+            <HalfGroup>
+            <FormHalfItem>
+              <Label>
+                커리큘럼 시작
+                <Required>*</Required>
+              </Label>
+              <DisableInput
+                value={new Date(form.startDate).toLocaleDateString()}
+                disabled
+                style={{width: '100%'}}
+              />
+            </FormHalfItem>
 
-            <FormGroup>
-              <HalfGroup>
-                <FormHalfItem>
-                  <Label>
-                    커리큘럼 시작
-                    <Required>*</Required>
-                  </Label>
-                  <DisableInput
-                    value={new Date(form.startDate).toLocaleDateString()}
-                    disabled
-                    style={{ width: "289px" }}
-                  />
-                </FormHalfItem>
-
-                <FormHalfItem>
-                  <Label>
-                    커리큘럼 주차
-                    <Required>*</Required>
-                  </Label>
-                  <CuliculumGroup>
-                    <DisableInput
-                      value={form.durationWeeks}
-                      disabled
-                      style={{ width: "165px" }}
-                    />
-                    <Label style={{ marginTop: "0px", marginLeft: "5px" }}>
-                      주
-                    </Label>
-                  </CuliculumGroup>
-                </FormHalfItem>
-              </HalfGroup>
+            <FormHalfItem>
+              <Label>
+                커리큘럼 주차
+                <Required>*</Required>
+              </Label>
+              <CuliculumGroup>
+              <DisableInput
+                value={form.durationWeeks}
+                disabled
+                style={{width: '100%'}}
+                />
+                <Label style={{marginTop: '0px', marginLeft: '5px'}}>주</Label>
+              </CuliculumGroup>
+            </FormHalfItem>
+            </HalfGroup>
 
               <FormItem>
                 <Label>강의 업로드 일시</Label>
@@ -338,19 +324,15 @@ export default function Setting() {
                     </DayButtonGroup>
                   </TimeGroup>
 
-                  <TimeGroup>
-                    <DisableInput
-                      name="lectureTime"
-                      style={{ width: "289px" }}
-                      value={
-                        isLecturePending
-                          ? ""
-                          : formatTimeWithMeridiem(form.lectureTime)
-                      }
-                      active={isLecturePending}
-                      disabled
-                    />
-                  </TimeGroup>
+                <TimeGroup>
+                <DisableInput
+                  name='lectureTime'
+                  style={{width: '100%'}}
+                  value={isLecturePending ? '' : formatTimeWithMeridiem(form.lectureTime)}
+                  active={isLecturePending}
+                  disabled
+                />
+                </TimeGroup>
 
                   <TimeGroup>
                     <PendingButton active={isLecturePending}>
@@ -391,19 +373,15 @@ export default function Setting() {
                     </DayButtonGroup>
                   </TimeGroup>
 
-                  <TimeGroup>
-                    <DisableInput
-                      name="assignmentTime"
-                      style={{ width: "289px" }}
-                      value={
-                        isAssignmentPending
-                          ? ""
-                          : formatTimeWithMeridiem(form.assignmentTime)
-                      }
-                      active={isAssignmentPending}
-                      disabled
-                    />
-                  </TimeGroup>
+                <TimeGroup>
+                <DisableInput
+                  name='assignmentTime'
+                  style={{width: '100%'}}
+                  value={isAssignmentPending ? '' : formatTimeWithMeridiem(form.assignmentTime)}
+                  active={isAssignmentPending}
+                  disabled
+                />
+                </TimeGroup> 
 
                   <TimeGroup>
                     <PendingButton active={isAssignmentPending}>
@@ -562,8 +540,8 @@ const PendingButton = styled.button`
   background-color: ${(props) => (props.active ? "#C3C3C3" : "#F4F4F4")};
   color: #909090;
 
-  @media (max-width: 900px) {
-    width: 289px;
+  @media (max-width: 900px) { 
+    width: 100%;
   }
 `;
 
@@ -611,6 +589,10 @@ const Title = styled.div`
   font-size: 21px;
   font-weight: 700;
   margin-top: 30px;
+
+  @media all and (max-width:479px) {
+    font-size: 18px;
+  }
 `;
 
 const FormGroup = styled.div`
@@ -669,7 +651,6 @@ const FormInput = styled.input`
   width: 100%;
   box-sizing: border-box;
   font-size: 13px;
-  font-weight: 500;
   padding: 8px 12px;
   border: 2px solid #c3c3c3;
   border-radius: 10px;
@@ -696,7 +677,11 @@ const CodeInput = styled.input`
   border: 2px solid #c3c3c3;
   border-radius: 10px;
   margin-right: 10px;
-`;
+
+  @media all and (max-width:479px) {
+    width: 58%;
+  }
+`
 
 const GreyHelpText = styled.div`
   height: 13px;
@@ -740,7 +725,12 @@ const CuliculumGroup = styled.div`
 const CopyGrop = styled.div`
   display: flex;
   flex-direction: row;
-`;
+  width: 100%;
+
+  @media all and (max-width:479px) {
+    font-size: 18px;
+  }
+`
 
 const HalfGroup = styled.div`
   display: flex;

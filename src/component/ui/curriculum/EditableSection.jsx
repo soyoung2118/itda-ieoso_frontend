@@ -84,6 +84,9 @@ const VideoIconImg = styled.img`
     margin-right: 1.8vh;
     width: 3.7vh;
   }
+  @media (max-width: 440px) {
+    width: 2vh;
+  }
 
   @media (max-width: 376px) {
     margin-left: 0vh;
@@ -274,6 +277,12 @@ const MaterialIcon = styled.img`
     margin-left: 0vh;
     margin-right: 1.8vh;
     width: 3.5vh;
+  }
+
+  @media (max-width: 440px) {
+    margin-left: 0vh;
+    margin-right: 1.8vh;
+    width: 2vh;
   }
 
   @media (max-width: 376px) {

@@ -1,13 +1,12 @@
-import { useState, useEffect, useContext } from "react";
-import { useParams, useOutletContext } from "react-router-dom";
-import styled from "styled-components";
-import { ModalOverlay, ModalContent } from "../../ui/modal/ModalStyles";
-//import ClassSidebar from "../../ui/class/ClassSidebar";
-import { Section } from "../../ui/class/ClassLayout";
-import EditButton from "../../ui/class/EditButton";
-import api from "../../api/api";
-import { UsersContext } from "../../contexts/usersContext";
-import PropTypes from "prop-types";
+  import { useState, useEffect, useContext } from "react";
+  import { useParams, useOutletContext } from "react-router-dom";
+  import styled from "styled-components";
+  import { ModalOverlay, ModalContent } from "../../ui/modal/ModalStyles";
+  import { Section } from "../../ui/class/ClassLayout";
+  import EditButton from "../../ui/class/EditButton";
+  import api from "../../api/api";
+  import { UsersContext } from "../../contexts/usersContext";
+  import PropTypes from "prop-types";
 
 const Title = styled.h1`
   font-size: 26px;
@@ -17,12 +16,28 @@ const Title = styled.h1`
   margin-bottom: 0px;
 `;
 
-const ContentHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-`;
+  const ContentHeader = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  `;
+
+  const NoticeContainer = styled.div`
+    flex: 1;
+    padding: 3.5vh;
+    border-radius: 8px;
+
+    @media (max-width: 1024px) {
+      padding: 3.25vh;
+    }
+
+  @media all and (max-width: 479px) {
+    justify-content: center;
+    padding: 0vh;
+    width: 100%;
+  }
+  `;
 
 const NoticeList = styled.div`
   display: flex;
@@ -54,12 +69,16 @@ const NoticeItem = styled.div`
   }
 `;
 
-const NoticeTitle = styled.h3`
-  font-size: 1.5rem;
-  font-weight: 550;
-  color: var(--black-color);
-  margin-bottom: 0.8rem;
-`;
+  const NoticeTitle = styled.h3`
+    font-size: 1.5rem;
+    font-weight: 550;
+    color: var(--black-color);
+    margin-bottom: 0.8rem;
+
+    @media (max-width: 480px) {
+      font-size: 1rem;
+    }
+  `;
 
 const NoticeMeta = styled.div`
   font-size: 0.9rem;
@@ -70,15 +89,19 @@ const NoticeMeta = styled.div`
   font-weight: semi-bold;
   flex-wrap: wrap;
 
-  @media (max-width: 500px) {
-    flex-direction: column;
-    align-items: flex-start;
+    @media (max-width: 480px) {
+      flex-direction: column;
+      align-items: flex-start;
 
-    span:nth-child(2) {
-      display: none;
+      span:nth-child(2) {
+        display: none;
+      }
     }
-  }
-`;
+
+    @media all and (max-width: 479px) {
+      font-size: 0.8rem;
+    }
+  `;
 
 const NoticeViews = styled.div`
   text-align: center;
@@ -86,12 +109,24 @@ const NoticeViews = styled.div`
   font-size: 1.25rem;
   font-weight: bold;
 
-  div {
-    font-size: 0.875rem;
-    color: #474747;
-    margin-top: 0.25rem;
-  }
-`;
+    div {
+      font-size: 0.875rem;
+      color: #474747;
+      margin-top: 0.25rem;
+
+      @media all and (max-width: 479px) {
+        font-size: 0.7rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      font-size: 1rem;
+    }
+
+    @media all and (max-width: 479px) {
+      font-size: 1rem;
+    }
+  `;
 
 const NoticeContent = styled.div`
   padding: 1.5rem;
@@ -111,22 +146,39 @@ const NoticeContent = styled.div`
     right: 17px;
   }
 
-  .button {
-    background-color: transparent;
-    color: #767676;
-    border: none;
-    font-weight: 500;
-    cursor: pointer;
-  }
-`;
+    .button {
+      background-color: transparent;
+      color: #767676;
+      border: none;
+      font-weight: 500;
+      cursor: pointer;
 
-const Pagination = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.8rem;
-  margin: 2rem;
-`;
+      @media (max-width: 480px) {
+        font-size: 0.8rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      font-size: 0.9rem;
+    }
+
+    @media all and (max-width: 479px) {
+      font-size: 0.8rem;
+      white-space: normal;
+    }
+  `;
+
+  const Pagination = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.8rem;
+    margin: 2rem;
+
+    @media all and (max-width: 479px) {
+      margin: 1rem;
+    }
+  `;
 
 const PageButton = styled.button`
   display: flex;
@@ -304,18 +356,17 @@ const ClassNotice = () => {
     window.location.href = `/class/${courseId}/overview/notice/edit/${noticeId}`;
   };
 
-  return (
-    <div style={{ display: "flex", marginTop: "2rem" }}>
-      {/*<ClassSidebar style={{ marginRight: "2rem" }} />*/}
-      <main
-        style={{
-          flex: 1,
-          borderRadius: "8px",
-        }}
-      >
-        <ContentHeader>
-          <Title>공지사항</Title>
-        </ContentHeader>
+    return (
+          <div style={{ display: "flex", marginTop: "2rem" }}>
+            <NoticeContainer
+              style={{
+                flex: 1,
+                borderRadius: "8px",
+              }}
+            >
+              <ContentHeader>
+                <Title>공지사항</Title>
+              </ContentHeader>
 
         <Section>
           <NoticeList>
@@ -409,34 +460,34 @@ const ClassNotice = () => {
                 </PageButton>
               ))}
 
-              {/* 다음 버튼 */}
-              <PageButton
-                onClick={() =>
-                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                }
-                disabled={currentPage === totalPages}
-              >
-                <Icon className="material-symbols-outlined">
-                  arrow_forward_ios
-                </Icon>
-              </PageButton>
-            </Pagination>
-          )}
-        </Section>
-      </main>
-      {isCreator && (
-        <EditButton
-          to={`/class/${courseId}/overview/notice/create`}
-          edit={true}
+                    {/* 다음 버튼 */}
+                    <PageButton
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                      }
+                      disabled={currentPage === totalPages}
+                    >
+                      <Icon className="material-symbols-outlined">
+                        arrow_forward_ios
+                      </Icon>
+                    </PageButton>
+                  </Pagination>
+                )}
+              </Section>
+            </NoticeContainer>
+        {isCreator && (
+          <EditButton
+            to={`/class/${courseId}/overview/notice/create`}
+            edit={true}
+          />
+        )}
+        <NoticeDeleteModal
+          isOpen={isDeleteModalOpen}
+          onClose={() => setIsDeleteModalOpen(false)}
+          onDelete={handleNoticeDelete}
         />
-      )}
-      <NoticeDeleteModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        onDelete={handleNoticeDelete}
-      />
-    </div>
-  );
-};
+      </div>
+    );
+  };
 
 export default ClassNotice;

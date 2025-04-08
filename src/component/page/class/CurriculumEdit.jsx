@@ -41,7 +41,7 @@ const Curriculum = styled.div`
 
   @media (max-width: 480px) {
     padding: 0vh;
-    margin-left: 3vh;
+    /* margin-left: 3vh; */
     border-radius: 9px;
   }
 `;

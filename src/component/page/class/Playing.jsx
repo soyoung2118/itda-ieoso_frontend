@@ -7,6 +7,7 @@ import PlayingCurriculumSidebar from "../../ui/class/PlayingCurriculumSidebar";
 import api from "../../api/api";
 import { UsersContext } from "../../contexts/usersContext";
 import VideoPlaying from "../../ui/class/VideoPlaying";
+import CloseIcon from "@mui/icons-material/Close";
 
 const ClassPlaying = () => {
   const navigate = useNavigate();
@@ -19,13 +20,19 @@ const ClassPlaying = () => {
   const [currentLectureInfo, setCurrentLectureInfo] = useState([]);
   const [currentVideoInfo, setCurrentVideoInfo] = useState([]);
 
+  const toggleSidebar = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsVisible((prev) => !prev);
+  };
+
   useEffect(() => {
     const fetchCurriculumAndVideoData = async () => {
       if (!courseId || !user || !lectureId || !videoId) return;
 
       try {
         const curriculumResponse = await api.get(
-          `/lectures/curriculum/${courseId}/${user.userId}`,
+          `/lectures/curriculum/${courseId}/${user.userId}`
         );
 
         if (curriculumResponse.data.success) {
@@ -33,14 +40,14 @@ const ClassPlaying = () => {
           setCurriculumData(curriculum);
 
           const currentLecture = curriculum.find(
-            (lecture) => lecture.lectureId === Number(lectureId),
+            (lecture) => lecture.lectureId === Number(lectureId)
           );
 
           if (currentLecture) {
             setCurrentLectureInfo(currentLecture);
 
             const currentVideo = currentLecture.videos.find(
-              (video) => video.videoId === Number(videoId),
+              (video) => video.videoId === Number(videoId)
             );
 
             if (currentVideo) {
@@ -81,30 +88,42 @@ const ClassPlaying = () => {
                 />
               </ClickContainer>
             </TitleContainer>
-
-            {isMobile && (
-              <MenuContainer>
-                <MenuIcon onClick={setIsVisibleHandler} className="menu-icon" />
-              </MenuContainer>
-            )}
           </TopContainer>
 
           <VideoPlaying videoUrl={currentVideoInfo.videoUrl} />
+          {isMobile && (
+            <MobileToggleButtonWrapper>
+              <MobileToggleButton type="button" onClick={toggleSidebar}>
+                {isVisible ? (
+                  <CloseIcon style={{ fontSize: "3.7vh" }} />
+                ) : (
+                  <MenuIcon style={{ fontSize: "3.7vh" }} />
+                )}
+              </MobileToggleButton>
+            </MobileToggleButtonWrapper>
+          )}
         </LeftSide>
 
-        {(!isMobile || isVisible) && (
-          <>
-            {isVisible && (
-              <RightSide isVisible={isVisible}>
-                <PlayingCurriculumSidebar
-                  curriculumData={curriculumData}
-                  setCurriculumData={setCurriculumData}
-                  currentLectureInfo={currentLectureInfo}
-                  setCurrentLectureInfo={setCurrentLectureInfo}
-                />
-              </RightSide>
-            )}
-          </>
+        {!isMobile ? (
+          <RightSide>
+            <PlayingCurriculumSidebar
+              curriculumData={curriculumData}
+              setCurriculumData={setCurriculumData}
+              currentLectureInfo={currentLectureInfo}
+              setCurrentLectureInfo={setCurrentLectureInfo}
+            />
+          </RightSide>
+        ) : (
+          <SidebarSlideWrapper show={isVisible}>
+            <RightSide>
+              <PlayingCurriculumSidebar
+                curriculumData={curriculumData}
+                setCurriculumData={setCurriculumData}
+                currentLectureInfo={currentLectureInfo}
+                setCurrentLectureInfo={setCurrentLectureInfo}
+              />
+            </RightSide>
+          </SidebarSlideWrapper>
         )}
       </Container>
     </>
@@ -143,20 +162,14 @@ const RightSide = styled.div`
   background-color: #ffffff;
   border-radius: 20px;
 
-  @media (max-width: 480px) {
-    display: ${(props) => (props.isVisible ? "block" : "none")};
-    position: absolute;
-    width: 60vw !important;
-    right: 0;
-    margin-top: 35px;
-    margin-right: 25px;
-    background: white;
-    z-index: 1000;
-    border: 2px solid #e0e0e0;
-  }
-
   @media (max-width: 768px) {
     width: 25vw;
+  }
+
+  @media (max-width: 480px) {
+    display: block;
+    width: 100%;
+    height: 100%;
   }
 `;
 
@@ -183,5 +196,48 @@ const SubTitle = styled.div`
   font-size: 16px;
   font-weight: 400;
 `;
+const MobileToggleButtonWrapper = styled.div`
+  display: none;
 
+  @media (max-width: 480px) {
+    display: block;
+    position: fixed;
+    bottom: 20px;
+    right: 12%;
+    z-index: 1500;
+  }
+`;
+
+const MobileToggleButton = styled.button`
+  display: none;
+
+  @media (max-width: 480px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    margin-top: 2vh;
+    margin-left: auto;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--main-color);
+    padding: 0.5vh;
+  }
+`;
+
+const SidebarSlideWrapper = styled.div`
+  @media (max-width: 480px) {
+    position: fixed;
+    z-index: 999;
+    top: 0;
+    right: ${(props) => (props.show ? "0" : "-100%")};
+    width: 75%;
+    height: 100%;
+    background-color: white;
+    transition: right 0.3s ease-in-out;
+    box-shadow: -2px 0px 10px rgba(0, 0, 0, 0.1);
+  }
+`;
 export default ClassPlaying;

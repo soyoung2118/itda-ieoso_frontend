@@ -51,7 +51,7 @@ const ButtonContainer = styled.div`
   margin-left: auto;
   gap: 1.5rem;
 
-  @media (max-width: 600px) {
+  @media (max-width: 480px) {
     padding: 1px;
     gap: 0.5rem;
   }
@@ -70,8 +70,9 @@ const StyledButton = styled.button`
   margin-right: -2.1rem;
   margin-bottom: 1rem;
 
-  @media (max-width: 600px) {
-    font-size: 16px;
+  @media (max-width: 480px) {
+    font-size: 14px;
+    font-weight: 500;
     padding: 10px 18px;
   }
 `;
@@ -87,8 +88,9 @@ const CancelButton = styled.button`
   cursor: pointer;
   margin-bottom: 1rem;
 
-  @media (max-width: 600px) {
-    font-size: 16px;
+  @media (max-width: 480px) {
+    font-size: 14px;
+    font-weight: 500;
     padding: 10px 18px;
   }
 `;

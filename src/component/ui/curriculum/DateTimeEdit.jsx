@@ -26,25 +26,38 @@ const DateTimeContainer = styled.div`
 
   /* 달력 팝업 */
   .react-datepicker {
+    display: flex;
+    width: 50vh;
+    height: auto;
+    border: 1px solid #dcdcdc;
     font-size: 14px;
     border-radius: 10px;
-    border: 1.5px solid #dcdcdc;
     overflow: hidden;
-    display: flex;
-    z-index: 9999;
-    height: auto;
-    align-items: stretch;
-    min-height: fit-content;
 
     @media (max-width: 1024px) {
       width: 26vh;
-      height: 20vh;
       font-size: 11.5px;
     }
 
     @media (max-width: 768px) {
-      width: 28vh;
+      width: 30vh;
       font-size: 10px;
+      border-radius: 7px;
+    }
+
+    @media (max-width: 480px) {
+      width: 45vh;
+      border-radius: 5px;
+    }
+
+    @media (max-width: 440px) {
+      width: 24vh;
+      border-radius: 5px;
+    }
+
+    @media (max-width: 376px) {
+      width: 28vh;
+      border-radius: 3px;
     }
   }
 
@@ -53,16 +66,9 @@ const DateTimeContainer = styled.div`
   }
 
   .react-datepicker__month-container {
+    flex: 3;
+    min-width: 0;
     padding: 1vh;
-    flex: 8;
-    max-width: 80%;
-    box-sizing: border-box;
-
-    @media (max-width: 768px) {
-      // flex: 7;
-      // max-width: 70%;
-      height: 100%;
-    }
   }
 
   .react-datepicker__current-month {
@@ -77,6 +83,30 @@ const DateTimeContainer = styled.div`
     @media (max-width: 768px) {
       font-size: 11.5px;
     }
+
+    @media (max-width: 480px) {
+      font-size: 7px;
+      font-weight: 550;
+    }
+    @media (max-width: 376px) {
+      font-size: 6.5px;
+    }
+  }
+
+  .react-datepicker__month {
+    @media (max-width: 1024px) {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 75%;
+    }
+
+    @media (max-width: 768px) {
+      height: 70%;
+    }
+    @media (max-width: 480px) {
+      margin: 0 auto;
+    }
   }
 
   .react-datepicker__header {
@@ -90,6 +120,14 @@ const DateTimeContainer = styled.div`
     @media (max-width: 1024px) {
       padding: 0.3vh;
       gap: 0vh;
+    }
+
+    @media (max-width: 480px) {
+      padding: 0.1vh;
+    }
+
+    @media (max-width: 376px) {
+      padding: 0vh;
     }
   }
 
@@ -108,11 +146,26 @@ const DateTimeContainer = styled.div`
       padding: 0px;
       margin: 0;
     }
+    @media (max-width: 480px) {
+      font-size: 7px;
+      line-height: 2.5;
+    }
+
+    @media (max-width: 376px) {
+      font-size: 6.5px;
+    }
   }
 
   .react-datepicker__day-names {
     display: flex;
     justify-content: space-between;
+    width: 100%;
+  }
+
+  .react-datepicker__week {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
   }
 
   .react-datepicker__day-name {
@@ -131,6 +184,16 @@ const DateTimeContainer = styled.div`
     @media (max-width: 768px) {
       font-size: 9px;
     }
+
+    @media (max-width: 480px) {
+      flex: 0.5;
+      font-size: 7px;
+    }
+
+    @media (max-width: 376px) {
+      flex: 1;
+      font-size: 6.5px;
+    }
   }
 
   .react-datepicker__day--selected,
@@ -148,42 +211,40 @@ const DateTimeContainer = styled.div`
     border-left: 1px solid #eee;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    padding-top: 0;
-    flex: 3;
-    max-width: 30%;
-    width: 30%;
-    box-sizing: border-box;
 
     @media (max-width: 768px) {
-      flex: 2;
-      width: auto;
+      max-height: 10vh;
+    }
+
+    @media (max-width: 480px) {
+      flex: 1;
+      max-height: 20vh;
     }
   }
 
-  .react-datepicker__time / {
+  .react-datepicker__time {
     border-top: 1px solid #eee;
-    height: 80%;
-
-    @media (max-width: 768px) {
-      height: 85%;
-    }
+    width: 100%;
   }
 
   .react-datepicker__time-box {
-    width: 100%;
-    height: 100%;
-
-    @media (max-width: 768px) {
-      width: 100%;
-      border: 2px solid black;
+    @media (max-width: 480px) {
+      width: 10vh;
+      max-width: 10vh;
+      flex: 1;
+      box-sizing: border-box;
+    }
+    @media (max-width: 376px) {
+      width: 7vh;
+      max-width: 7vh;
+      flex: 1;
+      box-sizing: border-box;
     }
   }
 
   .react-datepicker-time__header {
     font-size: 13px;
     font-weight: bold;
-    padding: 0.5rem 0;
 
     flex-shrink: 0;
     padding: 0.5rem 0;
@@ -195,7 +256,30 @@ const DateTimeContainer = styled.div`
     }
     @media (max-width: 768px) {
       font-size: 10.5px !important;
-      padding: 0.1rem 0;
+      padding: 0.35rem 0;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 7.5px !important;
+      padding: 0.15rem 0;
+    }
+
+    @media (max-width: 376px) {
+      font-size: 6px !important;
+      padding: 0.3rem 0;
+    }
+  }
+
+  .react-datepicker__time-list {
+    width: 100%;
+    box-sizing: border-box;
+
+    @media (max-width: 480px) {
+      max-height: 25vh;
+    }
+
+    @media (max-width: 376px) {
+      max-height: 18vh;
     }
   }
 
@@ -203,6 +287,9 @@ const DateTimeContainer = styled.div`
     font-size: 14px;
     color: #333;
     cursor: pointer;
+    width: 100%;
+    min-height: 40px;
+    box-sizing: border-box;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -215,7 +302,13 @@ const DateTimeContainer = styled.div`
       font-size: 12px;
     }
     @media (max-width: 768px) {
-      font-size: 11px;
+      font-size: 10px;
+      min-height: 30px;
+    }
+    @media (max-width: 480px) {
+      font-size: 7px;
+      min-height: 17px;
+      max-height: 17px;
     }
   }
 
