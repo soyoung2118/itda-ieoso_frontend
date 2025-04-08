@@ -291,6 +291,9 @@ const PlayingCurriculumSidebar = ({
   };
 
   const dateText = (time) => {
+    if (!time || typeof time !== "string" || !time.includes("T")) {
+      return "날짜 정보 없음";
+    }
     const date = time.slice(0, -3);
     return date.replace("T", " ");
   };
