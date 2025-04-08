@@ -221,7 +221,6 @@ const ClassAssignmentSubmit = () => {
               />
             </ClickContainer>
           </TitleContainer>
-
           {isMobile && (
             <MobileToggleButton type="button" onClick={toggleSidebar}>
               {isVisible ? (
@@ -343,6 +342,7 @@ const Container = styled.div`
   display: flex;
   margin-top: 30px;
   background-color: #f6f7f9;
+  position: relative;
 `;
 
 const LeftSide = styled.div`
@@ -382,31 +382,44 @@ const MenuContainer = styled.div`
   margin-top: 3px;
 `;
 
-const MobileToggleButton = styled.button`
+const MobileToggleButtonWrapper = styled.div`
   display: none;
 
   @media (max-width: 480px) {
     display: block;
     position: fixed;
-    bottom: 4.6%;
-    right: 5%;
-    z-index: 1300;
+    bottom: 20px;
+    right: 12%;
+    z-index: 1500;
+  }
+`;
+
+const MobileToggleButton = styled.button`
+  display: none;
+
+  @media (max-width: 480px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    margin-top: 2vh;
+    margin-left: auto;
     background: white;
     border: 1px solid #ccc;
     border-radius: 50%;
-    padding: 0.8vh;
-    font-size: 0.5vh;
     cursor: pointer;
     color: var(--main-color);
+    padding: 0.5vh;
   }
 `;
 
 const SidebarSlideWrapper = styled.div`
   @media (max-width: 480px) {
     position: fixed;
+    z-index: 999;
     top: 0;
     right: ${(props) => (props.show ? "0" : "-100%")};
-    width: 55%;
+    width: 75%;
     height: 100%;
     background-color: white;
     transition: right 0.3s ease-in-out;
