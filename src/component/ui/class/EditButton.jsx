@@ -1,8 +1,11 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 import styled from "styled-components";
 import EditBtn from "../../img/class/edit_btn.svg";
 import EditedBtn from "../../img/class/edited_btn.svg";
-import { useNavigate } from "react-router-dom";
+import { ModalOverlay, AlertModalContainer } from "../modal/ModalStyles";
 
 const StyledButton = styled.div`
   position: fixed;
@@ -23,6 +26,7 @@ const StyledButton = styled.div`
 
 const EditButton = ({ to, edit, lecture }) => {
   const navigate = useNavigate();
+  const [showAlertModal, setShowAlertModal] = useState(false);
 
   const handleClick = (to) => {
     if (!lecture) return;
@@ -33,9 +37,7 @@ const EditButton = ({ to, edit, lecture }) => {
     );
 
     if (isLectureDateMissing || isAnySubDateMissing) {
-      alert(
-        "시작일 또는 종료일이 입력되지 않았습니다.\n모든 날짜 항목을 입력해주시기 바랍니다.",
-      );
+      setShowAlertModal(true);
       return;
     }
 
@@ -43,14 +45,50 @@ const EditButton = ({ to, edit, lecture }) => {
   };
 
   return (
-    <StyledButton onClick={() => handleClick(to)}>
-      <img
-        src={edit ? EditBtn : EditedBtn}
-        alt="Edit Button"
-        style={{ width: "100%" }}
-      />
-    </StyledButton>
+    <>
+      <StyledButton onClick={() => handleClick(to)}>
+        <img
+          src={edit ? EditBtn : EditedBtn}
+          alt="Edit Button"
+          style={{ width: "100%" }}
+        />
+      </StyledButton>
+      {showAlertModal && (
+        <ModalOverlay>
+          <AlertModalContainer>
+            <div className="text">
+              시작일 또는 종료일이 입력되지 않았습니다.
+              <br />
+              모든 날짜 항목을 입력해주시기 바랍니다.
+            </div>
+            <div className="button-container">
+              <button
+                className="close-button"
+                onClick={() => setShowAlertModal(false)}
+              >
+                확인
+              </button>
+            </div>
+          </AlertModalContainer>
+        </ModalOverlay>
+      )}
+    </>
   );
+};
+
+EditButton.propTypes = {
+  to: PropTypes.string.isRequired,
+  edit: PropTypes.bool.isRequired,
+  lecture: PropTypes.shape({
+    startDate: PropTypes.string,
+    endDate: PropTypes.string,
+    subSections: PropTypes.arrayOf(
+      PropTypes.shape({
+        startDate: PropTypes.string,
+        endDate: PropTypes.string,
+      }),
+    ),
+  }).isRequired,
 };
 
 export default EditButton;
