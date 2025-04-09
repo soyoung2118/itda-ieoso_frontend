@@ -904,8 +904,9 @@ const Curriculum = () => {
       </CurriculmContainer>
       {isCreator && (
         <EditButton
-          to={`/class/${courseId}/curriculum/${activeLectureId}/edit`}
           edit={true}
+          to={`/class/${courseId}/curriculum/${activeLectureId}/edit`}
+          lecture={activeLecture}
         />
       )}
 

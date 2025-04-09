@@ -561,7 +561,7 @@ const CurriculumEdit = () => {
 
       if (editingSection) {
         if (!editingSection.startDate || !editingSection.endDate) {
-          alert("날짜를 선택해주세요!");
+          alert("시작일 또는 종료일이 입력되지 않았습니다.\n모든 날짜 항목을 입력해주시기 바랍니다.");
           return;
         }
       }
@@ -572,7 +572,7 @@ const CurriculumEdit = () => {
             `/lectures/${courseId}/${activeLectureId}/${userId}`,
             {
               lectureTitle: activeLecture.lectureTitle,
-              lectureDescription: lectureDescription, // 변경된 설명 저장
+              lectureDescription: lectureDescription, 
               startDate: activeLecture.startDate,
               endDate: activeLecture.endDate,
             },
@@ -580,7 +580,7 @@ const CurriculumEdit = () => {
 
           if (response.data.success) {
             setLectureDescription(lectureDescription);
-            setIsEditingDescription(false); // 수정 완료 후 편집 종료
+            setIsEditingDescription(false); 
           } else {
             console.error("강의 설명 수정 실패:", response.data.message);
           }
@@ -734,6 +734,7 @@ const CurriculumEdit = () => {
       <EditButton
         edit={false}
         to={`/class/${courseId}/curriculum/${activeLectureId}/`}
+        lecture={activeLecture}
       />
     </div>
   );

@@ -2,8 +2,9 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import EditBtn from "../../img/class/edit_btn.svg";
 import EditedBtn from "../../img/class/edited_btn.svg";
+import { useNavigate } from "react-router-dom";
 
-const StyledButton = styled(Link)`
+const StyledButton = styled.div`
   position: fixed;
   bottom: 2rem;
   right: 2rem;
@@ -20,9 +21,29 @@ const StyledButton = styled(Link)`
   }
 `;
 
-const EditButton = ({ to, edit }) => {
+const EditButton = ({ to, edit, lecture }) => {
+  const navigate = useNavigate();
+
+  const handleClick = (to) => {
+    if (!lecture) return;
+
+    const isLectureDateMissing = !lecture.startDate || !lecture.endDate;
+    const isAnySubDateMissing = lecture.subSections?.some(
+      (section) => !section.startDate || !section.endDate,
+    );
+
+    if (isLectureDateMissing || isAnySubDateMissing) {
+      alert(
+        "시작일 또는 종료일이 입력되지 않았습니다.\n모든 날짜 항목을 입력해주시기 바랍니다.",
+      );
+      return;
+    }
+
+    navigate(to);
+  };
+
   return (
-    <StyledButton to={to}>
+    <StyledButton onClick={() => handleClick(to)}>
       <img
         src={edit ? EditBtn : EditedBtn}
         alt="Edit Button"
