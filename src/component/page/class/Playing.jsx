@@ -37,7 +37,26 @@ const ClassPlaying = () => {
 
         if (curriculumResponse.data.success) {
           const curriculum = curriculumResponse.data.data.curriculumResponses;
-          setCurriculumData(curriculum);
+          const filteredCurriculum = curriculum
+            .map((lecture) => {
+              const filteredVideos = lecture.videos.filter(
+                (video) => video.videoTitle !== "강의 영상 제목을 입력하세요."
+              );
+        
+              const filteredAssignments = lecture.assignments.filter(
+                (assignment) => assignment.assignmentTitle !== "과제 제목을 입력하세요."
+              );
+        
+              return {
+                ...lecture,
+                videos: filteredVideos,
+                assignments: filteredAssignments,
+              };
+            })
+            
+            //.filter((lecture) => lecture.videos.length > 0 || lecture.assignments.length > 0);
+        
+          setCurriculumData(filteredCurriculum);
 
           const currentLecture = curriculum.find(
             (lecture) => lecture.lectureId === Number(lectureId),
