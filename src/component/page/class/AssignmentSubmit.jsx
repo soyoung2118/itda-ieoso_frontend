@@ -79,7 +79,6 @@ const ClassAssignmentSubmit = () => {
             //.filter((lecture) => lecture.videos.length > 0 || lecture.assignments.length > 0);
         
           setCurriculumData(filteredCurriculum);
-          console.log(filteredCurriculum);
 
           const currentLecture = curriculum.find(
             (lecture) => lecture.lectureId === Number(lectureId),
