@@ -218,7 +218,7 @@ const PlayingCurriculumSidebar = ({
       now.getTime() > endDate.getTime()
     ) {
       setAlertMessage(
-        `<strong>지금은 자료를 볼 수 없는 시간이에요.</strong> \n\n이 자료는 ${startDate.toLocaleString()}부터 \n${endDate.toLocaleString()}까지 다운로드 가능합니다.`
+        `<strong>지금은 자료를 볼 수 없는 시간이에요.</strong> \n\n이 자료는 ${startDate.toLocaleString()}부터 \n${endDate.toLocaleString()}까지 다운로드 가능합니다.`,
       );
       setShowAlertModal(true);
       return;
@@ -445,7 +445,10 @@ const PlayingCurriculumSidebar = ({
       {showAlertModal && (
         <ModalOverlay>
           <AlertModalContainer>
-            <div className="none-bold-text" dangerouslySetInnerHTML={{ __html: alertMessage }}></div>
+            <div
+              className="none-bold-text"
+              dangerouslySetInnerHTML={{ __html: alertMessage }}
+            ></div>
             <div className="button-container">
               <button
                 className="close-button"
