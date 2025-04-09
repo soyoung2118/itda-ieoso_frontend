@@ -167,7 +167,6 @@ const NoticeContent = styled.div`
     white-space: pre-wrap;
     word-break: break-all;
   }
-
 `;
 
 const Pagination = styled.div`
