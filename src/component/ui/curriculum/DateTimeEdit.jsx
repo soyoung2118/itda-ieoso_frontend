@@ -496,7 +496,6 @@ const DateTimeEdit = ({
     }
   };
 
-  // 날짜 변경 → API 전송 + 부모 상태 업데이트
   const handleDateChange = (newDate) => {
     if (!newDate) {
       alert("날짜를 선택해주세요!");
