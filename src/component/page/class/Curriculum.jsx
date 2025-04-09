@@ -647,7 +647,7 @@ const Curriculum = () => {
         now.getTime() > endDate.getTime()
       ) {
         setAlertMessage(
-          `이 콘텐츠는 ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()}까지만 접근 가능합니다.`,
+          `<strong>지금은 강의를 볼 수 없는 시간이에요.</strong> \n\n이 강의는 ${startDate.toLocaleString()}부터 \n${endDate.toLocaleString()}까지 시청하실 수 있어요.`,
         );
         setShowAlertModal(true);
         return;
@@ -662,7 +662,7 @@ const Curriculum = () => {
       }
       if (now.getTime() < startDate.getTime()) {
         setAlertMessage(
-          `이 과제는 ${startDate.toLocaleString()} 이후에 제출할 수 있습니다.`,
+          `<strong>지금은 과제를 제출할 수 없는 시간이에요.</strong> \n\n${startDate.toLocaleString()} 이후에 제출할 수 있습니다.`,
         );
         setShowAlertModal(true);
         return;
@@ -683,7 +683,7 @@ const Curriculum = () => {
       now.getTime() > endDate.getTime()
     ) {
       setAlertMessage(
-        `이 자료는 ${startDate.toLocaleString()} ~ ${endDate.toLocaleString()}까지만 다운로드 가능합니다.`,
+        `<strong>지금은 자료를 볼 수 없는 시간이에요.</strong> \n\n이 자료는 ${startDate.toLocaleString()}부터 \n${endDate.toLocaleString()}까지 다운로드 가능합니다.`
       );
       setShowAlertModal(true);
       return;
@@ -912,7 +912,7 @@ const Curriculum = () => {
       {showAlertModal && (
         <ModalOverlay>
           <AlertModalContainer>
-            <div className="text">{alertMessage}</div>
+            <div className="none-bold-text" dangerouslySetInnerHTML={{ __html: alertMessage }}></div>
             <div className="button-container">
               <button
                 className="close-button"
