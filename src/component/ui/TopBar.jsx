@@ -47,7 +47,7 @@ export default function TopBar() {
       const redirectUri = encodeURIComponent(
         `${window.location.origin}/oauth/account/link`,
       );
-      const googleLoginUrl = `https://staging.eduitda.com/api/oauth/google/login/temp?redirect_uri=${redirectUri}`;
+      const googleLoginUrl = `${import.meta.env.VITE_API_URL}/oauth/google/login/temp?redirect_uri=${redirectUri}`;
       window.location.href = googleLoginUrl;
     } catch (error) {
       console.error("구글 연동 시작 중 오류 발생:", error);

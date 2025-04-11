@@ -81,7 +81,7 @@ export default function LogIn() {
     const redirectUri = encodeURIComponent(
       `${window.location.origin}/oauth/callback`,
     );
-    const googleLoginUrl = `https://staging.eduitda.com/api/oauth/google/login?redirect_uri=${redirectUri}`;
+    const googleLoginUrl = `${import.meta.env.VITE_API_URL}/oauth/google/login?redirect_uri=${redirectUri}`;
     window.location.href = googleLoginUrl;
   };
 
