@@ -94,6 +94,7 @@ const TabLink = styled(NavLink)`
   white-space: nowrap;
 
   &.active {
+    color: var(--black-color);
     &::after {
       content: "";
       position: absolute;
