@@ -1,10 +1,9 @@
 import { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import AdminTopBar from "../../ui/class/AdminTopBar";
-import api from "../../api/api";
-import { UsersContext } from "../../contexts/usersContext";
-import EntryCodeCopyModal from "../../ui/class/EntryCodeCopyModal";
+import api from "../../../api/api";
+import { UsersContext } from "../../../contexts/usersContext";
+import EntryCodeCopyModal from "../../../ui/class/EntryCodeCopyModal";
 
 export default function Setting() {
   const navigate = useNavigate();
@@ -197,7 +196,6 @@ export default function Setting() {
         borderRadius: "8px",
       }}
     >
-      <AdminTopBar />
       <div style={{ margin: "1vh 0vh" }}>
         <div
           style={{

@@ -20,20 +20,21 @@ import FindPassword from "./component/page/users/FindPassword.jsx";
 import ChangePassword from "./component/page/users/ChangePassword.jsx";
 import ClassList from "./component/page/ClassList.jsx";
 import Create from "./component/page/class/Create.jsx";
-import Setting from "./component/page/class/Setting.jsx";
 import Participate from "./component/page/Participate.jsx";
 import Class from "./component/page/Class.jsx";
 import ClassOverview from "./component/page/class/Overview.jsx";
-import ClassSummary from "./component/page/class/Summary.jsx";
-import ClassStudents from "./component/page/class/Students.jsx";
 import ClassNotice from "./component/page/class/Notice.jsx";
 import NoticeCreate from "./component/page/class/NoticeCreate.jsx";
 import ClassCurriculum from "./component/page/class/Curriculum.jsx";
 import ClassCurriculumEdit from "./component/page/class/CurriculumEdit.jsx";
+import Admin from "./component/page/class/Admin.jsx";
+import ClassSummary from "./component/page/class/admin/Summary.jsx";
+import ClassStudents from "./component/page/class/admin/Students.jsx";
+import StudentDetail from "./component/page/class/admin/StudentDetail.jsx";
+import Setting from "./component/page/class/admin/Setting.jsx";
 import Dashboard from "./component/page/dashboard/Dashboard.jsx";
 import ClassPlaying from "./component/page/class/Playing.jsx";
 import ClassAssignmentSubmit from "./component/page/class/AssignmentSubmit.jsx";
-import StudentDetail from "./component/page/class/StudentDetail.jsx";
 import GoogleAuthCallback from "./component/page/users/GoogleAuthCallback.jsx";
 import GoogleAccountLink from "./component/page/users/GoogleAccountLink.jsx";
 
@@ -155,13 +156,12 @@ function App() {
               path="curriculum/:lectureId/edit"
               element={<ClassCurriculumEdit />}
             />
-            <Route path="admin/summary" element={<ClassSummary />} />
-            <Route path="admin/students" element={<ClassStudents />} />
-            <Route
-              path="admin/students/:studentId"
-              element={<StudentDetail />}
-            />
-            <Route path="admin/setting" element={<Setting />} />
+            <Route path="admin/" element={<Admin />}>
+              <Route path="summary" element={<ClassSummary />} />
+              <Route path="students" element={<ClassStudents />} />
+              <Route path="students/:studentId" element={<StudentDetail />} />
+              <Route path="setting" element={<Setting />} />
+            </Route>
             <Route
               path="playing/:lectureId/:videoId"
               element={<ClassPlaying />}
