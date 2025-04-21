@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import AdminTopBar from "../../ui/class/AdminTopBar";
-import { Section } from "../../ui/class/ClassLayout";
+import { Section } from "../../../ui/class/ClassLayout";
 import styled from "styled-components";
 
-import assignmentIcon from "../../img/admin/student_assignment.svg";
-import api from "../../api/api";
-import Download from "../../img/icon/download.svg";
+import assignmentIcon from "../../../img/admin/student_assignment.svg";
+import api from "../../../api/api";
+import Download from "../../../img/icon/download.svg";
 
 const ClassStudents = () => {
   const { courseId, studentId } = useParams();
@@ -117,7 +116,6 @@ const ClassStudents = () => {
 
   return (
     <MainWrapper>
-      <AdminTopBar />
       <div>
         <TopBar>
           <Title>학생별 과제 보기</Title>

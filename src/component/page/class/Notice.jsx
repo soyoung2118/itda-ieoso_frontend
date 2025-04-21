@@ -3,7 +3,7 @@ import { useParams, useOutletContext } from "react-router-dom";
 import styled from "styled-components";
 import { ModalOverlay, ModalContent } from "../../ui/modal/ModalStyles";
 import { Section } from "../../ui/class/ClassLayout";
-import EditButton from "../../ui/class/EditButton";
+import EditNoticeButton from "../../ui/class/EditNoticeButton";
 import api from "../../api/api";
 import { UsersContext } from "../../contexts/usersContext";
 import PropTypes from "prop-types";
@@ -477,7 +477,7 @@ const ClassNotice = () => {
         </Section>
       </NoticeContainer>
       {isCreator && (
-        <EditButton
+        <EditNoticeButton
           to={`/class/${courseId}/overview/notice/create`}
           edit={true}
         />

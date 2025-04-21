@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import api from "../../api/api";
-import AdminTopBar from "../../ui/class/AdminTopBar";
+import api from "../../../api/api";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import styled from "styled-components";
-import StudentProgressTable from "../../ui/class/StudentProgressTable";
+import StudentProgressTable from "../../../ui/class/StudentProgressTable";
 import { StyledEngineProvider } from "@mui/material";
 import { style } from "@mui/system";
 
@@ -202,7 +201,6 @@ const ClassSummary = () => {
         borderRadius: "8px",
       }}
     >
-      <AdminTopBar />
       <div style={{ margin: "1vh 0vh" }}>
         <SummarySection>
           <Summary>요약</Summary>

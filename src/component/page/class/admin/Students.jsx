@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import AdminTopBar from "../../ui/class/AdminTopBar";
-import { Section } from "../../ui/class/ClassLayout";
-import profileIcon from "../../img/icon/usericon.svg";
-import api from "../../api/api";
+import { Section } from "../../../ui/class/ClassLayout";
+import profileIcon from "../../../img/icon/usericon.svg";
+import api from "../../../api/api";
 import styled from "styled-components";
 
 const Main = styled.main`
@@ -436,7 +435,6 @@ const ClassStudents = () => {
 
   return (
     <Main>
-      <AdminTopBar />
       <HeaderWrap>
         <HeaderTitleRow>
           <HeaderTitle>전체 과제 보기</HeaderTitle>
