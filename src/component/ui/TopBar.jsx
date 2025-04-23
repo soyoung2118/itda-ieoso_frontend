@@ -22,18 +22,24 @@ export default function TopBar() {
   };
 
   useEffect(() => {
-    const handleCheckExist = async () => {
-      const response = await checkExist();
+    // 현재 경로를 가져옵니다.
+    const currentPath = location.pathname;
 
-      if (response.data === "NONE") {
-        setIsGoogleLinked(false);
-      } else {
-        setIsGoogleLinked(true);
-      }
-    };
+    // LandingPage와 LoginPage가 아닌 경우에만 checkExist를 호출합니다.
+    if (currentPath !== "/" && currentPath !== "/login") {
+      const handleCheckExist = async () => {
+        const response = await checkExist();
 
-    handleCheckExist();
-  }, [isGoogleLinked]);
+        if (response.data === "NONE") {
+          setIsGoogleLinked(false);
+        } else {
+          setIsGoogleLinked(true);
+        }
+      };
+
+      handleCheckExist();
+    }
+  }, [isGoogleLinked, location.pathname]);
 
   const handleGoogleAuth = () => {
     try {
