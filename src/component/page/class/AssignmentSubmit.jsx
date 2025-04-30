@@ -388,7 +388,7 @@ const NoticeContentContainer = styled.div`
   flex-direction: column;
   padding-left: 10px;
   overflow: auto;
-  height: calc(30vh - 65px);
+  height: calc(30vh - 20px);
   white-space: pre-wrap;
   &::-webkit-scrollbar {
     display: block;
