@@ -69,13 +69,13 @@ const StyledQuill = styled(ReactQuill)`
 const StyledButton = styled.a`
   position: fixed;
   bottom: 2rem;
-  right: 2rem;
+  right: 4rem;
   cursor: pointer;
   border: none;
   background-color: transparent;
 
   .img {
-    width: 49px;
+    width: 60px;
 
     @media (max-width: 1024px) {
       width: 35px;

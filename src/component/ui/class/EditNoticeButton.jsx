@@ -6,7 +6,7 @@ import EditedBtn from "../../img/class/edited_btn.svg";
 const StyledButton = styled(Link)`
   position: fixed;
   bottom: 2rem;
-  right: 2rem;
+  right: 4rem;
   width: 6vh;
   cursor: pointer;
 
