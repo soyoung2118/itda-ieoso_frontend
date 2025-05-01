@@ -388,11 +388,26 @@ const NoticeContentContainer = styled.div`
   flex-direction: column;
   padding-left: 10px;
   overflow: auto;
-  height: calc(30vh - 20px);
+  height: calc(30vh - 15px);
   white-space: pre-wrap;
+  
+  /* 스크롤바 보이게 강제 적용 */
   &::-webkit-scrollbar {
-    display: block;
+    width: 6px;
   }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,0.3);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* Firefox용 */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,0.3) transparent;
 `;
 
 const TitleContainer = styled.div`

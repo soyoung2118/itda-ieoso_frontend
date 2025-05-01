@@ -29,11 +29,14 @@ const GlobalStyle = createGlobalStyle`
     button, textarea {
         font-family: "Pretendard", sans-serif;
     }
-
-    &::-webkit-scrollbar {
-        display: none;
+    ::-webkit-scrollbar {
+        width: 0px;
+        height: 0px;
     }
 
+    html {
+        scrollbar-width: none;
+    }
 `;
 
 export default GlobalStyle;
