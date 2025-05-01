@@ -26,15 +26,11 @@ const ContentHeader = styled.div`
 const NoticeContainer = styled.div`
   flex: 1;
   border-radius: 8px;
-
-  @media (max-width: 1024px) {
-    padding: 3.25vh;
-  }
-
+  width: 100%;
+  
   @media all and (max-width: 479px) {
     justify-content: center;
     padding: 0vh;
-    width: 100%;
   }
 `;
 
@@ -137,7 +133,8 @@ const NoticeContent = styled.div`
   transition: max-height 0.3s ease-out;
   overflow: hidden;
   position: relative;
-  white-space: pre;
+  white-space: pre-wrap;
+  word-break: break-word;
 
   .button-container {
     position: absolute;
