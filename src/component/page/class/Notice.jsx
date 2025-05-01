@@ -25,7 +25,6 @@ const ContentHeader = styled.div`
 
 const NoticeContainer = styled.div`
   flex: 1;
-  padding: 3.5vh;
   border-radius: 8px;
 
   @media (max-width: 1024px) {
