@@ -12,6 +12,7 @@ import api from "../../api/api";
 import { UsersContext } from "../../contexts/usersContext";
 import EntryCodeModal from "../../ui/class/EntryCodeModal";
 import PropTypes from "prop-types";
+import DOMPurify from "dompurify";
 
 const IconRow = styled.div`
   display: flex;
@@ -68,13 +69,13 @@ const StyledQuill = styled(ReactQuill)`
 const StyledButton = styled.a`
   position: fixed;
   bottom: 2rem;
-  right: 2rem;
+  right: 4rem;
   cursor: pointer;
   border: none;
   background-color: transparent;
 
   .img {
-    width: 49px;
+    width: 60px;
 
     @media (max-width: 1024px) {
       width: 35px;
@@ -151,11 +152,22 @@ const ImageContainer = styled.div`
     pointer-events: none;
   }
 `;
+const TitleContainer = styled.div`
+  display: flex;
+  align-items: flex-end;
+  margin: 15px 5px;
+`;
 
 const Title = styled.div`
   font-size: 26px;
   font-weight: 800;
-  text-align: left;
+`;
+
+const LimitText = styled.div`
+  font-size: 13px;
+  margin-bottom: 3px;
+  margin-left: 15px;
+  color: var(--main-color);
 `;
 
 const EditableSectionContent = ({ content, onChange, isEditing }) => {
@@ -170,11 +182,30 @@ const EditableSectionContent = ({ content, onChange, isEditing }) => {
 
   const modulesToUse = isEditing ? modules : { toolbar: false };
 
+  const handleChange = (value) => {
+    const cleanText = DOMPurify.sanitize(value, { ALLOWED_TAGS: [] })
+      .replace(/<br\s*\/?>/gi, "\n")
+      .replace(/<\/p>/gi, "\n");
+    if (cleanText.length <= 500) {
+      onChange(value);
+    } else {
+      let truncatedValue = value;
+      while (
+        DOMPurify.sanitize(truncatedValue, { ALLOWED_TAGS: [] })
+          .replace(/<br\s*\/?>/gi, "\n")
+          .replace(/<\/p>/gi, "\n").length > 500
+      ) {
+        truncatedValue = truncatedValue.slice(0, -1);
+      }
+      onChange(truncatedValue);
+    }
+  };
+
   return (
     <StyledQuill
       key={isEditing ? "editing" : "readOnly"}
       value={content}
-      onChange={isEditing ? onChange : () => {}}
+      onChange={isEditing ? handleChange : () => {}}
       readOnly={!isEditing}
       modules={modulesToUse}
       theme="snow"
@@ -186,6 +217,14 @@ EditableSectionContent.propTypes = {
   content: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   isEditing: PropTypes.bool.isRequired,
+};
+
+const getPlainTextLength = (htmlContent) => {
+  const cleanHtml = DOMPurify.sanitize(htmlContent, { ALLOWED_TAGS: [] });
+  const textWithNewlines = cleanHtml
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/p>/gi, "\n");
+  return textWithNewlines.length;
 };
 
 const ClassOverview = () => {
@@ -354,8 +393,12 @@ const ClassOverview = () => {
             </span>
           </IconRow>
         </Section>
-
-        <Title style={{ margin: "10px 5px" }}>강의 소개</Title>
+        <TitleContainer>
+          <Title>강의 소개</Title>
+          {isEditing && (
+            <LimitText>{getPlainTextLength(sectionContent)} / 500자</LimitText>
+          )}
+        </TitleContainer>
         <Content isEditing={isEditing}>
           <EditableSectionContent
             content={sectionContent}

@@ -9,7 +9,7 @@ import { UsersContext } from "../../contexts/usersContext";
 const AssignmentSubmitBox = ({
   courseId,
   userId,
-  content,
+  content = "",
   setContent,
   files,
   setFiles,
@@ -25,10 +25,15 @@ const AssignmentSubmitBox = ({
 
   const [previousFiles, setPreviousFiles] = useState([]);
   const [deletedFiles, setDeletedFiles] = useState([]);
+  const [charCount, setCharCount] = useState(0);
 
   useEffect(() => {
     setCanEdit(true);
   }, [assignmentId]);
+
+  useEffect(() => {
+    setCharCount((content || "").length);
+  }, [content]);
 
   const handleSubmit = async () => {
     if (!user) return;
@@ -139,6 +144,14 @@ const AssignmentSubmitBox = ({
     }
   };
 
+  const handleContentChange = (e) => {
+    const newValue = e.target.value;
+    if (newValue.length <= 5000) {
+      setContent(newValue);
+      setCharCount(newValue.length);
+    }
+  };
+
   return (
     <Wrapper
       isBoth={submissionType === "BOTH"}
@@ -147,13 +160,17 @@ const AssignmentSubmitBox = ({
     >
       {(submissionType === "TEXT" || submissionType === "BOTH") && (
         <Box>
-          <FormTitle>내용</FormTitle>
+          <Label>
+            <FormTitle>내용</FormTitle>
+            <LimitText>{charCount}</LimitText>
+            <LimitText>/5000 자</LimitText>
+          </Label>
           <EditorContainer>
             <TextArea
               placeholder="내용을 입력하세요"
               value={content || ""}
-              onChange={(e) => setContent(e.target.value)}
-              wrap:hard
+              onChange={handleContentChange}
+              wrap="hard"
             />
           </EditorContainer>
         </Box>
@@ -204,6 +221,18 @@ const FormTitle = styled.div`
   font-weight: 700;
   padding: 0px 10px;
   margin-top: 5px;
+`;
+
+const Label = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  margin: 7px 0;
+`;
+
+const LimitText = styled.div`
+  font-size: 13px;
+  color: var(--main-color);
 `;
 
 const Wrapper = styled.div`
