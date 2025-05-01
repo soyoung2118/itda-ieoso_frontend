@@ -188,7 +188,7 @@ const ShareDropdownContainer = styled.div`
     padding: 6px 10px 6px;
   }
 
-  button {
+  .link-button {
     background-color: #f7f7f7;
     color: var(--black-color);
     border: none;
@@ -196,6 +196,15 @@ const ShareDropdownContainer = styled.div`
     padding: 7px 15px;
     cursor: pointer;
     transition: background-color 0.3s;
+
+    /* &:active {
+      background-color: #969696;
+      transform: scale(0.98);
+    }
+
+    &:hover {
+      background-color: #969696;
+    } */
   }
 
   .invite-button {
@@ -205,6 +214,17 @@ const ShareDropdownContainer = styled.div`
     padding: 10px 0;
     margin-top: 5px;
     border-radius: 15px;
+    border: none;
+    cursor: pointer;
+
+    /* &:active {
+      background-color: var(--main-color);
+      transform: scale(0.98);
+    }
+
+    &:hover {
+      background-color: var(--main-color);
+    } */
   }
 
   @media all and (max-width: 479px) {
@@ -221,6 +241,7 @@ const AdminTopBar = ({ activeTab }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
+  const [copyMessage, setCopyMessage] = useState("");
   const [courseName, setCourseName] = useState("");
   const [entryCode, setEntryCode] = useState("");
   const [, setClassOptions] = useState(null);
@@ -367,11 +388,14 @@ const AdminTopBar = ({ activeTab }) => {
                 <ShareDropdownContainer ref={dropdownRef}>
                   <text>강의실 링크</text>
                   <div className="shareinfo">
-                    <span>www.eduitda.com</span>
+                    <span>https://eduitda.com</span>
                     <button
-                      onClick={() =>
-                        navigator.clipboard.writeText("www.eduitda.com")
-                      }
+                      className="link-button"
+                      onClick={() => {
+                        navigator.clipboard.writeText("https://eduitda.com");
+                        setCopyMessage("URL이 복사되었습니다!");
+                        setShowInviteModal(true);
+                      }}
                     >
                       URL 복사
                     </button>
@@ -380,12 +404,20 @@ const AdminTopBar = ({ activeTab }) => {
                   <div className="shareinfo">
                     <span>{entryCode}</span>
                     <button
-                      onClick={() => navigator.clipboard.writeText(entryCode)}
+                      className="link-button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(entryCode);
+                        setCopyMessage("강의실 코드가 복사되었습니다!");
+                        setShowInviteModal(true);
+                      }}
                     >
                       코드 복사
                     </button>
                   </div>
-                  <button className="invite-button" onClick={handleShare}>
+                  <button className="invite-button" onClick={() => {
+                    handleShare();
+                    setCopyMessage("초대 메시지가 복사되었습니다!");
+                  }}>
                     강의실 초대하기
                   </button>
                 </ShareDropdownContainer>
@@ -421,7 +453,7 @@ const AdminTopBar = ({ activeTab }) => {
       {showInviteModal && (
         <ModalOverlay>
           <AlertModalContainer>
-            <div className="text">초대 메시지가 복사되었습니다!</div>
+            <div className="text">{copyMessage}</div>
             <div
               className="close-button"
               onClick={() => setShowInviteModal(false)}
