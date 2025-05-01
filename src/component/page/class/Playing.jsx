@@ -39,7 +39,7 @@ const ClassPlaying = () => {
           const curriculum = curriculumResponse.data.data.curriculumResponses;
           const filteredCurriculum = curriculum.map((lecture) => {
             const filteredVideos = lecture.videos.filter(
-              (video) => video.videoTitle !== "강의 영상 제목을 입력하세요.",
+              (video) => video.videoUrl !== null,
             );
 
             const filteredAssignments = lecture.assignments.filter(
