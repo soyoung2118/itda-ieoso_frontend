@@ -4,8 +4,8 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 import Container from "../Container";
 import StarIcon from "@mui/icons-material/Star";
-import { getMyCoursesTitles } from "../../api/classApi";
 import { UsersContext } from "../../contexts/usersContext";
+import { formatMyCoursesTitles } from "../../api/classApi";
 
 const Navbar = styled.div`
   background-color: var(--white-color);
@@ -216,7 +216,7 @@ const RightContainer = styled.div`
   }
 `;
 
-const ClassTopbar = ({ onCourseChange, isCreator }) => {
+const ClassTopbar = ({ onCourseChange, isCreator, myCourses }) => {
   const { user } = useContext(UsersContext);
   const { courseId, lectureId } = useParams();
   const location = useLocation();
@@ -230,19 +230,18 @@ const ClassTopbar = ({ onCourseChange, isCreator }) => {
   const iconRef = useRef(null);
 
   useEffect(() => {
-    const fetchClasses = async () => {
-      if (!user?.userId) return;
-      const courses = await getMyCoursesTitles(user.userId);
-      setClassOptions(courses);
+    if (!user?.userId) return;
 
-      const foundCourse = courses.find(
+    // myCourses가 props로 전달되었다면 API 호출하지 않음
+    if (myCourses) {
+      const formattedCourses = formatMyCoursesTitles(myCourses, user.userId);
+      setClassOptions(formattedCourses);
+      const current = formattedCourses.find(
         (course) => String(course.courseId) === String(courseId),
       );
-      setCurrentCourse(foundCourse || null);
-    };
-
-    fetchClasses();
-  }, [user?.userId, courseId]);
+      setCurrentCourse(current);
+    }
+  }, [user?.userId, courseId, myCourses]);
 
   useEffect(() => {
     const checkScrollable = () => {
@@ -379,6 +378,7 @@ const ClassTopbar = ({ onCourseChange, isCreator }) => {
 ClassTopbar.propTypes = {
   onCourseChange: PropTypes.func.isRequired,
   isCreator: PropTypes.bool.isRequired,
+  myCourses: PropTypes.array,
 };
 
 export default ClassTopbar;

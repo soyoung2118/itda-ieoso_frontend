@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { Outlet, useParams, useNavigate } from "react-router-dom";
+import { Outlet, useOutletContext, useParams, useNavigate, useLocation } from "react-router-dom";
 import api from "../../api/api";
 import { UsersContext } from "../../contexts/usersContext";
 import AdminTopBar from "../../ui/class/AdminTopBar";
@@ -8,16 +8,28 @@ import { ModalOverlay, AlertModalContainer } from "../../ui/modal/ModalStyles";
 const Admin = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useContext(UsersContext);
+  const {
+    courseData: parentCourseData,
+    isCreator: parentIsCreator,
+    myCourses,
+  } = useOutletContext();
 
-  const [courseData, setCourseData] = useState(null);
-  const [isCreator, setIsCreator] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [courseData, setCourseData] = useState(parentCourseData);
+  const [isCreator, setIsCreator] = useState(parentIsCreator);
+  const [loading, setLoading] = useState(!parentCourseData);
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
 
+  const getActiveTab = () => {
+    if (location.pathname.includes("/admin/students")) return "students";
+    if (location.pathname.includes("/admin/setting")) return "setting";
+    return "summary";
+  };
+
   useEffect(() => {
-    if (!courseId || !user) return;
+    if (!courseId || !user || parentCourseData) return;
 
     const fetchCourseData = async () => {
       try {
@@ -35,7 +47,7 @@ const Admin = () => {
     };
 
     fetchCourseData();
-  }, [courseId, user]);
+  }, [courseId, user, parentCourseData]);
 
   const handleModalClose = () => {
     setShowModal(false);
@@ -47,7 +59,11 @@ const Admin = () => {
 
   return (
     <div>
-      <AdminTopBar />
+      <AdminTopBar
+        myCourses={myCourses}
+        activeTab={getActiveTab()}
+        courseData={courseData}
+      />
       <Outlet context={{ courseData, isCreator }} />
       {showModal && (
         <ModalOverlay>

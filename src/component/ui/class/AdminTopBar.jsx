@@ -10,9 +10,8 @@ import {
   AlertModalContainer,
 } from "../../ui/modal/ModalStyles";
 import api from "../../api/api";
-import { getMyCoursesTitles } from "../../api/classApi";
 import { UsersContext } from "../../contexts/usersContext";
-import { getCourseNameandEntryCode } from "../../api/classApi";
+import { formatMyCoursesTitles } from "../../api/classApi";
 
 const Container = styled.div`
   width: 100%;
@@ -233,7 +232,7 @@ const ShareDropdownContainer = styled.div`
   }
 `;
 
-const AdminTopBar = ({ activeTab }) => {
+const AdminTopBar = ({ myCourses, activeTab, courseData }) => {
   const { courseId } = useParams();
   const { user } = useContext(UsersContext);
   const navigate = useNavigate();
@@ -250,33 +249,22 @@ const AdminTopBar = ({ activeTab }) => {
   const iconRef = useRef(null);
 
   useEffect(() => {
-    if (!user?.userId) return;
+    if (!user?.userId || !myCourses) return;
 
-    const fetchClasses = async () => {
-      const courses = await getMyCoursesTitles(user.userId);
-      setClassOptions(courses);
-
-      const current = courses.find(
-        (course) => String(course.courseId) === String(courseId),
-      );
-      setCurrentCourse(current);
-      console.log(current);
-    };
-
-    fetchClasses();
-  }, [user?.userId, courseId]);
+    const formattedCourses = formatMyCoursesTitles(myCourses, user.userId);
+    setClassOptions(formattedCourses);
+    const current = formattedCourses.find(
+      (course) => String(course.courseId) === String(courseId),
+    );
+    setCurrentCourse(current);
+  }, [user?.userId, courseId, myCourses]);
 
   useEffect(() => {
-    const fetchCourseDetails = async () => {
-      const details = await getCourseNameandEntryCode(courseId);
-      if (details) {
-        setCourseName(details.courseTitle);
-        setEntryCode(details.entryCode);
-      }
-    };
-
-    fetchCourseDetails();
-  }, [courseId]);
+    if (courseData) {
+      setCourseName(courseData.courseTitle);
+      setEntryCode(courseData.entryCode);
+    }
+  }, [courseData]);
 
   // 공유 버튼 클릭 시 드롭다운 표시
   const handleIconClick = () => {
@@ -414,10 +402,13 @@ const AdminTopBar = ({ activeTab }) => {
                       코드 복사
                     </button>
                   </div>
-                  <button className="invite-button" onClick={() => {
-                    handleShare();
-                    setCopyMessage("초대 메시지가 복사되었습니다!");
-                  }}>
+                  <button
+                    className="invite-button"
+                    onClick={() => {
+                      handleShare();
+                      setCopyMessage("초대 메시지가 복사되었습니다!");
+                    }}
+                  >
                     강의실 초대하기
                   </button>
                 </ShareDropdownContainer>
@@ -469,6 +460,8 @@ const AdminTopBar = ({ activeTab }) => {
 
 AdminTopBar.propTypes = {
   activeTab: PropTypes.string.isRequired,
+  myCourses: PropTypes.array,
+  courseData: PropTypes.object,
 };
 
 export default AdminTopBar;
