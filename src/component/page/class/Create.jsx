@@ -640,10 +640,10 @@ const CreateButton = styled.button`
 `;
 
 const Container = styled.div`
-  margin: 41px 27vw;
+  margin: 2rem 27vw;
   border-radius: 20px;
   @media (max-width: 800px) {
-    margin: 41px 10vw;
+    margin: 2rem 10vw;
   }
 `;
 

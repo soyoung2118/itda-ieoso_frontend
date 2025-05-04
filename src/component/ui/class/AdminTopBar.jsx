@@ -63,7 +63,7 @@ const NavbarContent = styled.div`
 
   @media all and (max-width: 479px) {
     gap: 0;
-    padding: 0.4rem 0.5rem;
+    padding: 0.4rem 0.1rem;
   }
 `;
 
@@ -158,7 +158,7 @@ const Icon = styled.img`
 const ShareDropdownContainer = styled.div`
   position: absolute;
   top: 340px;
-  right: 110px;
+  right: 11vw;
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 15px;
