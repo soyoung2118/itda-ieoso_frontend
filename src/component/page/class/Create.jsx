@@ -309,7 +309,7 @@ export default function Create() {
                     startDate: date,
                   }));
                 }}
-                minDate={new Date()}
+                //minDate={new Date()}
                 customInput={<CustomInput />}
                 dateFormat="yyyy-MM-dd"
                 popperProps={{
