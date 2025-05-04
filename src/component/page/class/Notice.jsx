@@ -34,6 +34,18 @@ const NoticeContainer = styled.div`
   }
 `;
 
+const NoneNotice = styled.div`
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: var(--darkgrey-color);
+  padding: 3rem 0;
+
+  @media all and (max-width: 479px) {
+    font-size: 1rem;
+  }
+`;
+
 const NoticeList = styled.div`
   display: flex;
   flex-direction: column;
@@ -50,7 +62,7 @@ const NoticeItemLeft = styled.div`
 `;
 
 const NoticeItem = styled.div`
-  padding: 1.2rem;
+  padding: 0 1.2rem 1.2rem;
   border-bottom: 1.5px solid #cdcdcd;
   display: flex;
   justify-content: space-between;
@@ -369,17 +381,7 @@ const ClassNotice = () => {
           <NoticeList>
             {/* 🔹 공지가 없을 때 표시할 메시지 */}
             {notices.length === 0 ? (
-              <div
-                style={{
-                  textAlign: "center",
-                  fontSize: "1.25rem",
-                  fontWeight: "bold",
-                  color: "var(--darkgrey-color)",
-                  padding: "3rem 0",
-                }}
-              >
-                아직 등록된 공지사항이 없습니다.
-              </div>
+              <NoneNotice>아직 등록된 공지사항이 없습니다.</NoneNotice>
             ) : (
               currentNotices.map((notice) => (
                 <div key={notice.announcementId}>
