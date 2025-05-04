@@ -11,6 +11,7 @@ import "react-quill-new/dist/quill.snow.css";
 import api from "../../api/api";
 import { UsersContext } from "../../contexts/usersContext";
 import EntryCodeModal from "../../ui/class/EntryCodeModal";
+import EntryCodeCopyModal from "../../ui/class/EntryCodeCopyModal";
 import PropTypes from "prop-types";
 import DOMPurify from "dompurify";
 
@@ -237,6 +238,7 @@ const ClassOverview = () => {
   const location = useLocation();
   const entrycode = location.state?.entrycode || null;
   const [isEntryCodeModalOpen, setIsEntryCodeModalOpen] = useState(false);
+  const [isEntryCodeCopyModalOpen, setIsEntryCodeCopyModalOpen] = useState(false);
   const [sectionContent, setSectionContent] = useState("");
   const [courseThumbnail, setCourseThumbnail] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -428,7 +430,17 @@ const ClassOverview = () => {
       {isEntryCodeModalOpen && (
         <EntryCodeModal
           entrycode={entrycode}
-          onClose={() => setIsEntryCodeModalOpen(false)}
+          onClose={() => {
+            setIsEntryCodeModalOpen(false);
+            setIsEntryCodeCopyModalOpen(true);
+          }}
+        />
+      )}
+
+      {isEntryCodeCopyModalOpen && (
+        <EntryCodeCopyModal
+          entrycode={entrycode}
+          onClose={() => setIsEntryCodeCopyModalOpen(false)}
         />
       )}
     </div>

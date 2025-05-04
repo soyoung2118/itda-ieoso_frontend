@@ -192,7 +192,6 @@ export default function Create() {
       );
 
       if (settingResponse.data.success) {
-        console.log(settingResponse.data);
       } else {
         throw new Error("강의실 설정에 실패했습니다");
       }
