@@ -1,12 +1,10 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import LogoImage from "../img/logo/itda_logo.svg";
 import userIcon from "../img/icon/usericon.svg";
 import { UsersContext } from "../contexts/usersContext";
 import { UsersInfoContainer } from "../page/users/UsersInfoContainer";
-import { checkExist } from "../api/usersApi";
-import api from "../api/api";
 
 export default function TopBar() {
   const navigate = useNavigate();
@@ -15,51 +13,6 @@ export default function TopBar() {
 
   // 드롭다운 상태 추가
   const [showUsersInfoContainer, setShowUsersInfoContainer] = useState(false);
-  const [isGoogleLinked, setIsGoogleLinked] = useState(null);
-
-  const handleUserIconClick = () => {
-    setShowUsersInfoContainer((prev) => !prev); // 드롭다운 토글
-  };
-
-  useEffect(() => {
-    // 현재 경로를 가져옵니다.
-    const currentPath = location.pathname;
-
-    // LandingPage와 LoginPage가 아닌 경우에만 checkExist를 호출합니다.
-    if (currentPath !== "/" && currentPath !== "/login") {
-      const handleCheckExist = async () => {
-        const response = await checkExist();
-
-        if (response.data === "NONE") {
-          setIsGoogleLinked(false);
-        } else {
-          setIsGoogleLinked(true);
-        }
-      };
-
-      handleCheckExist();
-    }
-  }, [isGoogleLinked, location.pathname]);
-
-  const handleGoogleAuth = () => {
-    try {
-      // 현재 로그인된 사용자의 토큰 가져오기
-      const currentToken = localStorage.getItem("token");
-      if (!currentToken) {
-        alert("로그인이 필요합니다.");
-        return;
-      }
-
-      const redirectUri = encodeURIComponent(
-        `${window.location.origin}/oauth/account/link`,
-      );
-      const googleLoginUrl = `${import.meta.env.VITE_API_URL}/oauth/google/login/temp?redirect_uri=${redirectUri}`;
-      window.location.href = googleLoginUrl;
-    } catch (error) {
-      console.error("구글 연동 시작 중 오류 발생:", error);
-      alert("구글 계정 연동을 시작할 수 없습니다. 다시 시도해주세요.");
-    }
-  };
 
   return (
     <Wrapper>
@@ -69,62 +22,50 @@ export default function TopBar() {
         onClick={isUser ? () => navigate("/class/list") : () => navigate("/")}
       />
       <Header>
-        {location.pathname !== "/login" &&
-          location.pathname !== "/signup" &&
-          location.pathname !== "/find-password" && (
-            <div className="header-right">
-              {isUser ? (
-                <UserContainer>
-                  {location.pathname === "/dashboard" ? (
+        {location.pathname !== "/login" && (
+          <div className="header-right">
+            {isUser ? (
+              <UserContainer>
+                {location.pathname === "/dashboard" ? (
+                  <button
+                    className="navigate-button"
+                    onClick={() => navigate("/class/list")}
+                  >
+                    강의실 입장하기
+                  </button>
+                ) : (
+                  <>
                     <button
                       className="navigate-button"
-                      onClick={() => navigate("/class/list")}
+                      onClick={() => navigate("/dashboard")}
                     >
-                      강의실 입장하기
+                      대시보드로 가기
                     </button>
-                  ) : (
-                    <>
-                      <button
-                        className="navigate-button"
-                        onClick={() => navigate("/dashboard")}
-                      >
-                        대시보드로 가기
-                      </button>
-                      {isGoogleLinked === false && (
-                        <button
-                          className="navigate-button"
-                          onClick={handleGoogleAuth}
-                        >
-                          구글 계정 연동하기
-                        </button>
-                      )}
-                    </>
-                  )}
-                  <UserIcon
-                    src={userIcon}
-                    alt="user icon"
-                    onClick={handleUserIconClick}
+                  </>
+                )}
+                <UserIcon
+                  src={userIcon}
+                  alt="user icon"
+                  onClick={() => setShowUsersInfoContainer((prev) => !prev)}
+                />
+                {showUsersInfoContainer && (
+                  <UsersInfoContainer
+                    setShowUsersInfoContainer={setShowUsersInfoContainer}
                   />
-                  {showUsersInfoContainer && (
-                    <UsersInfoContainer
-                      setShowUsersInfoContainer={setShowUsersInfoContainer}
-                      isGoogleLinked={isGoogleLinked}
-                    />
-                  )}
+                )}
+              </UserContainer>
+            ) : (
+              <>
+                <button className="login" onClick={() => navigate("/login")}>
+                  로그인
+                </button>
+                <UserContainer>
+                  <UserIcon src={userIcon} alt="user icon" />
                 </UserContainer>
-              ) : (
-                <>
-                  {/* <button className="signup" onClick={() => navigate('/signup')}>회원가입</button> */}
-                  <button className="login" onClick={() => navigate("/login")}>
-                    로그인
-                  </button>
-                  <UserContainer>
-                    <UserIcon src={userIcon} alt="user icon" />
-                  </UserContainer>
-                </>
-              )}
-            </div>
-          )}
+              </>
+            )}
+          </div>
+        )}
       </Header>
     </Wrapper>
   );
@@ -169,21 +110,6 @@ const Header = styled.header`
     /* 모바일 세로 (해상도 ~ 479px)*/
     @media all and (max-width: 479px) {
       padding: 0px;
-    }
-  }
-
-  .signup {
-    min-width: 90px;
-    background-color: transparent;
-    color: #000000;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-
-    /* 모바일 세로 (해상도 ~ 479px)*/
-    @media all and (max-width: 479px) {
-      min-width: 50px;
-      font-size: 12px;
     }
   }
 

@@ -11,7 +11,6 @@ import {
 } from "../ui/modal/ModalStyles";
 import api from "../api/api";
 import { UsersContext } from "../contexts/usersContext";
-import { checkExist } from "../api/usersApi";
 import DeleteIcon from "../img/icon/delete.svg";
 
 export default function Class() {
@@ -23,8 +22,6 @@ export default function Class() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedCourseId, setSelectedCourseId] = useState(null);
   const [showAlertModal, setShowAlertModal] = useState(false);
-  const [showGoogleAlertModal, setShowGoogleAlertModal] = useState(false);
-  const [isGoogleLinked, setIsGoogleLinked] = useState(null);
 
   const handleLectureClick = (id) => {
     navigate(`/class/${id}/overview/info`);
@@ -84,21 +81,6 @@ export default function Class() {
       setSelectedCourseId(null);
     }
   };
-
-  useEffect(() => {
-    const handleCheckExist = async () => {
-      const response = await checkExist();
-
-      if (response.data === "NONE") {
-        setIsGoogleLinked(false);
-        setShowGoogleAlertModal(true);
-      } else {
-        setIsGoogleLinked(true);
-      }
-    };
-
-    handleCheckExist();
-  }, [isGoogleLinked]);
 
   return (
     <>
@@ -250,24 +232,6 @@ export default function Class() {
               <button
                 className="close-button"
                 onClick={() => setShowAlertModal(false)}
-              >
-                확인
-              </button>
-            </div>
-          </AlertModalContainer>
-        </ModalOverlay>
-      )}
-
-      {/* 새로운 알림 모달 */}
-      {showGoogleAlertModal && (
-        <ModalOverlay>
-          <AlertModalContainer>
-            <div className="text">일반 로그인 서비스가 04/30 종료됩니다</div>
-            <div className="text">상단 바에서 구글 계정을 연동해 주세요</div>
-            <div className="button-container">
-              <button
-                className="close-button"
-                onClick={() => setShowGoogleAlertModal(false)}
               >
                 확인
               </button>
