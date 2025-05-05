@@ -6,7 +6,6 @@ import userIcon from "../img/icon/usericon.svg";
 import { UsersContext } from "../contexts/usersContext";
 import { UsersInfoContainer } from "../page/users/UsersInfoContainer";
 import { checkExist } from "../api/usersApi";
-import api from "../api/api";
 
 export default function TopBar() {
   const navigate = useNavigate();
@@ -136,11 +135,11 @@ const Wrapper = styled.div`
   height: 7vh;
   align-items: center;
   justify-content: space-between;
-  padding: 1px 10px 1px 20px;
+  padding: 1px 9vw;
   background-color: #ffffff;
 
   @media all and (max-width: 479px) {
-    padding: 1px 2px 1px 18px;
+    padding: 1px 12vw;
   }
 `;
 
@@ -223,14 +222,13 @@ const UserContainer = styled.div`
   display: flex;
   align-items: center;
   position: relative;
-  padding: 10px;
+  padding: 10px 0 10px 10px;
   border-radius: 8px;
 `;
 
 const UserIcon = styled.img`
   width: 40px;
   height: 40px;
-  margin-right: 10px;
   cursor: pointer;
 
   /* 모바일 세로 (해상도 ~ 479px)*/
