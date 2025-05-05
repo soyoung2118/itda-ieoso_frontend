@@ -26,12 +26,10 @@ export default function LogIn() {
         <Container>
           <LogoImage src={logoImage} alt="logo" />
           <LogoText>로그인</LogoText>
-          <SocialLoginButton>
             <GoogleButton onClick={handleGoogleLogin} disabled={isLoading}>
             <GoogleIcon src={googleIcon} alt="logo" />
             {isLoading ? "처리 중..." : "Google로 계속하기"}
             </GoogleButton>
-          </SocialLoginButton>
         </Container>
       </LoginPageLayout>
       {showAlertModal && (
@@ -68,7 +66,7 @@ const Container = styled.div`
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
   border-radius: 15px;
   width: 100%;
-  padding: 2rem;
+  padding: 3.5rem 2rem;
   box-sizing: border-box;
 `;
 
@@ -81,19 +79,12 @@ const LogoImage = styled.img`
 const LogoText = styled.div`
   font-size: 1.75rem;
   font-weight: 600;
-  margin-bottom: 7.5vh;
-`;
-
-const SocialLoginButton = styled.div`
-  width: 100%;
-  max-width: 400px;
-  display: flex;
-  justify-content: center;
+  margin-bottom: 3vh;
 `;
 
 const GoogleButton = styled.button`
   width: 100%;
-  max-width: 350px;
+  max-width: 500px;
   height: 48px;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
