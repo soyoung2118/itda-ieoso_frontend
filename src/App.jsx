@@ -37,6 +37,7 @@ import ClassPlaying from "./component/page/class/Playing.jsx";
 import ClassAssignmentSubmit from "./component/page/class/AssignmentSubmit.jsx";
 import GoogleAuthCallback from "./component/page/users/GoogleAuthCallback.jsx";
 import GoogleAccountLink from "./component/page/users/GoogleAccountLink.jsx";
+import { LanguageProvider } from "./component/contexts/LanguageContext.jsx";
 
 // 페이지 이동 시 스크롤을 맨 위로 이동시키는 컴포넌트
 function ScrollToTop() {
@@ -129,51 +130,56 @@ function App() {
   return (
     <BrowserRouter>
       <UsersProvider>
-        <LogoutHandler />
-        <ScrollToTop /> {/* 필요 없으면 지우면 됨 */}
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/oauth/callback" element={<GoogleAuthCallback />} />
-          <Route path="/oauth/account/link" element={<GoogleAccountLink />} />
-          <Route path="/login" element={<LogIn />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/find-password" element={<FindPassword />} />
-          <Route path="/change-password" element={<ChangePassword />} />
-          <Route path="/class/list" element={<ClassList />} />
-          <Route path="/class/create" element={<Create />} />
-          <Route path="/class/participate" element={<Participate />} />
+        <LanguageProvider>
+          <LogoutHandler />
+          <ScrollToTop /> {/* 필요 없으면 지우면 됨 */}
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/oauth/callback" element={<GoogleAuthCallback />} />
+            <Route path="/oauth/account/link" element={<GoogleAccountLink />} />
+            <Route path="/login" element={<LogIn />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/find-password" element={<FindPassword />} />
+            <Route path="/change-password" element={<ChangePassword />} />
+            <Route path="/class/list" element={<ClassList />} />
+            <Route path="/class/create" element={<Create />} />
+            <Route path="/class/participate" element={<Participate />} />
 
-          <Route path="/class/:courseId" element={<Class />}>
-            <Route path="overview/info" element={<ClassOverview />} />
-            <Route path="overview/notice" element={<ClassNotice />} />
-            <Route path="overview/notice/create" element={<NoticeCreate />} />
-            <Route
-              path="overview/notice/edit/:noticeId"
-              element={<NoticeCreate />}
-            />
-            <Route path="curriculum/:lectureId" element={<ClassCurriculum />} />
-            <Route
-              path="curriculum/:lectureId/edit"
-              element={<ClassCurriculumEdit />}
-            />
-            <Route path="admin/" element={<Admin />}>
-              <Route path="summary" element={<ClassSummary />} />
-              <Route path="students" element={<ClassStudents />} />
-              <Route path="students/:studentId" element={<StudentDetail />} />
-              <Route path="setting" element={<Setting />} />
+            <Route path="/class/:courseId" element={<Class />}>
+              <Route path="overview/info" element={<ClassOverview />} />
+              <Route path="overview/notice" element={<ClassNotice />} />
+              <Route path="overview/notice/create" element={<NoticeCreate />} />
+              <Route
+                path="overview/notice/edit/:noticeId"
+                element={<NoticeCreate />}
+              />
+              <Route
+                path="curriculum/:lectureId"
+                element={<ClassCurriculum />}
+              />
+              <Route
+                path="curriculum/:lectureId/edit"
+                element={<ClassCurriculumEdit />}
+              />
+              <Route path="admin/" element={<Admin />}>
+                <Route path="summary" element={<ClassSummary />} />
+                <Route path="students" element={<ClassStudents />} />
+                <Route path="students/:studentId" element={<StudentDetail />} />
+                <Route path="setting" element={<Setting />} />
+              </Route>
+              <Route
+                path="playing/:lectureId/:videoId"
+                element={<ClassPlaying />}
+              />
+              <Route
+                path="assignment/submit/:lectureId/:assignmentId"
+                element={<ClassAssignmentSubmit />}
+              />
             </Route>
-            <Route
-              path="playing/:lectureId/:videoId"
-              element={<ClassPlaying />}
-            />
-            <Route
-              path="assignment/submit/:lectureId/:assignmentId"
-              element={<ClassAssignmentSubmit />}
-            />
-          </Route>
 
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Routes>
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Routes>
+        </LanguageProvider>
       </UsersProvider>
     </BrowserRouter>
   );
