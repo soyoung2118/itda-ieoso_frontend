@@ -32,8 +32,8 @@ const IconRow = styled.div`
   }
 
   span {
-    font-size: 15px;
-    font-weight: 500;
+    font-size: 1rem;
+    font-weight: 400;
   }
 `;
 
@@ -164,8 +164,8 @@ const TitleContainer = styled.div`
 `;
 
 const Title = styled.div`
-  font-size: 26px;
-  font-weight: 800;
+  font-size: 22px;
+  font-weight: 700;
 `;
 
 const LimitText = styled.div`
@@ -393,13 +393,13 @@ const ClassOverview = () => {
           <IconRow style={{ gap: "0rem" }}>
             <span className="material-symbols-outlined">star</span>
             <span style={{ margin: "0rem 0.3rem 0rem 1rem" }}>강의 난이도</span>
-            <span style={{ marginLeft: 0, fontWeight: 800 }}>
+            <span style={{ marginLeft: 0, fontWeight: 700 }}>
               {changeDifficultly(courseData.difficultyLevel)}
             </span>
           </IconRow>
         </Section>
         <TitleContainer>
-          <Title>강의 소개</Title>
+          <Title style={{marginTop: "2rem"}}>강의 소개</Title>
           {isEditing && (
             <LimitText>{getPlainTextLength(sectionContent)} / 500자</LimitText>
           )}
