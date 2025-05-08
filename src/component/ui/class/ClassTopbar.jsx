@@ -14,23 +14,23 @@ const Navbar = styled.div`
   justify-content: space-between;
   align-items: center;
   border-radius: 15px;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   flex-direction: row;
 
   @media (max-width: 1024px) {
-    font-size: 1.3rem;
-  }
-
-  @media (max-width: 768px) {
     font-size: 1.2rem;
   }
 
-  @media (max-width: 480px) {
+  @media (max-width: 768px) {
     font-size: 1.1rem;
   }
 
+  @media (max-width: 480px) {
+    font-size: 1.0rem;
+  }
+
   @media all and (max-width: 479px) {
-    font-size: 20px;
+    font-size: 1.0rem;
     flex-direction: column;
     align-items: flex-start;
   }
@@ -38,7 +38,7 @@ const Navbar = styled.div`
 
 const VerticalLine = styled.div`
   width: 1px;
-  height: 3.4rem;
+  height: 3rem;
   background-color: #cdcdcd;
 `;
 
@@ -46,27 +46,29 @@ const ClassTitleContainer = styled.div`
   display: flex;
   align-items: center;
   cursor: pointer;
-  gap: 0.5rem;
+  gap: 0.3rem;
 
   .course-title {
-    font-size: 1.3rem;
+    font-size: 20px;
     font-weight: bold;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    max-width: 28ch;
 
     @media (max-width: 1024px) {
-      max-width: 11ch;
+      max-width: 18ch;
+      font-size: 18px;
     }
 
     @media (max-width: 768px) {
-      max-width: 10ch;
-      font-size: 18px;
+      max-width: 12ch;
+      font-size: 15px;
     }
 
     @media all and (max-width: 479px) {
-      max-width: 10ch;
-      font-size: 18px;
+      max-width: 12ch;
+      font-size: 15px;
     }
   }
 `;
@@ -153,11 +155,11 @@ const TabLinkContainer = styled.div`
   }
 
   @media (max-width: 1024px) {
-    gap: 1rem;
+    gap: 0.5rem;
   }
 
   @media (max-width: 768px) {
-    gap: 0.5rem;
+    gap: 0.3rem;
   }
 
   @media all and (max-width: 479px) {
@@ -177,7 +179,7 @@ const TabLink = styled(NavLink)`
 
   &.active {
     color: var(--black-color);
-    border-bottom: 3px solid var(--black-color);
+    border-bottom: 3px solid var(--main-color);
     margin-bottom: -18px;
 
     @media all and (max-width: 479px) {
@@ -191,13 +193,17 @@ const TabLink = styled(NavLink)`
     &.active {
       margin-bottom: -21px;
 
+      @media all and (max-width: 767px) {
+        margin-bottom: -18px;
+      }
+
       @media all and (max-width: 479px) {
         margin-bottom: -10px;
       }
     }
   }
 
-  @media all and (max-width: 479px) {
+  @media all and (max-width: 767px) {
     font-size: 16px;
     width: 40%;
   }
@@ -305,7 +311,7 @@ const ClassTopbar = ({ onCourseChange, isCreator, myCourses }) => {
         >
           <span
             className="material-symbols-outlined"
-            style={{ fontSize: "1.8rem", cursor: "pointer" }}
+            style={{ fontSize: "1.5rem", cursor: "pointer" }}
             onClick={() => navigate("/class/list")}
           >
             home
