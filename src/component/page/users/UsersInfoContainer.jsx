@@ -1,17 +1,12 @@
 import { useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import userIcon from "../../img/icon/usericon.svg";
 import { logout } from "../../api/usersApi";
 import { UsersContext } from "../../contexts/usersContext";
 import PropTypes from "prop-types";
 
-export function UsersInfoContainer({
-  setShowUsersInfoContainer,
-  isGoogleLinked,
-}) {
+export function UsersInfoContainer({ setShowUsersInfoContainer }) {
   const { user, setUser, setIsUser } = useContext(UsersContext);
-  const navigate = useNavigate();
 
   // 드롭다운 외부 클릭 시 닫기
   useEffect(() => {
@@ -36,10 +31,6 @@ export function UsersInfoContainer({
     }
   };
 
-  const handleChangePassword = () => {
-    navigate("/change-password");
-  };
-
   return (
     <Dropdown className="dropdown-container">
       <DropdownContainer>
@@ -51,11 +42,6 @@ export function UsersInfoContainer({
           </UserText>
         </UserInfo>
         <div className="button-container">
-          {isGoogleLinked === false && (
-            <button className="user-button" onClick={handleChangePassword}>
-              비밀번호 변경
-            </button>
-          )}
           <button className="user-button" onClick={handleLogout}>
             로그아웃 하기
           </button>
@@ -139,5 +125,4 @@ const UserText = styled.div`
 // PropTypes 설정
 UsersInfoContainer.propTypes = {
   setShowUsersInfoContainer: PropTypes.func.isRequired,
-  isGoogleLinked: PropTypes.bool.isRequired,
 };
