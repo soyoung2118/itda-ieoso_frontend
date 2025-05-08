@@ -214,6 +214,7 @@ export default function Create() {
       );
 
       if (settingResponse.data.success) {
+        console.log(settingResponse.data);
       } else {
         throw new Error("강의실 설정에 실패했습니다");
       }
@@ -234,28 +235,6 @@ export default function Create() {
 
   const onInstructorInputHandler = (e) => {
     setInstructorInputCount(e.target.value.length);
-  };
-
-  const CustomInput = forwardRef(({ value, onClick }, ref) => (
-    <InputGroup onClick={onClick}>
-      <IconInput
-        ref={ref}
-        value={value}
-        placeholder="커리큘럼 시작을 설정해주세요."
-        readOnly
-        style={{ width: "250px" }}
-      />
-      <CalendarIcon>
-        <img src={Calendar} style={{ width: 18 }} alt="캘린더" />
-      </CalendarIcon>
-    </InputGroup>
-  ));
-
-  CustomInput.displayName = "CustomInput";
-
-  CustomInput.propTypes = {
-    value: PropTypes.string.isRequired,
-    onClick: PropTypes.func.isRequired,
   };
 
   return (
@@ -330,7 +309,7 @@ export default function Create() {
                     startDate: date,
                   }));
                 }}
-                //minDate={new Date()}
+                minDate={new Date()}
                 customInput={<CustomInput />}
                 dateFormat="yyyy-MM-dd"
                 popperProps={{
@@ -363,7 +342,8 @@ export default function Create() {
             </FormItem>
 
             <FormItem>
-              <Label>강의 업로드 일시
+              <Label>
+                강의 업로드 일시
                 <Required>*</Required>
               </Label>
               <TimeGroup>
@@ -383,7 +363,9 @@ export default function Create() {
                     </DayButton>
                   ))}
                 </DayButtonGroup>
-                <HelpText>복수 선택이 가능해요.</HelpText>
+                {!isLecturePending && (
+                  <HelpText>복수 선택이 가능해요!</HelpText>
+                )}
               </TimeGroup>
               <HalfGroup>
                 <TimeGroup>
@@ -462,9 +444,11 @@ export default function Create() {
                     </DayButton>
                   ))}
                 </DayButtonGroup>
-                  <HelpText>
+                {!isAssignmentPending && (
+                  <HelpText style={{ color: "var(--guide-gray-color)" }}>
                     복수 선택이 가능해요.
                   </HelpText>
+                )}
               </TimeGroup>
               <HalfGroup>
                 <TimeGroup>
@@ -513,7 +497,7 @@ export default function Create() {
                   </TimePickerWrapper>
                   {form.assignmentTime && !isAssignmentPending && (
                     <HelpText style={{ color: "var(--guide-green-color)" }}>
-                      과제 마감 시간이 설정되었어요!
+                      과제 시간이 설정되었어요!
                     </HelpText>
                   )}
                 </TimeGroup>
@@ -523,7 +507,7 @@ export default function Create() {
         </Section>
 
         <Section style={{ borderBottom: "none" }}>
-          <Title>STEP 3. 수강생에게 강좌를 어떻게 공개하실건가요?</Title>
+          <Title>STEP 3. 수강생에게 강좌를 어떻게 공개하실 건가요?</Title>
           <FormGroup>
             <FormItem>
               <Label>
@@ -651,7 +635,7 @@ const CreateButton = styled.button`
   border: none;
   cursor: pointer;
   width: 100%;
-  padding: 10px 0;
+  padding: 12px 0;
   background-color: #ff4747;
   color: white;
   font-size: 17px;
@@ -759,13 +743,14 @@ const DayButtonGroup = styled.div`
 `;
 
 const DayButton = styled.button`
-  width: 2.2rem;
-  height: 2.2rem;
+  width: 2rem;
+  height: 2rem;
   border-radius: 9999px;
   display: flex;
   align-items: center;
   justify-content: center;
   border: none;
+  cursor: pointer;
   font-size: 16px;
   background-color: ${(props) => (props.active ? "#FF4747" : "#EEEEEE")};
   color: ${(props) => (props.active ? "#FFFFFF" : "#909090")};
