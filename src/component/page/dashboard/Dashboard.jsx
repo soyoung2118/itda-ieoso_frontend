@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import TopBar from "../../ui/TopBar";
+import { PageLayout } from "../../ui/class/ClassLayout";
 import WeeklyCalendar from "./WeekCalendar";
 import Sidebar from "./Sidebar";
 import TaskList from "./TaskList";
@@ -95,7 +96,7 @@ export default function DashBoard() {
   return (
     <>
       <TopBar />
-      <Container>
+      <PageLayout>
         <WeekRange>
           <WeekTitle>
             <div className="week-text">이번 주 강의표</div>
@@ -134,15 +135,10 @@ export default function DashBoard() {
             lectures={filteredLectures}
           />
         </ToDoContainer>
-      </Container>
+      </PageLayout>
     </>
   );
 }
-
-// 헤더 밑
-const Container = styled.div`
-  padding: 20px 30px;
-`;
 
 const WeekRange = styled.div`
   display: flex;
@@ -206,5 +202,5 @@ const WeekButton = styled.div`
 
 const ToDoContainer = styled.div`
   display: flex;
-  margin-top: 30px;
+  margin-top: 40px;
 `;
