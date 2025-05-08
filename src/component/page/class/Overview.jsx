@@ -341,6 +341,14 @@ const ClassOverview = () => {
     return null;
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${year}년 ${month}월 ${day}일 시작`;
+  };
+
   return (
     <div style={{ display: "flex", marginTop: "2rem" }}>
       <main
@@ -375,7 +383,7 @@ const ClassOverview = () => {
           <IconRow style={{ marginTop: "2rem" }}>
             <span className="material-symbols-outlined">event</span>
             <span>
-              {courseData.startDate ? courseData.startDate : "시작 날짜 미정"}
+              {courseData.startDate ? formatDate(courseData.startDate) : "시작 날짜 미정"}
             </span>
           </IconRow>
           <IconRow>
