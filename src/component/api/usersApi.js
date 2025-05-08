@@ -20,28 +20,6 @@ export const login = async (credentials) => {
   }
 };
 
-export const checkExist = async () => {
-  const response = await api.get("/oauth/social/linked");
-  return response.data;
-};
-
-export const findpassword = async (name, email) => {
-  const response = await api.post(
-    `/users/reset/password?email=${email}&name=${name}`,
-  );
-  return response.data;
-};
-
-export const signup = async (credentials) => {
-  const response = await api.post("/users/sign-up", credentials);
-  return response.data;
-};
-
-export const checkEmail = async (email) => {
-  const response = await api.get(`/users/check-email?email=${email}`);
-  return response.data;
-};
-
 export const logout = async () => {
   try {
     const response = await api.post("/logout");

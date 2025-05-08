@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import TopBar from "../ui/TopBar";
 import { PageLayout } from "../ui/class/ClassLayout";
+import { ModalOverlay, ModalContent, AlertModalContainer } from "../ui/modal/ModalStyles";
 import LogoGray from "../img/logo/itda_logo_gray.svg";
 import ClassThumbnail from "../img/class/classlist_thumbnail.svg";
 import GreyCircle from "../img/class/grey_circle.svg";
@@ -14,8 +15,6 @@ import {
 import DeleteIcon from "../img/icon/delete.svg";
 import api from "../api/api";
 import { UsersContext } from "../contexts/usersContext";
-import { checkExist } from "../api/usersApi";
-
 
 export default function Class() {
   const navigate = useNavigate();
@@ -26,8 +25,6 @@ export default function Class() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedCourseId, setSelectedCourseId] = useState(null);
   const [showAlertModal, setShowAlertModal] = useState(false);
-  const [showGoogleAlertModal, setShowGoogleAlertModal] = useState(false);
-  const [isGoogleLinked, setIsGoogleLinked] = useState(null);
 
   const handleLectureClick = (id) => {
     navigate(`/class/${id}/overview/info`);
@@ -270,24 +267,6 @@ export default function Class() {
               <button
                 className="close-button"
                 onClick={() => setShowAlertModal(false)}
-              >
-                확인
-              </button>
-            </div>
-          </AlertModalContainer>
-        </ModalOverlay>
-      )}
-
-      {/* 새로운 알림 모달 */}
-      {showGoogleAlertModal && (
-        <ModalOverlay>
-          <AlertModalContainer>
-            <div className="text">일반 로그인 서비스가 04/30 종료됩니다</div>
-            <div className="text">상단 바에서 구글 계정을 연동해 주세요</div>
-            <div className="button-container">
-              <button
-                className="close-button"
-                onClick={() => setShowGoogleAlertModal(false)}
               >
                 확인
               </button>
