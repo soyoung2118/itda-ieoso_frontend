@@ -221,7 +221,7 @@ export default function Create() {
         value={value}
         placeholder="커리큘럼 시작을 설정해주세요."
         readOnly
-        style={{ width: "230px" }}
+        style={{ width: "250px" }}
       />
       <CalendarIcon>
         <img src={Calendar} style={{ width: 18 }} alt="캘린더" />
@@ -341,7 +341,9 @@ export default function Create() {
             </FormItem>
 
             <FormItem>
-              <Label>강의 업로드 일시</Label>
+              <Label>강의 업로드 일시
+                <Required>*</Required>
+              </Label>
               <TimeGroup>
                 <DayButtonGroup>
                   {timeSlots.map((day) => (
@@ -359,9 +361,7 @@ export default function Create() {
                     </DayButton>
                   ))}
                 </DayButtonGroup>
-                {!isLecturePending && (
-                  <HelpText>복수 선택이 가능해요!</HelpText>
-                )}
+                <HelpText>복수 선택이 가능해요.</HelpText>
               </TimeGroup>
               <HalfGroup>
                 <TimeGroup>
@@ -418,7 +418,10 @@ export default function Create() {
             </FormItem>
 
             <FormItem>
-              <Label>과제 마감 일시</Label>
+              <Label>
+                과제 마감 일시
+                <Required>*</Required>
+              </Label>
               <TimeGroup>
                 <DayButtonGroup>
                   {timeSlots.map((day) => (
@@ -437,11 +440,9 @@ export default function Create() {
                     </DayButton>
                   ))}
                 </DayButtonGroup>
-                {!isAssignmentPending && (
-                  <HelpText style={{ color: "var(--guide-gray-color)" }}>
+                  <HelpText>
                     복수 선택이 가능해요.
                   </HelpText>
-                )}
               </TimeGroup>
               <HalfGroup>
                 <TimeGroup>
@@ -490,7 +491,7 @@ export default function Create() {
                   </TimePickerWrapper>
                   {form.assignmentTime && !isAssignmentPending && (
                     <HelpText style={{ color: "var(--guide-green-color)" }}>
-                      과제 시간이 설정되었어요!
+                      과제 마감 시간이 설정되었어요!
                     </HelpText>
                   )}
                 </TimeGroup>
@@ -500,7 +501,7 @@ export default function Create() {
         </Section>
 
         <Section style={{ borderBottom: "none" }}>
-          <Title>STEP 3. 수강생에게 강좌를 어떻게 공개하실 건가요?</Title>
+          <Title>STEP 3. 수강생에게 강좌를 어떻게 공개하실건가요?</Title>
           <FormGroup>
             <FormItem>
               <Label>
@@ -597,7 +598,7 @@ const ButtonGroup = styled.div`
 `;
 
 const RadioButton = styled.button`
-  padding: 10px 20px;
+  padding: 12px 20px;
   margin-left: 5px;
   border: none;
   border-radius: 10px;
@@ -618,7 +619,7 @@ const LevelButton = styled.button`
   background-color: ${(props) => (props.active ? "#FF4747" : "#EEEEEE ")};
   color: ${(props) => (props.active ? "#FFFFFF" : "#909090")};
   width: 80px;
-  padding: 8px 0px;
+  padding: 10px 0px;
   border: none;
   cursor: pointer;
   margin-bottom: 8px;
@@ -694,7 +695,7 @@ const FormInput = styled.input`
   width: 100%;
   box-sizing: border-box;
   font-size: 13px;
-  padding: 8px 12px;
+  padding: 10px 12px;
   border: 2px solid #c3c3c3;
   border-radius: 10px;
 `;
@@ -702,7 +703,7 @@ const FormInput = styled.input`
 const IconInput = styled.input`
   box-sizing: border-box;
   font-size: 13px;
-  padding: 8px 32px 8px 12px;
+  padding: 10px 32px 10px 12px;
   border: 2px solid #c3c3c3;
   border-radius: 10px;
 `;
@@ -736,14 +737,15 @@ const DayButtonGroup = styled.div`
 `;
 
 const DayButton = styled.button`
-  width: 2rem;
-  height: 2rem;
+  width: 2.2rem;
+  height: 2.2rem;
   border-radius: 9999px;
   display: flex;
   align-items: center;
   justify-content: center;
   border: none;
-  background-color: ${(props) => (props.active ? "#FF4747" : "#D9D9D9")};
+  font-size: 16px;
+  background-color: ${(props) => (props.active ? "#FF4747" : "#EEEEEE")};
   color: ${(props) => (props.active ? "#FFFFFF" : "#909090")};
 `;
 
