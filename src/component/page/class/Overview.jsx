@@ -6,12 +6,16 @@ import VideoIcon from "../../img/icon/videocam.svg";
 import EditBtn from "../../img/class/edit_btn.svg";
 import EditedBtn from "../../img/class/edited_btn.svg";
 import { Section } from "../../ui/class/ClassLayout";
+import {
+  ModalOverlay,
+  ModalContent,
+  AlertModalContainer,
+} from "../../ui/modal/ModalStyles";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import api from "../../api/api";
 import { UsersContext } from "../../contexts/usersContext";
 import EntryCodeModal from "../../ui/class/EntryCodeModal";
-import EntryCodeCopyModal from "../../ui/class/EntryCodeCopyModal";
 import PropTypes from "prop-types";
 import DOMPurify from "dompurify";
 
@@ -238,7 +242,6 @@ const ClassOverview = () => {
   const location = useLocation();
   const entrycode = location.state?.entrycode || null;
   const [isEntryCodeModalOpen, setIsEntryCodeModalOpen] = useState(false);
-  const [isEntryCodeCopyModalOpen, setIsEntryCodeCopyModalOpen] = useState(false);
   const [sectionContent, setSectionContent] = useState("");
   const [courseThumbnail, setCourseThumbnail] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -428,20 +431,24 @@ const ClassOverview = () => {
       )}
 
       {isEntryCodeModalOpen && (
-        <EntryCodeModal
-          entrycode={entrycode}
-          onClose={() => {
-            setIsEntryCodeModalOpen(false);
-            setIsEntryCodeCopyModalOpen(true);
-          }}
-        />
-      )}
-
-      {isEntryCodeCopyModalOpen && (
-        <EntryCodeCopyModal
-          entrycode={entrycode}
-          onClose={() => setIsEntryCodeCopyModalOpen(false)}
-        />
+        <ModalOverlay>
+          <AlertModalContainer style={{alignItems: "flex-start"}}>
+            <div className="title">강의실을 만들었어요!</div>
+            <div style={{display: "flex", alignItems: "center"}}>
+              <div className="none-bold-text" style={{marginBottom: "5px"}}>강의실 코드: </div>
+                <div className="text" style={{marginBottom: "5px"}}>{entrycode}</div>
+            </div>
+            <div className="none-bold-text" style={{marginBottom: "20px", fontSize: "17px"}}>
+            강의실 코드는 언제든지 관리 페이지에서 확인할 수 있어요
+            </div>
+              <div
+                className="close-button"
+                onClick={() => setIsEntryCodeModalOpen(false)}
+            >
+              확인
+            </div>
+          </AlertModalContainer>
+        </ModalOverlay>
       )}
     </div>
   );
