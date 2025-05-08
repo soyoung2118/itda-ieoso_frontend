@@ -73,7 +73,8 @@ export default function TopBar() {
                         className="navigate-button"
                         onClick={() => navigate("/dashboard")}
                       >
-                        대시보드로 가기
+                        <span className="dashboard-text">대시보드로 가기</span>
+                        <span className="mobile-dashboard-text">대시보드</span>
                       </button>
                     </>
                   )}
@@ -115,7 +116,7 @@ const Wrapper = styled.div`
   background-color: #ffffff;
 
   @media all and (max-width: 479px) {
-    padding: 1px 12vw;
+    padding: 1px 5vw;
   }
 `;
 
@@ -171,11 +172,27 @@ const Header = styled.header`
     padding: 10px 20px;
     cursor: pointer;
     border-radius: 60px;
-  }
 
-  @media all and (max-width: 479px) {
-    min-width: 50px;
-    font-size: 12px;
+    .dashboard-text {
+      display: block;
+    }
+
+    .mobile-dashboard-text {
+      display: none;
+    }
+
+    @media all and (max-width: 479px) {
+      min-width: 50px;
+      font-size: 12px;
+
+      .dashboard-text {
+        display: none;
+      }
+
+      .mobile-dashboard-text {
+        display: block;
+      }
+    }
   }
 
   .language-switcher {
