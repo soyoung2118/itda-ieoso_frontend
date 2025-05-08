@@ -4,6 +4,7 @@ import styled from "styled-components";
 import TopBar from "../ui/TopBar";
 import LogoGray from "../img/logo/itda_logo_gray.svg";
 import ClassThumbnail from "../img/class/classlist_thumbnail.svg";
+import GreyCircle from "../img/class/grey_circle.svg";
 import {
   ModalOverlay,
   ModalContent,
@@ -100,6 +101,14 @@ export default function Class() {
     handleCheckExist();
   }, [isGoogleLinked]);
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${year}년 ${month}월 ${day}일`;
+  };
+
   return (
     <>
       <TopBar />
@@ -119,7 +128,15 @@ export default function Class() {
           </MenuItem>
         </Sidebar>
         <Content>
-          <h2>{selectedMenu}</h2>
+          <TopText>
+            <h2>{selectedMenu}</h2>
+            {lecturesCount !== 0 && 
+            <GreyText>
+              <img src={GreyCircle} alt="GreyCircle" width="10" height="10" style={{marginRight: "5px"}} />
+              등록순
+            </GreyText>
+            }
+          </TopText>
           {lecturesCount === 0 ? (
             <NoLecturesMessage>
               <img src={LogoGray} alt="LogoGray" width="40" height="40" />
@@ -144,7 +161,7 @@ export default function Class() {
                       <span className="material-symbols-outlined">event</span>
                       <span>
                         {lecture.startDate
-                          ? `${lecture.startDate} 시작`
+                          ? `${formatDate(lecture.startDate)} 시작`
                           : "시작일 미정"}
                       </span>
                     </IconRow>
@@ -167,7 +184,7 @@ export default function Class() {
                       <span style={{ margin: "0rem 0.3rem 0rem 1rem" }}>
                         강의 난이도
                       </span>
-                      <span style={{ marginLeft: 0, fontWeight: 800 }}>
+                      <span style={{ marginLeft: 0, fontWeight: 700 }}>
                         {changeDifficultly(lecture.difficultyLevel)}
                       </span>
                     </IconRow>
@@ -232,7 +249,7 @@ export default function Class() {
                 onClick={() => setShowDeleteModal(false)}
               >
                 취소
-              </button>
+              </button> 
               <button className="delete-button" onClick={confirmDelete}>
                 나가기
               </button>
@@ -300,7 +317,7 @@ const Container = styled.div`
 
 const Sidebar = styled.div`
   min-width: 110px;
-  width: 10%;
+  width: 15%;
   height: 60vh;
   margin: 30px 20px;
   background-color: #fff;
@@ -349,6 +366,19 @@ const Content = styled.div`
   }
 `;
 
+const TopText = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const GreyText = styled.div`
+  color: var(--darkgrey-color);
+  margin-right: 30px;
+  display: flex;
+  align-items: center;
+`;
+
 const LectureCard = styled.div`
   position: relative;
   display: flex;
@@ -367,9 +397,9 @@ const LectureCard = styled.div`
 `;
 
 const LectureImage = styled.img`
-  min-width: 200px;
+  min-width: 230px;
   width: 100%;
-  min-height: 200px;
+  min-height: 210px;
   height: auto;
   margin-bottom: 20px;
   object-fit: contain;
@@ -397,7 +427,7 @@ const LectureDetail = styled.div`
 const LectureTitle = styled.h3`
   margin: 0;
   font-size: 24px;
-  margin-bottom: 12px;
+  font-weight: 600;
 `;
 
 const IconRow = styled.div`
@@ -414,7 +444,7 @@ const IconRow = styled.div`
 
   span {
     font-size: 1rem;
-    font-weight: 500;
+    font-weight: 400;
   }
 `;
 
