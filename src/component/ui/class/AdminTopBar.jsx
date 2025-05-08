@@ -86,14 +86,15 @@ const TabLink = styled(NavLink)`
   text-align: center;
   padding: 5px 10px;
   text-decoration: none;
-  color: #5f6368;
-  font-weight: 550;
+  color: var(--darkgrey-color);
+  font-weight: 500;
   font-size: 18px;
   position: relative;
   white-space: nowrap;
 
   &.active {
     color: var(--black-color);
+    font-weight: 700;
     &::after {
       content: "";
       position: absolute;
@@ -140,17 +141,11 @@ const IconContainer = styled.nav`
 `;
 
 const Icon = styled.img`
-  width: 33px;
-  height: 33px;
+  height: 24px;
   cursor: pointer;
 
-  &.delete-icon {
-    height: 37px;
-  }
-
-  @media (max-width: 479px) {
-    width: 24px;
-    height: 24px;
+  @media (max-width: 768px) {
+    height: 20px;
   }
 `;
 
