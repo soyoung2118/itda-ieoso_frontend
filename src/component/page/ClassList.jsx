@@ -7,11 +7,6 @@ import { ModalOverlay, ModalContent, AlertModalContainer } from "../ui/modal/Mod
 import LogoGray from "../img/logo/itda_logo_gray.svg";
 import ClassThumbnail from "../img/class/classlist_thumbnail.svg";
 import GreyCircle from "../img/class/grey_circle.svg";
-import {
-  ModalOverlay,
-  ModalContent,
-  AlertModalContainer,
-} from "../ui/modal/ModalStyles";
 import DeleteIcon from "../img/icon/delete.svg";
 import api from "../api/api";
 import { UsersContext } from "../contexts/usersContext";
@@ -83,6 +78,14 @@ export default function Class() {
       setShowDeleteModal(false);
       setSelectedCourseId(null);
     }
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${year}년 ${month}월 ${day}일`;
   };
 
   return (

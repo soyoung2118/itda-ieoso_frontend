@@ -90,14 +90,19 @@ export default function Participate() {
   );
 } 
 
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+`;
+
 const Layout = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   background-color: #ffffff;
   width: 100%;
-  height: 100vh;
-  padding: 10vh 0;
 `;
 
 const Container = styled.div`
@@ -110,6 +115,9 @@ const Container = styled.div`
   margin: 0 auto;
   padding: 2rem;
   box-sizing: border-box;
+  height: calc(100vh - 60px);
+  justify-content: center;
+  padding-bottom: 10vh;
 `;
 
 
