@@ -5,9 +5,7 @@ import LogoImage from "../img/logo/itda_logo.svg";
 import userIcon from "../img/icon/usericon.svg";
 import { UsersContext } from "../contexts/usersContext";
 import { UsersInfoContainer } from "../page/users/UsersInfoContainer";
-import api from "../api/api";
 import { useLanguage } from "../contexts/LanguageContext";
-import { collectVisibleTexts } from "../../utils/collectVisibleTexts";
 import Translate from "../img/landing/translate.svg";
 
 export default function TopBar() {
@@ -17,7 +15,7 @@ export default function TopBar() {
 
   // 드롭다운 상태 추가
   const [showUsersInfoContainer, setShowUsersInfoContainer] = useState(false);
-  const { targetLang, setTargetLang, translateVisibleTexts } = useLanguage();
+  const { targetLang, setTargetLang } = useLanguage();
 
   const handleUserIconClick = () => {
     setShowUsersInfoContainer((prev) => !prev); // 드롭다운 토글
@@ -64,8 +62,9 @@ export default function TopBar() {
                     <button
                       className="navigate-button"
                       onClick={() => navigate("/class/list")}
-                    >
-                      강의실 입장하기
+                  >
+                    <span className="dashboard-text">강의실 입장하기</span>
+                    <span className="mobile-dashboard-text">강의실</span>
                     </button>
                   ) : (
                     <>
@@ -81,7 +80,7 @@ export default function TopBar() {
                   <UserIcon
                     src={userIcon}
                     alt="user icon"
-                  onClick={() => setShowUsersInfoContainer((prev) => !prev)}
+                    onClick={handleUserIconClick}
                   />
                   {showUsersInfoContainer && (
                     <UsersInfoContainer
@@ -145,6 +144,7 @@ const Header = styled.header`
     /* 모바일 세로 (해상도 ~ 479px)*/
     @media all and (max-width: 479px) {
       padding: 0px;
+      gap: 1vh;
     }
   }
 
@@ -203,6 +203,11 @@ const Header = styled.header`
     font-weight: 500;
     cursor: pointer;
     margin-right: 2vh;
+
+    /* 모바일 세로 (해상도 ~ 479px)*/
+    @media all and (max-width: 479px) {
+      margin-right: 0px;
+    }
   }
 
   .langs {
