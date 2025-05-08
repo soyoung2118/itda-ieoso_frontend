@@ -4,7 +4,6 @@ import styled from "styled-components";
 import TopBar from "../ui/TopBar";
 import { ModalOverlay, AlertModalContainer } from "../ui/modal/ModalStyles";
 import logoImage from "../img/logo/itda_logo_symbol.svg";
-import { SignUpInput, NextButton } from "../../style/Styles";
 import api from "../api/api";
 import { UsersContext } from "../contexts/usersContext";
 
@@ -53,38 +52,30 @@ export default function Participate() {
   return (
     <Wrapper>
       <TopBar />
-      <Container>
-        <LogoImage src={logoImage} alt="logo" />
-        <LogoText>강의실 입장</LogoText>
-        <Explain>공유 받은 강의 공간 입장 코드를 입력해주세요.</Explain>
-        <div
-          style={{
-            minWidth: "300px",
-            width: "60%",
-            maxWidth: "800px",
-            margin: "0 auto",
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
+      <Layout>
+        <Container>
+          <LogoImage src={logoImage} alt="logo" />
+          <LogoText>강의실 입장</LogoText>
+          <Explain>공유 받은 강의 공간 입장 코드를 입력해주세요.</Explain>
           <Form>
             <Label>강의실 입장코드</Label>
-            <SignUpInput
+            <EntryCodeContainer>
+            <EntryCodeInput
               type="text"
               placeholder="코드를 입력해주세요."
               onChange={(e) => setCode(e.target.value)}
               value={code}
             />
 
-            <NextButton
-              style={{ fontSize: "1rem", fontWeight: "400", marginTop: "30px" }}
+            <EntryCodeButton
               onClick={handleParticipate}
             >
               강의실 입장하기
-            </NextButton>
+              </EntryCodeButton>
+            </EntryCodeContainer> 
           </Form>
-        </div>
-      </Container>
+        </Container>
+      </Layout>
       {isModalOpen && (
         <ModalOverlay>
           <AlertModalContainer>
@@ -97,25 +88,30 @@ export default function Participate() {
       )}
     </Wrapper>
   );
-}
+} 
 
-const Wrapper = styled.div`
+const Layout = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
+  background-color: #ffffff;
+  width: 100%;
   height: 100vh;
-  overflow: hidden;
+  padding: 10vh 0;
 `;
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #ffffff;
-  width: 100%;
-  height: calc(100vh - 60px);
   justify-content: center;
-  padding-bottom: 10vh;
+  width: 100%;
+  max-width: 650px;
+  margin: 0 auto;
+  padding: 2rem;
+  box-sizing: border-box;
 `;
+
 
 export const Logo = styled.div`
   font-size: 24px;
@@ -124,13 +120,13 @@ export const Logo = styled.div`
 `;
 
 const LogoImage = styled.img`
-  width: 70px;
+  width: 50px;
   margin-bottom: 1rem;
 `;
 
 const LogoText = styled.div`
-  font-size: 2rem;
-  font-weight: 800;
+  font-size: 1.75rem;
+  font-weight: 700;
   margin-bottom: 10px;
 `;
 
@@ -153,4 +149,39 @@ const Label = styled.label`
   margin-bottom: 0.5rem;
   font-size: 1.2rem;
   font-weight: 600;
+`;
+
+
+const EntryCodeContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 550px;
+`;
+
+const EntryCodeInput = styled.input`
+  width: 100%;
+  padding: 0.7rem;
+  border: 1px solid #cdcdcd;
+  border-radius: 15px;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: #cdcdcd;
+  }
+`;
+
+const EntryCodeButton = styled.button`
+  width: 100%;
+  display: block;
+  background-color: #ff4747;
+  color: white;
+  border: none;
+  padding: 0.75rem;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 15px;
+  margin: 10px auto;
 `;
