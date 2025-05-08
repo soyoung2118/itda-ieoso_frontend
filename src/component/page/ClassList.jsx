@@ -85,6 +85,7 @@ export default function Class() {
     }
   };
 
+<<<<<<< HEAD
   useEffect(() => {
     const handleCheckExist = async () => {
       const response = await checkExist();
@@ -108,6 +109,8 @@ export default function Class() {
     return `${year}년 ${month}월 ${day}일`;
   };
 
+=======
+>>>>>>> 36f00de67a6b26ee5ae6aed388b5fa83be2da42f
   return (
     <>
       <TopBar />

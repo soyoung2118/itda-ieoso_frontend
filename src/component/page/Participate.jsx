@@ -76,8 +76,12 @@ export default function Participate() {
               value={code}
             />
 
+<<<<<<<<< Temporary merge branch 1
+            <EntryCodeButton
+=========
             <NextButton
               style={{ fontSize: "1rem", fontWeight: "400", marginTop: "30px" }}
+>>>>>>>>> Temporary merge branch 2
               onClick={handleParticipate}
             >
               강의실 입장하기
@@ -99,6 +103,9 @@ export default function Participate() {
   );
 }
 
+<<<<<<<<< Temporary merge branch 1
+const Layout = styled.div`
+=========
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -107,15 +114,34 @@ const Wrapper = styled.div`
 `;
 
 const Container = styled.div`
+>>>>>>>>> Temporary merge branch 2
   display: flex;
   flex-direction: column;
   align-items: center;
   background-color: #ffffff;
   width: 100%;
+<<<<<<<<< Temporary merge branch 1
+  height: 100vh;
+  padding: 10vh 0;
+`;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 650px;
+  margin: 0 auto;
+  padding: 2rem;
+  box-sizing: border-box;
+=========
   height: calc(100vh - 60px);
   justify-content: center;
   padding-bottom: 10vh;
+>>>>>>>>> Temporary merge branch 2
 `;
+
 
 export const Logo = styled.div`
   font-size: 24px;
