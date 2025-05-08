@@ -9,8 +9,8 @@ import { UsersContext } from "../../contexts/usersContext";
 import PropTypes from "prop-types";
 
 const Title = styled.h1`
-  font-size: 26px;
-  font-weight: bold;
+  font-size: 22px;
+  font-weight: 700;
   margin-left: 1rem;
   margin-top: 0rem;
   margin-bottom: 0px;
@@ -62,7 +62,7 @@ const NoticeItemLeft = styled.div`
 `;
 
 const NoticeItem = styled.div`
-  padding: 0 1.2rem 1.2rem;
+  padding: 1rem 1rem 1.2rem 1.4rem;
   border-bottom: 1.5px solid #cdcdcd;
   display: flex;
   justify-content: space-between;
@@ -77,8 +77,8 @@ const NoticeItem = styled.div`
 `;
 
 const NoticeTitle = styled.h3`
-  font-size: 1.5rem;
-  font-weight: 550;
+  font-size: 1.3rem;
+  font-weight: 500;
   color: var(--black-color);
   margin-bottom: 0.8rem;
 
@@ -113,8 +113,8 @@ const NoticeMeta = styled.div`
 const NoticeViews = styled.div`
   text-align: center;
   color: var(--main-color);
-  font-size: 1.25rem;
-  font-weight: bold;
+  font-size: 1.1rem;
+  font-weight: 500;
 
   div {
     font-size: 0.875rem;
@@ -193,14 +193,14 @@ const PageButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 1.8rem;
+  height: 1.8rem;
   border-radius: 8px;
   background-color: ${(props) =>
     props.active ? "var(--pink-color)" : "transparent"};
   border: none;
   cursor: pointer;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   &:hover {
     background-color: var(--lightgrey-color);
   }
@@ -374,7 +374,7 @@ const ClassNotice = () => {
         }}
       >
         <ContentHeader>
-          <Title>공지사항</Title>
+          <Title>공지 사항</Title>
         </ContentHeader>
 
         <Section>
@@ -390,19 +390,16 @@ const ClassNotice = () => {
                   >
                     <NoticeItemLeft>
                       <NoticeTitle>{notice.announcementTitle}</NoticeTitle>
-                      {/* ✅ title → announcementTitle */}
                       <NoticeMeta>
                         <span>{notice.instructorName}</span>
-                        {/* ✅ author → instructorName */}
                         <span>|</span>
                         <span>
                           {new Date(notice.createdAt).toLocaleDateString()}
                         </span>
                       </NoticeMeta>
-                      {/* ✅ date → createdAt */}
                     </NoticeItemLeft>
                     <NoticeViews>
-                      {notice.viewCount} {/* ✅ views → viewCount */}
+                      {notice.viewCount}
                       <div>조회수</div>
                     </NoticeViews>
                   </NoticeItem>
