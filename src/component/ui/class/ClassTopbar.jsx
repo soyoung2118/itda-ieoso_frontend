@@ -148,6 +148,10 @@ const TabLinkContainer = styled.div`
   justify-content: flex-end;
   white-space: nowrap;
 
+  &.disabled {
+    pointer-events: none;
+  }
+
   @media (max-width: 1024px) {
     gap: 1rem;
   }
@@ -228,6 +232,7 @@ const ClassTopbar = ({ onCourseChange, isCreator, myCourses }) => {
   const tabRef = useRef(null);
   const dropdownRef = useRef(null);
   const iconRef = useRef(null);
+  const isEditPage = location.pathname.includes("edit");
 
   useEffect(() => {
     if (!user?.userId) return;
@@ -341,7 +346,7 @@ const ClassTopbar = ({ onCourseChange, isCreator, myCourses }) => {
       <RightContainer>
         <TabLinkContainer
           ref={tabRef}
-          className={isScrollable ? "scrolling" : ""}
+          className={`${isScrollable ? "scrolling" : ""} ${isEditPage ? "disabled" : ""}`}
         >
           <TabLink
             to={`/class/${courseId}/overview/info`}

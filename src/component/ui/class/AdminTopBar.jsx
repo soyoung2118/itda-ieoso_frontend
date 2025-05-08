@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, useRef } from "react";
-import { NavLink, useParams, useNavigate } from "react-router-dom";
+import { NavLink, useParams, useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import Delete from "../../img/icon/bin.svg";
@@ -236,6 +236,8 @@ const AdminTopBar = ({ myCourses, activeTab, courseData }) => {
   const { courseId } = useParams();
   const { user } = useContext(UsersContext);
   const navigate = useNavigate();
+  const location = useLocation();
+  const path = location.pathname;
   // 모달 관련 상태
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -247,6 +249,11 @@ const AdminTopBar = ({ myCourses, activeTab, courseData }) => {
   const [currentCourse, setCurrentCourse] = useState(null);
   const dropdownRef = useRef(null);
   const iconRef = useRef(null);
+
+  const isSummaryTab =
+    path.includes("/admin/summary") || path.includes("/admin/students");
+
+  const isSettingTab = path.includes("/admin/setting");
 
   useEffect(() => {
     if (!user?.userId || !myCourses) return;
@@ -316,17 +323,18 @@ const AdminTopBar = ({ myCourses, activeTab, courseData }) => {
             <>
               <TabLink
                 to={`/class/${courseId}/admin/summary`}
-                className={activeTab === "summary" ? "active" : ""}
+                className={isSummaryTab ? "active" : ""}
               >
                 요약
               </TabLink>
-
+              {/*
               <TabLink
                 to={`/class/${courseId}/admin/students`}
                 className={activeTab === "students" ? "active" : ""}
               >
                 과제 보기
               </TabLink>
+              */}
             </>
           )}
 
@@ -334,19 +342,19 @@ const AdminTopBar = ({ myCourses, activeTab, courseData }) => {
             <>
               <TabLink
                 to={`/class/${courseId}/admin/summary`}
-                className={activeTab === "summary" ? "active" : ""}
+                className={isSummaryTab ? "active" : ""}
               >
                 요약
               </TabLink>
-              <TabLink
+              {/* <TabLink
                 to={`/class/${courseId}/admin/students`}
                 className={activeTab === "students" ? "active" : ""}
               >
                 과제 보기
-              </TabLink>
+              </TabLink> */}
               <TabLink
                 to={`/class/${courseId}/admin/setting`}
-                className={activeTab === "setting" ? "active" : ""}
+                className={isSettingTab ? "active" : ""}
               >
                 설정
               </TabLink>
