@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, useRef } from "react";
-import { NavLink, useParams, useNavigate } from "react-router-dom";
+import { NavLink, useParams, useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import Delete from "../../img/icon/bin.svg";
@@ -10,9 +10,8 @@ import {
   AlertModalContainer,
 } from "../../ui/modal/ModalStyles";
 import api from "../../api/api";
-import { getMyCoursesTitles } from "../../api/classApi";
 import { UsersContext } from "../../contexts/usersContext";
-import { getCourseNameandEntryCode } from "../../api/classApi";
+import { formatMyCoursesTitles } from "../../api/classApi";
 
 const Container = styled.div`
   width: 100%;
@@ -233,10 +232,12 @@ const ShareDropdownContainer = styled.div`
   }
 `;
 
-const AdminTopBar = ({ activeTab }) => {
+const AdminTopBar = ({ myCourses, activeTab, courseData }) => {
   const { courseId } = useParams();
   const { user } = useContext(UsersContext);
   const navigate = useNavigate();
+  const location = useLocation();
+  const path = location.pathname;
   // 모달 관련 상태
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -249,34 +250,28 @@ const AdminTopBar = ({ activeTab }) => {
   const dropdownRef = useRef(null);
   const iconRef = useRef(null);
 
-  useEffect(() => {
-    if (!user?.userId) return;
+  const isSummaryTab =
+    path.includes("/admin/summary") || path.includes("/admin/students");
 
-    const fetchClasses = async () => {
-      const courses = await getMyCoursesTitles(user.userId);
-      setClassOptions(courses);
-
-      const current = courses.find(
-        (course) => String(course.courseId) === String(courseId),
-      );
-      setCurrentCourse(current);
-      console.log(current);
-    };
-
-    fetchClasses();
-  }, [user?.userId, courseId]);
+  const isSettingTab = path.includes("/admin/setting");
 
   useEffect(() => {
-    const fetchCourseDetails = async () => {
-      const details = await getCourseNameandEntryCode(courseId);
-      if (details) {
-        setCourseName(details.courseTitle);
-        setEntryCode(details.entryCode);
-      }
-    };
+    if (!user?.userId || !myCourses) return;
 
-    fetchCourseDetails();
-  }, [courseId]);
+    const formattedCourses = formatMyCoursesTitles(myCourses, user.userId);
+    setClassOptions(formattedCourses);
+    const current = formattedCourses.find(
+      (course) => String(course.courseId) === String(courseId),
+    );
+    setCurrentCourse(current);
+  }, [user?.userId, courseId, myCourses]);
+
+  useEffect(() => {
+    if (courseData) {
+      setCourseName(courseData.courseTitle);
+      setEntryCode(courseData.entryCode);
+    }
+  }, [courseData]);
 
   // 공유 버튼 클릭 시 드롭다운 표시
   const handleIconClick = () => {
@@ -328,17 +323,18 @@ const AdminTopBar = ({ activeTab }) => {
             <>
               <TabLink
                 to={`/class/${courseId}/admin/summary`}
-                className={activeTab === "summary" ? "active" : ""}
+                className={isSummaryTab ? "active" : ""}
               >
                 요약
               </TabLink>
-
+              {/*
               <TabLink
                 to={`/class/${courseId}/admin/students`}
                 className={activeTab === "students" ? "active" : ""}
               >
                 과제 보기
               </TabLink>
+              */}
             </>
           )}
 
@@ -346,19 +342,19 @@ const AdminTopBar = ({ activeTab }) => {
             <>
               <TabLink
                 to={`/class/${courseId}/admin/summary`}
-                className={activeTab === "summary" ? "active" : ""}
+                className={isSummaryTab ? "active" : ""}
               >
                 요약
               </TabLink>
-              <TabLink
+              {/* <TabLink
                 to={`/class/${courseId}/admin/students`}
                 className={activeTab === "students" ? "active" : ""}
               >
                 과제 보기
-              </TabLink>
+              </TabLink> */}
               <TabLink
                 to={`/class/${courseId}/admin/setting`}
-                className={activeTab === "setting" ? "active" : ""}
+                className={isSettingTab ? "active" : ""}
               >
                 설정
               </TabLink>
@@ -414,10 +410,13 @@ const AdminTopBar = ({ activeTab }) => {
                       코드 복사
                     </button>
                   </div>
-                  <button className="invite-button" onClick={() => {
-                    handleShare();
-                    setCopyMessage("초대 메시지가 복사되었습니다!");
-                  }}>
+                  <button
+                    className="invite-button"
+                    onClick={() => {
+                      handleShare();
+                      setCopyMessage("초대 메시지가 복사되었습니다!");
+                    }}
+                  >
                     강의실 초대하기
                   </button>
                 </ShareDropdownContainer>
@@ -469,6 +468,8 @@ const AdminTopBar = ({ activeTab }) => {
 
 AdminTopBar.propTypes = {
   activeTab: PropTypes.string.isRequired,
+  myCourses: PropTypes.array,
+  courseData: PropTypes.object,
 };
 
 export default AdminTopBar;

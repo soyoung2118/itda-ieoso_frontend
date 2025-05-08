@@ -6,6 +6,10 @@ import userIcon from "../img/icon/usericon.svg";
 import { UsersContext } from "../contexts/usersContext";
 import { UsersInfoContainer } from "../page/users/UsersInfoContainer";
 import { checkExist } from "../api/usersApi";
+import api from "../api/api";
+import { useLanguage } from "../contexts/LanguageContext";
+import { collectVisibleTexts } from "../../utils/collectVisibleTexts";
+import Translate from "../img/landing/translate.svg";
 
 export default function TopBar() {
   const navigate = useNavigate();
@@ -15,6 +19,8 @@ export default function TopBar() {
   // 드롭다운 상태 추가
   const [showUsersInfoContainer, setShowUsersInfoContainer] = useState(false);
   const [isGoogleLinked, setIsGoogleLinked] = useState(null);
+
+  const { targetLang, setTargetLang, translateVisibleTexts } = useLanguage();
 
   const handleUserIconClick = () => {
     setShowUsersInfoContainer((prev) => !prev); // 드롭다운 토글
@@ -72,6 +78,30 @@ export default function TopBar() {
           location.pathname !== "/signup" &&
           location.pathname !== "/find-password" && (
             <div className="header-right">
+              <div className="language-switcher">
+                <TranslateIcon src={Translate} />
+                <span
+                  className={
+                    targetLang === "ko" ? "lang-active" : "lang-inactive"
+                  }
+                  onClick={() => {
+                    if (targetLang !== "ko") setTargetLang("ko");
+                  }}
+                >
+                  KR
+                </span>
+                <div className="divider">|</div>
+                <span
+                  className={
+                    targetLang === "en" ? "lang-active" : "lang-inactive"
+                  }
+                  onClick={() => {
+                    if (targetLang !== "en") setTargetLang("en");
+                  }}
+                >
+                  EN
+                </span>
+              </div>
               {isUser ? (
                 <UserContainer>
                   {location.pathname === "/dashboard" ? (
@@ -216,6 +246,33 @@ const Header = styled.header`
     min-width: 50px;
     font-size: 12px;
   }
+
+  .language-switcher {
+    display: flex;
+    align-items: center;
+    gap: 1vh;
+    font-size: 17px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-right: 2vh;
+  }
+
+  .langs {
+    display: flex;
+    align-items: center;
+  }
+
+  .lang-active {
+    color: black;
+  }
+
+  .lang-inactive {
+    color: #cccccc;
+  }
+
+  .divider {
+    color: #cccccc;
+  }
 `;
 
 const UserContainer = styled.div`
@@ -235,4 +292,8 @@ const UserIcon = styled.img`
   @media all and (max-width: 479px) {
     margin-right: 0px;
   }
+`;
+
+const TranslateIcon = styled.img`
+  width: 2vh;
 `;

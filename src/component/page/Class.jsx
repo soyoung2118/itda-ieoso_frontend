@@ -5,7 +5,7 @@ import { UsersContext } from "../contexts/usersContext";
 import TopBar from "../ui/TopBar";
 import ClassTopbar from "../ui/class/ClassTopbar";
 import { PageLayout } from "../ui/class/ClassLayout";
-import { getMyCourses } from "../api/classApi";
+import { getMyCourses, formatMyCoursesTitles } from "../api/classApi";
 import { ModalOverlay, AlertModalContainer } from "../ui/modal/ModalStyles";
 
 export default function Class() {
@@ -19,6 +19,7 @@ export default function Class() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
+  const [myCourses, setMyCourses] = useState(null);
 
   useEffect(() => {
     if (!selectedCourseId || !user) return;
@@ -33,9 +34,13 @@ export default function Class() {
           setIsCreator(isCreator);
 
           try {
-            // 사용자가 수강 중인 강의 목록 가져오기
             const myCourses = await getMyCourses(user.userId);
-            const currentCourse = myCourses.find(
+            setMyCourses(myCourses);
+            const formattedCourses = formatMyCoursesTitles(
+              myCourses,
+              user.userId,
+            );
+            const currentCourse = formattedCourses.find(
               (course) => course.courseId === Number(selectedCourseId),
             );
             const isEnrolled = !!currentCourse;
@@ -102,8 +107,9 @@ export default function Class() {
           selectedCourseId={selectedCourseId}
           onCourseChange={handleCourseChange}
           isCreator={isCreator}
+          myCourses={myCourses}
         />
-        <Outlet context={{ courseData, isCreator }} />
+        <Outlet context={{ courseData, isCreator, myCourses }} />
       </PageLayout>
       {showModal && (
         <ModalOverlay>
