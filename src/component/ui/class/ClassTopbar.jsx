@@ -9,7 +9,7 @@ import { formatMyCoursesTitles } from "../../api/classApi";
 
 const Navbar = styled.div`
   background-color: var(--white-color);
-  padding: 0.5rem 1.3rem;
+  padding: 0.5rem 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -96,9 +96,10 @@ const DropdownButton = styled.div`
   cursor: pointer;
   background-color: var(--white-color);
   border-radius: 8px;
-  font-weight: bold;
+  font-weight: 500;
   color: var(--black-color);
   white-space: nowrap;
+  font-size: 1rem;
 `;
 
 const DropdownMenu = styled.div`
@@ -159,7 +160,7 @@ const TabLinkContainer = styled.div`
   }
 
   @media (max-width: 768px) {
-    gap: 0.3rem;
+    gap: 0.2rem;
   }
 
   @media all and (max-width: 479px) {
@@ -174,13 +175,14 @@ const TabLink = styled(NavLink)`
   padding: 5px 10px;
   text-decoration: none;
   color: var(--darkgrey-color);
-  font-weight: bold;
+  font-weight: 500;
   position: relative;
 
   &.active {
     color: var(--black-color);
     border-bottom: 3px solid var(--main-color);
     margin-bottom: -18px;
+    font-weight: 700;
 
     @media all and (max-width: 479px) {
       margin-bottom: -5px;
@@ -189,7 +191,7 @@ const TabLink = styled(NavLink)`
 
   /* 화면이 768px보다 작아지면 고정 너비 해제 + 최소 너비만 지정 */
   @media (max-width: 768px) {
-    font-size: 18px;
+    font-size: 17px;
     &.active {
       margin-bottom: -21px;
 
@@ -204,7 +206,7 @@ const TabLink = styled(NavLink)`
   }
 
   @media all and (max-width: 767px) {
-    font-size: 16px;
+    font-size: 15px;
     width: 40%;
   }
 `;
