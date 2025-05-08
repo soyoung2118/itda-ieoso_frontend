@@ -51,7 +51,7 @@ export default function Participate() {
   };
 
   return (
-    <>
+    <Wrapper>
       <TopBar />
       <Container>
         <LogoImage src={logoImage} alt="logo" />
@@ -77,7 +77,7 @@ export default function Participate() {
             />
 
             <NextButton
-              style={{ fontSize: "1rem" }}
+              style={{ fontSize: "1rem", fontWeight: "400", marginTop: "30px" }}
               onClick={handleParticipate}
             >
               강의실 입장하기
@@ -95,9 +95,16 @@ export default function Participate() {
           </AlertModalContainer>
         </ModalOverlay>
       )}
-    </>
+    </Wrapper>
   );
 }
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+`;
 
 const Container = styled.div`
   display: flex;
@@ -105,9 +112,9 @@ const Container = styled.div`
   align-items: center;
   background-color: #ffffff;
   width: 100%;
-  height: 100vh;
-  justify-content: flex-start;
-  padding-top: 15vh;
+  height: calc(100vh - 60px);
+  justify-content: center;
+  padding-bottom: 10vh;
 `;
 
 export const Logo = styled.div`
@@ -138,6 +145,7 @@ const Form = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
+  margin-top: 20px;
 `;
 
 const Label = styled.label`
