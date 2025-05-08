@@ -121,9 +121,9 @@ const ClassStudents = () => {
           <Title>학생별 과제 보기</Title>
           <TimeText>{currentTime} 기준</TimeText>
           <NavButton
-            onClick={() => navigate(`/class/${courseId}/admin/students`)}
+            onClick={() => navigate(`/class/${courseId}/admin/summary`)}
           >
-            과제 보기
+            요약 보기
           </NavButton>
         </TopBar>
 

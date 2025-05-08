@@ -1,4 +1,4 @@
-import { useEffect, useState, forwardRef, useContext } from "react";
+import { useEffect, useState, forwardRef, useContext, memo } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import TopBar from "../../ui/TopBar";
@@ -10,6 +10,28 @@ import api from "../../api/api";
 import { UsersContext } from "../../contexts/usersContext";
 import { ModalOverlay, AlertModalContainer } from "../../ui/modal/ModalStyles";
 import PropTypes from "prop-types";
+
+const CustomInput = memo(forwardRef(({ value, onClick }, ref) => (
+  <InputGroup onClick={onClick}>
+    <IconInput
+      ref={ref}
+      value={value}
+      placeholder="커리큘럼 시작을 설정해주세요."
+      readOnly
+      style={{ width: "230px" }}
+    />
+    <CalendarIcon>
+      <img src={Calendar} style={{ width: 18 }} alt="캘린더" />
+    </CalendarIcon>
+  </InputGroup>
+)));
+
+CustomInput.displayName = "CustomInput";
+
+CustomInput.propTypes = {
+  value: PropTypes.string.isRequired,
+  onClick: PropTypes.func.isRequired,
+};
 
 export default function Create() {
   const navigate = useNavigate();
@@ -638,10 +660,10 @@ const CreateButton = styled.button`
 `;
 
 const Container = styled.div`
-  margin: 41px 27vw;
+  margin: 2rem 27vw;
   border-radius: 20px;
   @media (max-width: 800px) {
-    margin: 41px 10vw;
+    margin: 2rem 10vw;
   }
 `;
 

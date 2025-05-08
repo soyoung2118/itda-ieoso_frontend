@@ -141,7 +141,7 @@ const SidebarContainer = styled.div`
   height: 40vh;
   background-color: #fff;
   padding: 20px;
-  border-radius: 20px;
+  border-radius: 15px;
 
   @media all and (max-width: 479px) {
     display: none;

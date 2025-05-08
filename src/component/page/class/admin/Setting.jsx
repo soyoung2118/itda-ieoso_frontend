@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useOutletContext } from "react-router-dom";
 import styled from "styled-components";
 import api from "../../../api/api";
 import { UsersContext } from "../../../contexts/usersContext";
@@ -9,6 +9,7 @@ export default function Setting() {
   const navigate = useNavigate();
   const { courseId } = useParams();
   const { user } = useContext(UsersContext);
+  const { courseData } = useOutletContext();
   const timeSlots = ["월", "화", "수", "목", "금", "토", "일"];
   const [isAssignmentPending, setIsAssignmentPending] = useState(false);
   const [isLecturePending, setIsLecturePending] = useState(false);
@@ -51,47 +52,33 @@ export default function Setting() {
   };
 
   useEffect(() => {
-    const fetchCourseData = async () => {
-      try {
-        const courseResponse = await api.get(`/courses/${courseId}`);
-        if (!courseResponse.data.success) {
-          console.log("강의 정보 불러오기 실패");
-        } else {
-          const courseData = courseResponse.data.data;
-          console.log(courseData);
+    if (courseData) {
+      setForm({
+        coursename: courseData.courseTitle,
+        instructor: courseData.instructorName,
+        entrycode: courseData.entryCode,
+        startDate: courseData.startDate,
+        durationWeeks: courseData.durationWeeks,
+        lectureDays: courseData.lectureDay
+          ? courseData.lectureDay.split(",").map(Number)
+          : [],
+        lectureTime: courseData.lectureTime?.slice(0, -3),
+        assignmentDays: courseData.assignmentDueDay
+          ? courseData.assignmentDueDay.split(",").map(Number)
+          : [],
+        assignmentTime: courseData.assignmentDueTime?.slice(0, -3),
+        difficulty: courseData.difficultyLevel?.toLowerCase(),
+        isAssignmentPublic: courseData.isAssignmentPublic,
+      });
 
-          setForm({
-            coursename: courseData.courseTitle,
-            instructor: courseData.instructorName,
-            entrycode: courseData.entryCode,
-            startDate: courseData.startDate,
-            durationWeeks: courseData.durationWeeks,
-            lectureDays: courseData.lectureDay
-              ? courseData.lectureDay.split(",").map(Number)
-              : [],
-            lectureTime: courseData.lectureTime?.slice(0, -3),
-            assignmentDays: courseData.assignmentDueDay
-              ? courseData.assignmentDueDay.split(",").map(Number)
-              : [],
-            assignmentTime: courseData.assignmentDueTime?.slice(0, -3),
-            difficulty: courseData.difficultyLevel?.toLowerCase(),
-            isAssignmentPublic: courseData.isAssignmentPublic,
-          });
-
-          setIsAssignmentPending(
-            !courseData.assignmentDueDay || courseData.assignmentDueTime === "",
-          );
-          setIsLecturePending(
-            !courseData.lectureDay || courseData.lectureTime === "",
-          );
-        }
-      } catch (error) {
-        console.error("Failed to fetch course data:", error);
-      }
-    };
-
-    fetchCourseData();
-  }, [courseId]);
+      setIsAssignmentPending(
+        !courseData.assignmentDueDay || courseData.assignmentDueTime === "",
+      );
+      setIsLecturePending(
+        !courseData.lectureDay || courseData.lectureTime === "",
+      );
+    }
+  }, [courseData]);
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;

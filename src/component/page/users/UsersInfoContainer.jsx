@@ -68,7 +68,7 @@ export function UsersInfoContainer({
 // 스타일링 유지
 const Dropdown = styled.div`
   position: absolute;
-  top: 8vh;
+  top: 4rem;
   right: 0;
   background-color: white;
   border: 1px solid #ccc;

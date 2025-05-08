@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import TopBar from "../ui/TopBar";
+import { PageLayout } from "../ui/class/ClassLayout";
 import LogoGray from "../img/logo/itda_logo_gray.svg";
 import ClassThumbnail from "../img/class/classlist_thumbnail.svg";
 import GreyCircle from "../img/class/grey_circle.svg";
@@ -10,10 +11,11 @@ import {
   ModalContent,
   AlertModalContainer,
 } from "../ui/modal/ModalStyles";
+import DeleteIcon from "../img/icon/delete.svg";
 import api from "../api/api";
 import { UsersContext } from "../contexts/usersContext";
 import { checkExist } from "../api/usersApi";
-import DeleteIcon from "../img/icon/delete.svg";
+
 
 export default function Class() {
   const navigate = useNavigate();
@@ -112,9 +114,10 @@ export default function Class() {
   return (
     <>
       <TopBar />
-      <Container>
-        <Sidebar>
-          <MenuItem
+      <PageLayout>
+        <Container>
+          <Sidebar>
+            <MenuItem
             active={selectedMenu === "전체 강의실"}
             onClick={() => setSelectedMenu("전체 강의실")}
           >
@@ -236,7 +239,7 @@ export default function Class() {
           </PopupMenu>
         )}
       </Container>
-
+      </PageLayout>
       {/* 모달 */}
       {showDeleteModal && (
         <ModalOverlay>
@@ -300,18 +303,12 @@ const Container = styled.div`
   display: flex;
   position: relative;
   height: 100%;
-  padding: 1.5rem 9vw;
-  margin-bottom: 100px;
-
-  @media all and (min-width: 768px) {
-    padding: 1vh 2.2vw;
-  }
 
   /* 모바일 세로 (해상도 ~ 479px)*/
   @media all and (max-width: 479px) {
     display: flex;
     flex-direction: column;
-    padding: 0 2vw;
+    align-items: center;
   }
 `;
 
@@ -322,7 +319,7 @@ const Sidebar = styled.div`
   margin: 30px 20px;
   background-color: #fff;
   padding: 20px;
-  border-radius: 20px;
+  border-radius: 8px;
 
   /* 노트북 & 태블릿 가로 (해상도 1024px ~ 1279px)*/
   @media all and (min-width: 1024px) and (max-width: 1279px) {
@@ -333,10 +330,12 @@ const Sidebar = styled.div`
     display: flex;
     justify-content: space-around;
     align-items: center;
-    width: 90%;
+    width: 100%;
+    max-width: 100%;
     height: 8vh;
-    margin: 25px 10px 5px;
+    margin-bottom: 20px;
     padding: 8px;
+    box-sizing: border-box;
   }
 `;
 
@@ -352,17 +351,23 @@ const MenuItem = styled.div`
 
   /* 모바일 세로 (해상도 ~ 479px)*/
   @media all and (max-width: 479px) {
-    padding: 15px 30px;
+    padding: 10px 30px;
     margin-bottom: 0;
   }
 `;
 
 const Content = styled.div`
   flex: 1;
-  padding: 20px;
+  padding-left: 30px;
+
+  @media all and (max-width: 1024px) {
+    padding-left: 30px;
+  }
+
   /* 모바일 세로 (해상도 ~ 479px)*/
   @media all and (max-width: 479px) {
-    padding: 0 15px 0 25px;
+    flex: 0;
+    padding-left: 0;
   }
 `;
 
@@ -384,7 +389,7 @@ const LectureCard = styled.div`
   display: flex;
   flex-direction: column;
   background-color: #fff;
-  margin: 10px 30px 20px 0;
+  margin-top: 20px;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -450,8 +455,8 @@ const IconRow = styled.div`
 
 const AddButton = styled.button`
   position: fixed;
-  bottom: 2.5rem;
-  right: 6vw;
+  bottom: 3vh;
+  right: 9vw;
   width: 3.8rem;
   height: 60px;
   padding-bottom: 15px;
@@ -475,8 +480,8 @@ const AddButton = styled.button`
 
 const PopupMenu = styled.div`
   position: fixed;
-  bottom: 105px;
-  right: 95px;
+  bottom: 10vh;
+  right: 12vw;
   background-color: #fff;
   border-radius: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
