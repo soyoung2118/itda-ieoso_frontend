@@ -309,7 +309,7 @@ export default function Create() {
                     startDate: date,
                   }));
                 }}
-                minDate={new Date()}
+                //minDate={new Date()}
                 customInput={<CustomInput />}
                 dateFormat="yyyy-MM-dd"
                 popperProps={{
@@ -342,7 +342,10 @@ export default function Create() {
             </FormItem>
 
             <FormItem>
-              <Label>강의 업로드 일시</Label>
+              <Label>
+                강의 업로드 일시
+                <Required>*</Required>
+              </Label>
               <TimeGroup>
                 <DayButtonGroup>
                   {timeSlots.map((day) => (
@@ -421,6 +424,7 @@ export default function Create() {
             <FormItem>
               <Label>
                 과제 마감 일시
+                <Required>*</Required>
               </Label>
               <TimeGroup>
                 <DayButtonGroup>
@@ -600,7 +604,7 @@ const ButtonGroup = styled.div`
 `;
 
 const RadioButton = styled.button`
-  padding: 10px 20px;
+  padding: 12px 20px;
   margin-left: 5px;
   border: none;
   border-radius: 10px;
@@ -621,7 +625,7 @@ const LevelButton = styled.button`
   background-color: ${(props) => (props.active ? "#FF4747" : "#EEEEEE ")};
   color: ${(props) => (props.active ? "#FFFFFF" : "#909090")};
   width: 80px;
-  padding: 8px 0px;
+  padding: 10px 0px;
   border: none;
   cursor: pointer;
   margin-bottom: 8px;
@@ -631,7 +635,7 @@ const CreateButton = styled.button`
   border: none;
   cursor: pointer;
   width: 100%;
-  padding: 10px 0;
+  padding: 12px 0;
   background-color: #ff4747;
   color: white;
   font-size: 17px;
@@ -697,7 +701,7 @@ const FormInput = styled.input`
   width: 100%;
   box-sizing: border-box;
   font-size: 13px;
-  padding: 8px 12px;
+  padding: 10px 12px;
   border: 2px solid #c3c3c3;
   border-radius: 10px;
 `;
@@ -705,7 +709,7 @@ const FormInput = styled.input`
 const IconInput = styled.input`
   box-sizing: border-box;
   font-size: 13px;
-  padding: 8px 32px 8px 12px;
+  padding: 10px 32px 10px 12px;
   border: 2px solid #c3c3c3;
   border-radius: 10px;
 `;
@@ -746,7 +750,9 @@ const DayButton = styled.button`
   align-items: center;
   justify-content: center;
   border: none;
-  background-color: ${(props) => (props.active ? "#FF4747" : "#D9D9D9")};
+  cursor: pointer;
+  font-size: 16px;
+  background-color: ${(props) => (props.active ? "#FF4747" : "#EEEEEE")};
   color: ${(props) => (props.active ? "#FFFFFF" : "#909090")};
 `;
 

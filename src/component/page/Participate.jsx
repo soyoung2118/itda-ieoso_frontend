@@ -50,7 +50,7 @@ export default function Participate() {
   };
 
   return (
-    <>
+    <Wrapper>
       <TopBar />
       <Layout>
         <Container>
@@ -86,7 +86,7 @@ export default function Participate() {
           </AlertModalContainer>
         </ModalOverlay>
       )}
-    </>
+    </Wrapper>
   );
 } 
 
@@ -111,6 +111,7 @@ const Container = styled.div`
   padding: 2rem;
   box-sizing: border-box;
 `;
+
 
 export const Logo = styled.div`
   font-size: 24px;
@@ -140,6 +141,7 @@ const Form = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
+  margin-top: 20px;
 `;
 
 const Label = styled.label`

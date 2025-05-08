@@ -44,7 +44,6 @@ const ModalWrapper = styled.div`
   align-items: center;
   justify-content: flex-start;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-
   @media (max-width: 1000px) {
     width: 70%;
   }
@@ -55,7 +54,6 @@ const ModalContent = styled.div``;
 const ModalText = styled.div`
   font-size: 25px;
   font-weight: bold;
-
   @media (max-width: 480px) {
     font-size: 20px;
   }

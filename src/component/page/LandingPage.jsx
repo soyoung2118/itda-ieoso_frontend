@@ -60,15 +60,28 @@ const Highlight = styled.span`
   color: var(--main-color);
 `;
 
+const SemiBold = styled.span`
+  font-weight: 600;
+`;
+
+const HeavyBold = styled.span`
+  font-weight: 900;
+  letter-spacing: 0.15rem;
+  
+  @media all and (max-width: 479px) {
+    letter-spacing: 0.1rem;
+  }
+`;
+
 const StartButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
   margin-top: 40px;
-  padding: 15px 40px;
+  padding: 15px 30px;
   background-color: var(--main-color);
   color: #ffffff;
-  font-size: 20px;
+  font-size: 1rem;
   border: none;
   border-radius: 50px;
   cursor: pointer;
@@ -99,7 +112,7 @@ const FeatureCard = styled.div`
   width: 250px;
   height: 300px;
   background-color: #ffffff;
-  padding: 15px 20px;
+  padding: 20px 25px;
   border-radius: 8px;
   //box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: left;
@@ -112,22 +125,27 @@ const FeatureCard = styled.div`
 
 const FeatureTitle = styled.h2`
   font-size: 1.3em;
-  font-weight: bold;
-  margin-bottom: 5px;
+  font-weight: 700;
+  margin-bottom: 10px;
   white-space: pre-line;
 `;
 
 const FeatureDescription = styled.p`
   color: #aaaaaa;
-  font-size: 1rem;
+  font-size: 0.9rem;
   margin-top: 5px;
   margin-bottom: 20px;
   white-space: pre-line;
+  line-height: 1.3;
+
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+  }
 `;
 
 const FeatureImage = styled.img`
-  width: 120px;
-  height: 120px;
+  width: 100px;
+  height: 100px;
   position: absolute;
   bottom: 20px;
   right: 20px;
@@ -137,8 +155,11 @@ const FeatureImage = styled.img`
 const BaseContainer = styled.div`
   justify-content: center;
   align-items: center;
-  padding: 3vh 2vw;
   background-color: #ffffff;
+`;
+
+const MarginContainer = styled.div`
+  margin: 0px 10vw;
 `;
 
 const ExplainBottomImage = styled.img`
@@ -171,7 +192,6 @@ const ActionButton = styled.div`
   aspect-ratio: 3 / 1;
   max-height: 80px;
   padding: 3vw;
-  margin: 10px;
   background-color: #f5f5f5;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -187,13 +207,17 @@ const ActionButton = styled.div`
   /* 모바일 세로 (해상도 ~ 479px)*/
   @media all and (max-width: 479px) {
     width: 40%;
+
+    &:nth-child(2) {
+      margin: 0px 10px;
+    }
   }
 `;
 
 const ButtonText = styled.span`
   position: absolute;
-  top: 10px;
-  left: 15px;
+  top: 15px;
+  left: 20px;
   font-size: clamp(0.75rem, 2vw, 1.1rem);
   font-weight: 500;
 
@@ -224,7 +248,7 @@ const AppDownloadContainer = styled.div`
   display: flex;
   align-items: center;
   gap: clamp(10px, 2vw, 20px);
-  margin: 20px;
+  margin: 100px 0px 50px 0px;
   flex-wrap: wrap;
 `;
 
@@ -305,7 +329,7 @@ const Footer = styled.footer`
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 0 30px 80px;
+  padding: 30px 10vw 60px 10vw;
   background-color: #ffffff;
 
   /* 모바일 세로 (해상도 ~ 479px)*/
@@ -380,27 +404,32 @@ const FooterInfo = styled.p`
 
 const ResponsiveText = styled.div`
   font-size: 3.2rem;
-  font-weight: 500;
+  font-weight: 600;
 
   /* 모바일 세로 (해상도 ~ 479px)*/
   @media all and (max-width: 479px) {
-    font-size: 2rem;
+    font-size: 1.8rem;
+    font-weight: 600;
   }
 `;
 
-const ResponsiveHeading = styled.h2`
+const ResponsiveHeading = styled.div`
   font-size: 3.2rem;
-  font-weight: bold;
+  font-weight: 800;
   margin: 10px;
+  letter-spacing: 0.15rem;
 
   @media all and (max-width: 479px) {
-    font-size: 2rem;
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin: 10px;
   }
 `;
 
 const ResponsiveDescription = styled.div`
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   margin-top: 10px;
+  font-weight: 300;
 
   @media all and (max-width: 479px) {
     font-size: 1rem;
@@ -503,13 +532,13 @@ export default function LandingPage() {
       <TopBar />
       <MainContainer>
         <ExplainContainer>
-          <ResponsiveText>쉬운 챌린지 운영,</ResponsiveText>
+          <ResponsiveText>쉬운 온라인 강의실 운영,</ResponsiveText>
           <ResponsiveHeading>
-            지금 <Highlight>‘itda’</Highlight>에서 시작하세요!
+            지금 <HeavyBold><Highlight>‘itda’</Highlight>에서 시작</HeavyBold>하세요!
           </ResponsiveHeading>
           <ResponsiveDescription>
-            <strong>3분만에</strong> 강의실 개설,
-            <strong>한 눈에 확인</strong> 하는 과제 제출 현황
+            <SemiBold>3분만에</SemiBold> 강의실 개설,
+            <SemiBold> 한 눈에 확인</SemiBold>하는 과제 제출 현황
           </ResponsiveDescription>
           <StartButton
             onClick={() => navigate(isLoggedIn ? "/class/list" : "/login")}
@@ -532,6 +561,8 @@ export default function LandingPage() {
             </FeatureCard>
           ))}
         </Features>
+
+        <MarginContainer>
         <BaseContainer>
           <ExplainBottomImage
             src={explain1}
@@ -542,7 +573,7 @@ export default function LandingPage() {
         <ExplainBottomImage
           src={explain2}
           alt="itda logo"
-          style={{ width: "100%" }}
+          style={{ width: "100%"}}
         />
         <BaseContainer>
           {renderActionButtons(navigate, isLoggedIn)}
@@ -566,11 +597,12 @@ export default function LandingPage() {
             </div>
           </AppDownloadContainer>
         </BaseContainer>
+        </MarginContainer>
         <hr
           style={{
             width: "100%",
             margin: "1vh 0px 3vh",
-            border: "1px solid #CDCDC",
+            border: "1px solid rgb(247, 247, 247)",
           }}
         />
         <Footer>
@@ -600,6 +632,7 @@ export default function LandingPage() {
             </FooterInfoContainer>
           </FooterSection>
         </Footer>
+        
       </MainContainer>
       {loginModalOpen && (
         <ModalOverlay>

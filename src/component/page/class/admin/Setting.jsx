@@ -39,9 +39,17 @@ export default function Setting() {
     setTitleInputCount(form.coursename.length);
   }, [form.coursename]);
 
+  const onTitleInputHandler = (e) => {
+    setTitleInputCount(e.target.value.length);
+  };
+
   useEffect(() => {
     setInstructorInputCount(form.instructor.length);
   }, [form.instructor]);
+
+  const onInstructorInputHandler = (e) => {
+    setInstructorInputCount(e.target.value.length);
+  };
 
   useEffect(() => {
     if (courseData) {
@@ -218,6 +226,7 @@ export default function Setting() {
                 <FormInput
                   type="text"
                   name="coursename"
+                  maxlength="30"
                   value={form.coursename}
                   onChange={(e) => {
                     handleFormChange(e);
@@ -238,6 +247,7 @@ export default function Setting() {
                 <FormInput
                   type="text"
                   name="instructor"
+                  maxlength="5"
                   placeholder="ex. 김잇다"
                   value={form.instructor}
                   onChange={(e) => {
