@@ -32,8 +32,8 @@ const IconRow = styled.div`
   }
 
   span {
-    font-size: 15px;
-    font-weight: 500;
+    font-size: 1rem;
+    font-weight: 400;
   }
 `;
 
@@ -164,8 +164,8 @@ const TitleContainer = styled.div`
 `;
 
 const Title = styled.div`
-  font-size: 26px;
-  font-weight: 800;
+  font-size: 22px;
+  font-weight: 700;
 `;
 
 const LimitText = styled.div`
@@ -341,6 +341,14 @@ const ClassOverview = () => {
     return null;
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${year}년 ${month}월 ${day}일 시작`;
+  };
+
   return (
     <div style={{ display: "flex", marginTop: "2rem" }}>
       <main
@@ -375,7 +383,7 @@ const ClassOverview = () => {
           <IconRow style={{ marginTop: "2rem" }}>
             <span className="material-symbols-outlined">event</span>
             <span>
-              {courseData.startDate ? courseData.startDate : "시작 날짜 미정"}
+              {courseData.startDate ? formatDate(courseData.startDate) : "시작 날짜 미정"}
             </span>
           </IconRow>
           <IconRow>
@@ -393,13 +401,13 @@ const ClassOverview = () => {
           <IconRow style={{ gap: "0rem" }}>
             <span className="material-symbols-outlined">star</span>
             <span style={{ margin: "0rem 0.3rem 0rem 1rem" }}>강의 난이도</span>
-            <span style={{ marginLeft: 0, fontWeight: 800 }}>
+            <span style={{ marginLeft: 0, fontWeight: 700 }}>
               {changeDifficultly(courseData.difficultyLevel)}
             </span>
           </IconRow>
         </Section>
         <TitleContainer>
-          <Title>강의 소개</Title>
+          <Title style={{marginTop: "2rem"}}>강의 소개</Title>
           {isEditing && (
             <LimitText>{getPlainTextLength(sectionContent)} / 500자</LimitText>
           )}

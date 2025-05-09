@@ -639,7 +639,7 @@ const CreateButton = styled.button`
   background-color: #ff4747;
   color: white;
   font-size: 17px;
-  font-weight: 500;
+  font-weight: 400;
   border-radius: 10px;
 `;
 

@@ -192,23 +192,6 @@ export default function Setting() {
       }}
     >
       <div style={{ margin: "1vh 0vh" }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "baseline",
-            marginLeft: "2.5vh",
-          }}
-        >
-          <h3
-            style={{
-              fontSize: "24px",
-              fontWeight: "700",
-              color: "var(--black-color)",
-            }}
-          >
-            설정
-          </h3>
-        </div>
         <Container>
           <Section>
             <Title style={{ marginTop: "6px" }}>
@@ -566,7 +549,7 @@ const LevelButton = styled.button`
   font-size: 15px;
   background-color: ${(props) => (props.active ? "#FF4747" : "#EEEEEE ")};
   color: ${(props) => (props.active ? "#FFFFFF" : "#909090")};
-  padding: 6px 18px;
+  padding: 10px 20px;
   border: none;
   cursor: pointer;
   margin-bottom: 8px;
@@ -580,11 +563,11 @@ const CreateButton = styled.button`
   border: none;
   cursor: pointer;
   width: 100%;
-  padding: 10px 0;
+  padding: 12px 0;
   background-color: #ff4747;
   color: white;
   font-size: 17px;
-  font-weight: 500;
+  font-weight: 400;
   border-radius: 10px;
 `;
 
@@ -592,6 +575,7 @@ const Container = styled.div`
   padding: 24px 30px;
   background-color: white;
   border-radius: 12px;
+  margin-top: 1.5rem;
 `;
 
 const Section = styled.div`
@@ -666,7 +650,7 @@ const FormInput = styled.input`
   width: 100%;
   box-sizing: border-box;
   font-size: 13px;
-  padding: 8px 12px;
+  padding: 10px 12px;
   border: 2px solid #c3c3c3;
   border-radius: 10px;
 `;
@@ -675,7 +659,7 @@ const DisableInput = styled.input`
   box-sizing: border-box;
   font-size: 13px;
   font-weight: 500;
-  padding: 8px 12px;
+  padding: 10px 12px;
   color: #767676;
   background-color: #c3c3c3;
   background-color: ${(props) => (props.active ? "#F4F4F4" : "#C3C3C3")};
@@ -687,7 +671,7 @@ const DisableInput = styled.input`
 const CodeInput = styled.input`
   box-sizing: border-box;
   font-size: 13px;
-  padding: 8px 12px;
+  padding: 10px 12px;
   color: #000000;
   border: 2px solid #c3c3c3;
   border-radius: 10px;
@@ -702,7 +686,7 @@ const GreyHelpText = styled.div`
   height: 13px;
   min-height: 13px;
   color: #909090;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 400;
   margin-top: 4px;
 `;
@@ -724,6 +708,7 @@ const DayButton = styled.button`
   border: none;
   background-color: ${(props) => (props.active ? "#C3C3C3" : "#F4F4F4")};
   color: #909090;
+  font-size: 16px;
 `;
 
 const TimeGroup = styled.div`
