@@ -6,11 +6,16 @@ export const login = async (credentials) => {
     const response = await api.post("/login", credentials);
     // 응답 헤더에서 토큰 추출
     const token = response.headers["authorization"];
-    if (token) {
+    // 리프레쉬 토큰 추출
+    const refreshToken = response.data.refreshToken;
+
+    if (token && refreshToken) {
       localStorage.setItem("token", token);
+      localStorage.setItem("refreshToken", refreshToken);
+
 
       const expirationTime = new Date().getTime() + 36000000; // 10시간
-      localStorage.setItem("tokenExpiration", expirationTime);
+      localStorage.setItem("Expiration", expirationTime);
       startLogoutTimer();
     }
     return response;
@@ -64,4 +69,16 @@ export const useAutoLogout = () => {
 export const getUsersInfo = async () => {
   const response = await api.get("/users/user-info");
   return response.data;
+};
+
+// 리프레쉬 토큰
+export const refreshAccessToken = async () => {
+  const refreshToken = localStorage.getItem("refreshToken");
+  if (!refreshToken) throw new Error("Refresh token이 없습니다.");
+
+  const response = await api.post("/auth/refresh", {
+    refreshToken: refreshToken,
+  });
+
+  return response.data.jwtToken; // 새 access token
 };

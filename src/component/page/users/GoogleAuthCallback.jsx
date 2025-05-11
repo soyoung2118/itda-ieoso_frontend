@@ -85,6 +85,7 @@ export default function GoogleAuthCallback() {
             }
 
             let jwtToken = null;
+            let refreshToken = null;
 
             if (response.data.jwtToken) {
               jwtToken = response.data.jwtToken;
@@ -94,7 +95,14 @@ export default function GoogleAuthCallback() {
               throw new Error("응답에 JWT 토큰이 없습니다");
             }
 
-            console.log("JWT 토큰 수신 성공");
+            if (response.data.refreshToken) {
+              refreshToken = response.data.refreshToken;
+            }
+
+            if (!refreshToken) {
+              throw new Error("응답에 refresh 토큰이 없습니다");
+            }
+
             await processToken(jwtToken);
             return;
           } catch (error) {
@@ -120,11 +128,12 @@ export default function GoogleAuthCallback() {
       }
     };
 
-    const processToken = async (token) => {
+    const processToken = async (token, refreshToken) => {
       try {
         const testValue = "test-" + new Date().getTime();
         localStorage.setItem("test-item", testValue);
         localStorage.setItem("token", token);
+        localStorage.setItem("refreshToken", refreshToken);
 
         const expirationTime = new Date().getTime() + 36000000; // 10시간
         localStorage.setItem("tokenExpiration", expirationTime);

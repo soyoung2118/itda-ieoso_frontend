@@ -82,6 +82,8 @@ export default function GoogleAccountLink() {
               response.headers?.Authorization ||
               response.data?.jwtToken;
 
+            const refreshToken = response.data?.refreshToken;
+
             if (newToken && newToken !== currentToken) {
               const finalToken = newToken.startsWith("Bearer ")
                 ? newToken.replace("Bearer ", "")
@@ -91,6 +93,10 @@ export default function GoogleAccountLink() {
               api.defaults.headers.common["Authorization"] =
                 `Bearer ${finalToken}`;
 
+              if (refreshToken) {
+                localStorage.setItem("refreshToken", refreshToken);
+              }
+              
               // 토큰 만료 시간 재설정 (10시간)
               const expirationTime = new Date().getTime() + 36000000;
               localStorage.setItem("tokenExpiration", expirationTime);
