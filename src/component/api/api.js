@@ -1,4 +1,5 @@
 import axios from "axios";
+import { refreshAccessToken } from "./usersApi";
 
 // Axios 인스턴스 생성
 const api = axios.create({
@@ -49,6 +50,43 @@ api.interceptors.response.use(
     } else {
       console.error("서버 응답 없음", error.message);
     }
+    return Promise.reject(error);
+  },
+);
+
+// refresh API 호출, 새 토큰으로 요청 재시도 
+api.interceptors.response.use(
+  (response) => {
+    if (!response.data) {
+      response.data = { message: "응답 바디 없음" };
+    }
+    return response;
+  },
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      localStorage.getItem("refreshToken")
+    ) {
+      originalRequest._retry = true;
+
+      try {
+        const newAccessToken = await refreshAccessToken();
+        localStorage.setItem("token", newAccessToken);
+        api.defaults.headers.common["Authorization"] = `Bearer ${newAccessToken}`;
+        originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+        return api(originalRequest);
+      } catch (refreshError) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("user");
+        window.location.href = "/login";
+        return Promise.reject(refreshError);
+      }
+    }
+
     return Promise.reject(error);
   },
 );
