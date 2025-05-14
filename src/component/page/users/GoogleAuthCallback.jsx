@@ -103,7 +103,7 @@ export default function GoogleAuthCallback() {
               throw new Error("응답에 refresh 토큰이 없습니다");
             }
 
-            await processToken(jwtToken);
+            await processToken(jwtToken, refreshToken);
             return;
           } catch (error) {
             console.error("API 호출 중 오류 발생:", error);
