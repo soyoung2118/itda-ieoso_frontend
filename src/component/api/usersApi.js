@@ -14,7 +14,7 @@ export const login = async (credentials) => {
       localStorage.setItem("refreshToken", refreshToken);
 
 
-      const expirationTime = new Date().getTime() + 36000000; // 10시간
+      const expirationTime = new Date().getTime() + 3600000; // 1시간
       localStorage.setItem("Expiration", expirationTime);
       startLogoutTimer();
     }

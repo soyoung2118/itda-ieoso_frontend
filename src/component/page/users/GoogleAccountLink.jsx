@@ -96,9 +96,9 @@ export default function GoogleAccountLink() {
               if (refreshToken) {
                 localStorage.setItem("refreshToken", refreshToken);
               }
-              
-              // 토큰 만료 시간 재설정 (10시간)
-              const expirationTime = new Date().getTime() + 36000000;
+
+              // 토큰 만료 시간 재설정 (1시간)
+              const expirationTime = new Date().getTime() + 3600000;
               localStorage.setItem("tokenExpiration", expirationTime);
             } else {
               console.log("JWT 토큰이 갱신되지 않았습니다.");

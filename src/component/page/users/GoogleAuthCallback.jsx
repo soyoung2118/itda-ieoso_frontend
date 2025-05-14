@@ -135,7 +135,7 @@ export default function GoogleAuthCallback() {
         localStorage.setItem("token", token);
         localStorage.setItem("refreshToken", refreshToken);
 
-        const expirationTime = new Date().getTime() + 36000000; // 10시간
+        const expirationTime = new Date().getTime() + 3600000; // 1시간
         localStorage.setItem("tokenExpiration", expirationTime);
 
         startLogoutTimer();
