@@ -119,8 +119,6 @@ export default function GoogleAuthCallback() {
 
     const processToken = async (token, refreshToken) => {
       try {
-        const testValue = "test-" + new Date().getTime();
-        localStorage.setItem("test-item", testValue);
         localStorage.setItem("token", token);
         localStorage.setItem("refreshToken", refreshToken);
 

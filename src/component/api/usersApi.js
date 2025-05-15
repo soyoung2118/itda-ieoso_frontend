@@ -35,6 +35,7 @@ export const logout = async () => {
 
     localStorage.removeItem("token");
     localStorage.removeItem("tokenExpiration");
+    localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
     return response;
   } catch (error) {
