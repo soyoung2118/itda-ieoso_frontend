@@ -35,7 +35,31 @@ export const LanguageProvider = ({ children }) => {
         },
       );
 
-      const translatedArray = response.data.data.split("\n");
+      let translatedArray = response.data.data.split("\n");
+
+      if (
+        location.pathname.includes("/class/create") ||
+        location.pathname.includes("/class/setting")
+      ) {
+        const customWeekdayMap = {
+          월: "Mon",
+          화: "Tue",
+          수: "Wed",
+          목: "Thu",
+          금: "Fri",
+          토: "Sat",
+          일: "Sun",
+        };
+
+        // joinedText가 개행으로 연결되어 있으니 split해서 개별 처리
+        const originalArray = joinedText.split("\n");
+
+        translatedArray = originalArray.map((original, idx) => {
+          // 요일이면 직접 번역, 아니면 백에서 받은 결과 사용
+          return customWeekdayMap[original] || translatedArray[idx];
+        });
+      }
+
       const textNodes = [];
 
       const walker = document.createTreeWalker(
