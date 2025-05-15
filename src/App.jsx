@@ -32,6 +32,9 @@ import ClassAssignmentSubmit from "./component/page/class/AssignmentSubmit.jsx";
 import GoogleAuthCallback from "./component/page/users/GoogleAuthCallback.jsx";
 import GoogleAccountLink from "./component/page/users/GoogleAccountLink.jsx";
 import { LanguageProvider } from "./component/contexts/LanguageContext.jsx";
+import ChannelTalk from "./component/ui/ChannelTalk.jsx";
+
+
 
 // 페이지 이동 시 스크롤을 맨 위로 이동시키는 컴포넌트
 function ScrollToTop() {
@@ -127,6 +130,9 @@ function App() {
         <LanguageProvider>
           <LogoutHandler />
           <ScrollToTop /> {/* 필요 없으면 지우면 됨 */}
+
+          <ChannelTalk />
+
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/oauth/callback" element={<GoogleAuthCallback />} />
