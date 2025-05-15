@@ -35,7 +35,7 @@ export const LanguageProvider = ({ children }) => {
         },
       );
 
-      let translatedArray = response.data.data.split("\n");
+      const translatedArray = response.data.data.split("\n");
 
       const textNodes = [];
 
