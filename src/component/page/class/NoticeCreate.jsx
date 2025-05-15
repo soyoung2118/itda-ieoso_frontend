@@ -248,13 +248,13 @@ const NoticeCreateForm = () => {
               </label>
               <CountContainer>
                 <Text>{inputCount}</Text>
-                <Text>/30 자</Text>
+                <Text>/100 자</Text>
               </CountContainer>
               <StyledInput
                 id="title"
                 type="text"
                 value={title}
-                maxLength="30"
+                maxLength="100"
                 onChange={(e) => {
                   setTitle(e.target.value);
                   onInputHandler(e);
