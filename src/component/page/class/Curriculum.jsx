@@ -347,7 +347,7 @@ const VideoDetails = styled.p`
 `;
 
 const BlackLine = styled.span`
-  border-left: 2px solid #909090;
+  border-left: 1px solid #909090;
   height: 1rem;
 
   @media (max-width: 768px) {
