@@ -103,7 +103,7 @@ export default function GoogleAuthCallback() {
               throw new Error("응답에 refresh 토큰이 없습니다");
             }
 
-            await processToken(jwtToken);
+            await processToken(jwtToken, refreshToken);
             return;
           } catch (error) {
             console.error("API 호출 중 오류 발생:", error);
@@ -135,7 +135,7 @@ export default function GoogleAuthCallback() {
         localStorage.setItem("token", token);
         localStorage.setItem("refreshToken", refreshToken);
 
-        const expirationTime = new Date().getTime() + 36000000; // 10시간
+        const expirationTime = new Date().getTime() + 3600000; // 1시간
         localStorage.setItem("tokenExpiration", expirationTime);
 
         startLogoutTimer();
