@@ -36,6 +36,7 @@ export const LanguageProvider = ({ children }) => {
       );
 
       const translatedArray = response.data.data.split("\n");
+
       const textNodes = [];
 
       const walker = document.createTreeWalker(
@@ -57,10 +58,21 @@ export const LanguageProvider = ({ children }) => {
       while (walker.nextNode()) {
         textNodes.push(walker.currentNode);
       }
-
       for (let i = 0; i < textNodes.length && i < translatedArray.length; i++) {
-        textNodes[i].nodeValue = translatedArray[i];
+        const node = textNodes[i];
+        const parent = node.parentElement;
+        const translateId = parent.getAttribute("data-translate-id");
+
+        if (translateId === "day-월") node.nodeValue = "Mon";
+        else if (translateId === "day-화") node.nodeValue = "Tue";
+        else if (translateId === "day-수") node.nodeValue = "Wed";
+        else if (translateId === "day-목") node.nodeValue = "Thu";
+        else if (translateId === "day-금") node.nodeValue = "Fri";
+        else if (translateId === "day-토") node.nodeValue = "Sat";
+        else if (translateId === "day-일") node.nodeValue = "Sun";
+        else node.nodeValue = translatedArray[i];
       }
+
     } catch (error) {
       console.error("번역 실패:", error);
     }
