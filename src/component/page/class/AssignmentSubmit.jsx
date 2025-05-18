@@ -4,7 +4,7 @@ import styled from "styled-components";
 import MenuIcon from "@mui/icons-material/Menu";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import api from "../../api/api";
-import PlayingCurriculumSidebar from "../../ui/class/PlayingCurriculumSidebar";
+import AssignmentSubmitSidebar from "../../ui/class/AssignmentSubmitSidebar";
 import { UsersContext } from "../../contexts/usersContext";
 import AssignmentSubmitBox from "../../ui/class/AssignmentSubmitBox";
 import AssignmentShowBox from "../../ui/class/AssignmentShowBox";
@@ -291,7 +291,7 @@ const ClassAssignmentSubmit = () => {
 
       {!isMobile ? (
         <RightSide>
-          <PlayingCurriculumSidebar
+          <AssignmentSubmitSidebar
             curriculumData={curriculumData}
             setCurriculumData={setCurriculumData}
             currentLectureInfo={currentLectureInfo}
@@ -301,7 +301,7 @@ const ClassAssignmentSubmit = () => {
       ) : (
         <SidebarSlideWrapper show={isVisible}>
           <RightSide>
-            <PlayingCurriculumSidebar
+            <AssignmentSubmitSidebar
               curriculumData={curriculumData}
               setCurriculumData={setCurriculumData}
               currentLectureInfo={currentLectureInfo}
