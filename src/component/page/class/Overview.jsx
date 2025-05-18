@@ -6,6 +6,11 @@ import VideoIcon from "../../img/icon/videocam.svg";
 import EditBtn from "../../img/class/edit_btn.svg";
 import EditedBtn from "../../img/class/edited_btn.svg";
 import { Section } from "../../ui/class/ClassLayout";
+import {
+  ModalOverlay,
+  ModalContent,
+  AlertModalContainer,
+} from "../../ui/modal/ModalStyles";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import api from "../../api/api";
@@ -27,8 +32,8 @@ const IconRow = styled.div`
   }
 
   span {
-    font-size: 15px;
-    font-weight: 500;
+    font-size: 1rem;
+    font-weight: 400;
   }
 `;
 
@@ -159,8 +164,8 @@ const TitleContainer = styled.div`
 `;
 
 const Title = styled.div`
-  font-size: 26px;
-  font-weight: 800;
+  font-size: 22px;
+  font-weight: 700;
 `;
 
 const LimitText = styled.div`
@@ -336,6 +341,14 @@ const ClassOverview = () => {
     return null;
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${year}년 ${month}월 ${day}일 시작`;
+  };
+
   return (
     <div style={{ display: "flex", marginTop: "2rem" }}>
       <main
@@ -370,7 +383,7 @@ const ClassOverview = () => {
           <IconRow style={{ marginTop: "2rem" }}>
             <span className="material-symbols-outlined">event</span>
             <span>
-              {courseData.startDate ? courseData.startDate : "시작 날짜 미정"}
+              {courseData.startDate ? formatDate(courseData.startDate) : "시작 날짜 미정"}
             </span>
           </IconRow>
           <IconRow>
@@ -388,13 +401,13 @@ const ClassOverview = () => {
           <IconRow style={{ gap: "0rem" }}>
             <span className="material-symbols-outlined">star</span>
             <span style={{ margin: "0rem 0.3rem 0rem 1rem" }}>강의 난이도</span>
-            <span style={{ marginLeft: 0, fontWeight: 800 }}>
+            <span style={{ marginLeft: 0, fontWeight: 700 }}>
               {changeDifficultly(courseData.difficultyLevel)}
             </span>
           </IconRow>
         </Section>
         <TitleContainer>
-          <Title>강의 소개</Title>
+          <Title style={{marginTop: "2rem"}}>강의 소개</Title>
           {isEditing && (
             <LimitText>{getPlainTextLength(sectionContent)} / 500자</LimitText>
           )}
@@ -426,10 +439,24 @@ const ClassOverview = () => {
       )}
 
       {isEntryCodeModalOpen && (
-        <EntryCodeModal
-          entrycode={entrycode}
-          onClose={() => setIsEntryCodeModalOpen(false)}
-        />
+        <ModalOverlay>
+          <AlertModalContainer style={{alignItems: "flex-start"}}>
+            <div className="title">강의실을 만들었어요!</div>
+            <div style={{display: "flex", alignItems: "center"}}>
+              <div className="none-bold-text" style={{marginBottom: "5px"}}>강의실 코드: </div>
+                <div className="text" style={{marginBottom: "5px"}}>{entrycode}</div>
+            </div>
+            <div className="none-bold-text" style={{marginBottom: "20px", fontSize: "17px"}}>
+            강의실 코드는 언제든지 관리 페이지에서 확인할 수 있어요
+            </div>
+              <div
+                className="close-button"
+                onClick={() => setIsEntryCodeModalOpen(false)}
+            >
+              확인
+            </div>
+          </AlertModalContainer>
+        </ModalOverlay>
       )}
     </div>
   );

@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import { startTokenRefreshTimer } from "../api/tokenManager";
 
 export const UsersContext = createContext();
 
@@ -15,10 +16,19 @@ export const UsersProvider = ({ children }) => {
     if (token) {
       setIsUser(true);
       setUser(JSON.parse(user));
+      // 토큰 갱신 타이머 시작
+      startTokenRefreshTimer();
     } else {
       setIsUser(false);
       setUser(null);
     }
+
+    // 컴포넌트 언마운트 시 타이머 정리
+    return () => {
+      if (window.tokenRefreshTimer) {
+        clearInterval(window.tokenRefreshTimer);
+      }
+    };
   }, []);
 
   return (

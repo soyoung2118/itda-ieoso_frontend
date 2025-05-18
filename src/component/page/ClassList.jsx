@@ -2,17 +2,14 @@ import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import TopBar from "../ui/TopBar";
+import { PageLayout } from "../ui/class/ClassLayout";
+import { ModalOverlay, ModalContent, AlertModalContainer } from "../ui/modal/ModalStyles";
 import LogoGray from "../img/logo/itda_logo_gray.svg";
 import ClassThumbnail from "../img/class/classlist_thumbnail.svg";
-import {
-  ModalOverlay,
-  ModalContent,
-  AlertModalContainer,
-} from "../ui/modal/ModalStyles";
+import GreyCircle from "../img/class/grey_circle.svg";
+import DeleteIcon from "../img/icon/delete.svg";
 import api from "../api/api";
 import { UsersContext } from "../contexts/usersContext";
-import { checkExist } from "../api/usersApi";
-import DeleteIcon from "../img/icon/delete.svg";
 
 export default function Class() {
   const navigate = useNavigate();
@@ -23,8 +20,6 @@ export default function Class() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedCourseId, setSelectedCourseId] = useState(null);
   const [showAlertModal, setShowAlertModal] = useState(false);
-  const [showGoogleAlertModal, setShowGoogleAlertModal] = useState(false);
-  const [isGoogleLinked, setIsGoogleLinked] = useState(null);
 
   const handleLectureClick = (id) => {
     navigate(`/class/${id}/overview/info`);
@@ -85,27 +80,21 @@ export default function Class() {
     }
   };
 
-  useEffect(() => {
-    const handleCheckExist = async () => {
-      const response = await checkExist();
-
-      if (response.data === "NONE") {
-        setIsGoogleLinked(false);
-        setShowGoogleAlertModal(true);
-      } else {
-        setIsGoogleLinked(true);
-      }
-    };
-
-    handleCheckExist();
-  }, [isGoogleLinked]);
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${year}년 ${month}월 ${day}일`;
+  };
 
   return (
     <>
       <TopBar />
-      <Container>
-        <Sidebar>
-          <MenuItem
+      <PageLayout>
+        <Container>
+          <Sidebar>
+            <MenuItem
             active={selectedMenu === "전체 강의실"}
             onClick={() => setSelectedMenu("전체 강의실")}
           >
@@ -119,7 +108,15 @@ export default function Class() {
           </MenuItem>
         </Sidebar>
         <Content>
-          <h2>{selectedMenu}</h2>
+          <TopText>
+            <h2>{selectedMenu}</h2>
+            {lecturesCount !== 0 && 
+            <GreyText>
+              <img src={GreyCircle} alt="GreyCircle" width="10" height="10" style={{marginRight: "5px"}} />
+              등록순
+            </GreyText>
+            }
+          </TopText>
           {lecturesCount === 0 ? (
             <NoLecturesMessage>
               <img src={LogoGray} alt="LogoGray" width="40" height="40" />
@@ -144,7 +141,7 @@ export default function Class() {
                       <span className="material-symbols-outlined">event</span>
                       <span>
                         {lecture.startDate
-                          ? `${lecture.startDate} 시작`
+                          ? `${formatDate(lecture.startDate)} 시작`
                           : "시작일 미정"}
                       </span>
                     </IconRow>
@@ -167,7 +164,7 @@ export default function Class() {
                       <span style={{ margin: "0rem 0.3rem 0rem 1rem" }}>
                         강의 난이도
                       </span>
-                      <span style={{ marginLeft: 0, fontWeight: 800 }}>
+                      <span style={{ marginLeft: 0, fontWeight: 700 }}>
                         {changeDifficultly(lecture.difficultyLevel)}
                       </span>
                     </IconRow>
@@ -219,7 +216,7 @@ export default function Class() {
           </PopupMenu>
         )}
       </Container>
-
+      </PageLayout>
       {/* 모달 */}
       {showDeleteModal && (
         <ModalOverlay>
@@ -232,7 +229,7 @@ export default function Class() {
                 onClick={() => setShowDeleteModal(false)}
               >
                 취소
-              </button>
+              </button> 
               <button className="delete-button" onClick={confirmDelete}>
                 나가기
               </button>
@@ -257,24 +254,6 @@ export default function Class() {
           </AlertModalContainer>
         </ModalOverlay>
       )}
-
-      {/* 새로운 알림 모달 */}
-      {showGoogleAlertModal && (
-        <ModalOverlay>
-          <AlertModalContainer>
-            <div className="text">일반 로그인 서비스가 04/30 종료됩니다</div>
-            <div className="text">상단 바에서 구글 계정을 연동해 주세요</div>
-            <div className="button-container">
-              <button
-                className="close-button"
-                onClick={() => setShowGoogleAlertModal(false)}
-              >
-                확인
-              </button>
-            </div>
-          </AlertModalContainer>
-        </ModalOverlay>
-      )}
     </>
   );
 }
@@ -283,29 +262,23 @@ const Container = styled.div`
   display: flex;
   position: relative;
   height: 100%;
-  padding: 1.5rem 9vw;
-  margin-bottom: 100px;
-
-  @media all and (min-width: 768px) {
-    padding: 1vh 2.2vw;
-  }
 
   /* 모바일 세로 (해상도 ~ 479px)*/
   @media all and (max-width: 479px) {
     display: flex;
     flex-direction: column;
-    padding: 0 2vw;
+    align-items: center;
   }
 `;
 
 const Sidebar = styled.div`
   min-width: 110px;
-  width: 10%;
+  width: 15%;
   height: 60vh;
   margin: 30px 20px;
   background-color: #fff;
   padding: 20px;
-  border-radius: 20px;
+  border-radius: 8px;
 
   /* 노트북 & 태블릿 가로 (해상도 1024px ~ 1279px)*/
   @media all and (min-width: 1024px) and (max-width: 1279px) {
@@ -316,10 +289,12 @@ const Sidebar = styled.div`
     display: flex;
     justify-content: space-around;
     align-items: center;
-    width: 90%;
+    width: 100%;
+    max-width: 100%;
     height: 8vh;
-    margin: 25px 10px 5px;
+    margin-bottom: 20px;
     padding: 8px;
+    box-sizing: border-box;
   }
 `;
 
@@ -335,18 +310,37 @@ const MenuItem = styled.div`
 
   /* 모바일 세로 (해상도 ~ 479px)*/
   @media all and (max-width: 479px) {
-    padding: 15px 30px;
+    padding: 10px 30px;
     margin-bottom: 0;
   }
 `;
 
 const Content = styled.div`
   flex: 1;
-  padding: 20px;
+  padding-left: 30px;
+
+  @media all and (max-width: 1024px) {
+    padding-left: 30px;
+  }
+
   /* 모바일 세로 (해상도 ~ 479px)*/
   @media all and (max-width: 479px) {
-    padding: 0 15px 0 25px;
+    flex: 0;
+    padding-left: 0;
   }
+`;
+
+const TopText = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const GreyText = styled.div`
+  color: var(--darkgrey-color);
+  margin-right: 30px;
+  display: flex;
+  align-items: center;
 `;
 
 const LectureCard = styled.div`
@@ -354,7 +348,7 @@ const LectureCard = styled.div`
   display: flex;
   flex-direction: column;
   background-color: #fff;
-  margin: 10px 30px 20px 0;
+  margin-top: 20px;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -367,9 +361,9 @@ const LectureCard = styled.div`
 `;
 
 const LectureImage = styled.img`
-  min-width: 200px;
+  min-width: 230px;
   width: 100%;
-  min-height: 200px;
+  min-height: 210px;
   height: auto;
   margin-bottom: 20px;
   object-fit: contain;
@@ -397,7 +391,7 @@ const LectureDetail = styled.div`
 const LectureTitle = styled.h3`
   margin: 0;
   font-size: 24px;
-  margin-bottom: 12px;
+  font-weight: 600;
 `;
 
 const IconRow = styled.div`
@@ -414,14 +408,14 @@ const IconRow = styled.div`
 
   span {
     font-size: 1rem;
-    font-weight: 500;
+    font-weight: 400;
   }
 `;
 
 const AddButton = styled.button`
   position: fixed;
-  bottom: 2.5rem;
-  right: 6vw;
+  bottom: 3vh;
+  right: 9vw;
   width: 3.8rem;
   height: 60px;
   padding-bottom: 15px;
@@ -445,8 +439,8 @@ const AddButton = styled.button`
 
 const PopupMenu = styled.div`
   position: fixed;
-  bottom: 105px;
-  right: 95px;
+  bottom: 10vh;
+  right: 12vw;
   background-color: #fff;
   border-radius: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);

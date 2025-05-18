@@ -1,23 +1,16 @@
-import { useEffect, useRef, useCallback, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   BrowserRouter,
   Route,
   Routes,
-  useNavigate,
   useLocation,
 } from "react-router-dom";
 import { UsersProvider } from "./component/contexts/usersContext.jsx";
-import { logout } from "./component/api/usersApi.js";
-import {
-  ModalOverlay,
-  AlertModalContainer,
-} from "./component/ui/modal/ModalStyles.jsx";
+import { handleLogout } from "./component/api/tokenManager.js";
+import { ModalOverlay, AlertModalContainer } from "./component/ui/modal/ModalStyles.jsx";
 
 import LandingPage from "./component/page/LandingPage.jsx";
 import LogIn from "./component/page/users/LogIn.jsx";
-import SignUp from "./component/page/users/SignUp.jsx";
-import FindPassword from "./component/page/users/FindPassword.jsx";
-import ChangePassword from "./component/page/users/ChangePassword.jsx";
 import ClassList from "./component/page/ClassList.jsx";
 import Create from "./component/page/class/Create.jsx";
 import Participate from "./component/page/Participate.jsx";
@@ -37,6 +30,10 @@ import ClassPlaying from "./component/page/class/Playing.jsx";
 import ClassAssignmentSubmit from "./component/page/class/AssignmentSubmit.jsx";
 import GoogleAuthCallback from "./component/page/users/GoogleAuthCallback.jsx";
 import GoogleAccountLink from "./component/page/users/GoogleAccountLink.jsx";
+import { LanguageProvider } from "./component/contexts/LanguageContext.jsx";
+import ChannelTalk from "./component/ui/ChannelTalk.jsx";
+
+
 
 // 페이지 이동 시 스크롤을 맨 위로 이동시키는 컴포넌트
 function ScrollToTop() {
@@ -50,55 +47,44 @@ function ScrollToTop() {
 }
 
 function LogoutHandler() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const logoutTimerRef = useRef(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-
-  const handleLogout = useCallback(async () => {
-    try {
-      await logout();
-      localStorage.removeItem("token");
-      localStorage.removeItem("tokenExpiration");
-      navigate("/");
-    } catch (error) {
-      console.error("자동 로그아웃 중 오류 발생:", error);
-    }
-  }, [navigate]);
-
-  const checkExpiration = useCallback(() => {
-    const expirationTime = localStorage.getItem("tokenExpiration");
-    if (expirationTime && new Date().getTime() > expirationTime) {
-      setModalIsOpen(true);
-    }
-  }, []);
+  const [logoutMessage, setLogoutMessage] = useState("");
 
   useEffect(() => {
-    checkExpiration();
+    const checkSessionExpiration = () => {
+      const sessionExpiration = localStorage.getItem("sessionExpiration");
+      const currentTime = new Date().getTime();
 
-    const expirationTime = localStorage.getItem("tokenExpiration");
-    if (expirationTime) {
-      const timeLeft = expirationTime - new Date().getTime();
+      if (!sessionExpiration) return;
 
-      if (timeLeft <= 0) {
+      if (currentTime > parseInt(sessionExpiration)) {
+        setLogoutMessage("로그인 시간이 만료되어 로그아웃합니다.");
         setModalIsOpen(true);
-      } else {
-        setTimeout(() => {
-          setModalIsOpen(true);
-        }, timeLeft);
-      }
-    }
-
-    return () => {
-      if (logoutTimerRef.current) {
-        clearTimeout(logoutTimerRef.current);
       }
     };
-  }, [checkExpiration]);
 
-  useEffect(() => {
-    checkExpiration();
-  }, [location, checkExpiration]);
+    // 페이지 로드 시 한 번 체크
+    checkSessionExpiration();
+
+    // 1분마다 체크
+    const interval = setInterval(checkSessionExpiration, 60000);
+
+    // 토큰 관련 에러 발생 시 로그아웃
+    const handleTokenError = (event) => {
+      if (event.detail?.type === 'token_error') {
+        setLogoutMessage("인증에 문제가 발생하여 자동 로그아웃됩니다.");
+        setModalIsOpen(true);
+      }
+    };
+
+    // 토큰 에러 이벤트 리스너 등록
+    window.addEventListener('tokenError', handleTokenError);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('tokenError', handleTokenError);
+    };
+  }, []);
 
   return (
     <>
@@ -108,7 +94,7 @@ function LogoutHandler() {
             isOpen={modalIsOpen}
             onRequestClose={() => setModalIsOpen(false)}
           >
-            <div className="text">로그인 시간이 만료되어 로그아웃합니다.</div>
+            <div className="text">{logoutMessage}</div>
             <div
               className="close-button"
               onClick={() => {
@@ -129,51 +115,54 @@ function App() {
   return (
     <BrowserRouter>
       <UsersProvider>
-        <LogoutHandler />
-        <ScrollToTop /> {/* 필요 없으면 지우면 됨 */}
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/oauth/callback" element={<GoogleAuthCallback />} />
-          <Route path="/oauth/account/link" element={<GoogleAccountLink />} />
-          <Route path="/login" element={<LogIn />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/find-password" element={<FindPassword />} />
-          <Route path="/change-password" element={<ChangePassword />} />
-          <Route path="/class/list" element={<ClassList />} />
-          <Route path="/class/create" element={<Create />} />
-          <Route path="/class/participate" element={<Participate />} />
+        <LanguageProvider>
+          <LogoutHandler />
+          <ScrollToTop />
+          <ChannelTalk />
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/oauth/callback" element={<GoogleAuthCallback />} />
+            <Route path="/oauth/account/link" element={<GoogleAccountLink />} />
+            <Route path="/login" element={<LogIn />} />
+            <Route path="/class/list" element={<ClassList />} />
+            <Route path="/class/create" element={<Create />} />
+            <Route path="/class/participate" element={<Participate />} />
 
-          <Route path="/class/:courseId" element={<Class />}>
-            <Route path="overview/info" element={<ClassOverview />} />
-            <Route path="overview/notice" element={<ClassNotice />} />
-            <Route path="overview/notice/create" element={<NoticeCreate />} />
-            <Route
-              path="overview/notice/edit/:noticeId"
-              element={<NoticeCreate />}
-            />
-            <Route path="curriculum/:lectureId" element={<ClassCurriculum />} />
-            <Route
-              path="curriculum/:lectureId/edit"
-              element={<ClassCurriculumEdit />}
-            />
-            <Route path="admin/" element={<Admin />}>
-              <Route path="summary" element={<ClassSummary />} />
-              <Route path="students" element={<ClassStudents />} />
-              <Route path="students/:studentId" element={<StudentDetail />} />
-              <Route path="setting" element={<Setting />} />
+            <Route path="/class/:courseId" element={<Class />}>
+              <Route path="overview/info" element={<ClassOverview />} />
+              <Route path="overview/notice" element={<ClassNotice />} />
+              <Route path="overview/notice/create" element={<NoticeCreate />} />
+              <Route
+                path="overview/notice/edit/:noticeId"
+                element={<NoticeCreate />}
+              />
+              <Route
+                path="curriculum/:lectureId"
+                element={<ClassCurriculum />}
+              />
+              <Route
+                path="curriculum/:lectureId/edit"
+                element={<ClassCurriculumEdit />}
+              />
+              <Route path="admin/" element={<Admin />}>
+                <Route path="summary" element={<ClassSummary />} />
+                <Route path="students" element={<ClassStudents />} />
+                <Route path="students/:studentId" element={<StudentDetail />} />
+                <Route path="setting" element={<Setting />} />
+              </Route>
+              <Route
+                path="playing/:lectureId/:videoId"
+                element={<ClassPlaying />}
+              />
+              <Route
+                path="assignment/submit/:lectureId/:assignmentId"
+                element={<ClassAssignmentSubmit />}
+              />
             </Route>
-            <Route
-              path="playing/:lectureId/:videoId"
-              element={<ClassPlaying />}
-            />
-            <Route
-              path="assignment/submit/:lectureId/:assignmentId"
-              element={<ClassAssignmentSubmit />}
-            />
-          </Route>
 
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Routes>
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Routes>
+        </LanguageProvider>
       </UsersProvider>
     </BrowserRouter>
   );

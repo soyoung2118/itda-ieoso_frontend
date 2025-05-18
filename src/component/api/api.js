@@ -1,20 +1,48 @@
 import axios from "axios";
+import { handleTokenRefresh } from "./tokenManager";
 
 // Axios 인스턴스 생성
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
-  timeout: 5000,
+  timeout: 15000,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// 요청 인터셉터: 요청 전에 토큰 추가
+// 토큰이 만료되었는지 확인
+const isTokenExpired = () => {
+  const expirationTime = localStorage.getItem("tokenExpiration");
+  if (!expirationTime) return true;
+  return new Date().getTime() > parseInt(expirationTime);
+};
+
+// 요청 인터셉터: 요청 전에 토큰 체크 및 갱신
 api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers["Authorization"] = `Bearer ${token}`;
+  async (config) => {
+    // OAuth 관련 요청은 제외
+    if (
+      config.url?.includes("/oauth/reissuetoken") ||
+      config.url?.includes("/oauth/return/uri") ||
+      config.url?.includes("/oauth/google/login")
+    ) {
+      return config;
+    }
+
+    // 토큰이 만료되었으면 갱신 시도
+    if (isTokenExpired()) {
+      try {
+        const newToken = await handleTokenRefresh();
+        config.headers["Authorization"] = `Bearer ${newToken}`;
+      } catch (error) {
+        // 토큰 갱신 실패는 response 인터셉터에서 처리
+        return Promise.reject(error);
+      }
+    } else {
+      const token = localStorage.getItem("token");
+      if (token) {
+        config.headers["Authorization"] = `Bearer ${token}`;
+      }
     }
     return config;
   },
@@ -24,31 +52,30 @@ api.interceptors.request.use(
 // 응답 인터셉터: 응답 후 에러 처리
 api.interceptors.response.use(
   (response) => {
-    // 응답 바디가 없을 경우 기본 메시지 추가
     if (!response.data) {
       response.data = { message: "응답 바디 없음" };
     }
     return response;
   },
-  (error) => {
-    if (error.response) {
-      // 401 에러 (인증 실패 시 로그인 페이지로 리다이렉트)
-      if (error.response.status === 401) {
-        // 로그인 시도에서 발생한 401 에러는 리다이렉트하지 않음
-        if (!error.config.url.includes("/login")) {
-          localStorage.removeItem("token"); // 토큰 삭제
-          //window.location.href = '/'; // 페이지 강제 이동
-        }
-      }
+  async (error) => {
+    const originalRequest = error.config;
 
-      // 기타 에러 처리
-      console.error(
-        `에러 발생: ${error.response.status}`,
-        error.response.data || "서버 오류",
-      );
-    } else {
-      console.error("서버 응답 없음", error.message);
+    // 401, 403 에러 시 토큰 갱신 시도
+    if (
+      (error.response?.status === 401 || error.response?.status === 403) &&
+      !originalRequest._retry
+    ) {
+      originalRequest._retry = true;
+
+      try {
+        const newToken = await handleTokenRefresh();
+        originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
+        return api(originalRequest);
+      } catch (refreshError) {
+        return Promise.reject(refreshError);
+      }
     }
+
     return Promise.reject(error);
   },
 );

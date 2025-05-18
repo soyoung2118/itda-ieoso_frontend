@@ -1,12 +1,12 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import LogoImage from "../img/logo/itda_logo.svg";
 import userIcon from "../img/icon/usericon.svg";
 import { UsersContext } from "../contexts/usersContext";
 import { UsersInfoContainer } from "../page/users/UsersInfoContainer";
-import { checkExist } from "../api/usersApi";
-import api from "../api/api";
+import { useLanguage } from "../contexts/LanguageContext";
+import Translate from "../img/landing/translate.svg";
 
 export default function TopBar() {
   const navigate = useNavigate();
@@ -15,51 +15,12 @@ export default function TopBar() {
 
   // 드롭다운 상태 추가
   const [showUsersInfoContainer, setShowUsersInfoContainer] = useState(false);
-  const [isGoogleLinked, setIsGoogleLinked] = useState(null);
+  const { targetLang, setTargetLang } = useLanguage();
 
   const handleUserIconClick = () => {
     setShowUsersInfoContainer((prev) => !prev); // 드롭다운 토글
   };
 
-  useEffect(() => {
-    // 현재 경로를 가져옵니다.
-    const currentPath = location.pathname;
-
-    // LandingPage와 LoginPage가 아닌 경우에만 checkExist를 호출합니다.
-    if (currentPath !== "/" && currentPath !== "/login") {
-      const handleCheckExist = async () => {
-        const response = await checkExist();
-
-        if (response.data === "NONE") {
-          setIsGoogleLinked(false);
-        } else {
-          setIsGoogleLinked(true);
-        }
-      };
-
-      handleCheckExist();
-    }
-  }, [isGoogleLinked, location.pathname]);
-
-  const handleGoogleAuth = () => {
-    try {
-      // 현재 로그인된 사용자의 토큰 가져오기
-      const currentToken = localStorage.getItem("token");
-      if (!currentToken) {
-        alert("로그인이 필요합니다.");
-        return;
-      }
-
-      const redirectUri = encodeURIComponent(
-        `${window.location.origin}/oauth/account/link`,
-      );
-      const googleLoginUrl = `${import.meta.env.VITE_API_URL}/oauth/google/login/temp?redirect_uri=${redirectUri}`;
-      window.location.href = googleLoginUrl;
-    } catch (error) {
-      console.error("구글 연동 시작 중 오류 발생:", error);
-      alert("구글 계정 연동을 시작할 수 없습니다. 다시 시도해주세요.");
-    }
-  };
 
   return (
     <Wrapper>
@@ -69,18 +30,41 @@ export default function TopBar() {
         onClick={isUser ? () => navigate("/class/list") : () => navigate("/")}
       />
       <Header>
-        {location.pathname !== "/login" &&
-          location.pathname !== "/signup" &&
-          location.pathname !== "/find-password" && (
+        {location.pathname !== "/login" && (
             <div className="header-right">
+              <div className="language-switcher">
+                <TranslateIcon src={Translate} />
+                <span
+                  className={
+                    targetLang === "ko" ? "lang-active" : "lang-inactive"
+                  }
+                  onClick={() => {
+                    if (targetLang !== "ko") setTargetLang("ko");
+                  }}
+                >
+                  KR
+                </span>
+                <div className="divider">|</div>
+                <span
+                  className={
+                    targetLang === "en" ? "lang-active" : "lang-inactive"
+                  }
+                  onClick={() => {
+                    if (targetLang !== "en") setTargetLang("en");
+                  }}
+                >
+                  EN
+                </span>
+              </div>
               {isUser ? (
                 <UserContainer>
                   {location.pathname === "/dashboard" ? (
                     <button
                       className="navigate-button"
                       onClick={() => navigate("/class/list")}
-                    >
-                      강의실 입장하기
+                  >
+                    <span className="dashboard-text">강의실 입장하기</span>
+                    <span className="mobile-dashboard-text">강의실</span>
                     </button>
                   ) : (
                     <>
@@ -88,16 +72,9 @@ export default function TopBar() {
                         className="navigate-button"
                         onClick={() => navigate("/dashboard")}
                       >
-                        대시보드로 가기
+                        <span className="dashboard-text">대시보드로 가기</span>
+                        <span className="mobile-dashboard-text">대시보드</span>
                       </button>
-                      {isGoogleLinked === false && (
-                        <button
-                          className="navigate-button"
-                          onClick={handleGoogleAuth}
-                        >
-                          구글 계정 연동하기
-                        </button>
-                      )}
                     </>
                   )}
                   <UserIcon
@@ -108,13 +85,11 @@ export default function TopBar() {
                   {showUsersInfoContainer && (
                     <UsersInfoContainer
                       setShowUsersInfoContainer={setShowUsersInfoContainer}
-                      isGoogleLinked={isGoogleLinked}
                     />
                   )}
                 </UserContainer>
               ) : (
                 <>
-                  {/* <button className="signup" onClick={() => navigate('/signup')}>회원가입</button> */}
                   <button className="login" onClick={() => navigate("/login")}>
                     로그인
                   </button>
@@ -136,11 +111,11 @@ const Wrapper = styled.div`
   height: 7vh;
   align-items: center;
   justify-content: space-between;
-  padding: 1px 10px 1px 20px;
+  padding: 1px 9vw;
   background-color: #ffffff;
 
   @media all and (max-width: 479px) {
-    padding: 1px 2px 1px 18px;
+    padding: 1px 5vw;
   }
 `;
 
@@ -169,21 +144,7 @@ const Header = styled.header`
     /* 모바일 세로 (해상도 ~ 479px)*/
     @media all and (max-width: 479px) {
       padding: 0px;
-    }
-  }
-
-  .signup {
-    min-width: 90px;
-    background-color: transparent;
-    color: #000000;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-
-    /* 모바일 세로 (해상도 ~ 479px)*/
-    @media all and (max-width: 479px) {
-      min-width: 50px;
-      font-size: 12px;
+      gap: 1vh;
     }
   }
 
@@ -211,11 +172,59 @@ const Header = styled.header`
     padding: 10px 20px;
     cursor: pointer;
     border-radius: 60px;
+
+    .dashboard-text {
+      display: block;
+    }
+
+    .mobile-dashboard-text {
+      display: none;
+    }
+
+    @media all and (max-width: 479px) {
+      min-width: 50px;
+      font-size: 12px;
+
+      .dashboard-text {
+        display: none;
+      }
+
+      .mobile-dashboard-text {
+        display: block;
+      }
+    }
   }
 
-  @media all and (max-width: 479px) {
-    min-width: 50px;
-    font-size: 12px;
+  .language-switcher {
+    display: flex;
+    align-items: center;
+    gap: 1vh;
+    font-size: 17px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-right: 2vh;
+
+    /* 모바일 세로 (해상도 ~ 479px)*/
+    @media all and (max-width: 479px) {
+      margin-right: 0px;
+    }
+  }
+
+  .langs {
+    display: flex;
+    align-items: center;
+  }
+
+  .lang-active {
+    color: black;
+  }
+
+  .lang-inactive {
+    color: #cccccc;
+  }
+
+  .divider {
+    color: #cccccc;
   }
 `;
 
@@ -223,18 +232,21 @@ const UserContainer = styled.div`
   display: flex;
   align-items: center;
   position: relative;
-  padding: 10px;
+  padding: 10px 0 10px 10px;
   border-radius: 8px;
 `;
 
 const UserIcon = styled.img`
   width: 40px;
   height: 40px;
-  margin-right: 10px;
   cursor: pointer;
 
   /* 모바일 세로 (해상도 ~ 479px)*/
   @media all and (max-width: 479px) {
     margin-right: 0px;
   }
+`;
+
+const TranslateIcon = styled.img`
+  width: 2vh;
 `;

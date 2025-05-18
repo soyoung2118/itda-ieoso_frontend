@@ -2,17 +2,27 @@ import styled from "styled-components";
 import LogoSymbol from "../../img/logo/itda_logo_symbol.svg";
 
 export default function EntryCodeModal({ entrycode, onClose }) {
+  const handleCopy = (text) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        onClose();
+      })
+      .catch((err) => {
+        console.error("복사 중 오류가 발생했습니다:", err);
+      });
+  };
   return (
     <ModalBackdrop>
       <ModalWrapper>
         <ModalContent>
           <img src={LogoSymbol} alt="LogoSymbol" width="60" height="60" />
           <ModalText style={{ marginTop: "10px" }}>
-            강의실이 개설되었어요.
+            강의실이 개설되었습니다!
           </ModalText>
           <ModalSmallText>내 강의실 코드</ModalSmallText>
           <ModalText>{entrycode}</ModalText>
-          <CloseButton onClick={onClose}>수강생 초대하기</CloseButton>
+          <CloseButton onClick={() => {handleCopy(entrycode)}}>수강생 초대하기</CloseButton>
         </ModalContent>
       </ModalWrapper>
     </ModalBackdrop>
