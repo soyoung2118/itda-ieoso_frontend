@@ -5,7 +5,7 @@ import styled from "styled-components";
 import Assignment from "../../img/icon/docs.svg";
 import Material from "../../img/icon/pdf.svg";
 import Video from "../../img/icon/videored.svg";
-import api from "../../api/api";
+import { getCurriculumWithAssignments, getAllAssignmentSubmissions } from "../../api/classCurriculumApi";
 import { UsersContext } from "../../contexts/usersContext";
 import { ModalOverlay, AlertModalContainer } from "../modal/ModalStyles";
 
@@ -116,74 +116,16 @@ const AssignmentSubmitSidebar = ({
     const fetchData = async () => {
       try {
         if (!courseId || !user) return;
-
-        const curriculumResponse = await api.get(
-          `/lectures/curriculum/${courseId}/${user.userId}`,
-        );
-        const cleanedData = {
-          ...curriculumResponse.data.data,
-          curriculumResponses:
-            curriculumResponse.data.data.curriculumResponses?.map(
-              (lecture) => ({
-                ...lecture,
-                videos:
-                  lecture.videos?.filter((video) =>
-                    Object.values(video).every((value) => value !== null),
-                  ) || [],
-                assignments:
-                  lecture.assignments?.filter((assignment) =>
-                    Object.values(assignment).every((value) => value !== null),
-                  ) || [],
-                materials:
-                  lecture.materials?.filter((material) =>
-                    Object.values(material).every((value) => value !== null),
-                  ) || [],
-              }),
-            ) || [],
-        };
-
-        setCurriculumData(cleanedData.curriculumResponses);
-
-        const historyResponse = await api.get(
-          `/lectures/history/${courseId}/${user.userId}`,
-        );
-
-        if (historyResponse.data.success) {
-          const submissions = Array.isArray(
-            historyResponse.data.data.submissions,
-          )
-            ? historyResponse.data.data.submissions
-            : [];
-
-          const materials = Array.isArray(historyResponse.data.data.materials)
-            ? historyResponse.data.data.materials
-            : [];
-
-          setAssignmentIdList((prev) => [
-            ...prev,
-            ...submissions.map((sub) => sub.assignmentId),
-          ]);
-
-          setSubmissionStatusList((prev) => [
-            ...prev,
-            ...submissions.map((sub) => sub.submissionStatus),
-          ]);
-
-          setMaterialIdList((prev) => [
-            ...prev,
-            ...materials.map((sub) => sub.materialId),
-          ]);
-
-          setMaterialStatusList((prev) => [
-            ...prev,
-            ...materials.map((sub) => sub.materialHistoryStatus),
-          ]);
-        }
+        // 커리큘럼(주차별+과제)
+        const lectures = await getCurriculumWithAssignments(courseId, user.userId);
+        setCurriculumData(lectures);
+        // 제출 데이터(과제별 학생 제출)
+        const allSubmissions = await getAllAssignmentSubmissions(courseId);
+        // 필요하다면 setState로 submissions 저장 가능
       } catch (error) {
         console.error("데이터 로딩 오류:", error);
       }
     };
-
     fetchData();
   }, [courseId, user, setCurriculumData]);
 
