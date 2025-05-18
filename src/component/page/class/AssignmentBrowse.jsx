@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { getCurriculumWithAssignments, getAllAssignmentSubmissions } from "../../api/classCurriculumApi";
 import { UsersContext } from "../../contexts/usersContext";
 import AssignmentBrowseSidebar from "../../ui/class/AssignmentBrowseSidebar";
+import api from "../../api/api";
 
 const AssignmentBrowse = () => {
   const { courseId } = useParams();
@@ -13,6 +14,7 @@ const AssignmentBrowse = () => {
   const [curriculum, setCurriculum] = useState([]); // 주차별 커리큘럼
   const [allSubmissions, setAllSubmissions] = useState([]); // 모든 과제 제출
   const [openWeek, setOpenWeek] = useState(null);
+  const [galleryIndexes, setGalleryIndexes] = useState({}); // {assignmentId: idx}
 
   // 커리큘럼, 제출 데이터 fetch
   useEffect(() => {
@@ -61,6 +63,41 @@ const AssignmentBrowse = () => {
     return assignment.studentResults.find(r => r.userId === selectedStudentId) || null;
   };
 
+  // 이미지 확장자 판별 함수
+  const isImageFile = (fileName = "") => {
+    return /\.(jpg|jpeg|png)$/i.test(fileName);
+  };
+
+  // PDF 파일만 추출
+  const isPdfFile = (fileName = "") => {
+    return /\.pdf$/i.test(fileName);
+  };
+
+  // 갤러리 넘기기 핸들러
+  const handlePrev = (assignmentId, imageCount) => {
+    setGalleryIndexes(prev => ({
+      ...prev,
+      [assignmentId]: prev[assignmentId] === 0 ? imageCount - 1 : (prev[assignmentId] || 0) - 1
+    }));
+  };
+  const handleNext = (assignmentId, imageCount) => {
+    setGalleryIndexes(prev => ({
+      ...prev,
+      [assignmentId]: prev[assignmentId] === imageCount - 1 ? 0 : (prev[assignmentId] || 0) + 1
+    }));
+  };
+
+  // PDF 미리보기 핸들러
+  const handlePdfPreview = async (fileUrl) => {
+    try {
+      const res = await api.get("/files/download", { params: { fileUrl } });
+      const presignedUrl = res.data.data;
+      window.open(presignedUrl, "_blank");
+    } catch (e) {
+      alert("PDF 미리보기에 실패했습니다.");
+    }
+  };
+
   return (
     <Container>
       <ContentArea>
@@ -83,6 +120,11 @@ const AssignmentBrowse = () => {
                     {lecture.assignments.length === 0 && <NoAssignment>과제가 없습니다.</NoAssignment>}
                     {lecture.assignments.map((assignment) => {
                       const submission = findStudentSubmission(assignment.assignmentId);
+                      const imageFiles = (submission?.files || []).filter(f => isImageFile(f.fileName));
+                      const pdfFiles = (submission?.files || []).filter(f => isPdfFile(f.fileName));
+                      const otherFiles = (submission?.files || []).filter(f => !isImageFile(f.fileName) && !isPdfFile(f.fileName));
+                      const galleryIdx = galleryIndexes[assignment.assignmentId] || 0;
+
                       return (
                         <SubmissionBox key={assignment.assignmentId}>
                           <SubmissionHeader>
@@ -90,13 +132,34 @@ const AssignmentBrowse = () => {
                               <h4>{assignment.assignmentTitle}</h4>
                             </AssignmentInfo>
                             <FileList>
-                              {submission && submission.files && submission.files.length > 0 ? (
-                                submission.files.map((file, fileIdx) => (
-                                  <DownloadLink key={fileIdx} href={file.fileUrl} download>
+                              {/* 이미지 갤러리 */}
+                              {imageFiles.length > 0 && (
+                                <GalleryWrapper>
+                                  <GalleryArrow onClick={() => handlePrev(assignment.assignmentId, imageFiles.length)} disabled={imageFiles.length <= 1}>&lt;</GalleryArrow>
+                                  <GalleryImage src={imageFiles[galleryIdx].fileUrl} alt={imageFiles[galleryIdx].fileName} />
+                                  <GalleryArrow onClick={() => handleNext(assignment.assignmentId, imageFiles.length)} disabled={imageFiles.length <= 1}>&gt;</GalleryArrow>
+                                </GalleryWrapper>
+                              )}
+                            </FileList>
+                            {/* PDF 파일 빨간 글씨로 목록화 */}
+                            {pdfFiles.length > 0 && (
+                              <PdfList>
+                                {pdfFiles.map((file, fileIdx) => (
+                                  <PdfLinkButton key={fileIdx} type="button" onClick={() => handlePdfPreview(file.fileUrl)}>
                                     {file.fileName}
-                                  </DownloadLink>
-                                ))
-                              ) : submission && submission.textContent && submission.textContent !== "null" ? null : (
+                                  </PdfLinkButton>
+                                ))}
+                              </PdfList>
+                            )}
+                            {/* 이미지/ PDF 외 파일 다운로드 */}
+                            <FileList>
+                              {otherFiles.length > 0 && otherFiles.map((file, fileIdx) => (
+                                <DownloadLink key={fileIdx} href={file.fileUrl} download>
+                                  {file.fileName}
+                                </DownloadLink>
+                              ))}
+                              {/* 미제출 안내 */}
+                              {(!submission || ((submission.files?.length ?? 0) === 0 && (!submission.textContent || submission.textContent === "null"))) && (
                                 <span>미제출</span>
                               )}
                             </FileList>
@@ -262,6 +325,54 @@ const TopTitle = styled.div`
   font-weight: 700;
   margin-bottom: 18px;
   color: #222;
+`;
+
+const GalleryWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+const GalleryImage = styled.img`
+  max-width: 320px;
+  max-height: 220px;
+  border-radius: 8px;
+  object-fit: contain;
+  background: #f8f8f8;
+`;
+const GalleryArrow = styled.button`
+  background: none;
+  border: none;
+  color: #bbb;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0 8px;
+  &:disabled {
+    color: #eee;
+    cursor: default;
+  }
+`;
+
+const PdfList = styled.div`
+  margin: 10px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+const PdfLinkButton = styled.button`
+  background: none;
+  border: none;
+  color: #ff4747;
+  font-weight: 600;
+  font-size: 15px;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  &:hover {
+    text-decoration: none;
+    opacity: 0.8;
+  }
 `;
 
 export default AssignmentBrowse;
