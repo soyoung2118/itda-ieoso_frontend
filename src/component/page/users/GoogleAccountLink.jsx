@@ -5,6 +5,7 @@ import { getUsersInfo } from "../../api/usersApi";
 import { UsersContext } from "../../contexts/usersContext";
 import { useContext } from "react";
 import styled from "styled-components";
+import { setSessionExpiration, startTokenRefreshTimer } from "../../api/tokenManager";
 
 const LoadingContainer = styled.div`
   display: flex;
@@ -109,9 +110,15 @@ export default function GoogleAccountLink() {
               // refreshToken 저장
               localStorage.setItem("refreshToken", newToken);
 
-              // 토큰 만료 시간 재설정 (1시간)
+              // 토큰 만료 시간 설정 (1시간)
               const expirationTime = new Date().getTime() + 3600000;
               localStorage.setItem("tokenExpiration", expirationTime);
+
+              // 세션 만료 시간 설정 (2주)
+              setSessionExpiration();
+              
+              // 토큰 갱신 타이머 시작
+              startTokenRefreshTimer();
             } else {
               console.log("JWT 토큰이 갱신되지 않았습니다.");
             }
