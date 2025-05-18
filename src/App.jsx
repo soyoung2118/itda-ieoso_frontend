@@ -1,13 +1,12 @@
-import { useEffect, useRef, useCallback, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   BrowserRouter,
   Route,
   Routes,
-  useNavigate,
   useLocation,
 } from "react-router-dom";
 import { UsersProvider } from "./component/contexts/usersContext.jsx";
-import { logout } from "./component/api/usersApi.js";
+import { handleLogout } from "./component/api/tokenManager.js";
 import { ModalOverlay, AlertModalContainer } from "./component/ui/modal/ModalStyles.jsx";
 
 import LandingPage from "./component/page/LandingPage.jsx";
@@ -48,55 +47,44 @@ function ScrollToTop() {
 }
 
 function LogoutHandler() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const logoutTimerRef = useRef(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-
-  const handleLogout = useCallback(async () => {
-    try {
-      await logout();
-      localStorage.removeItem("token");
-      localStorage.removeItem("tokenExpiration");
-      navigate("/");
-    } catch (error) {
-      console.error("자동 로그아웃 중 오류 발생:", error);
-    }
-  }, [navigate]);
-
-  const checkExpiration = useCallback(() => {
-    const expirationTime = localStorage.getItem("tokenExpiration");
-    if (expirationTime && new Date().getTime() > expirationTime) {
-      setModalIsOpen(true);
-    }
-  }, []);
+  const [logoutMessage, setLogoutMessage] = useState("");
 
   useEffect(() => {
-    checkExpiration();
+    const checkSessionExpiration = () => {
+      const sessionExpiration = localStorage.getItem("sessionExpiration");
+      const currentTime = new Date().getTime();
 
-    const expirationTime = localStorage.getItem("tokenExpiration");
-    if (expirationTime) {
-      const timeLeft = expirationTime - new Date().getTime();
+      if (!sessionExpiration) return;
 
-      if (timeLeft <= 0) {
+      if (currentTime > parseInt(sessionExpiration)) {
+        setLogoutMessage("로그인 시간이 만료되어 로그아웃합니다.");
         setModalIsOpen(true);
-      } else {
-        setTimeout(() => {
-          setModalIsOpen(true);
-        }, timeLeft);
-      }
-    }
-
-    return () => {
-      if (logoutTimerRef.current) {
-        clearTimeout(logoutTimerRef.current);
       }
     };
-  }, [checkExpiration]);
 
-  useEffect(() => {
-    checkExpiration();
-  }, [location, checkExpiration]);
+    // 페이지 로드 시 한 번 체크
+    checkSessionExpiration();
+
+    // 1분마다 체크
+    const interval = setInterval(checkSessionExpiration, 60000);
+
+    // 토큰 관련 에러 발생 시 로그아웃
+    const handleTokenError = (event) => {
+      if (event.detail?.type === 'token_error') {
+        setLogoutMessage("인증에 문제가 발생하여 자동 로그아웃됩니다.");
+        setModalIsOpen(true);
+      }
+    };
+
+    // 토큰 에러 이벤트 리스너 등록
+    window.addEventListener('tokenError', handleTokenError);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('tokenError', handleTokenError);
+    };
+  }, []);
 
   return (
     <>
@@ -106,7 +94,7 @@ function LogoutHandler() {
             isOpen={modalIsOpen}
             onRequestClose={() => setModalIsOpen(false)}
           >
-            <div className="text">로그인 시간이 만료되어 로그아웃합니다.</div>
+            <div className="text">{logoutMessage}</div>
             <div
               className="close-button"
               onClick={() => {
@@ -129,10 +117,8 @@ function App() {
       <UsersProvider>
         <LanguageProvider>
           <LogoutHandler />
-          <ScrollToTop /> {/* 필요 없으면 지우면 됨 */}
-
+          <ScrollToTop />
           <ChannelTalk />
-
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/oauth/callback" element={<GoogleAuthCallback />} />

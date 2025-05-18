@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import api from "../../api/api";
-import { getUsersInfo, startLogoutTimer } from "../../api/usersApi";
+import { getUsersInfo } from "../../api/usersApi";
 import { UsersContext } from "../../contexts/usersContext";
 import { useContext } from "react";
 import styled from "styled-components";
+import { setSessionExpiration, startTokenRefreshTimer } from "../../api/tokenManager";
 
 const LoadingContainer = styled.div`
   display: flex;
@@ -119,15 +120,17 @@ export default function GoogleAuthCallback() {
 
     const processToken = async (token, refreshToken) => {
       try {
-        const testValue = "test-" + new Date().getTime();
-        localStorage.setItem("test-item", testValue);
         localStorage.setItem("token", token);
         localStorage.setItem("refreshToken", refreshToken);
 
         const expirationTime = new Date().getTime() + 3600000; // 1시간
         localStorage.setItem("tokenExpiration", expirationTime);
 
-        startLogoutTimer();
+        // 세션 만료 시간 설정 (2주)
+        setSessionExpiration();
+
+        // 토큰 갱신 타이머 시작
+        startTokenRefreshTimer();
 
         api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
         setIsUser(true);
