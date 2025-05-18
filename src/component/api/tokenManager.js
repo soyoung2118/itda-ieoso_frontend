@@ -7,8 +7,8 @@ let refreshSubscribers = [];
 
 // 상수 정의
 const TOKEN_EXPIRATION_TIME = 3600000; // 1시간
-//const SESSION_EXPIRATION_TIME = 1209600000; // 2주 (14일)
-const SESSION_EXPIRATION_TIME = 300000; // 5분
+const SESSION_EXPIRATION_TIME = 1209600000; // 2주 (14일)
+//const SESSION_EXPIRATION_TIME = 300000; // 5분
 
 // 토큰 갱신이 완료되면 대기 중인 요청들을 처리
 const onRefreshed = (newToken) => {
