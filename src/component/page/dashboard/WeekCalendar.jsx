@@ -139,7 +139,9 @@ function WeeklyCalendar({ currentWeek, setSelectedDate, lectures, userId }) {
           }}
           isSelected={selectedDay === date.getDate()}
         >
-          <DayLabel>{days[index]}</DayLabel>
+          <DayLabel data-translate-id={`day-${days[index]}`}>
+            {days[index]}
+          </DayLabel>
           <DateNumber isSelected={selectedDay === date.getDate()}>
             {date.getDate()}
           </DateNumber>

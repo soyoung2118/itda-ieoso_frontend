@@ -11,6 +11,30 @@ import { UsersContext } from "../../contexts/usersContext";
 import { ModalOverlay, AlertModalContainer } from "../../ui/modal/ModalStyles";
 import PropTypes from "prop-types";
 
+const CustomInput = memo(
+  forwardRef(({ value, onClick }, ref) => (
+    <InputGroup onClick={onClick}>
+      <IconInput
+        ref={ref}
+        value={value}
+        placeholder="커리큘럼 시작을 설정해주세요."
+        readOnly
+        style={{ width: "230px" }}
+      />
+      <CalendarIcon>
+        <img src={Calendar} style={{ width: 18 }} alt="캘린더" />
+      </CalendarIcon>
+    </InputGroup>
+  )),
+);
+
+CustomInput.displayName = "CustomInput";
+
+CustomInput.propTypes = {
+  value: PropTypes.string.isRequired,
+  onClick: PropTypes.func.isRequired,
+};
+
 export default function Create() {
   const navigate = useNavigate();
   const timeSlots = ["월", "화", "수", "목", "금", "토", "일"];
@@ -348,6 +372,7 @@ export default function Create() {
                   {timeSlots.map((day) => (
                     <DayButton
                       key={day}
+                      data-translate-id={`day-${day}`} // 번역
                       active={
                         !isLecturePending &&
                         form.lectureDays.includes(timeSlots.indexOf(day) + 1)
@@ -425,6 +450,7 @@ export default function Create() {
                   {timeSlots.map((day) => (
                     <DayButton
                       key={day}
+                      data-translate-id={`day-${day}`} // 번역
                       active={
                         !isAssignmentPending &&
                         form.assignmentDays.includes(timeSlots.indexOf(day) + 1)
@@ -736,7 +762,9 @@ const DayButtonGroup = styled.div`
   margin-right: 10px;
 `;
 
-const DayButton = styled.button`
+const DayButton = styled.button.attrs((props) => ({
+  "data-translate-id": props["data-translate-id"],
+}))`
   width: 2rem;
   height: 2rem;
   border-radius: 9999px;
