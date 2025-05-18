@@ -11,16 +11,20 @@ export const getMyCourses = async (userId) => {
   }
 };
 
-// courseId와 courseTitle 가져오고 개설자인지 확인하는 함수
-export const getMyCoursesTitles = async (userId) => {
-  const courses = await getMyCourses(userId);
-
+// courses 데이터를 직접 받음
+export const formatMyCoursesTitles = (courses, userId) => {
   return courses.map((course) => ({
     courseId: course.courseId,
     courseTitle: course.courseTitle,
     isCreator: String(course.user?.userId) === String(userId),
     isAssignmentPublic: course.isAssignmentPublic,
   }));
+};
+
+// 기존 함수는 backward compatibility를 위해 유지
+export const getMyCoursesTitles = async (userId) => {
+  const courses = await getMyCourses(userId);
+  return formatMyCoursesTitles(courses, userId);
 };
 
 export const getCourseNameandEntryCode = async (courseId) => {

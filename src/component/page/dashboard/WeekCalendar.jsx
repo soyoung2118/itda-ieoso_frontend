@@ -174,7 +174,7 @@ const CalendarContainer = styled.div`
   width: 100%;
   box-sizing: border-box;
   padding: 2vh 0;
-  height: 17vh;
+  height: 14vh;
   overflow: hidden;
 `;
 

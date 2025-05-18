@@ -69,6 +69,7 @@ export default function GoogleAuthCallback() {
         // 토큰이 직접 제공된 경우
         if (token) {
           console.log("JWT 토큰이 URL에서 직접 제공됨");
+          console.log("access token", token);
           await processToken(token);
           return;
         }
@@ -80,22 +81,18 @@ export default function GoogleAuthCallback() {
           try {
             const response = await api.get(`/oauth/return/uri?code=${code}`);
 
-            if (!response.data) {
-              throw new Error("응답 데이터가 없습니다");
+            if (
+              !response.data ||
+              !response.data.jwtToken ||
+              !response.data.refreshToken
+            ) {
+              throw new Error("JWT 또는 refresh 토큰이 응답에 없습니다.");
             }
 
-            let jwtToken = null;
+            const jwtToken = response.data.jwtToken;
+            const refreshToken = response.data.refreshToken;
 
-            if (response.data.jwtToken) {
-              jwtToken = response.data.jwtToken;
-            }
-
-            if (!jwtToken) {
-              throw new Error("응답에 JWT 토큰이 없습니다");
-            }
-
-            console.log("JWT 토큰 수신 성공");
-            await processToken(jwtToken);
+            await processToken(jwtToken, refreshToken);
             return;
           } catch (error) {
             console.error("API 호출 중 오류 발생:", error);
@@ -120,13 +117,14 @@ export default function GoogleAuthCallback() {
       }
     };
 
-    const processToken = async (token) => {
+    const processToken = async (token, refreshToken) => {
       try {
         const testValue = "test-" + new Date().getTime();
         localStorage.setItem("test-item", testValue);
         localStorage.setItem("token", token);
+        localStorage.setItem("refreshToken", refreshToken);
 
-        const expirationTime = new Date().getTime() + 36000000; // 10시간
+        const expirationTime = new Date().getTime() + 3600000; // 1시간
         localStorage.setItem("tokenExpiration", expirationTime);
 
         startLogoutTimer();

@@ -6,40 +6,26 @@ export const login = async (credentials) => {
     const response = await api.post("/login", credentials);
     // 응답 헤더에서 토큰 추출
     const token = response.headers["authorization"];
-    if (token) {
-      localStorage.setItem("token", token);
+    // 리프레쉬 토큰 추출
+    const refreshToken = response.data.refreshToken;
 
-      const expirationTime = new Date().getTime() + 36000000; // 10시간
+    console.log("token:", token, "refreshtoken", refreshToken);
+
+    // login 함수
+    if (token && refreshToken) {
+      localStorage.setItem("token", token);
+      localStorage.setItem("refreshToken", refreshToken);
+
+      const expirationTime = new Date().getTime() + 3600000; // 1시간
       localStorage.setItem("tokenExpiration", expirationTime);
       startLogoutTimer();
     }
+
     return response;
   } catch (error) {
     console.error("로그인 API 호출 실패:", error);
     throw error;
   }
-};
-
-export const checkExist = async () => {
-  const response = await api.get("/oauth/social/linked");
-  return response.data;
-};
-
-export const findpassword = async (name, email) => {
-  const response = await api.post(
-    `/users/reset/password?email=${email}&name=${name}`,
-  );
-  return response.data;
-};
-
-export const signup = async (credentials) => {
-  const response = await api.post("/users/sign-up", credentials);
-  return response.data;
-};
-
-export const checkEmail = async (email) => {
-  const response = await api.get(`/users/check-email?email=${email}`);
-  return response.data;
 };
 
 export const logout = async () => {
@@ -86,4 +72,22 @@ export const useAutoLogout = () => {
 export const getUsersInfo = async () => {
   const response = await api.get("/users/user-info");
   return response.data;
+};
+
+// 리프레쉬 토큰
+export const refreshAccessToken = async () => {
+  const refreshToken = localStorage.getItem("refreshToken");
+
+  console.log(refreshToken);
+  if (!refreshToken) throw new Error("Refresh token 없음");
+
+  console.log("서버에 전달할 refreshToken:", refreshToken);
+
+  const response = await api.post("/oauth/reissuetoken", {
+    refreshToken: refreshToken,
+  });
+
+  console.log("서버로부터 받은 새 accessToken:", response.data?.jwtToken);
+
+  return response.data.jwtToken;
 };

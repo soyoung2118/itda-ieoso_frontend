@@ -61,7 +61,7 @@ const ClassAssignmentSubmit = () => {
 
           const filteredCurriculum = curriculum.map((lecture) => {
             const filteredVideos = lecture.videos.filter(
-              (video) => video.videoTitle !== "강의 영상 제목을 입력하세요.",
+              (video) => video.videoUrl !== null,
             );
 
             const filteredAssignments = lecture.assignments.filter(
@@ -231,7 +231,7 @@ const ClassAssignmentSubmit = () => {
             <MainTitle>
               {currentLectureInfo?.lectureTitle}{" "}
               {truncateText(
-                currentAssignmentInfo?.assignmentTitle || "과제 제목",
+                currentAssignmentInfo?.assignmentTitle || "",
               )}
             </MainTitle>
 
@@ -256,7 +256,7 @@ const ClassAssignmentSubmit = () => {
 
         <WhiteBoxComponent>
           <NoticeContentContainer>
-            {currentAssignmentInfo?.assignmentDescription || "과제 설명"}
+            {currentAssignmentInfo?.assignmentDescription || ""}
           </NoticeContentContainer>
         </WhiteBoxComponent>
 
@@ -388,11 +388,26 @@ const NoticeContentContainer = styled.div`
   flex-direction: column;
   padding-left: 10px;
   overflow: auto;
-  height: calc(30vh - 65px);
+  height: calc(30vh - 15px);
   white-space: pre-wrap;
+  
+  /* 스크롤바 보이게 강제 적용 */
   &::-webkit-scrollbar {
-    display: block;
+    width: 6px;
   }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,0.3);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* Firefox용 */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,0.3) transparent;
 `;
 
 const TitleContainer = styled.div`

@@ -8,16 +8,10 @@ import {
 } from "react-router-dom";
 import { UsersProvider } from "./component/contexts/usersContext.jsx";
 import { logout } from "./component/api/usersApi.js";
-import {
-  ModalOverlay,
-  AlertModalContainer,
-} from "./component/ui/modal/ModalStyles.jsx";
+import { ModalOverlay, AlertModalContainer } from "./component/ui/modal/ModalStyles.jsx";
 
 import LandingPage from "./component/page/LandingPage.jsx";
 import LogIn from "./component/page/users/LogIn.jsx";
-import SignUp from "./component/page/users/SignUp.jsx";
-import FindPassword from "./component/page/users/FindPassword.jsx";
-import ChangePassword from "./component/page/users/ChangePassword.jsx";
 import ClassList from "./component/page/ClassList.jsx";
 import Create from "./component/page/class/Create.jsx";
 import Participate from "./component/page/Participate.jsx";
@@ -38,6 +32,9 @@ import ClassAssignmentSubmit from "./component/page/class/AssignmentSubmit.jsx";
 import GoogleAuthCallback from "./component/page/users/GoogleAuthCallback.jsx";
 import GoogleAccountLink from "./component/page/users/GoogleAccountLink.jsx";
 import { LanguageProvider } from "./component/contexts/LanguageContext.jsx";
+import ChannelTalk from "./component/ui/ChannelTalk.jsx";
+
+
 
 // 페이지 이동 시 스크롤을 맨 위로 이동시키는 컴포넌트
 function ScrollToTop() {
@@ -133,14 +130,14 @@ function App() {
         <LanguageProvider>
           <LogoutHandler />
           <ScrollToTop /> {/* 필요 없으면 지우면 됨 */}
+
+          <ChannelTalk />
+
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/oauth/callback" element={<GoogleAuthCallback />} />
             <Route path="/oauth/account/link" element={<GoogleAccountLink />} />
             <Route path="/login" element={<LogIn />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/find-password" element={<FindPassword />} />
-            <Route path="/change-password" element={<ChangePassword />} />
             <Route path="/class/list" element={<ClassList />} />
             <Route path="/class/create" element={<Create />} />
             <Route path="/class/participate" element={<Participate />} />

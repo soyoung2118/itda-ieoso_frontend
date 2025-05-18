@@ -9,12 +9,11 @@ import { UsersContext } from "../../contexts/usersContext";
 import PropTypes from "prop-types";
 
 const NoticeTitle = styled.h3`
-  font-size: 26px;
-  font-weight: bold;
+  font-size: 22px;
+  font-weight: 700;
   color: var(--black-color);
   margin-bottom: 1rem;
   margin-left: 1rem;
-  letter-spacing: -2px;
   margin-top: 1rem;
 `;
 
@@ -237,7 +236,7 @@ const NoticeCreateForm = () => {
           style={{ display: "flex", flexDirection: "column", width: "100%" }}
         >
           <NoticeTitle>
-            {noticeId ? "공지사항 수정" : "공지사항 작성"}
+            {noticeId ? "공지 사항 수정" : "공지 사항 작성"}
           </NoticeTitle>
           <Container style={{ padding: "2rem", paddingRight: "4.3rem" }}>
             <form onSubmit={handleSubmit}>

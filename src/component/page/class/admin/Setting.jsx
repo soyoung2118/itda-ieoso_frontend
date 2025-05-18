@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useOutletContext } from "react-router-dom";
 import styled from "styled-components";
 import api from "../../../api/api";
 import { UsersContext } from "../../../contexts/usersContext";
@@ -9,6 +9,7 @@ export default function Setting() {
   const navigate = useNavigate();
   const { courseId } = useParams();
   const { user } = useContext(UsersContext);
+  const { courseData } = useOutletContext();
   const timeSlots = ["월", "화", "수", "목", "금", "토", "일"];
   const [isAssignmentPending, setIsAssignmentPending] = useState(false);
   const [isLecturePending, setIsLecturePending] = useState(false);
@@ -38,52 +39,46 @@ export default function Setting() {
     setTitleInputCount(form.coursename.length);
   }, [form.coursename]);
 
+  const onTitleInputHandler = (e) => {
+    setTitleInputCount(e.target.value.length);
+  };
+
   useEffect(() => {
     setInstructorInputCount(form.instructor.length);
   }, [form.instructor]);
 
+  const onInstructorInputHandler = (e) => {
+    setInstructorInputCount(e.target.value.length);
+  };
+
   useEffect(() => {
-    const fetchCourseData = async () => {
-      try {
-        const courseResponse = await api.get(`/courses/${courseId}`);
-        if (!courseResponse.data.success) {
-          console.log("강의 정보 불러오기 실패");
-        } else {
-          const courseData = courseResponse.data.data;
-          console.log(courseData);
+    if (courseData) {
+      setForm({
+        coursename: courseData.courseTitle,
+        instructor: courseData.instructorName,
+        entrycode: courseData.entryCode,
+        startDate: courseData.startDate,
+        durationWeeks: courseData.durationWeeks,
+        lectureDays: courseData.lectureDay
+          ? courseData.lectureDay.split(",").map(Number)
+          : [],
+        lectureTime: courseData.lectureTime?.slice(0, -3),
+        assignmentDays: courseData.assignmentDueDay
+          ? courseData.assignmentDueDay.split(",").map(Number)
+          : [],
+        assignmentTime: courseData.assignmentDueTime?.slice(0, -3),
+        difficulty: courseData.difficultyLevel?.toLowerCase(),
+        isAssignmentPublic: courseData.isAssignmentPublic,
+      });
 
-          setForm({
-            coursename: courseData.courseTitle,
-            instructor: courseData.instructorName,
-            entrycode: courseData.entryCode,
-            startDate: courseData.startDate,
-            durationWeeks: courseData.durationWeeks,
-            lectureDays: courseData.lectureDay
-              ? courseData.lectureDay.split(",").map(Number)
-              : [],
-            lectureTime: courseData.lectureTime?.slice(0, -3),
-            assignmentDays: courseData.assignmentDueDay
-              ? courseData.assignmentDueDay.split(",").map(Number)
-              : [],
-            assignmentTime: courseData.assignmentDueTime?.slice(0, -3),
-            difficulty: courseData.difficultyLevel?.toLowerCase(),
-            isAssignmentPublic: courseData.isAssignmentPublic,
-          });
-
-          setIsAssignmentPending(
-            !courseData.assignmentDueDay || courseData.assignmentDueTime === "",
-          );
-          setIsLecturePending(
-            !courseData.lectureDay || courseData.lectureTime === "",
-          );
-        }
-      } catch (error) {
-        console.error("Failed to fetch course data:", error);
-      }
-    };
-
-    fetchCourseData();
-  }, [courseId]);
+      setIsAssignmentPending(
+        !courseData.assignmentDueDay || courseData.assignmentDueTime === "",
+      );
+      setIsLecturePending(
+        !courseData.lectureDay || courseData.lectureTime === "",
+      );
+    }
+  }, [courseData]);
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
@@ -197,23 +192,6 @@ export default function Setting() {
       }}
     >
       <div style={{ margin: "1vh 0vh" }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "baseline",
-            marginLeft: "2.5vh",
-          }}
-        >
-          <h3
-            style={{
-              fontSize: "24px",
-              fontWeight: "700",
-              color: "var(--black-color)",
-            }}
-          >
-            설정
-          </h3>
-        </div>
         <Container>
           <Section>
             <Title style={{ marginTop: "6px" }}>
@@ -231,6 +209,7 @@ export default function Setting() {
                 <FormInput
                   type="text"
                   name="coursename"
+                  maxlength="30"
                   value={form.coursename}
                   onChange={(e) => {
                     handleFormChange(e);
@@ -251,6 +230,7 @@ export default function Setting() {
                 <FormInput
                   type="text"
                   name="instructor"
+                  maxlength="5"
                   placeholder="ex. 김잇다"
                   value={form.instructor}
                   onChange={(e) => {
@@ -569,7 +549,7 @@ const LevelButton = styled.button`
   font-size: 15px;
   background-color: ${(props) => (props.active ? "#FF4747" : "#EEEEEE ")};
   color: ${(props) => (props.active ? "#FFFFFF" : "#909090")};
-  padding: 6px 18px;
+  padding: 10px 20px;
   border: none;
   cursor: pointer;
   margin-bottom: 8px;
@@ -583,11 +563,11 @@ const CreateButton = styled.button`
   border: none;
   cursor: pointer;
   width: 100%;
-  padding: 10px 0;
+  padding: 12px 0;
   background-color: #ff4747;
   color: white;
   font-size: 17px;
-  font-weight: 500;
+  font-weight: 400;
   border-radius: 10px;
 `;
 
@@ -595,6 +575,7 @@ const Container = styled.div`
   padding: 24px 30px;
   background-color: white;
   border-radius: 12px;
+  margin-top: 1.5rem;
 `;
 
 const Section = styled.div`
@@ -669,7 +650,7 @@ const FormInput = styled.input`
   width: 100%;
   box-sizing: border-box;
   font-size: 13px;
-  padding: 8px 12px;
+  padding: 10px 12px;
   border: 2px solid #c3c3c3;
   border-radius: 10px;
 `;
@@ -678,7 +659,7 @@ const DisableInput = styled.input`
   box-sizing: border-box;
   font-size: 13px;
   font-weight: 500;
-  padding: 8px 12px;
+  padding: 10px 12px;
   color: #767676;
   background-color: #c3c3c3;
   background-color: ${(props) => (props.active ? "#F4F4F4" : "#C3C3C3")};
@@ -690,7 +671,7 @@ const DisableInput = styled.input`
 const CodeInput = styled.input`
   box-sizing: border-box;
   font-size: 13px;
-  padding: 8px 12px;
+  padding: 10px 12px;
   color: #000000;
   border: 2px solid #c3c3c3;
   border-radius: 10px;
@@ -705,7 +686,7 @@ const GreyHelpText = styled.div`
   height: 13px;
   min-height: 13px;
   color: #909090;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 400;
   margin-top: 4px;
 `;
@@ -727,6 +708,7 @@ const DayButton = styled.button`
   border: none;
   background-color: ${(props) => (props.active ? "#C3C3C3" : "#F4F4F4")};
   color: #909090;
+  font-size: 16px;
 `;
 
 const TimeGroup = styled.div`

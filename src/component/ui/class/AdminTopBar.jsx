@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, useRef } from "react";
-import { NavLink, useParams, useNavigate } from "react-router-dom";
+import { NavLink, useParams, useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import Delete from "../../img/icon/bin.svg";
@@ -10,9 +10,8 @@ import {
   AlertModalContainer,
 } from "../../ui/modal/ModalStyles";
 import api from "../../api/api";
-import { getMyCoursesTitles } from "../../api/classApi";
 import { UsersContext } from "../../contexts/usersContext";
-import { getCourseNameandEntryCode } from "../../api/classApi";
+import { formatMyCoursesTitles } from "../../api/classApi";
 
 const Container = styled.div`
   width: 100%;
@@ -63,7 +62,7 @@ const NavbarContent = styled.div`
 
   @media all and (max-width: 479px) {
     gap: 0;
-    padding: 0.4rem 0.5rem;
+    padding: 0.4rem 0.1rem;
   }
 `;
 
@@ -87,14 +86,15 @@ const TabLink = styled(NavLink)`
   text-align: center;
   padding: 5px 10px;
   text-decoration: none;
-  color: #5f6368;
-  font-weight: 550;
+  color: var(--darkgrey-color);
+  font-weight: 500;
   font-size: 18px;
   position: relative;
   white-space: nowrap;
 
   &.active {
     color: var(--black-color);
+    font-weight: 700;
     &::after {
       content: "";
       position: absolute;
@@ -141,24 +141,18 @@ const IconContainer = styled.nav`
 `;
 
 const Icon = styled.img`
-  width: 33px;
-  height: 33px;
+  height: 24px;
   cursor: pointer;
 
-  &.delete-icon {
-    height: 37px;
-  }
-
-  @media (max-width: 479px) {
-    width: 24px;
-    height: 24px;
+  @media (max-width: 768px) {
+    height: 20px;
   }
 `;
 
 const ShareDropdownContainer = styled.div`
   position: absolute;
   top: 340px;
-  right: 110px;
+  right: 11vw;
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 15px;
@@ -188,7 +182,7 @@ const ShareDropdownContainer = styled.div`
     padding: 6px 10px 6px;
   }
 
-  button {
+  .link-button {
     background-color: #f7f7f7;
     color: var(--black-color);
     border: none;
@@ -196,6 +190,15 @@ const ShareDropdownContainer = styled.div`
     padding: 7px 15px;
     cursor: pointer;
     transition: background-color 0.3s;
+
+    /* &:active {
+      background-color: #969696;
+      transform: scale(0.98);
+    }
+
+    &:hover {
+      background-color: #969696;
+    } */
   }
 
   .invite-button {
@@ -205,6 +208,17 @@ const ShareDropdownContainer = styled.div`
     padding: 10px 0;
     margin-top: 5px;
     border-radius: 15px;
+    border: none;
+    cursor: pointer;
+
+    /* &:active {
+      background-color: var(--main-color);
+      transform: scale(0.98);
+    }
+
+    &:hover {
+      background-color: var(--main-color);
+    } */
   }
 
   @media all and (max-width: 479px) {
@@ -213,14 +227,17 @@ const ShareDropdownContainer = styled.div`
   }
 `;
 
-const AdminTopBar = ({ activeTab }) => {
+const AdminTopBar = ({ myCourses, activeTab, courseData }) => {
   const { courseId } = useParams();
   const { user } = useContext(UsersContext);
   const navigate = useNavigate();
+  const location = useLocation();
+  const path = location.pathname;
   // 모달 관련 상태
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
+  const [copyMessage, setCopyMessage] = useState("");
   const [courseName, setCourseName] = useState("");
   const [entryCode, setEntryCode] = useState("");
   const [, setClassOptions] = useState(null);
@@ -228,34 +245,28 @@ const AdminTopBar = ({ activeTab }) => {
   const dropdownRef = useRef(null);
   const iconRef = useRef(null);
 
-  useEffect(() => {
-    if (!user?.userId) return;
+  const isSummaryTab =
+    path.includes("/admin/summary") || path.includes("/admin/students");
 
-    const fetchClasses = async () => {
-      const courses = await getMyCoursesTitles(user.userId);
-      setClassOptions(courses);
-
-      const current = courses.find(
-        (course) => String(course.courseId) === String(courseId),
-      );
-      setCurrentCourse(current);
-      console.log(current);
-    };
-
-    fetchClasses();
-  }, [user?.userId, courseId]);
+  const isSettingTab = path.includes("/admin/setting");
 
   useEffect(() => {
-    const fetchCourseDetails = async () => {
-      const details = await getCourseNameandEntryCode(courseId);
-      if (details) {
-        setCourseName(details.courseTitle);
-        setEntryCode(details.entryCode);
-      }
-    };
+    if (!user?.userId || !myCourses) return;
 
-    fetchCourseDetails();
-  }, [courseId]);
+    const formattedCourses = formatMyCoursesTitles(myCourses, user.userId);
+    setClassOptions(formattedCourses);
+    const current = formattedCourses.find(
+      (course) => String(course.courseId) === String(courseId),
+    );
+    setCurrentCourse(current);
+  }, [user?.userId, courseId, myCourses]);
+
+  useEffect(() => {
+    if (courseData) {
+      setCourseName(courseData.courseTitle);
+      setEntryCode(courseData.entryCode);
+    }
+  }, [courseData]);
 
   // 공유 버튼 클릭 시 드롭다운 표시
   const handleIconClick = () => {
@@ -291,7 +302,7 @@ const AdminTopBar = ({ activeTab }) => {
   };
 
   const handleShare = () => {
-    const inviteText = `[${courseName}] 강의실에 초대합니다!\n\n🔗 강의실 링크: https://eduitda.com\n📌 강의실 코드: ${entryCode}\n\n1. itda 로그인\n2. + 버튼 클릭 > 강의실 입장하기\n3. 강의실 코드 입력\n\n지금 바로 참여하고 함께 배워요! 😊`;
+    const inviteText = `[${courseName}] 강의실에 초대합니다!\n\n🔗 강의실 링크: https://eduitda.com\n📌 강의실 코드: ${entryCode}\n\n1. itda 로그인\n2. +버튼 클릭 > 강의실 입장하기\n3. 강의실 코드 입력\n\n지금 바로 참여하고 함께 배워요! 😊`;
     navigator.clipboard
       .writeText(inviteText)
       .then(() => setShowInviteModal(true))
@@ -307,17 +318,18 @@ const AdminTopBar = ({ activeTab }) => {
             <>
               <TabLink
                 to={`/class/${courseId}/admin/summary`}
-                className={activeTab === "summary" ? "active" : ""}
+                className={isSummaryTab ? "active" : ""}
               >
                 요약
               </TabLink>
-
+              {/*
               <TabLink
                 to={`/class/${courseId}/admin/students`}
                 className={activeTab === "students" ? "active" : ""}
               >
                 과제 보기
               </TabLink>
+              */}
             </>
           )}
 
@@ -325,19 +337,19 @@ const AdminTopBar = ({ activeTab }) => {
             <>
               <TabLink
                 to={`/class/${courseId}/admin/summary`}
-                className={activeTab === "summary" ? "active" : ""}
+                className={isSummaryTab ? "active" : ""}
               >
                 요약
               </TabLink>
-              <TabLink
+              {/* <TabLink
                 to={`/class/${courseId}/admin/students`}
                 className={activeTab === "students" ? "active" : ""}
               >
                 과제 보기
-              </TabLink>
+              </TabLink> */}
               <TabLink
                 to={`/class/${courseId}/admin/setting`}
-                className={activeTab === "setting" ? "active" : ""}
+                className={isSettingTab ? "active" : ""}
               >
                 설정
               </TabLink>
@@ -367,11 +379,14 @@ const AdminTopBar = ({ activeTab }) => {
                 <ShareDropdownContainer ref={dropdownRef}>
                   <text>강의실 링크</text>
                   <div className="shareinfo">
-                    <span>www.eduitda.com</span>
+                    <span>https://eduitda.com</span>
                     <button
-                      onClick={() =>
-                        navigator.clipboard.writeText("www.eduitda.com")
-                      }
+                      className="link-button"
+                      onClick={() => {
+                        navigator.clipboard.writeText("https://eduitda.com");
+                        setCopyMessage("URL이 복사되었습니다!");
+                        setShowInviteModal(true);
+                      }}
                     >
                       URL 복사
                     </button>
@@ -380,12 +395,23 @@ const AdminTopBar = ({ activeTab }) => {
                   <div className="shareinfo">
                     <span>{entryCode}</span>
                     <button
-                      onClick={() => navigator.clipboard.writeText(entryCode)}
+                      className="link-button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(entryCode);
+                        setCopyMessage("강의실 코드가 복사되었습니다!");
+                        setShowInviteModal(true);
+                      }}
                     >
                       코드 복사
                     </button>
                   </div>
-                  <button className="invite-button" onClick={handleShare}>
+                  <button
+                    className="invite-button"
+                    onClick={() => {
+                      handleShare();
+                      setCopyMessage("초대 메시지가 복사되었습니다!");
+                    }}
+                  >
                     강의실 초대하기
                   </button>
                 </ShareDropdownContainer>
@@ -421,7 +447,7 @@ const AdminTopBar = ({ activeTab }) => {
       {showInviteModal && (
         <ModalOverlay>
           <AlertModalContainer>
-            <div className="text">초대 메시지가 복사되었습니다!</div>
+            <div className="text">{copyMessage}</div>
             <div
               className="close-button"
               onClick={() => setShowInviteModal(false)}
@@ -437,6 +463,8 @@ const AdminTopBar = ({ activeTab }) => {
 
 AdminTopBar.propTypes = {
   activeTab: PropTypes.string.isRequired,
+  myCourses: PropTypes.array,
+  courseData: PropTypes.object,
 };
 
 export default AdminTopBar;

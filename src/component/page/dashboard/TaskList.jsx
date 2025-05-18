@@ -271,7 +271,7 @@ TaskSection.propTypes = {
 const TaskContainer = styled.div`
   flex-grow: 1;
   background-color: transparent;
-  border-radius: 10px;
+  border-radius: 15px;
   margin-left: 20px;
 
   @media all and (max-width: 479px) {
@@ -285,7 +285,7 @@ const HeaderContainer = styled.div`
   margin-bottom: 20px;
   padding: 5px;
   background-color: rgb(255, 255, 255);
-  border-radius: 10px;
+  border-radius: 15px;
 
   @media all and (max-width: 479px) {
     padding: 5px;
@@ -295,7 +295,7 @@ const HeaderContainer = styled.div`
 const HeaderTitle = styled.div`
   font-size: 20px;
   font-weight: 600;
-  padding: 10px 0 5px 10px;
+  padding: 10px 0 10px 10px;
 
   @media all and (max-width: 479px) {
     font-size: 16px;
@@ -311,16 +311,15 @@ const TaskDate = styled.div`
 const TaskListContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10px;
   background-color: #ffffff;
-  border-radius: 10px;
+  border-radius: 15px;
 `;
 
 const SectionContainer = styled.div`
   margin-bottom: 20px;
   padding: 5px 30px;
   background-color: rgb(255, 255, 255);
-  border-radius: 10px;
+  border-radius: 15px;
 
   @media all and (max-width: 479px) {
     padding: 5px 12px;
@@ -330,9 +329,9 @@ const SectionContainer = styled.div`
 const TaskTitle = styled.h3`
   font-size: 18px;
   color: #ff4747;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
   background-color: #f5f5f5;
-  border-radius: 10px;
+  border-radius: 15px;
   padding: 10px;
 
   @media all and (max-width: 479px) {

@@ -10,7 +10,7 @@ import { ModalOverlay, AlertModalContainer } from "../modal/ModalStyles";
 const StyledButton = styled.div`
   position: fixed;
   bottom: 2rem;
-  right: 2rem;
+  right: 4rem;
   width: 6vh;
   cursor: pointer;
 

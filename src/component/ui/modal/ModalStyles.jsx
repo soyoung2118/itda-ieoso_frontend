@@ -121,6 +121,13 @@ export const AlertModalContainer = styled.div`
       font-size: 13px;
     }
   }
+
+  .title{
+    font-size: 30px;
+    font-weight: 400;
+    margin-bottom: 10px;
+  }
+
   .close-button {
     background: none;
     border: none;
