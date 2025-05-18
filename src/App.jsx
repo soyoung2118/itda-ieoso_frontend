@@ -32,7 +32,7 @@ import GoogleAuthCallback from "./component/page/users/GoogleAuthCallback.jsx";
 import GoogleAccountLink from "./component/page/users/GoogleAccountLink.jsx";
 import { LanguageProvider } from "./component/contexts/LanguageContext.jsx";
 import ChannelTalk from "./component/ui/ChannelTalk.jsx";
-
+import AssignmentBrowse from "./component/page/class/AssignmentBrowse.jsx";
 
 
 // 페이지 이동 시 스크롤을 맨 위로 이동시키는 컴포넌트
@@ -157,6 +157,10 @@ function App() {
               <Route
                 path="assignment/submit/:lectureId/:assignmentId"
                 element={<ClassAssignmentSubmit />}
+              />
+              <Route
+                path="assignment/browse/:lectureId"
+                element={<AssignmentBrowse />}
               />
             </Route>
 

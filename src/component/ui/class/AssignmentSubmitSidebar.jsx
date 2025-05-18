@@ -394,7 +394,7 @@ const AssignmentSubmitSidebar = ({
   const handleMenuClick = (menu) => {
     setActiveMenu(menu);
     if (menu === "browse") {
-      navigate(`/class/${courseId}/assignment/browse`);
+      navigate(`/class/${courseId}/assignment/browse/${lectureId}`);
     } else {
       if (location.pathname.includes("/assignment/browse")) {
         const firstLecture = curriculumData[0];
