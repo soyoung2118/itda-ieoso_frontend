@@ -3,8 +3,12 @@ import styled from "styled-components";
 export const PageLayout = styled.div`
   padding: 2rem 9vw;
 
-  @media all and (max-width: 479px) {
-    padding: 2rem 12vw;
+  @media all and (max-width: 1024px) {
+    padding: 2rem 7vw;
+  }
+
+  @media all and (max-width: 768px) {
+    padding: 2rem 6vw;
   }
 `;
 
