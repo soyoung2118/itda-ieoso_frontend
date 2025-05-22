@@ -360,7 +360,7 @@ const AssignmentSubmitSidebar = ({
           active={activeMenu === "browse"} 
           onClick={() => handleMenuClick("browse")}
         >
-          다른 수강생 과제 둘러보기
+          다른 과제보기
         </MenuItem>
       </MenuContainer>
       {activeMenu === "curriculum" && (
@@ -543,23 +543,23 @@ const MenuContainer = styled.div`
   width: 100%;
   border-bottom: 1px solid #E5E5E5;
   background: #fff;
-  gap: 32px;
 
-  @media (max-width: 1023px) {
+  @media (max-width: 1024px) {
     flex-direction: column;
     align-items: stretch;
-    gap: 0;
+    gap: 5px;
     border-bottom: none;
-    width: auto;
+    width: 100%;
   }
 `;
 
 const MenuItem = styled.div`
   position: relative;
-  font-size: 16px;
+  font-size: 18px;
+  width: 80%;
   font-weight: ${props => props.active ? '600' : '400'};
   color: ${props => props.active ? '#222' : '#C3C3C3'};
-  padding: 18px 20px 13px 20px;
+  padding: 13px 0px;
   cursor: pointer;
   white-space: nowrap;
   background: transparent;
@@ -572,13 +572,16 @@ const MenuItem = styled.div`
     left: 0;
     right: 0;
     bottom: -1px;
-    height: 3px;
+    height: 2px;
     background: var(--main-color, #FF4747);
     border-radius: 2px;
   }
 
-  @media (max-width: 1023px) {
-    padding: 18px 0 13px 16px;
+  @media (min-width: 1023px) {
+    padding: 13px 10px;
+  }
+
+  @media (max-width: 1024px) {
     border-bottom: 1px solid #E5E5E5;
     border-right: none;
     &::after {
@@ -586,13 +589,14 @@ const MenuItem = styled.div`
       right: 0;
       bottom: 0;
       width: 100%;
-      height: 3px;
+      height: 2px;
     }
   }
 
   @media (max-width: 1023px) {
-    font-size: 13px;
-    }
+    font-size: 16px;
+    margin: 0 10px;
+  }
 `;
 
 const RightContainer = styled.div`

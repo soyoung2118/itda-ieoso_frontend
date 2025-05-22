@@ -412,14 +412,18 @@ const MenuTitle = styled.div`
   margin: 0 auto;
   margin-bottom: 10px;
   padding: 13px 0px;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   background: none;
   border: none;
-  border-bottom: 1px solid #000;
+  border-bottom: 1px solid #E5E5E5;
 
   @media (max-width: 480px) {
     width: 100%;
+  }
+
+  @media (max-width: 1023px) {
+    font-size: 16px;
   }
 `;
 
