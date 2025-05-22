@@ -30,9 +30,6 @@ export default function TopBar() {
         onClick={isUser ? () => navigate("/class/list") : () => navigate("/")}
       />
       <Header>
-      <div>
-        test
-      </div>
         {location.pathname !== "/login" && (
             <div className="header-right">
               {/* <div className="language-switcher">
