@@ -71,7 +71,7 @@ export default function LogIn() {
       {showAlertModal && (
         <ModalOverlay>
           <AlertModalContainer>
-            <div className="none-bold-text" style={{fontSize: "1rem"}}>{alertMessage}</div>
+            <div className="none-bold-text">{alertMessage}</div>
             <div className="button-container">
               <button
                 className="close-button"
