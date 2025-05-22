@@ -1,13 +1,27 @@
 import { useState, useEffect, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { getCurriculumWithAssignments, getAllAssignmentSubmissions } from "../../api/classCurriculumApi";
 import { UsersContext } from "../../contexts/usersContext";
 import AssignmentBrowseSidebar from "../../ui/class/AssignmentBrowseSidebar";
 import api from "../../api/api";
 
+const formatSubmissionDate = (dateString) => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  const year = date.getFullYear().toString().slice(-2);
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  
+  return `${year}.${month}.${day} ${hours}:${minutes}`;
+};
+
 const AssignmentBrowse = () => {
   const { courseId } = useParams();
+  const navigate = useNavigate();
   const { user } = useContext(UsersContext);
   const [students, setStudents] = useState([]);
   const [selectedStudentId, setSelectedStudentId] = useState(null);
@@ -22,8 +36,10 @@ const AssignmentBrowse = () => {
       if (!courseId || !user) return;
       try {
         const lectures = await getCurriculumWithAssignments(courseId, user.userId);
+        console.log('Curriculum Data:', lectures);
         setCurriculum(lectures);
         const submissions = await getAllAssignmentSubmissions(courseId);
+        console.log('All Submissions:', submissions);
         setAllSubmissions(submissions);
         // 학생 목록 추출 (중복 없이)
         const studentMap = new Map();
@@ -38,9 +54,11 @@ const AssignmentBrowse = () => {
             }
           });
         });
-        setStudents([...studentMap.values()]);
+        const studentList = [...studentMap.values()];
+        console.log('Student List:', studentList);
+        setStudents(studentList);
       } catch (e) {
-        console.error(e);
+        console.error('Error fetching data:', e);
       }
     };
     fetchData();
@@ -50,6 +68,24 @@ const AssignmentBrowse = () => {
   useEffect(() => {
     if (students.length > 0) setSelectedStudentId(students[0].id);
   }, [students]);
+
+  // 현재 선택된 학생의 제출 정보도 확인
+  useEffect(() => {
+    if (selectedStudentId) {
+      console.log('Selected Student ID:', selectedStudentId);
+      const selectedStudent = students.find(s => s.id === selectedStudentId);
+      console.log('Selected Student Info:', selectedStudent);
+    }
+  }, [selectedStudentId, students]);
+
+  // 현재 열린 주차 정보도 확인
+  useEffect(() => {
+    if (openWeek) {
+      console.log('Open Week ID:', openWeek);
+      const currentLecture = curriculum.find(l => l.lectureId === openWeek);
+      console.log('Current Lecture Info:', currentLecture);
+    }
+  }, [openWeek, curriculum]);
 
   // 아코디언 토글
   const handleWeekToggle = (lectureId) => {
@@ -98,20 +134,33 @@ const AssignmentBrowse = () => {
     }
   };
 
+  const handleNavigationCurriculum = () => {
+    navigate(`/class/${courseId}/curriculum/${curriculum[0].lectureId}`);
+  };
+
   return (
     <Container>
-      <ContentArea>
+      <ContentWrapper>
+        <TopTitle>
+          {(() => {
+            const selected = students.find(s => s.id === selectedStudentId);
+            return selected ? (
+              <>
+                <span className="name">{selected.name}</span>
+                <span className="subtitle"> 과제목록 <ArrowForwardIosIcon onClick={handleNavigationCurriculum} style={{ width: "13px", marginLeft: "15px", cursor: "pointer" }} /></span>
+              </>
+            ) : '';
+          })()}
+        </TopTitle>
+      
         <MainContent>
-          <TopTitle>
-            {(() => {
-              const selected = students.find(s => s.id === selectedStudentId);
-              return selected ? `${selected.name} 과제 목록 >` : '';
-            })()}
-          </TopTitle>
           <SubmissionList>
             {curriculum.map((lecture, idx) => (
-              <AccordionBox key={lecture.lectureId}>
-                <AccordionHeader onClick={() => handleWeekToggle(lecture.lectureId)}>
+              <AccordionBox key={lecture.lectureId} isOpen={openWeek === lecture.lectureId}>
+                <AccordionHeader 
+                  onClick={() => handleWeekToggle(lecture.lectureId)}
+                  isOpen={openWeek === lecture.lectureId}
+                >
                   <AccordionTitle>{lecture.lectureTitle}</AccordionTitle>
                   <AccordionIcon>{openWeek === lecture.lectureId ? '▲' : '▼'}</AccordionIcon>
                 </AccordionHeader>
@@ -130,6 +179,9 @@ const AssignmentBrowse = () => {
                           <SubmissionHeader>
                             <AssignmentInfo>
                               <h4>{assignment.assignmentTitle}</h4>
+                              {submission?.submittedAt && (
+                                <span className="submission-date">{formatSubmissionDate(submission.submittedAt)}</span>
+                              )}
                             </AssignmentInfo>
                             <FileList>
                               {/* 이미지 갤러리 */}
@@ -176,63 +228,68 @@ const AssignmentBrowse = () => {
             ))}
           </SubmissionList>
         </MainContent>
-        <SidebarArea>
-          <AssignmentBrowseSidebar
-            students={students}
-            selectedId={selectedStudentId}
-            onSelect={setSelectedStudentId}
-          />
-        </SidebarArea>
-      </ContentArea>
+      </ContentWrapper>
+
+      <SidebarArea>
+        <AssignmentBrowseSidebar
+          students={students}
+          selectedId={selectedStudentId}
+          onSelect={setSelectedStudentId}
+        />
+      </SidebarArea>
     </Container>
   );
 };
 
 const Container = styled.div`
-  width: 100%;
-  height: 100%;
   background: #f6f7f9;
-  min-height: 100vh;
-`;
-
-const ContentArea = styled.div`
+  min-height: 80vh;
   display: flex;
   flex-direction: row;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 40px 0 0 0;
-  min-height: 80vh;
-  gap: 32px;
+  padding: 28px 0px;
+`;
+
+const TopTitle = styled.div`
+  font-size: 20px;
+  color: #222;
+  margin-bottom: 18px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  .name {
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+  }
+
+  .subtitle {
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+  }
+`;
+
+const ContentWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 70vw;
+  padding-left: 5px;
+  padding-right: 20px;
+  position: relative;
 `;
 
 const MainContent = styled.div`
-  flex: 1;
-  background: #fff;
-  border-radius: 20px;
-  padding: 32px 32px 32px 32px;
-  min-width: 0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
   display: flex;
   flex-direction: column;
 `;
 
 const SidebarArea = styled.div`
-  width: 260px;
-  min-width: 220px;
   background: transparent;
   display: flex;
   flex-direction: column;
-`;
-
-const Title = styled.h1`
-  font-size: 24px;
-  font-weight: 600;
-  color: #222;
-  margin: 0;
-  
-  @media (max-width: 1023px) {
-    font-size: 20px;
-  }
 `;
 
 const SubmissionList = styled.div`
@@ -240,34 +297,30 @@ const SubmissionList = styled.div`
 `;
 
 const AccordionBox = styled.div`
-  background: #fff;
-  border-radius: 16px;
-  margin-bottom: 18px;
-  border: 1px solid #e5e5e5;
+  margin-bottom: ${props => props.isOpen ? '0' : '18px'};
 `;
+
 const AccordionHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 24px;
-  font-size: 18px;
+  border-radius: ${props => props.isOpen ? '10px 10px 0 0' : '10px'};
+  padding: 24px 28px;
+  font-size: 17px;
   font-weight: 700;
-  border-bottom: 1px solid #e5e5e5;
   background: #fff;
   cursor: pointer;
+  border-bottom: ${props => props.isOpen ? '1px solid #E5E5E5' : 'none'};
 `;
+
 const AccordionTitle = styled.div``;
 const AccordionIcon = styled.div`
   font-size: 18px;
 `;
 const AccordionContent = styled.div`
-  padding: 0 24px 24px 24px;
-`;
-const Divider = styled.div`
-  width: 100%;
-  height: 1px;
-  background: #e5e5e5;
-  margin: 16px 0;
+  padding: 24px 28px;
+  background: #fff;
+  border-radius: 0 0 10px 10px;
 `;
 const NoAssignment = styled.div`
   color: #bbb;
@@ -277,9 +330,7 @@ const NoAssignment = styled.div`
 const SubmissionBox = styled.div`
   background: #fff;
   border-radius: 12px;
-  margin: 24px 0 0 0;
-  border: 1px solid #f0f0f0;
-  padding: 24px 24px 16px 24px;
+  margin-top: 14px;
 `;
 const SubmissionHeader = styled.div`
   display: flex;
@@ -290,11 +341,17 @@ const SubmissionHeader = styled.div`
 const AssignmentInfo = styled.div`
   display: flex;
   align-items: center;
+  flex-direction: column;
   gap: 12px;
   h4 {
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 600;
     margin: 0 0 4px 0;
+  }
+  .submission-date {
+    font-size: 14px;
+    font-weight: 600;
+    color: #474747;
   }
 `;
 const FileList = styled.div`
@@ -318,13 +375,6 @@ const TextContent = styled.div`
   padding: 16px;
   border-radius: 8px;
   margin-top: 8px;
-`;
-
-const TopTitle = styled.div`
-  font-size: 20px;
-  font-weight: 700;
-  margin-bottom: 18px;
-  color: #222;
 `;
 
 const GalleryWrapper = styled.div`
