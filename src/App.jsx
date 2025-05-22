@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
-import {
-  BrowserRouter,
-  Route,
-  Routes,
-  useLocation,
-} from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { UsersProvider } from "./component/contexts/usersContext.jsx";
 import { handleLogout } from "./component/api/tokenManager.js";
-import { ModalOverlay, AlertModalContainer } from "./component/ui/modal/ModalStyles.jsx";
+import {
+  ModalOverlay,
+  AlertModalContainer,
+} from "./component/ui/modal/ModalStyles.jsx";
 
 import LandingPage from "./component/page/LandingPage.jsx";
 import LogIn from "./component/page/users/LogIn.jsx";
@@ -71,18 +69,18 @@ function LogoutHandler() {
 
     // 토큰 관련 에러 발생 시 로그아웃
     const handleTokenError = (event) => {
-      if (event.detail?.type === 'token_error') {
+      if (event.detail?.type === "token_error") {
         setLogoutMessage("인증에 문제가 발생하여 자동 로그아웃됩니다.");
         setModalIsOpen(true);
       }
     };
 
     // 토큰 에러 이벤트 리스너 등록
-    window.addEventListener('tokenError', handleTokenError);
+    window.addEventListener("tokenError", handleTokenError);
 
     return () => {
       clearInterval(interval);
-      window.removeEventListener('tokenError', handleTokenError);
+      window.removeEventListener("tokenError", handleTokenError);
     };
   }, []);
 

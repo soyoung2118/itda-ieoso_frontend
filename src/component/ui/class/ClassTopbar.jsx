@@ -26,11 +26,11 @@ const Navbar = styled.div`
   }
 
   @media (max-width: 480px) {
-    font-size: 1.0rem;
+    font-size: 1rem;
   }
 
   @media all and (max-width: 479px) {
-    font-size: 1.0rem;
+    font-size: 1rem;
     flex-direction: column;
     align-items: flex-start;
   }

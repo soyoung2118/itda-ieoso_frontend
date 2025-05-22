@@ -162,14 +162,29 @@ const ClassStudents = () => {
                     </AssignmentInfo>
                     <FileList>
                       {submission.files.length > 0 ? (
-                        submission.files.map((file, fileIdx) => (
-                          <DownloadLink
-                            key={fileIdx}
-                            onClick={() => handleDownload(file)}
-                          >
-                            {file.fileName}
-                          </DownloadLink>
-                        ))
+                        submission.files.map((file, fileIdx) => {
+                          const maxNameLength = 18;
+                          const dotIdx = file.fileName.lastIndexOf(".");
+                          let name = file.fileName;
+                          if (name.length > maxNameLength) {
+                            if (dotIdx > 0 && dotIdx < name.length - 1) {
+                              const ext = name.slice(dotIdx);
+                              const base = name.slice(0, 10);
+                              name = `${base}...${ext}`;
+                            } else {
+                              name = name.slice(0, 15) + "...";
+                            }
+                          }
+                          return (
+                            <FileItem
+                              key={fileIdx}
+                              onClick={() => handleDownload(file)}
+                            >
+                              <img src={Download} alt="다운로드" />
+                              <span className="file-name-ellipsis">{name}</span>
+                            </FileItem>
+                          );
+                        })
                       ) : submission.textContent &&
                         submission.textContent !== "null" ? null : (
                         <span>미제출</span>
@@ -234,7 +249,7 @@ const Title = styled.h3`
     font-weight: 650;
   }
 
-  @media (max-width: 376px) {
+  @media (max-width: 380px) {
     font-size: 12.8px;
   }
 `;
@@ -257,7 +272,7 @@ const TimeText = styled.p`
     font-size: 10px;
   }
 
-  @media (max-width: 376px) {
+  @media (max-width: 380px) {
     font-size: 8.5px;
   }
 `;
@@ -294,7 +309,7 @@ const NavButton = styled.button`
     font-weight: 550;
   }
 
-  @media (max-width: 376px) {
+  @media (max-width: 380px) {
     padding: 0.65vh 1.35vh;
     border-radius: 3px;
     font-size: 7.7px;
@@ -303,7 +318,10 @@ const NavButton = styled.button`
 
 const ContentWrapper = styled.div`
   display: flex;
-  margin: 2vh 0;
+  margin: 1.5vh 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 
   @media (max-width: 1024px) {
     margin: 1.3vh 0;
@@ -312,7 +330,7 @@ const ContentWrapper = styled.div`
   @media (max-width: 768px) {
     margin: 0.7vh 0;
   }
-  @media (max-width: 376px) {
+  @media (max-width: 380px) {
     margin: 0.35vh 0;
   }
 `;
@@ -323,6 +341,7 @@ const Sidebar = styled.aside`
   padding: 2.5vh 1.8vh;
   overflow-y: auto;
   border-radius: 20px;
+  min-width: 25px;
 
   @media (max-width: 1024px) {
     width: 16%;
@@ -335,10 +354,10 @@ const Sidebar = styled.aside`
   }
   @media (max-width: 480px) {
     width: 17%;
-    padding: 2vh 1.5vh;
+    padding: 2vh 10px;
     border-radius: 13px;
   }
-  @media (max-width: 376px) {
+  @media (max-width: 380px) {
     width: 16%;
     padding: 1.3vh 1vh;
     border-radius: 9px;
@@ -368,12 +387,12 @@ const StudentItem = styled.div`
   }
 
   @media (max-width: 480px) {
-    padding: 1vh 2vh;
+    padding: 1vh 10px;
     border-radius: 6.3px;
     font-size: 10px;
   }
 
-  @media (max-width: 376px) {
+  @media (max-width: 380px) {
     padding: 0.7vh 1.2vh;
     border-radius: 6px;
     font-size: 8px;
@@ -383,7 +402,6 @@ const StudentItem = styled.div`
 const StudentContent = styled.div`
   flex: 1;
   padding-left: 6vh;
-  margin-bottom: 5vh;
 
   @media (max-width: 1024px) {
     padding-left: 2vh;
@@ -393,7 +411,7 @@ const StudentContent = styled.div`
     padding-left: 1.7vh;
   }
 
-  @media (max-width: 376px) {
+  @media (max-width: 380px) {
     padding-left: 1.3vh;
   }
 `;
@@ -414,7 +432,7 @@ const AssignmentIcon = styled.img`
     width: 2.7vh;
   }
 
-  @media (max-width: 376px) {
+  @media (max-width: 380px) {
     width: 1.9vh;
   }
 `;
@@ -441,7 +459,7 @@ const SubmissionBox = styled.div`
     border-radius: 12px;
   }
 
-  @media (max-width: 376px) {
+  @media (max-width: 380px) {
     padding: 0.25vh 1.7vh 1.8vh;
     border-radius: 8.5 px;
   }
@@ -451,6 +469,7 @@ const SubmissionHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 10px;
 `;
 
 const AssignmentInfo = styled.div`
@@ -466,7 +485,7 @@ const AssignmentInfo = styled.div`
     gap: 0.7vh;
   }
 
-  @media (max-width: 376px) {
+  @media (max-width: 380px) {
     gap: 0.55vh;
   }
 
@@ -488,7 +507,7 @@ const AssignmentInfo = styled.div`
       font-size: 10.5px;
     }
 
-    @media (max-width: 376px) {
+    @media (max-width: 380px) {
       font-size: 9px;
       font-weight: 550;
     }
@@ -510,7 +529,7 @@ const AssignmentInfo = styled.div`
       font-size: 9px;
     }
 
-    @media (max-width: 376px) {
+    @media (max-width: 380px) {
       font-size: 7.2px;
     }
   }
@@ -518,35 +537,85 @@ const AssignmentInfo = styled.div`
 
 const FileList = styled.div`
   display: flex;
-  gap: 2vh;
-  font-size: 16px;
-  color: var(--main-color);
-
+  flex-direction: column;
+  gap: 1vh;
+  max-height: 15vh;
+  overflow-y: auto;
+  padding-right: 1vh;
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 2px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--midgrey-color);
+    border-radius: 2px;
+  }
   @media (max-width: 1024px) {
-    font-size: 13.5px;
-    max-width: 40%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: inline-block;
+    max-height: 12vh;
   }
-
   @media (max-width: 768px) {
-    font-size: 11.3px;
+    max-height: 10vh;
   }
-
-  @media (max-width: 480px) {
-    font-size: 8.5px;
-  }
-
-  @media (max-width: 376px) {
-    font-size: 7px;
+  span {
+    font-size: 12px;
+    color: #b0b0b0;
+    @media (max-width: 768px) {
+      font-size: 10px;
+    }
+    @media (max-width: 480px) {
+      font-size: 8px;
+    }
   }
 `;
 
-const DownloadLink = styled.a`
-  text-decoration: underline;
-  cursor: pointer;
+const FileItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1vh;
+  padding: 0.8vh 1vh;
+  background-color: #f6f7f9;
+  border-radius: 5px;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #eceef2;
+  }
+
+  img {
+    width: 16px;
+    height: 16px;
+    @media (max-width: 768px) {
+      width: 14px;
+      height: 14px;
+    }
+    @media (max-width: 480px) {
+      width: 12px;
+      height: 12px;
+    }
+  }
+
+  span.file-name-ellipsis {
+    font-size: 12px;
+    color: var(--main-color);
+    cursor: pointer;
+    max-width: 110px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    vertical-align: bottom;
+    @media (max-width: 768px) {
+      font-size: 10px;
+      max-width: 70px;
+    }
+    @media (max-width: 480px) {
+      font-size: 8px;
+      max-width: 50px;
+    }
+  }
 `;
 
 const TextContent = styled.div`
@@ -555,11 +624,28 @@ const TextContent = styled.div`
   background-color: #f6f7f9;
   border-radius: 8px;
   white-space: pre-wrap;
+  max-height: 30vh;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 2px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--midgrey-color);
+    border-radius: 2px;
+  }
 
   @media (max-width: 1024px) {
     margin-top: 0.5vh;
     padding: 2vh 2vh;
     font-size: 13.5px;
+    max-height: 25vh;
   }
 
   @media (max-width: 768px) {
@@ -567,6 +653,7 @@ const TextContent = styled.div`
     padding: 1.5vh 1.3vh;
     font-size: 11.5px;
     border-radius: 7px;
+    max-height: 20vh;
   }
 
   @media (max-width: 480px) {
@@ -574,12 +661,14 @@ const TextContent = styled.div`
     padding: 1.6vh 1.3vh;
     font-size: 9.3px;
     border-radius: 6px;
+    max-height: 18vh;
   }
 
-  @media (max-width: 376px) {
+  @media (max-width: 380px) {
     margin-top: -0.5vh;
     padding: 1.4vh 1.1vh;
     font-size: 7.6px;
     border-radius: 4px;
+    max-height: 15vh;
   }
 `;

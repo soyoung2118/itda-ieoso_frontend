@@ -72,7 +72,6 @@ export const LanguageProvider = ({ children }) => {
         else if (translateId === "day-일") node.nodeValue = "Sun";
         else node.nodeValue = translatedArray[i];
       }
-
     } catch (error) {
       console.error("번역 실패:", error);
     }

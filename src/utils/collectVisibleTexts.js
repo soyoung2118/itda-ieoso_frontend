@@ -5,12 +5,14 @@ export function collectVisibleTexts() {
     {
       acceptNode: (node) => {
         if (!node.parentElement) return NodeFilter.FILTER_REJECT;
-        if (node.parentElement.tagName === "SCRIPT") return NodeFilter.FILTER_REJECT;
-        if (node.parentElement.tagName === "STYLE") return NodeFilter.FILTER_REJECT;
+        if (node.parentElement.tagName === "SCRIPT")
+          return NodeFilter.FILTER_REJECT;
+        if (node.parentElement.tagName === "STYLE")
+          return NodeFilter.FILTER_REJECT;
         if (!node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
         return NodeFilter.FILTER_ACCEPT;
-      }
-    }
+      },
+    },
   );
 
   const texts = [];

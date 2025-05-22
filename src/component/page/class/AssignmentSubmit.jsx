@@ -230,9 +230,7 @@ const ClassAssignmentSubmit = () => {
           <TitleContainer>
             <MainTitle>
               {currentLectureInfo?.lectureTitle}{" "}
-              {truncateText(
-                currentAssignmentInfo?.assignmentTitle || "",
-              )}
+              {truncateText(currentAssignmentInfo?.assignmentTitle || "")}
             </MainTitle>
 
             <ClickContainer onClick={handleNavigationCurriculum}>
@@ -390,14 +388,14 @@ const NoticeContentContainer = styled.div`
   overflow: auto;
   height: calc(30vh - 15px);
   white-space: pre-wrap;
-  
+
   /* 스크롤바 보이게 강제 적용 */
   &::-webkit-scrollbar {
     width: 6px;
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: rgba(0,0,0,0.3);
+    background-color: rgba(0, 0, 0, 0.3);
     border-radius: 3px;
   }
 
@@ -407,7 +405,7 @@ const NoticeContentContainer = styled.div`
 
   /* Firefox용 */
   scrollbar-width: thin;
-  scrollbar-color: rgba(0,0,0,0.3) transparent;
+  scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
 `;
 
 const TitleContainer = styled.div`

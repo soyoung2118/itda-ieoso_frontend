@@ -3,7 +3,11 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import TopBar from "../ui/TopBar";
 import { PageLayout } from "../ui/class/ClassLayout";
-import { ModalOverlay, ModalContent, AlertModalContainer } from "../ui/modal/ModalStyles";
+import {
+  ModalOverlay,
+  ModalContent,
+  AlertModalContainer,
+} from "../ui/modal/ModalStyles";
 import LogoGray from "../img/logo/itda_logo_gray.svg";
 import ClassThumbnail from "../img/class/classlist_thumbnail.svg";
 import GreyCircle from "../img/class/grey_circle.svg";
@@ -95,127 +99,135 @@ export default function Class() {
         <Container>
           <Sidebar>
             <MenuItem
-            active={selectedMenu === "전체 강의실"}
-            onClick={() => setSelectedMenu("전체 강의실")}
-          >
-            전체 강의실
-          </MenuItem>
-          <MenuItem
-            active={selectedMenu === "내 강의실"}
-            onClick={() => setSelectedMenu("내 강의실")}
-          >
-            내 강의실
-          </MenuItem>
-        </Sidebar>
-        <Content>
-          <TopText>
-            <h2>{selectedMenu}</h2>
-            {lecturesCount !== 0 && 
-            <GreyText>
-              <img src={GreyCircle} alt="GreyCircle" width="10" height="10" style={{marginRight: "5px"}} />
-              등록순
-            </GreyText>
-            }
-          </TopText>
-          {lecturesCount === 0 ? (
-            <NoLecturesMessage>
-              <img src={LogoGray} alt="LogoGray" width="40" height="40" />
-              <br />
-              현재 생성된 강의실이 없습니다 &#58;&#40;
-              <br />+ 버튼을 눌러 강의실을 생성해보세요!
-            </NoLecturesMessage>
-          ) : (
-            lecturesToDisplay?.map((lecture) => (
-              <LectureCard
-                key={lecture.courseId}
-                onClick={() => handleLectureClick(lecture.courseId)}
-              >
-                <LectureImage
-                  src={lecture.courseThumbnail || ClassThumbnail}
-                  alt="Lecture"
-                />
-                <LectureInfo>
-                  <LectureTitle>{lecture.courseTitle}</LectureTitle>
-                  <LectureDetail>
-                    <IconRow>
-                      <span className="material-symbols-outlined">event</span>
-                      <span>
-                        {lecture.startDate
-                          ? `${formatDate(lecture.startDate)} 시작`
-                          : "시작일 미정"}
-                      </span>
-                    </IconRow>
-                    <IconRow>
-                      <span className="material-symbols-outlined">
-                        video_library
-                      </span>
-                      <span>
-                        {lecture.durationWeeks > 0
-                          ? `${lecture.durationWeeks}주 커리큘럼`
-                          : "기간 미정"}
-                      </span>
-                    </IconRow>
-                    <IconRow>
-                      <span className="material-symbols-outlined">person</span>
-                      <span>{lecture.instructorName}</span>
-                    </IconRow>
-                    <IconRow style={{ gap: "0rem" }}>
-                      <span className="material-symbols-outlined">star</span>
-                      <span style={{ margin: "0rem 0.3rem 0rem 1rem" }}>
-                        강의 난이도
-                      </span>
-                      <span style={{ marginLeft: 0, fontWeight: 700 }}>
-                        {changeDifficultly(lecture.difficultyLevel)}
-                      </span>
-                    </IconRow>
-                  </LectureDetail>
-                </LectureInfo>
-                <DeleteIconWrapper
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedCourseId(lecture.courseId);
-                    setShowDeleteModal(true);
-                  }}
-                >
+              active={selectedMenu === "전체 강의실"}
+              onClick={() => setSelectedMenu("전체 강의실")}
+            >
+              전체 강의실
+            </MenuItem>
+            <MenuItem
+              active={selectedMenu === "내 강의실"}
+              onClick={() => setSelectedMenu("내 강의실")}
+            >
+              내 강의실
+            </MenuItem>
+          </Sidebar>
+          <Content>
+            <TopText>
+              <h2>{selectedMenu}</h2>
+              {lecturesCount !== 0 && (
+                <GreyText>
                   <img
-                    src={DeleteIcon}
-                    alt="Delete Icon"
-                    style={{ width: "30px", height: "30px" }}
+                    src={GreyCircle}
+                    alt="GreyCircle"
+                    width="10"
+                    height="10"
+                    style={{ marginRight: "5px" }}
                   />
-                </DeleteIconWrapper>
-              </LectureCard>
-            ))
+                  등록순
+                </GreyText>
+              )}
+            </TopText>
+            {lecturesCount === 0 ? (
+              <NoLecturesMessage>
+                <img src={LogoGray} alt="LogoGray" width="40" height="40" />
+                <br />
+                현재 생성된 강의실이 없습니다 &#58;&#40;
+                <br />+ 버튼을 눌러 강의실을 생성해보세요!
+              </NoLecturesMessage>
+            ) : (
+              lecturesToDisplay?.map((lecture) => (
+                <LectureCard
+                  key={lecture.courseId}
+                  onClick={() => handleLectureClick(lecture.courseId)}
+                >
+                  <LectureImage
+                    src={lecture.courseThumbnail || ClassThumbnail}
+                    alt="Lecture"
+                  />
+                  <LectureInfo>
+                    <LectureTitle>{lecture.courseTitle}</LectureTitle>
+                    <LectureDetail>
+                      <IconRow>
+                        <span className="material-symbols-outlined">event</span>
+                        <span>
+                          {lecture.startDate
+                            ? `${formatDate(lecture.startDate)} 시작`
+                            : "시작일 미정"}
+                        </span>
+                      </IconRow>
+                      <IconRow>
+                        <span className="material-symbols-outlined">
+                          video_library
+                        </span>
+                        <span>
+                          {lecture.durationWeeks > 0
+                            ? `${lecture.durationWeeks}주 커리큘럼`
+                            : "기간 미정"}
+                        </span>
+                      </IconRow>
+                      <IconRow>
+                        <span className="material-symbols-outlined">
+                          person
+                        </span>
+                        <span>{lecture.instructorName}</span>
+                      </IconRow>
+                      <IconRow style={{ gap: "0rem" }}>
+                        <span className="material-symbols-outlined">star</span>
+                        <span style={{ margin: "0rem 0.3rem 0rem 1rem" }}>
+                          강의 난이도
+                        </span>
+                        <span style={{ marginLeft: 0, fontWeight: 700 }}>
+                          {changeDifficultly(lecture.difficultyLevel)}
+                        </span>
+                      </IconRow>
+                    </LectureDetail>
+                  </LectureInfo>
+                  <DeleteIconWrapper
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedCourseId(lecture.courseId);
+                      setShowDeleteModal(true);
+                    }}
+                  >
+                    <img
+                      src={DeleteIcon}
+                      alt="Delete Icon"
+                      style={{ width: "30px", height: "30px" }}
+                    />
+                  </DeleteIconWrapper>
+                </LectureCard>
+              ))
+            )}
+          </Content>
+          <AddButton
+            onClick={() => setShowPopup(!showPopup)}
+            data-showpopup={showPopup}
+          >
+            {showPopup ? "×" : "+"}
+          </AddButton>
+          {showPopup && (
+            <PopupMenu>
+              <PopupItem onClick={() => navigate("/class/create")}>
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: "24px", marginRight: "10px" }}
+                >
+                  new_window
+                </span>
+                강의실 만들기
+              </PopupItem>
+              <PopupItem onClick={() => navigate("/class/participate")}>
+                <span
+                  className="material-symbols-outlined"
+                  style={{ fontSize: "24px", marginRight: "10px" }}
+                >
+                  login
+                </span>
+                강의실 입장하기
+              </PopupItem>
+            </PopupMenu>
           )}
-        </Content>
-        <AddButton
-          onClick={() => setShowPopup(!showPopup)}
-          data-showpopup={showPopup}
-        >
-          {showPopup ? "×" : "+"}
-        </AddButton>
-        {showPopup && (
-          <PopupMenu>
-            <PopupItem onClick={() => navigate("/class/create")}>
-              <span
-                className="material-symbols-outlined"
-                style={{ fontSize: "24px", marginRight: "10px" }}
-              >
-                new_window
-              </span>
-              강의실 만들기
-            </PopupItem>
-            <PopupItem onClick={() => navigate("/class/participate")}>
-              <span
-                className="material-symbols-outlined"
-                style={{ fontSize: "24px", marginRight: "10px" }}
-              >
-                login
-              </span>
-              강의실 입장하기
-            </PopupItem>
-          </PopupMenu>
-        )}
-      </Container>
+        </Container>
       </PageLayout>
       {/* 모달 */}
       {showDeleteModal && (
@@ -229,7 +241,7 @@ export default function Class() {
                 onClick={() => setShowDeleteModal(false)}
               >
                 취소
-              </button> 
+              </button>
               <button className="delete-button" onClick={confirmDelete}>
                 나가기
               </button>

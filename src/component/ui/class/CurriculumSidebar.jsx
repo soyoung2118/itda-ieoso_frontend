@@ -174,18 +174,18 @@ const SectionIcon = styled.img`
 `;
 
 const Icon = styled.img`
-  width: ${props => props.type === 'video' ? '1.2rem' : '1rem'};
+  width: ${(props) => (props.type === "video" ? "1.2rem" : "1rem")};
 
   @media (max-width: 768px) {
-    width: ${props => props.type === 'video' ? '1rem' : '0.8rem'};
+    width: ${(props) => (props.type === "video" ? "1rem" : "0.8rem")};
   }
 
   @media (max-width: 480px) {
-    width: ${props => props.type === 'video' ? '1rem' : '0.8rem'};
+    width: ${(props) => (props.type === "video" ? "1rem" : "0.8rem")};
   }
 
   @media (max-width: 440px) {
-    width: ${props => props.type === 'video' ? '1rem' : '0.8rem'};
+    width: ${(props) => (props.type === "video" ? "1rem" : "0.8rem")};
   }
 `;
 
@@ -337,7 +337,10 @@ const CurriculumSidebar = ({
                         marginBottom: "10px",
                       }}
                     >
-                      <Icon src={getIconByType(subSection.contentType)} type={subSection.contentType} />
+                      <Icon
+                        src={getIconByType(subSection.contentType)}
+                        type={subSection.contentType}
+                      />
                       <TruncatedText width="10rem">
                         {getSubSectionTitle(subSection)}
                       </TruncatedText>

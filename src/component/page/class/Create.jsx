@@ -358,9 +358,12 @@ export default function Create() {
                         !isLecturePending &&
                         form.lectureDays.includes(timeSlots.indexOf(day) + 1)
                       }
-                      onClick={() =>
-                        !isLecturePending && handleDaySelect("lecture", day)
-                      }
+                      onClick={() => {
+                        if (isLecturePending) {
+                          setIsLecturePending(false);
+                        }
+                        handleDaySelect("lecture", day);
+                      }}
                     >
                       {day}
                     </DayButton>
@@ -411,8 +414,7 @@ export default function Create() {
                         }
                       }}
                     >
-                      {!isLecturePending && "정해지지 않았어요"}
-                      {isLecturePending && "설정 되었어요!"}
+                      정해지지 않았어요
                     </RadioButton>
                   </TimePickerWrapper>
                   {form.lectureTime && !isLecturePending && (
@@ -439,10 +441,12 @@ export default function Create() {
                         !isAssignmentPending &&
                         form.assignmentDays.includes(timeSlots.indexOf(day) + 1)
                       }
-                      onClick={() =>
-                        !isAssignmentPending &&
-                        handleDaySelect("assignment", day)
-                      }
+                      onClick={() => {
+                        if (isAssignmentPending) {
+                          setIsAssignmentPending(false);
+                        }
+                        handleDaySelect("assignment", day);
+                      }}
                     >
                       {day}
                     </DayButton>
@@ -495,8 +499,7 @@ export default function Create() {
                         }
                       }}
                     >
-                      {!isAssignmentPending && "정해지지 않았어요"}
-                      {isAssignmentPending && "설정 되었어요!"}
+                      정해지지 않았어요
                     </RadioButton>
                   </TimePickerWrapper>
                   {form.assignmentTime && !isAssignmentPending && (
@@ -613,7 +616,7 @@ const RadioButton = styled.button`
   border: none;
   border-radius: 10px;
   font-size: 15px;
-  background-color: ${(props) => (props.active ? "#F6F6F6" : "#FF4747")};
+  background-color: ${(props) => (props.active ? "#EEEEEE" : "#FF4747")};
   color: ${(props) => (props.active ? "#909090" : "#FFFFFF")};
   width: 149px;
 
@@ -650,7 +653,7 @@ const CreateButton = styled.button`
 const Container = styled.div`
   margin: 2rem 27vw;
   border-radius: 20px;
-  @media (max-width: 800px) {
+  @media (max-width: 1024px) {
     margin: 2rem 10vw;
   }
 `;
@@ -780,7 +783,7 @@ const TimePickerWrapper = styled.div`
   margin-right: 20px;
   display: flex;
   align-items: center;
-  position: relative;
+  position: static;
 
   @media (max-width: 900px) {
     margin-right: 0px;
