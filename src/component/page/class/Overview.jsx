@@ -105,12 +105,12 @@ const StyledButton = styled.a`
   }
 
   @media all and (max-width: 768px) {
-    right: 0.2rem;
+    right: 0rem;
     width: 75px;
   }
 
   @media all and (max-width: 479px) {
-    right: -1.5rem;
+    bottom: 9vh;
   }
 `;
 

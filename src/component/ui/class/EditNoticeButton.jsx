@@ -20,6 +20,8 @@ const StyledButton = styled.div`
 
   @media (max-width: 480px) {
     width: 42px;
+    right: 6.8vw;
+    bottom: 9vh;
   }
 
   @media (max-width: 376px) {
