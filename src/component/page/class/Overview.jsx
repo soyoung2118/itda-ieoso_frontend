@@ -50,7 +50,6 @@ const Content = styled.div`
 
 const StyledQuill = styled(ReactQuill)`
   width: 100%;
-  max-width: 1200px;
   min-height: 450px;
 
   .ql-toolbar {

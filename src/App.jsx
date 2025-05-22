@@ -31,7 +31,7 @@ import ClassAssignmentSubmit from "./component/page/class/AssignmentSubmit.jsx";
 import GoogleAuthCallback from "./component/page/users/GoogleAuthCallback.jsx";
 import GoogleAccountLink from "./component/page/users/GoogleAccountLink.jsx";
 import { LanguageProvider } from "./component/contexts/LanguageContext.jsx";
-import ChannelTalk from "./component/ui/ChannelTalk.jsx";
+// import ChannelTalk from "./component/ui/ChannelTalk.jsx";
 
 
 
@@ -118,7 +118,7 @@ function App() {
         <LanguageProvider>
           <LogoutHandler />
           <ScrollToTop />
-          <ChannelTalk />
+          {/* <ChannelTalk /> */}
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/oauth/callback" element={<GoogleAuthCallback />} />

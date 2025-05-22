@@ -5,8 +5,8 @@ import LogoImage from "../img/logo/itda_logo.svg";
 import userIcon from "../img/icon/usericon.svg";
 import { UsersContext } from "../contexts/usersContext";
 import { UsersInfoContainer } from "../page/users/UsersInfoContainer";
-import { useLanguage } from "../contexts/LanguageContext";
-import Translate from "../img/landing/translate.svg";
+// import { useLanguage } from "../contexts/LanguageContext";
+// import Translate from "../img/landing/translate.svg";
 
 export default function TopBar() {
   const navigate = useNavigate();
@@ -15,7 +15,7 @@ export default function TopBar() {
 
   // 드롭다운 상태 추가
   const [showUsersInfoContainer, setShowUsersInfoContainer] = useState(false);
-  const { targetLang, setTargetLang } = useLanguage();
+  // const { targetLang, setTargetLang } = useLanguage();
 
   const handleUserIconClick = () => {
     setShowUsersInfoContainer((prev) => !prev); // 드롭다운 토글
@@ -30,9 +30,12 @@ export default function TopBar() {
         onClick={isUser ? () => navigate("/class/list") : () => navigate("/")}
       />
       <Header>
+      <div>
+        test
+      </div>
         {location.pathname !== "/login" && (
             <div className="header-right">
-              <div className="language-switcher">
+              {/* <div className="language-switcher">
                 <TranslateIcon src={Translate} />
                 <span
                   className={
@@ -55,7 +58,7 @@ export default function TopBar() {
                 >
                   EN
                 </span>
-              </div>
+              </div> */}
               {isUser ? (
                 <UserContainer>
                   {location.pathname === "/dashboard" ? (
