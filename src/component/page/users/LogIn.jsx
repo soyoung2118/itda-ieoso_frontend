@@ -10,7 +10,43 @@ export default function LogIn() {
   const [showAlertModal, setShowAlertModal] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
 
+  function isInAppBrowser() {
+    const ua = navigator.userAgent || navigator.vendor;
+    return /KAKAOTALK|FBAN|FBAV|Instagram/.test(ua);
+  }
+
+  function isAndroid() {
+    return /Android/i.test(navigator.userAgent);
+  }
+
+  function isIOS() {
+    return /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  }
+
   const handleGoogleLogin = () => {
+    if (isInAppBrowser()) {
+      if (isAndroid()) {
+        setAlertMessage(
+          "구글 정책으로 인해 해당 앱 내에서는\n" +
+          "구글 로그인이 지원되지 않습니다.\n" +
+          "우측 하단 ⋮버튼을 눌러 외부 브라우저로 열어주세요."
+        );
+      } else if (isIOS()) {
+        setAlertMessage(
+          "구글 정책으로 인해 해당 앱 내에서는\n" +
+          "구글 로그인이 지원되지 않습니다.\n" +
+          "외부 브라우저(Safari)에서 다시 접속해주세요."
+        );
+      } else {
+        setAlertMessage(
+          "구글 정책으로 인해 해당 앱 내에서는\n" +
+          "구글 로그인이 지원되지 않습니다.\n" +
+          "외부 브라우저에서 다시 접속해주세요."
+        );
+      }
+      setShowAlertModal(true);
+      return;
+    }
     setIsLoading(true);
     const redirectUri = encodeURIComponent(
       `${window.location.origin}/oauth/callback`,
@@ -35,7 +71,7 @@ export default function LogIn() {
       {showAlertModal && (
         <ModalOverlay>
           <AlertModalContainer>
-            <div className="text">{alertMessage}</div>
+            <div className="none-bold-text">{alertMessage}</div>
             <div className="button-container">
               <button
                 className="close-button"

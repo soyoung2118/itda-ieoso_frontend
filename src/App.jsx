@@ -30,7 +30,7 @@ import ClassPlaying from "./component/page/class/Playing.jsx";
 import ClassAssignmentSubmit from "./component/page/class/AssignmentSubmit.jsx";
 import GoogleAuthCallback from "./component/page/users/GoogleAuthCallback.jsx";
 import GoogleAccountLink from "./component/page/users/GoogleAccountLink.jsx";
-import { LanguageProvider } from "./component/contexts/LanguageContext.jsx";
+// import { LanguageProvider } from "./component/contexts/LanguageContext.jsx";
 // import ChannelTalk from "./component/ui/ChannelTalk.jsx";
 
 
@@ -115,7 +115,7 @@ function App() {
   return (
     <BrowserRouter>
       <UsersProvider>
-        <LanguageProvider>
+        {/* <LanguageProvider> */}
           <LogoutHandler />
           <ScrollToTop />
           {/* <ChannelTalk /> */}
@@ -162,7 +162,7 @@ function App() {
 
             <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
-        </LanguageProvider>
+        {/* </LanguageProvider> */}
       </UsersProvider>
     </BrowserRouter>
   );
