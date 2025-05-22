@@ -185,7 +185,6 @@ const ClassAssignmentSubmit = () => {
             );
             if (assignment) {
               foundType = assignment.submissionType;
-              console.log(foundType);
               break;
             }
           }
