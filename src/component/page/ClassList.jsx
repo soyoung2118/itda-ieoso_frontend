@@ -414,7 +414,7 @@ const IconRow = styled.div`
 
 const AddButton = styled.button`
   position: fixed;
-  bottom: 3vh;
+  bottom: 12vh;
   right: 9vw;
   width: 3.8rem;
   height: 60px;
