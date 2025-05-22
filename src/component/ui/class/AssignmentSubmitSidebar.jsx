@@ -540,7 +540,9 @@ const MenuContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  width: 100%;
+  width: 90%;
+  margin: 0 auto;
+  margin-bottom: 10px;
   border-bottom: 1px solid #E5E5E5;
   background: #fff;
 
@@ -575,10 +577,6 @@ const MenuItem = styled.div`
     height: 2px;
     background: var(--main-color, #FF4747);
     border-radius: 2px;
-  }
-
-  @media (min-width: 1023px) {
-    padding: 13px 10px;
   }
 
   @media (max-width: 1024px) {

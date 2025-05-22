@@ -8,6 +8,7 @@ import Video from "../../img/icon/videored.svg";
 import { getCurriculumWithAssignments, getAllAssignmentSubmissions } from "../../api/classCurriculumApi";
 import { UsersContext } from "../../contexts/usersContext";
 import { ModalOverlay, AlertModalContainer } from "../modal/ModalStyles";
+import api from "../../api/api";
 const PlayingCurriculumSidebar = ({
   curriculumData,
   setCurriculumData,

@@ -29,6 +29,7 @@ const AssignmentBrowse = () => {
   const [allSubmissions, setAllSubmissions] = useState([]); // 모든 과제 제출
   const [openWeek, setOpenWeek] = useState(null);
   const [galleryIndexes, setGalleryIndexes] = useState({}); // {assignmentId: idx}
+  const [imageErrors, setImageErrors] = useState({});
 
   // 커리큘럼, 제출 데이터 fetch
   useEffect(() => {
@@ -138,6 +139,15 @@ const AssignmentBrowse = () => {
     navigate(`/class/${courseId}/curriculum/${curriculum[0].lectureId}`);
   };
 
+  // 이미지 로드 에러 핸들러
+  const handleImageError = (fileUrl, fileName) => {
+    console.error('Image load failed:', { fileUrl, fileName });
+    setImageErrors(prev => ({
+      ...prev,
+      [fileUrl]: true
+    }));
+  };
+
   return (
     <Container>
       <ContentWrapper>
@@ -188,7 +198,26 @@ const AssignmentBrowse = () => {
                               {imageFiles.length > 0 && (
                                 <GalleryWrapper>
                                   <GalleryArrow onClick={() => handlePrev(assignment.assignmentId, imageFiles.length)} disabled={imageFiles.length <= 1}>&lt;</GalleryArrow>
-                                  <GalleryImage src={imageFiles[galleryIdx].fileUrl} alt={imageFiles[galleryIdx].fileName} />
+                                  <GalleryImage 
+                                    src={imageFiles[galleryIdx].fileUrl} 
+                                    alt={imageFiles[galleryIdx].fileName}
+                                    onError={() => handleImageError(imageFiles[galleryIdx].fileUrl, imageFiles[galleryIdx].fileName)}
+                                    style={{ display: imageErrors[imageFiles[galleryIdx].fileUrl] ? 'none' : 'block' }}
+                                  />
+                                  {imageErrors[imageFiles[galleryIdx].fileUrl] && (
+                                    <div style={{ 
+                                      width: '100%', 
+                                      height: '100%', 
+                                      display: 'flex', 
+                                      alignItems: 'center', 
+                                      justifyContent: 'center',
+                                      background: '#f8f8f8',
+                                      borderRadius: '8px',
+                                      color: '#666'
+                                    }}>
+                                      이미지를 불러올 수 없습니다
+                                    </div>
+                                  )}
                                   <GalleryArrow onClick={() => handleNext(assignment.assignmentId, imageFiles.length)} disabled={imageFiles.length <= 1}>&gt;</GalleryArrow>
                                 </GalleryWrapper>
                               )}
@@ -275,10 +304,22 @@ const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
-  width: 70vw;
+  min-width: 0;
   padding-left: 5px;
   padding-right: 20px;
   position: relative;
+
+  @media screen and (max-width: 1440px) {
+    width: 65vw;
+  }
+
+  @media screen and (max-width: 1024px) {
+    width: 60vw;
+  }
+
+  @media screen and (max-width: 768px) {
+    width: 55vw;
+  }
 `;
 
 const MainContent = styled.div`
@@ -297,7 +338,7 @@ const SubmissionList = styled.div`
 `;
 
 const AccordionBox = styled.div`
-  margin-bottom: ${props => props.isOpen ? '0' : '18px'};
+  margin-bottom: 18px;
 `;
 
 const AccordionHeader = styled.div`
@@ -321,6 +362,8 @@ const AccordionContent = styled.div`
   padding: 24px 28px;
   background: #fff;
   border-radius: 0 0 10px 10px;
+  width: 100%;
+  box-sizing: border-box;
 `;
 const NoAssignment = styled.div`
   color: #bbb;
@@ -334,13 +377,12 @@ const SubmissionBox = styled.div`
 `;
 const SubmissionHeader = styled.div`
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: space-between;
   margin-bottom: 12px;
 `;
 const AssignmentInfo = styled.div`
   display: flex;
-  align-items: center;
   flex-direction: column;
   gap: 12px;
   h4 {
@@ -357,6 +399,7 @@ const AssignmentInfo = styled.div`
 const FileList = styled.div`
   display: flex;
   gap: 16px;
+  justify-content: center;
 `;
 const DownloadLink = styled.a`
   color: var(--main-color);
@@ -381,24 +424,54 @@ const GalleryWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
+  position: relative;
+  width: 480px;
+  height: 320px;
+
+  @media screen and (max-width: 1440px) {
+    width: 400px;
+    height: 280px;
+  }
+
+  @media screen and (max-width: 1024px) {
+    width: 320px;
+    height: 240px;
+  }
+
+  @media screen and (max-width: 768px) {
+    width: 280px;
+    height: 200px;
+  }
 `;
 const GalleryImage = styled.img`
-  max-width: 320px;
-  max-height: 220px;
+  width: 100%;
+  height: 100%;
   border-radius: 8px;
   object-fit: contain;
-  background: #f8f8f8;
+  // background: #f8f8f8;
 `;
 const GalleryArrow = styled.button`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
   background: none;
   border: none;
   color: #bbb;
   font-size: 24px;
   cursor: pointer;
   padding: 0 8px;
+  z-index: 1;
   &:disabled {
     color: #eee;
     cursor: default;
+  }
+
+  &:first-child {
+    left: -32px;
+  }
+
+  &:last-child {
+    right: -32px;
   }
 `;
 
