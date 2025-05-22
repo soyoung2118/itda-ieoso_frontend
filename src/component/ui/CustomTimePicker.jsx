@@ -101,11 +101,17 @@ const CustomTimePicker = ({
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (event.target.closest('.time-picker-container') || event.target.closest('.time-button')) {
+      if (
+        event.target.closest(".time-picker-container") ||
+        event.target.closest(".time-button")
+      ) {
         return;
       }
-      
-      if (containerRef.current && !containerRef.current.contains(event.target)) {
+
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target)
+      ) {
         setIsOpen(false);
         if (selectedTime) {
           onChange(selectedTime);
@@ -114,10 +120,10 @@ const CustomTimePicker = ({
     };
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isOpen, selectedTime, onChange]);
 

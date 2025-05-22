@@ -22,7 +22,13 @@ export default function EntryCodeModal({ entrycode, onClose }) {
           </ModalText>
           <ModalSmallText>내 강의실 코드</ModalSmallText>
           <ModalText>{entrycode}</ModalText>
-          <CloseButton onClick={() => {handleCopy(entrycode)}}>수강생 초대하기</CloseButton>
+          <CloseButton
+            onClick={() => {
+              handleCopy(entrycode);
+            }}
+          >
+            수강생 초대하기
+          </CloseButton>
         </ModalContent>
       </ModalWrapper>
     </ModalBackdrop>

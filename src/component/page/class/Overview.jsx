@@ -382,7 +382,9 @@ const ClassOverview = () => {
           <IconRow style={{ marginTop: "2rem" }}>
             <span className="material-symbols-outlined">event</span>
             <span>
-              {courseData.startDate ? formatDate(courseData.startDate) : "시작 날짜 미정"}
+              {courseData.startDate
+                ? formatDate(courseData.startDate)
+                : "시작 날짜 미정"}
             </span>
           </IconRow>
           <IconRow>
@@ -406,7 +408,7 @@ const ClassOverview = () => {
           </IconRow>
         </Section>
         <TitleContainer>
-          <Title style={{marginTop: "2rem"}}>강의 소개</Title>
+          <Title style={{ marginTop: "2rem" }}>강의 소개</Title>
           {isEditing && (
             <LimitText>{getPlainTextLength(sectionContent)} / 500자</LimitText>
           )}
@@ -439,18 +441,25 @@ const ClassOverview = () => {
 
       {isEntryCodeModalOpen && (
         <ModalOverlay>
-          <AlertModalContainer style={{alignItems: "flex-start"}}>
+          <AlertModalContainer style={{ alignItems: "flex-start" }}>
             <div className="title">강의실을 만들었어요!</div>
-            <div style={{display: "flex", alignItems: "center"}}>
-              <div className="none-bold-text" style={{marginBottom: "5px"}}>강의실 코드: </div>
-                <div className="text" style={{marginBottom: "5px"}}>{entrycode}</div>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <div className="none-bold-text" style={{ marginBottom: "5px" }}>
+                강의실 코드:{" "}
+              </div>
+              <div className="text" style={{ marginBottom: "5px" }}>
+                {entrycode}
+              </div>
             </div>
-            <div className="none-bold-text" style={{marginBottom: "20px", fontSize: "17px"}}>
-            강의실 코드는 언제든지 관리 페이지에서 확인할 수 있어요
+            <div
+              className="none-bold-text"
+              style={{ marginBottom: "20px", fontSize: "17px" }}
+            >
+              강의실 코드는 언제든지 관리 페이지에서 확인할 수 있어요
             </div>
-              <div
-                className="close-button"
-                onClick={() => setIsEntryCodeModalOpen(false)}
+            <div
+              className="close-button"
+              onClick={() => setIsEntryCodeModalOpen(false)}
             >
               확인
             </div>

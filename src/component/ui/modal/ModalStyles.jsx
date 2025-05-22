@@ -130,7 +130,7 @@ export const AlertModalContainer = styled.div`
     }
   }
 
-  .title{
+  .title {
     font-size: 30px;
     font-weight: 400;
     margin-bottom: 10px;

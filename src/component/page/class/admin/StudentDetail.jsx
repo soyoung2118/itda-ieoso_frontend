@@ -164,7 +164,7 @@ const ClassStudents = () => {
                       {submission.files.length > 0 ? (
                         submission.files.map((file, fileIdx) => {
                           const maxNameLength = 18;
-                          const dotIdx = file.fileName.lastIndexOf('.');
+                          const dotIdx = file.fileName.lastIndexOf(".");
                           let name = file.fileName;
                           if (name.length > maxNameLength) {
                             if (dotIdx > 0 && dotIdx < name.length - 1) {
@@ -172,11 +172,14 @@ const ClassStudents = () => {
                               const base = name.slice(0, 10);
                               name = `${base}...${ext}`;
                             } else {
-                              name = name.slice(0, 15) + '...';
+                              name = name.slice(0, 15) + "...";
                             }
                           }
                           return (
-                            <FileItem key={fileIdx} onClick={() => handleDownload(file)}>
+                            <FileItem
+                              key={fileIdx}
+                              onClick={() => handleDownload(file)}
+                            >
                               <img src={Download} alt="다운로드" />
                               <span className="file-name-ellipsis">{name}</span>
                             </FileItem>
@@ -621,18 +624,18 @@ const TextContent = styled.div`
   background-color: #f6f7f9;
   border-radius: 8px;
   white-space: pre-wrap;
-  max-height: 30vh; 
+  max-height: 30vh;
   overflow-y: auto;
 
   &::-webkit-scrollbar {
     width: 4px;
   }
-  
+
   &::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 2px;
   }
-  
+
   &::-webkit-scrollbar-thumb {
     background: var(--midgrey-color);
     border-radius: 2px;

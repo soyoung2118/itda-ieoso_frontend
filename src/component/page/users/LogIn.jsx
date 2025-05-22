@@ -28,20 +28,20 @@ export default function LogIn() {
       if (isAndroid()) {
         setAlertMessage(
           "구글 정책으로 인해 해당 앱 내에서는\n" +
-          "구글 로그인이 지원되지 않습니다.\n" +
-          "우측 하단 ⋮버튼을 눌러 외부 브라우저로 열어주세요."
+            "구글 로그인이 지원되지 않습니다.\n" +
+            "우측 하단 ⋮버튼을 눌러 외부 브라우저로 열어주세요.",
         );
       } else if (isIOS()) {
         setAlertMessage(
           "구글 정책으로 인해 해당 앱 내에서는\n" +
-          "구글 로그인이 지원되지 않습니다.\n" +
-          "외부 브라우저(Safari)에서 다시 접속해주세요."
+            "구글 로그인이 지원되지 않습니다.\n" +
+            "외부 브라우저(Safari)에서 다시 접속해주세요.",
         );
       } else {
         setAlertMessage(
           "구글 정책으로 인해 해당 앱 내에서는\n" +
-          "구글 로그인이 지원되지 않습니다.\n" +
-          "외부 브라우저에서 다시 접속해주세요."
+            "구글 로그인이 지원되지 않습니다.\n" +
+            "외부 브라우저에서 다시 접속해주세요.",
         );
       }
       setShowAlertModal(true);
@@ -57,15 +57,15 @@ export default function LogIn() {
 
   return (
     <>
-      <TopBar />  
+      <TopBar />
       <LoginPageLayout>
         <Container>
           <LogoImage src={logoImage} alt="logo" />
           <LogoText>로그인</LogoText>
-            <GoogleButton onClick={handleGoogleLogin} disabled={isLoading}>
+          <GoogleButton onClick={handleGoogleLogin} disabled={isLoading}>
             <GoogleIcon src={googleIcon} alt="logo" />
             {isLoading ? "처리 중..." : "Google로 계속하기"}
-            </GoogleButton>
+          </GoogleButton>
         </Container>
       </LoginPageLayout>
       {showAlertModal && (
