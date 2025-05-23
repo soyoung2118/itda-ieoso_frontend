@@ -419,7 +419,7 @@ const CurriculumSection = ({
                     {materialTruncatedText(subSection.originalFilename) ??
                       "자료 없음"}
                   </SectionTitle>
-                  <FileSize>{sub?.fileSize || ""}</FileSize>
+                  <FileSize>{subSection?.fileSize || ""}</FileSize>
                 </div>
               </MaterialSection>
             </div>
