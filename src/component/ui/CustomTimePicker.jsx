@@ -21,6 +21,7 @@ const CustomTimePicker = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const scrollViewsRef = useRef([null, null, null]);
+  const containerRef = useRef(null);
   const [selectedTime, setSelectedTime] = useState(
     value || new Date(2000, 0, 1, 0, 0, 0),
   );
@@ -97,6 +98,28 @@ const CustomTimePicker = ({
 
     requestAnimationFrame(initializeScrollPositions);
   }, [isOpen, selectedTime, currentMeridiem]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (event.target.closest('.time-picker-container') || event.target.closest('.time-button')) {
+        return;
+      }
+      
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
+        setIsOpen(false);
+        if (selectedTime) {
+          onChange(selectedTime);
+        }
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, selectedTime, onChange]);
 
   const moveOneStep = (index, direction) => {
     const scrollView = scrollViewsRef.current[index];
@@ -218,7 +241,7 @@ const CustomTimePicker = ({
   ];
 
   return (
-    <Container width={width}>
+    <Container width={width} ref={containerRef}>
       <InputDisplay onClick={() => !disabled && setIsOpen(!isOpen)}>
         <TimeText>{selectedTime ? inputTime : placeholder}</TimeText>
         <ClockIcon>
@@ -228,7 +251,7 @@ const CustomTimePicker = ({
 
       {isOpen && (
         <DropdownContainer>
-          <TimePickerContainer>
+          <TimePickerContainer className="time-picker-container">
             {timeColumns.map(({ key, items }, columnIndex) => (
               <Column key={key}>
                 <ScrollView
@@ -251,7 +274,11 @@ const CustomTimePicker = ({
                   {items.map((item) => (
                     <TimeButton
                       key={item}
-                      onClick={() => handleTimeButtonClick(columnIndex, item)}
+                      className="time-button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleTimeButtonClick(columnIndex, item);
+                      }}
                     >
                       {item}
                     </TimeButton>
@@ -277,7 +304,7 @@ const InputDisplay = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 12px;
+  padding: 10px 12px;
   border: 2px solid #c3c3c3;
   border-radius: 10px;
   background: white;

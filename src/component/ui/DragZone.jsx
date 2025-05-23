@@ -3,7 +3,7 @@ import { useDropzone } from "react-dropzone";
 import styled from "styled-components";
 import Cloud from "../img/icon/cloud.svg";
 
-const ClassAssignmentSubmit = ({ files, setFiles, maxFiles = 3 }) => {
+const ClassAssignmentSubmit = ({ files, setFiles, maxFiles = 10 }) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: (acceptedFiles) => {
       if (files.length + acceptedFiles.length > maxFiles) {

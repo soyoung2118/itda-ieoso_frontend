@@ -139,7 +139,9 @@ function WeeklyCalendar({ currentWeek, setSelectedDate, lectures, userId }) {
           }}
           isSelected={selectedDay === date.getDate()}
         >
-          <DayLabel>{days[index]}</DayLabel>
+          <DayLabel data-translate-id={`day-${days[index]}`}>
+            {days[index]}
+          </DayLabel>
           <DateNumber isSelected={selectedDay === date.getDate()}>
             {date.getDate()}
           </DateNumber>
@@ -172,7 +174,7 @@ const CalendarContainer = styled.div`
   width: 100%;
   box-sizing: border-box;
   padding: 2vh 0;
-  height: 17vh;
+  height: 14vh;
   overflow: hidden;
 `;
 

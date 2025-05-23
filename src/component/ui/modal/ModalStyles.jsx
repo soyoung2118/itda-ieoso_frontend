@@ -99,13 +99,17 @@ export const AlertModalContainer = styled.div`
     padding: 30px 60px;
   }
 
+  @media all and (max-width: 375px) {
+    padding: 20px 40px;
+  }
+
   .none-bold-text {
     font-size: 18px;
     margin-bottom: 20px;
 
     /* 모바일 세로 (해상도 ~ 479px)*/
     @media all and (max-width: 479px) {
-      font-size: 10px;
+      font-size: 12px;
       white-space: normal;
     }
   }
@@ -120,7 +124,18 @@ export const AlertModalContainer = styled.div`
       width: 100%;
       font-size: 13px;
     }
+
+    @media all and (max-width: 375px) {
+      font-size: 12px;
+    }
   }
+
+  .title{
+    font-size: 30px;
+    font-weight: 400;
+    margin-bottom: 10px;
+  }
+
   .close-button {
     background: none;
     border: none;
@@ -134,6 +149,10 @@ export const AlertModalContainer = styled.div`
     /* 모바일 세로 (해상도 ~ 479px)*/
     @media all and (max-width: 479px) {
       font-size: 14px;
+    }
+
+    @media all and (max-width: 375px) {
+      font-size: 12px;
     }
   }
 `;

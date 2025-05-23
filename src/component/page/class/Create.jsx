@@ -1,4 +1,4 @@
-import { useEffect, useState, forwardRef, useContext } from "react";
+import { useEffect, useState, forwardRef, useContext, memo } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import TopBar from "../../ui/TopBar";
@@ -10,6 +10,30 @@ import api from "../../api/api";
 import { UsersContext } from "../../contexts/usersContext";
 import { ModalOverlay, AlertModalContainer } from "../../ui/modal/ModalStyles";
 import PropTypes from "prop-types";
+
+const CustomInput = memo(
+  forwardRef(({ value, onClick }, ref) => (
+    <InputGroup onClick={onClick}>
+      <IconInput
+        ref={ref}
+        value={value}
+        placeholder="커리큘럼 시작을 설정해주세요."
+        readOnly
+        style={{ width: "230px" }}
+      />
+      <CalendarIcon>
+        <img src={Calendar} style={{ width: 18 }} alt="캘린더" />
+      </CalendarIcon>
+    </InputGroup>
+  )),
+);
+
+CustomInput.displayName = "CustomInput";
+
+CustomInput.propTypes = {
+  value: PropTypes.string.isRequired,
+  onClick: PropTypes.func.isRequired,
+};
 
 export default function Create() {
   const navigate = useNavigate();
@@ -215,28 +239,6 @@ export default function Create() {
     setInstructorInputCount(e.target.value.length);
   };
 
-  const CustomInput = forwardRef(({ value, onClick }, ref) => (
-    <InputGroup onClick={onClick}>
-      <IconInput
-        ref={ref}
-        value={value}
-        placeholder="커리큘럼 시작을 설정해주세요."
-        readOnly
-        style={{ width: "230px" }}
-      />
-      <CalendarIcon>
-        <img src={Calendar} style={{ width: 18 }} alt="캘린더" />
-      </CalendarIcon>
-    </InputGroup>
-  ));
-
-  CustomInput.displayName = "CustomInput";
-
-  CustomInput.propTypes = {
-    value: PropTypes.string.isRequired,
-    onClick: PropTypes.func.isRequired,
-  };
-
   return (
     <>
       <TopBar />
@@ -309,7 +311,7 @@ export default function Create() {
                     startDate: date,
                   }));
                 }}
-                minDate={new Date()}
+                //minDate={new Date()}
                 customInput={<CustomInput />}
                 dateFormat="yyyy-MM-dd"
                 popperProps={{
@@ -342,19 +344,26 @@ export default function Create() {
             </FormItem>
 
             <FormItem>
-              <Label>강의 업로드 일시</Label>
+              <Label>
+                강의 업로드 일시
+                <Required>*</Required>
+              </Label>
               <TimeGroup>
                 <DayButtonGroup>
                   {timeSlots.map((day) => (
                     <DayButton
                       key={day}
+                      data-translate-id={`day-${day}`} // 번역
                       active={
                         !isLecturePending &&
                         form.lectureDays.includes(timeSlots.indexOf(day) + 1)
                       }
-                      onClick={() =>
-                        !isLecturePending && handleDaySelect("lecture", day)
-                      }
+                      onClick={() => {
+                        if (isLecturePending) {
+                          setIsLecturePending(false);
+                        }
+                        handleDaySelect("lecture", day);
+                      }}
                     >
                       {day}
                     </DayButton>
@@ -405,8 +414,7 @@ export default function Create() {
                         }
                       }}
                     >
-                      {!isLecturePending && "정해지지 않았어요"}
-                      {isLecturePending && "설정 되었어요!"}
+                      정해지지 않았어요
                     </RadioButton>
                   </TimePickerWrapper>
                   {form.lectureTime && !isLecturePending && (
@@ -419,20 +427,26 @@ export default function Create() {
             </FormItem>
 
             <FormItem>
-              <Label>과제 마감 일시</Label>
+              <Label>
+                과제 마감 일시
+                <Required>*</Required>
+              </Label>
               <TimeGroup>
                 <DayButtonGroup>
                   {timeSlots.map((day) => (
                     <DayButton
                       key={day}
+                      data-translate-id={`day-${day}`} // 번역
                       active={
                         !isAssignmentPending &&
                         form.assignmentDays.includes(timeSlots.indexOf(day) + 1)
                       }
-                      onClick={() =>
-                        !isAssignmentPending &&
-                        handleDaySelect("assignment", day)
-                      }
+                      onClick={() => {
+                        if (isAssignmentPending) {
+                          setIsAssignmentPending(false);
+                        }
+                        handleDaySelect("assignment", day);
+                      }}
                     >
                       {day}
                     </DayButton>
@@ -485,8 +499,7 @@ export default function Create() {
                         }
                       }}
                     >
-                      {!isAssignmentPending && "정해지지 않았어요"}
-                      {isAssignmentPending && "설정 되었어요!"}
+                      정해지지 않았어요
                     </RadioButton>
                   </TimePickerWrapper>
                   {form.assignmentTime && !isAssignmentPending && (
@@ -598,12 +611,12 @@ const ButtonGroup = styled.div`
 `;
 
 const RadioButton = styled.button`
-  padding: 10px 20px;
+  padding: 12px 20px;
   margin-left: 5px;
   border: none;
   border-radius: 10px;
   font-size: 15px;
-  background-color: ${(props) => (props.active ? "#F6F6F6" : "#FF4747")};
+  background-color: ${(props) => (props.active ? "#EEEEEE" : "#FF4747")};
   color: ${(props) => (props.active ? "#909090" : "#FFFFFF")};
   width: 149px;
 
@@ -619,7 +632,7 @@ const LevelButton = styled.button`
   background-color: ${(props) => (props.active ? "#FF4747" : "#EEEEEE ")};
   color: ${(props) => (props.active ? "#FFFFFF" : "#909090")};
   width: 80px;
-  padding: 8px 0px;
+  padding: 10px 0px;
   border: none;
   cursor: pointer;
   margin-bottom: 8px;
@@ -629,19 +642,19 @@ const CreateButton = styled.button`
   border: none;
   cursor: pointer;
   width: 100%;
-  padding: 10px 0;
+  padding: 12px 0;
   background-color: #ff4747;
   color: white;
   font-size: 17px;
-  font-weight: 500;
+  font-weight: 400;
   border-radius: 10px;
 `;
 
 const Container = styled.div`
-  margin: 41px 27vw;
+  margin: 2rem 27vw;
   border-radius: 20px;
-  @media (max-width: 800px) {
-    margin: 41px 10vw;
+  @media (max-width: 1024px) {
+    margin: 2rem 10vw;
   }
 `;
 
@@ -695,7 +708,7 @@ const FormInput = styled.input`
   width: 100%;
   box-sizing: border-box;
   font-size: 13px;
-  padding: 8px 12px;
+  padding: 10px 12px;
   border: 2px solid #c3c3c3;
   border-radius: 10px;
 `;
@@ -703,7 +716,7 @@ const FormInput = styled.input`
 const IconInput = styled.input`
   box-sizing: border-box;
   font-size: 13px;
-  padding: 8px 32px 8px 12px;
+  padding: 10px 32px 10px 12px;
   border: 2px solid #c3c3c3;
   border-radius: 10px;
 `;
@@ -736,7 +749,9 @@ const DayButtonGroup = styled.div`
   margin-right: 10px;
 `;
 
-const DayButton = styled.button`
+const DayButton = styled.button.attrs((props) => ({
+  "data-translate-id": props["data-translate-id"],
+}))`
   width: 2rem;
   height: 2rem;
   border-radius: 9999px;
@@ -744,7 +759,9 @@ const DayButton = styled.button`
   align-items: center;
   justify-content: center;
   border: none;
-  background-color: ${(props) => (props.active ? "#FF4747" : "#D9D9D9")};
+  cursor: pointer;
+  font-size: 16px;
+  background-color: ${(props) => (props.active ? "#FF4747" : "#EEEEEE")};
   color: ${(props) => (props.active ? "#FFFFFF" : "#909090")};
 `;
 
@@ -766,7 +783,7 @@ const TimePickerWrapper = styled.div`
   margin-right: 20px;
   display: flex;
   align-items: center;
-  position: relative;
+  position: static;
 
   @media (max-width: 900px) {
     margin-right: 0px;

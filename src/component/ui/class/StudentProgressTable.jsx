@@ -4,6 +4,7 @@ import Profile from "../../img/class/profile.svg";
 import Done from "../../img/class/check/progress_done.svg";
 import Undone from "../../img/class/check/progress_undone.svg";
 import LateSubmission from "../../img/class/check/late_submission.svg";
+import { useNavigate, useParams } from "react-router-dom";
 
 const ScrollableTableContainer = styled.div`
   width: 100%;
@@ -202,8 +203,9 @@ const StudentProgressTable = ({ assignments }) => {
     assignment.studentStatuses.forEach((student) => {
       if (!studentsMap.has(student.userId)) {
         studentsMap.set(student.userId, {
+          userId: student.userId,
           name: student.studentName,
-          profile: Profile, // 기본 프로필 이미지 사용
+          profile: Profile,
           submissions: [],
         });
       }
@@ -217,6 +219,8 @@ const StudentProgressTable = ({ assignments }) => {
   const isDragging = useRef(false); // 드래그 상태 추적
   const startX = useRef(0);
   const scrollLeft = useRef(0);
+  const navigate = useNavigate();
+  const { courseId } = useParams();
 
   const handleScroll = () => {
     const scrollWidth =
@@ -297,19 +301,19 @@ const StudentProgressTable = ({ assignments }) => {
             {students.map((student, index) => (
               <tr key={index}>
                 <td>
-                  <ProfileContainer>
+                  <ProfileContainer
+                    onClick={() =>
+                      navigate(
+                        `/class/${courseId}/admin/students/${student.userId}`,
+                      )
+                    }
+                    style={{ cursor: "pointer" }}
+                  >
                     <ProfileImage src={student.profile} alt="프로필" />
                     {student.name}
                   </ProfileContainer>
                 </td>
-                {/* {student.submissions.map((submitted, idx) => (
-                  <td key={idx}>
-                    <CheckMarkIcon
-                      src={submitted ? Done : Undone}
-                      alt={submitted ? "제출 완료" : "미제출"}
-                    />
-                  </td>
-                ))} */}
+
                 {student.submissions.map((status, idx) => {
                   let iconSrc;
                   if (status === "SUBMITTED") {

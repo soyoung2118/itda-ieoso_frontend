@@ -4,33 +4,33 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 import Container from "../Container";
 import StarIcon from "@mui/icons-material/Star";
-import { getMyCoursesTitles } from "../../api/classApi";
 import { UsersContext } from "../../contexts/usersContext";
+import { formatMyCoursesTitles } from "../../api/classApi";
 
 const Navbar = styled.div`
   background-color: var(--white-color);
-  padding: 0.5rem 1.3rem;
+  padding: 0.5rem 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-radius: 15px;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   flex-direction: row;
 
   @media (max-width: 1024px) {
-    font-size: 1.3rem;
-  }
-
-  @media (max-width: 768px) {
     font-size: 1.2rem;
   }
 
-  @media (max-width: 480px) {
+  @media (max-width: 768px) {
     font-size: 1.1rem;
   }
 
+  @media (max-width: 480px) {
+    font-size: 1.0rem;
+  }
+
   @media all and (max-width: 479px) {
-    font-size: 20px;
+    font-size: 1.0rem;
     flex-direction: column;
     align-items: flex-start;
   }
@@ -38,7 +38,7 @@ const Navbar = styled.div`
 
 const VerticalLine = styled.div`
   width: 1px;
-  height: 3.4rem;
+  height: 3rem;
   background-color: #cdcdcd;
 `;
 
@@ -46,27 +46,29 @@ const ClassTitleContainer = styled.div`
   display: flex;
   align-items: center;
   cursor: pointer;
-  gap: 0.5rem;
+  gap: 0.3rem;
 
   .course-title {
-    font-size: 1.3rem;
+    font-size: 20px;
     font-weight: bold;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    max-width: 28ch;
 
     @media (max-width: 1024px) {
-      max-width: 11ch;
+      max-width: 18ch;
+      font-size: 18px;
     }
 
     @media (max-width: 768px) {
-      max-width: 10ch;
-      font-size: 18px;
+      max-width: 12ch;
+      font-size: 15px;
     }
 
     @media all and (max-width: 479px) {
-      max-width: 10ch;
-      font-size: 18px;
+      max-width: 12ch;
+      font-size: 15px;
     }
   }
 `;
@@ -94,9 +96,10 @@ const DropdownButton = styled.div`
   cursor: pointer;
   background-color: var(--white-color);
   border-radius: 8px;
-  font-weight: bold;
+  font-weight: 500;
   color: var(--black-color);
   white-space: nowrap;
+  font-size: 1rem;
 `;
 
 const DropdownMenu = styled.div`
@@ -148,12 +151,16 @@ const TabLinkContainer = styled.div`
   justify-content: flex-end;
   white-space: nowrap;
 
+  &.disabled {
+    pointer-events: none;
+  }
+
   @media (max-width: 1024px) {
-    gap: 1rem;
+    gap: 0.5rem;
   }
 
   @media (max-width: 768px) {
-    gap: 0.5rem;
+    gap: 0.2rem;
   }
 
   @media all and (max-width: 479px) {
@@ -168,13 +175,14 @@ const TabLink = styled(NavLink)`
   padding: 5px 10px;
   text-decoration: none;
   color: var(--darkgrey-color);
-  font-weight: bold;
+  font-weight: 500;
   position: relative;
 
   &.active {
     color: var(--black-color);
-    border-bottom: 3px solid var(--black-color);
+    border-bottom: 3px solid var(--main-color);
     margin-bottom: -18px;
+    font-weight: 700;
 
     @media all and (max-width: 479px) {
       margin-bottom: -5px;
@@ -183,9 +191,13 @@ const TabLink = styled(NavLink)`
 
   /* 화면이 768px보다 작아지면 고정 너비 해제 + 최소 너비만 지정 */
   @media (max-width: 768px) {
-    font-size: 18px;
+    font-size: 17px;
     &.active {
       margin-bottom: -21px;
+
+      @media all and (max-width: 767px) {
+        margin-bottom: -18px;
+      }
 
       @media all and (max-width: 479px) {
         margin-bottom: -10px;
@@ -193,8 +205,8 @@ const TabLink = styled(NavLink)`
     }
   }
 
-  @media all and (max-width: 479px) {
-    font-size: 16px;
+  @media all and (max-width: 767px) {
+    font-size: 15px;
     width: 40%;
   }
 `;
@@ -216,7 +228,7 @@ const RightContainer = styled.div`
   }
 `;
 
-const ClassTopbar = ({ onCourseChange, isCreator }) => {
+const ClassTopbar = ({ onCourseChange, isCreator, myCourses }) => {
   const { user } = useContext(UsersContext);
   const { courseId, lectureId } = useParams();
   const location = useLocation();
@@ -228,21 +240,21 @@ const ClassTopbar = ({ onCourseChange, isCreator }) => {
   const tabRef = useRef(null);
   const dropdownRef = useRef(null);
   const iconRef = useRef(null);
+  const isEditPage = location.pathname.includes("edit");
 
   useEffect(() => {
-    const fetchClasses = async () => {
-      if (!user?.userId) return;
-      const courses = await getMyCoursesTitles(user.userId);
-      setClassOptions(courses);
+    if (!user?.userId) return;
 
-      const foundCourse = courses.find(
+    // myCourses가 props로 전달되었다면 API 호출하지 않음
+    if (myCourses) {
+      const formattedCourses = formatMyCoursesTitles(myCourses, user.userId);
+      setClassOptions(formattedCourses);
+      const current = formattedCourses.find(
         (course) => String(course.courseId) === String(courseId),
       );
-      setCurrentCourse(foundCourse || null);
-    };
-
-    fetchClasses();
-  }, [user?.userId, courseId]);
+      setCurrentCourse(current);
+    }
+  }, [user?.userId, courseId, myCourses]);
 
   useEffect(() => {
     const checkScrollable = () => {
@@ -301,7 +313,7 @@ const ClassTopbar = ({ onCourseChange, isCreator }) => {
         >
           <span
             className="material-symbols-outlined"
-            style={{ fontSize: "1.8rem", cursor: "pointer" }}
+            style={{ fontSize: "1.5rem", cursor: "pointer" }}
             onClick={() => navigate("/class/list")}
           >
             home
@@ -342,7 +354,7 @@ const ClassTopbar = ({ onCourseChange, isCreator }) => {
       <RightContainer>
         <TabLinkContainer
           ref={tabRef}
-          className={isScrollable ? "scrolling" : ""}
+          className={`${isScrollable ? "scrolling" : ""} ${isEditPage ? "disabled" : ""}`}
         >
           <TabLink
             to={`/class/${courseId}/overview/info`}
@@ -379,6 +391,7 @@ const ClassTopbar = ({ onCourseChange, isCreator }) => {
 ClassTopbar.propTypes = {
   onCourseChange: PropTypes.func.isRequired,
   isCreator: PropTypes.bool.isRequired,
+  myCourses: PropTypes.array,
 };
 
 export default ClassTopbar;
