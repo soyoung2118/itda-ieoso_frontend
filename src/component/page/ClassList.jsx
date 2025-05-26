@@ -182,19 +182,21 @@ export default function Class() {
                       </IconRow>
                     </LectureDetail>
                   </LectureInfo>
-                  <DeleteIconWrapper
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedCourseId(lecture.courseId);
-                      setShowDeleteModal(true);
-                    }}
-                  >
-                    <img
-                      src={DeleteIcon}
-                      alt="Delete Icon"
-                      style={{ width: "30px", height: "30px" }}
-                    />
-                  </DeleteIconWrapper>
+                  {lecture.user.userId !== user.userId && (
+                    <DeleteIconWrapper
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedCourseId(lecture.courseId);
+                        setShowDeleteModal(true);
+                      }}
+                    >
+                      <img
+                        src={DeleteIcon}
+                        alt="Delete Icon"
+                        style={{ width: "30px", height: "30px" }}
+                      />
+                    </DeleteIconWrapper>
+                  )}
                 </LectureCard>
               ))
             )}
