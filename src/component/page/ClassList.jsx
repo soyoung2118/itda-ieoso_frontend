@@ -452,7 +452,7 @@ const AddButton = styled.button`
 
 const PopupMenu = styled.div`
   position: fixed;
-  bottom: 10vh;
+  bottom: 20vh;
   right: 12vw;
   background-color: #fff;
   border-radius: 20px;
