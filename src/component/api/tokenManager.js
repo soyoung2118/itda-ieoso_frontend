@@ -22,7 +22,7 @@ const addRefreshSubscriber = (callback) => {
 };
 
 // 토큰 에러 이벤트 발생
-const dispatchTokenError = (errorMessage) => {
+export const dispatchTokenError = (errorMessage) => {
   const event = new CustomEvent("tokenError", {
     detail: {
       type: "token_error",
