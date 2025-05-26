@@ -5,7 +5,10 @@ import { getUsersInfo } from "../../api/usersApi";
 import { UsersContext } from "../../contexts/usersContext";
 import { useContext } from "react";
 import styled from "styled-components";
-import { setSessionExpiration, startTokenRefreshTimer } from "../../api/tokenManager";
+import {
+  setSessionExpiration,
+  startTokenRefreshTimer,
+} from "../../api/tokenManager";
 
 const LoadingContainer = styled.div`
   display: flex;

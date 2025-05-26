@@ -27,7 +27,7 @@ const NoticeContainer = styled.div`
   flex: 1;
   border-radius: 8px;
   width: 100%;
-  
+
   @media all and (max-width: 479px) {
     justify-content: center;
     padding: 0vh;

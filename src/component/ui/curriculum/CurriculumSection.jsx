@@ -19,7 +19,6 @@ const Section = styled.div`
   position: relative;
   cursor: pointer;
   width: 97.5%;
-  
 
   @media (max-width: 1024px) {
     padding: 1.35vh 1.55vh;
@@ -399,7 +398,14 @@ const CurriculumSection = ({
           )}
 
           {subSection.contentType === "material" && (
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem", width: "100%" }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "1rem",
+                width: "100%",
+              }}
+            >
               <MaterialIcon src={Material} />
               <MaterialSection>
                 <div
@@ -409,17 +415,25 @@ const CurriculumSection = ({
                     gap: "0.5vh",
                   }}
                 >
-                <SectionTitle>
-                  {materialTruncatedText(subSection.originalFilename) ?? "자료 없음"}
-                </SectionTitle>
-                <FileSize>{subSection?.fileSize || ""}</FileSize>
+                  <SectionTitle>
+                    {materialTruncatedText(subSection.originalFilename) ??
+                      "자료 없음"}
+                  </SectionTitle>
+                  <FileSize>{subSection?.fileSize || ""}</FileSize>
                 </div>
               </MaterialSection>
             </div>
           )}
 
           {subSection.contentType === "assignment" && (
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem", width: "100%" }}>  
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "1rem",
+                width: "100%",
+              }}
+            >
               <MaterialIcon src={Assignment} alt="assignment icon" />
               <MaterialSection
                 style={{

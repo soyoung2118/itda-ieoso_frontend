@@ -67,7 +67,7 @@ const SemiBold = styled.span`
 const HeavyBold = styled.span`
   font-weight: 900;
   letter-spacing: 0.15rem;
-  
+
   @media all and (max-width: 479px) {
     letter-spacing: 0.1rem;
   }
@@ -534,7 +534,11 @@ export default function LandingPage() {
         <ExplainContainer>
           <ResponsiveText>쉬운 온라인 강의실 운영,</ResponsiveText>
           <ResponsiveHeading>
-            지금 <HeavyBold><Highlight>‘itda’</Highlight>에서 시작</HeavyBold>하세요!
+            지금{" "}
+            <HeavyBold>
+              <Highlight>‘itda’</Highlight>에서 시작
+            </HeavyBold>
+            하세요!
           </ResponsiveHeading>
           <ResponsiveDescription>
             <SemiBold>3분만에</SemiBold> 강의실 개설,
@@ -563,40 +567,40 @@ export default function LandingPage() {
         </Features>
 
         <MarginContainer>
-        <BaseContainer>
+          <BaseContainer>
+            <ExplainBottomImage
+              src={explain1}
+              alt="itda logo"
+              style={{ width: "100%", margin: "20px 0px" }}
+            />
+          </BaseContainer>
           <ExplainBottomImage
-            src={explain1}
+            src={explain2}
             alt="itda logo"
-            style={{ width: "100%", margin: "20px 0px" }}
+            style={{ width: "100%" }}
           />
-        </BaseContainer>
-        <ExplainBottomImage
-          src={explain2}
-          alt="itda logo"
-          style={{ width: "100%"}}
-        />
-        <BaseContainer>
-          {renderActionButtons(navigate, isLoggedIn)}
-          <AppDownloadContainer>
-            <AppLogo src={itdalogoRed} alt="itda logo" />
-            <div>
-              <AppDescription>
-                학습자와 교육자 모두가 선택하는 최상의 교육플랫폼,{" "}
-                <Highlight>itda</Highlight>
-              </AppDescription>
-              <AppDownloadLinks>
-                <AppDownloadLink href="#">
-                  <img src={googlePlay} alt="Google Play" />
-                  <span>Google Play</span>
-                </AppDownloadLink>
-                <AppDownloadLink href="#">
-                  <img src={appStore} alt="App Store" />
-                  <span>App Store</span>
-                </AppDownloadLink>
-              </AppDownloadLinks>
-            </div>
-          </AppDownloadContainer>
-        </BaseContainer>
+          <BaseContainer>
+            {renderActionButtons(navigate, isLoggedIn)}
+            <AppDownloadContainer>
+              <AppLogo src={itdalogoRed} alt="itda logo" />
+              <div>
+                <AppDescription>
+                  학습자와 교육자 모두가 선택하는 최상의 교육플랫폼,{" "}
+                  <Highlight>itda</Highlight>
+                </AppDescription>
+                <AppDownloadLinks>
+                  <AppDownloadLink href="#">
+                    <img src={googlePlay} alt="Google Play" />
+                    <span>Google Play</span>
+                  </AppDownloadLink>
+                  <AppDownloadLink href="#">
+                    <img src={appStore} alt="App Store" />
+                    <span>App Store</span>
+                  </AppDownloadLink>
+                </AppDownloadLinks>
+              </div>
+            </AppDownloadContainer>
+          </BaseContainer>
         </MarginContainer>
         <hr
           style={{
@@ -632,7 +636,6 @@ export default function LandingPage() {
             </FooterInfoContainer>
           </FooterSection>
         </Footer>
-        
       </MainContainer>
       {loginModalOpen && (
         <ModalOverlay>
