@@ -60,19 +60,17 @@ export default function Participate() {
           <Form>
             <Label>강의실 입장코드</Label>
             <EntryCodeContainer>
-            <EntryCodeInput
-              type="text"
-              placeholder="코드를 입력해주세요."
-              onChange={(e) => setCode(e.target.value)}
-              value={code}
-            />
+              <EntryCodeInput
+                type="text"
+                placeholder="코드를 입력해주세요."
+                onChange={(e) => setCode(e.target.value)}
+                value={code}
+              />
 
-            <EntryCodeButton
-              onClick={handleParticipate}
-            >
-              강의실 입장하기
+              <EntryCodeButton onClick={handleParticipate}>
+                강의실 입장하기
               </EntryCodeButton>
-            </EntryCodeContainer> 
+            </EntryCodeContainer>
           </Form>
         </Container>
       </Layout>
@@ -88,7 +86,7 @@ export default function Participate() {
       )}
     </Wrapper>
   );
-} 
+}
 
 const Wrapper = styled.div`
   display: flex;
@@ -119,7 +117,6 @@ const Container = styled.div`
   justify-content: center;
   padding-bottom: 10vh;
 `;
-
 
 export const Logo = styled.div`
   font-size: 24px;
@@ -158,7 +155,6 @@ const Label = styled.label`
   font-size: 1.2rem;
   font-weight: 600;
 `;
-
 
 const EntryCodeContainer = styled.div`
   display: flex;

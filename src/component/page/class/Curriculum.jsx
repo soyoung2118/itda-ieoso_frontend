@@ -75,7 +75,7 @@ const LectureTitle = styled.h1`
   @media (max-width: 1024px) {
     font-size: 24px;
   }
-    
+
   @media (max-width: 768px) {
     font-size: 21px;
   }
@@ -818,7 +818,7 @@ const Curriculum = () => {
                   <VideoInformation>
                     <CurriculumTitle>{sub.title}</CurriculumTitle>
                     <VideoDetails>
-                      <div style={{whiteSpace: 'nowrap'}}>
+                      <div style={{ whiteSpace: "nowrap" }}>
                         <span>{activeLecture.instructorName}</span>
                         <BlackLine />
                       </div>

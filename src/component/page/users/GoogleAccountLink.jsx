@@ -5,7 +5,10 @@ import { getUsersInfo } from "../../api/usersApi";
 import { UsersContext } from "../../contexts/usersContext";
 import { useContext } from "react";
 import styled from "styled-components";
-import { setSessionExpiration, startTokenRefreshTimer } from "../../api/tokenManager";
+import {
+  setSessionExpiration,
+  startTokenRefreshTimer,
+} from "../../api/tokenManager";
 
 const LoadingContainer = styled.div`
   display: flex;
@@ -116,7 +119,7 @@ export default function GoogleAccountLink() {
 
               // 세션 만료 시간 설정 (2주)
               setSessionExpiration();
-              
+
               // 토큰 갱신 타이머 시작
               startTokenRefreshTimer();
             } else {

@@ -21,7 +21,6 @@ export default function TopBar() {
     setShowUsersInfoContainer((prev) => !prev); // 드롭다운 토글
   };
 
-
   return (
     <Wrapper>
       <Logo
@@ -31,75 +30,75 @@ export default function TopBar() {
       />
       <Header>
         {location.pathname !== "/login" && (
-            <div className="header-right">
-              <div className="language-switcher">
-                <TranslateIcon src={Translate} />
-                <span
-                  className={
-                    targetLang === "ko" ? "lang-active" : "lang-inactive"
-                  }
-                  onClick={() => {
-                    if (targetLang !== "ko") setTargetLang("ko");
-                  }}
-                >
-                  KR
-                </span>
-                <div className="divider">|</div>
-                <span
-                  className={
-                    targetLang === "en" ? "lang-active" : "lang-inactive"
-                  }
-                  onClick={() => {
-                    if (targetLang !== "en") setTargetLang("en");
-                  }}
-                >
-                  EN
-                </span>
-              </div>
-              {isUser ? (
-                <UserContainer>
-                  {location.pathname === "/dashboard" ? (
-                    <button
-                      className="navigate-button"
-                      onClick={() => navigate("/class/list")}
+          <div className="header-right">
+            <div className="language-switcher">
+              <TranslateIcon src={Translate} />
+              <span
+                className={
+                  targetLang === "ko" ? "lang-active" : "lang-inactive"
+                }
+                onClick={() => {
+                  if (targetLang !== "ko") setTargetLang("ko");
+                }}
+              >
+                KR
+              </span>
+              <div className="divider">|</div>
+              <span
+                className={
+                  targetLang === "en" ? "lang-active" : "lang-inactive"
+                }
+                onClick={() => {
+                  if (targetLang !== "en") setTargetLang("en");
+                }}
+              >
+                EN
+              </span>
+            </div>
+            {isUser ? (
+              <UserContainer>
+                {location.pathname === "/dashboard" ? (
+                  <button
+                    className="navigate-button"
+                    onClick={() => navigate("/class/list")}
                   >
                     <span className="dashboard-text">강의실 입장하기</span>
                     <span className="mobile-dashboard-text">강의실</span>
-                    </button>
-                  ) : (
-                    <>
-                      <button
-                        className="navigate-button"
-                        onClick={() => navigate("/dashboard")}
-                      >
-                        <span className="dashboard-text">대시보드로 가기</span>
-                        <span className="mobile-dashboard-text">대시보드</span>
-                      </button>
-                    </>
-                  )}
-                  <UserIcon
-                    src={userIcon}
-                    alt="user icon"
-                    onClick={handleUserIconClick}
-                  />
-                  {showUsersInfoContainer && (
-                    <UsersInfoContainer
-                      setShowUsersInfoContainer={setShowUsersInfoContainer}
-                    />
-                  )}
-                </UserContainer>
-              ) : (
-                <>
-                  <button className="login" onClick={() => navigate("/login")}>
-                    로그인
                   </button>
-                  <UserContainer>
-                    <UserIcon src={userIcon} alt="user icon" />
-                  </UserContainer>
-                </>
-              )}
-            </div>
-          )}
+                ) : (
+                  <>
+                    <button
+                      className="navigate-button"
+                      onClick={() => navigate("/dashboard")}
+                    >
+                      <span className="dashboard-text">대시보드로 가기</span>
+                      <span className="mobile-dashboard-text">대시보드</span>
+                    </button>
+                  </>
+                )}
+                <UserIcon
+                  src={userIcon}
+                  alt="user icon"
+                  onClick={handleUserIconClick}
+                />
+                {showUsersInfoContainer && (
+                  <UsersInfoContainer
+                    setShowUsersInfoContainer={setShowUsersInfoContainer}
+                  />
+                )}
+              </UserContainer>
+            ) : (
+              <>
+                <button className="login" onClick={() => navigate("/login")}>
+                  로그인
+                </button>
+                <UserContainer>
+                  <UserIcon src={userIcon} alt="user icon" />
+                </UserContainer>
+              </>
+            )}
+          </div>
+        )}
       </Header>
     </Wrapper>
   );
