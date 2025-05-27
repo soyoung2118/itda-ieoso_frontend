@@ -242,7 +242,7 @@ const PlayingCurriculumSidebar = ({
   };
 
   return (
-    <>
+    <SidebarWrapper>
       <MenuTitle>커리큘럼</MenuTitle>
       <RightContainer>
         <CurriculumList>
@@ -403,9 +403,23 @@ const PlayingCurriculumSidebar = ({
           </AlertModalContainer>
         </ModalOverlay>
       )}
-    </>
+    </SidebarWrapper>
   );
 };
+
+const SidebarWrapper = styled.div`
+  width: 20vw;
+  background: #fff;
+  height: 70vh;
+  border-radius: 20px;
+  padding: 25px 20px;
+  overflow-y: scroll;
+
+  @media (max-width: 376px) {
+    width: 80%;
+    height: 100%;
+  }
+`;
 
 const MenuTitle = styled.div`
   display: flex;
