@@ -1,13 +1,48 @@
 import React from "react";
-// (예시) import { getCurriculumWithAssignments, getAllAssignmentSubmissions } from "../../api/classCurriculumApi";
+import { useContext, useEffect, useState } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 
 export default function AssignmentBrowseSidebar({ students, selectedId, onSelect }) {
+  const [activeMenu, setActiveMenu] = useState("browse");
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { courseId, lectureId } = useParams();
+
+  useEffect(() => {
+    if (location.pathname.includes("/assignment/browse")) {
+      setActiveMenu("browse");
+    } else {
+      setActiveMenu("curriculum");
+    }
+  }, [location.pathname]);
+
+  const handleMenuClick = (menu) => {
+    setActiveMenu(menu);
+    if (menu === "browse") {
+      navigate(`/class/${courseId}/assignment/browse/${lectureId}`);
+    } else {
+      if (location.pathname.includes("/assignment/browse")) {
+        navigate(`/class/${courseId}/assignment/submit/${lectureId}/`);
+      }
+    }
+  };
+
   return (
     <SidebarWrapper>
-      <MenuHeader>
-        <div>다른 수강생 과제 둘러보기</div>
-        <DropdownIcon>▼</DropdownIcon>
-      </MenuHeader>
+      <MenuContainer>
+        <MenuItem 
+          active={activeMenu === "curriculum"} 
+          //onClick={() => handleMenuClick("curriculum")}
+        >
+          커리큘럼
+        </MenuItem>
+        <MenuItem 
+          active={activeMenu === "browse"} 
+          onClick={() => handleMenuClick("browse")}
+        >
+          수강생 과제 보기
+        </MenuItem>
+      </MenuContainer>
       <StudentList>
         {students.map((student) => (
           <StudentItem
@@ -33,6 +68,68 @@ const SidebarWrapper = styled.div`
   height: 70vh;
   border-radius: 20px;
   padding: 25px 20px;
+`;
+
+const MenuContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  width: 90%;
+  margin: 0 auto;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #E5E5E5;
+  background: #fff;
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 5px;
+    border-bottom: none;
+    width: 100%;
+  }
+`;
+
+
+const MenuItem = styled.div`
+  position: relative;
+  font-size: 18px;
+  width: 80%;
+  font-weight: ${props => props.active ? '600' : '400'};
+  color: ${props => props.active ? '#222' : '#C3C3C3'};
+  padding: 13px 0px;
+  cursor: pointer;
+  white-space: nowrap;
+  background: transparent;
+  transition: color 0.2s;
+
+  &::after {
+    content: '';
+    display: ${props => props.active ? 'block' : 'none'};
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: var(--main-color, #FF4747);
+    border-radius: 2px;
+  }
+
+  @media (max-width: 1024px) {
+    border-bottom: 1px solid #E5E5E5;
+    border-right: none;
+    &::after {
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 2px;
+    }
+  }
+
+  @media (max-width: 1023px) {
+    font-size: 16px;
+    margin: 0 10px;
+  }
 `;
 
 const MenuHeader = styled.div`

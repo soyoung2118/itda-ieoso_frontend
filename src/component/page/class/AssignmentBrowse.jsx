@@ -311,7 +311,7 @@ const AssignmentBrowse = () => {
                                   <span className="submission-date">{formatSubmissionDate(submission.submittedAt)}</span>
                                 )}
                               </AssignmentInfo>
-                              <FileList>
+                              <FileList style={{display: 'flex', flexDirection: 'column', gap: '5px' }}>
                                 {/* 이미지 갤러리 */}
                                 {imageFiles.length > 0 && (
                                   <GalleryWrapper>
@@ -356,18 +356,18 @@ const AssignmentBrowse = () => {
                                     >
                                       <img src={rightButtonImg} alt="다음" style={{ width: 24, height: 24 }} />
                                     </GalleryArrow>
-                                    {/* 하단 dot 네비게이션 */}
-                                    <GalleryDots>
-                                      {imageFiles.map((_, idx) => (
-                                        <Dot
-                                          key={idx}
-                                          active={galleryIdx === idx}
-                                          onClick={() => handleDotClick(assignment.assignmentId, idx)}
-                                        />
-                                      ))}
-                                    </GalleryDots>
                                   </GalleryWrapper>
                                 )}
+                                {/* 하단 dot 네비게이션 */}
+                                <GalleryDots>
+                                  {imageFiles.map((_, idx) => (
+                                    <Dot
+                                      key={idx}
+                                      active={galleryIdx === idx}
+                                      onClick={() => handleDotClick(assignment.assignmentId, idx)}
+                                    />
+                                  ))}
+                                </GalleryDots>
                               </FileList>
                               {/* PDF 파일 빨간 글씨로 목록화 */}
                               {pdfFiles.length > 0 && (
@@ -388,7 +388,7 @@ const AssignmentBrowse = () => {
                                 ))}
                                 {/* 미제출 안내 */}
                                 {(!submission || ((submission.files?.length ?? 0) === 0 && (!submission.textContent || submission.textContent === "null"))) && (
-                                  <NotSubmittedText>미제출</NotSubmittedText>
+                                  <ReadThinText>미제출</ReadThinText>
                                 )}
                               </FileList>
                             </SubmissionHeader>
@@ -569,6 +569,12 @@ const DownloadLink = styled.a`
   }
 `;
 
+const ReadThinText = styled.div`
+  font-size: 14px;
+  font-weight: 400;
+  color: #FF4747;
+`;
+
 const TextContent = styled.div`
   font-size: 14px;
   line-height: 1.6;
@@ -586,25 +592,13 @@ const GalleryWrapper = styled.div`
   justify-content: center;
   gap: 8px;
   position: relative;
-  width: 580px;
-  height: 320px;
+  width: 100%;
+  height: 360px;
   background: #F6F7F9;
   border-radius: 16px;
   box-shadow: 0 2px 16px rgba(0,0,0,0.08);
-  margin: 0 auto 16px auto;
-  flex-direction: column;
-  @media screen and (max-width: 1440px) {
-    width: 500px;
-    height: 380px;
-  }
-  @media screen and (max-width: 1024px) {
-    width: 420px;
-    height: 340px;
-  }
-  @media screen and (max-width: 768px) {
-    width: 380px;
-    height: 300px;
-  }
+  margin: 0 auto 8px auto;
+  overflow: hidden;
 `;
 
 const GalleryImage = styled.img`
@@ -613,6 +607,8 @@ const GalleryImage = styled.img`
   border-radius: 12px;
   object-fit: contain;
   box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+  display: block;
+  margin: auto;
 `;
 
 const GalleryArrow = styled.button`
@@ -632,8 +628,8 @@ const GalleryArrow = styled.button`
   justify-content: center;
   z-index: 2;
   transition: background 0.2s, color 0.2s;
-  ${({ left }) => left && 'left: 12px;'}
-  ${({ right }) => right && 'right: 12px;'}
+  ${({ left }) => left && 'left: 16px;'}
+  ${({ right }) => right && 'right: 16px;'}
   &:disabled {
     color: #eee;
     cursor: default;

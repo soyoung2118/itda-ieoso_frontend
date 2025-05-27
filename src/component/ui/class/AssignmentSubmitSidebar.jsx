@@ -360,7 +360,7 @@ const AssignmentSubmitSidebar = ({
           active={activeMenu === "browse"} 
           onClick={() => handleMenuClick("browse")}
         >
-          다른 과제보기
+          수강생 과제 보기
         </MenuItem>
       </MenuContainer>
       {activeMenu === "curriculum" && (
