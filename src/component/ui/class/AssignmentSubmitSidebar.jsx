@@ -531,9 +531,17 @@ const AssignmentSubmitSidebar = ({
 };
 
 const SidebarWrapper = styled.div`
+  width: 20vw;
   background: #fff;
-  height: 100%;
-  box-sizing: border-box;
+  height: 70vh;
+  border-radius: 20px;
+  padding: 25px 20px;
+  overflow-y: scroll;
+
+  @media (max-width: 376px) {
+    width: 70%;
+    height: 100%;
+  }
 `;
 
 const MenuContainer = styled.div`

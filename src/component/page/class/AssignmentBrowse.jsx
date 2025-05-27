@@ -579,12 +579,6 @@ const SubmissionHeader = styled.div`
   margin-bottom: 12px;
 `;
 
-const NotSubmittedText = styled.div`
-  font-size: 14px;
-  font-weight: 600;
-  color: #474747;
-`;
-
 const AssignmentInfo = styled.div`
   display: flex;
   flex-direction: column;
@@ -765,6 +759,8 @@ const SidebarSlideWrapper = styled.div`
     z-index: 1100;
     transition: left 0.3s ease-in-out;
     box-shadow: 2px 0px 10px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+  }
 `;
 
 export default AssignmentBrowse;
