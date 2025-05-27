@@ -426,7 +426,7 @@ const IconRow = styled.div`
 
 const AddButton = styled.button`
   position: fixed;
-  bottom: 3vh;
+  bottom: 12vh;
   right: 9vw;
   width: 3.8rem;
   height: 60px;
@@ -439,19 +439,20 @@ const AddButton = styled.button`
   font-size: 44px;
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-
+  
+    
   @media all and (max-width: 479px) {
-    width: 3rem;
-    height: 3rem;
-    bottom: 35px;
-    right: 35px;
-    font-size: 37px;
+    width: 2.6rem;
+    height: 2.6rem;
+    bottom: 9vh;
+    right: 6.8vw;
+    font-size: 31px;
   }
 `;
 
 const PopupMenu = styled.div`
   position: fixed;
-  bottom: 10vh;
+  bottom: 20vh;
   right: 12vw;
   background-color: #fff;
   border-radius: 20px;

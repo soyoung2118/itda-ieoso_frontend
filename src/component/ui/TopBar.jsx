@@ -29,32 +29,32 @@ export default function TopBar() {
         onClick={isUser ? () => navigate("/class/list") : () => navigate("/")}
       />
       <Header>
+        <div className="language-switcher">
+          <TranslateIcon src={Translate} />
+          <span
+            className={
+              targetLang === "ko" ? "lang-active" : "lang-inactive"
+            }
+            onClick={() => {
+              if (targetLang !== "ko") setTargetLang("ko");
+            }}
+          >
+          KR
+          </span>
+          <div className="divider">|</div>
+          <span
+            className={
+              targetLang === "en" ? "lang-active" : "lang-inactive"
+            }
+            onClick={() => {
+              if (targetLang !== "en") setTargetLang("en");
+            }}
+          >
+          EN
+          </span>
+        </div>
         {location.pathname !== "/login" && (
           <div className="header-right">
-            <div className="language-switcher">
-              <TranslateIcon src={Translate} />
-              <span
-                className={
-                  targetLang === "ko" ? "lang-active" : "lang-inactive"
-                }
-                onClick={() => {
-                  if (targetLang !== "ko") setTargetLang("ko");
-                }}
-              >
-                KR
-              </span>
-              <div className="divider">|</div>
-              <span
-                className={
-                  targetLang === "en" ? "lang-active" : "lang-inactive"
-                }
-                onClick={() => {
-                  if (targetLang !== "en") setTargetLang("en");
-                }}
-              >
-                EN
-              </span>
-            </div>
             {isUser ? (
               <UserContainer>
                 {location.pathname === "/dashboard" ? (
