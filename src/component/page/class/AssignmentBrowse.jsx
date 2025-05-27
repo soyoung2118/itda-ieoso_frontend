@@ -8,6 +8,8 @@ import AssignmentBrowseSidebar from "../../ui/class/AssignmentBrowseSidebar";
 import api from "../../api/api";
 import rightButtonImg from "../../img/icon/rightbutton.svg";
 import leftButtonImg from "../../img/icon/leftbutton.svg";
+import MenuIcon from "@mui/icons-material/Menu";
+import CloseIcon from "@mui/icons-material/Close";
 
 const formatSubmissionDate = (dateString) => {
   if (!dateString) return '';
@@ -33,6 +35,22 @@ const AssignmentBrowse = () => {
   const [galleryIndexes, setGalleryIndexes] = useState({}); // {assignmentId: idx}
   const [imageErrors, setImageErrors] = useState({});
   const [imageUrls, setImageUrls] = useState({});
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 376);
+  const [showSidebar, setShowSidebar] = useState(true);
+
+  useEffect(() => {
+    const isMobileView = window.matchMedia("(max-width: 376px)").matches;
+    setIsMobile(isMobileView);
+    setShowSidebar(!isMobileView);
+  }, []);
+
+  const handleToggle = () => setShowSidebar((prev) => !prev);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 480);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // 커리큘럼, 제출 데이터 fetch
   useEffect(() => {
@@ -406,15 +424,40 @@ const AssignmentBrowse = () => {
             ))}
           </SubmissionList>
         </MainContent>
+
+        {isMobile && (
+          <MobileToggleButton type="button" onClick={handleToggle}>
+            {showSidebar ? (
+              <CloseIcon style={{ fontSize: "2.8vh" }} />
+            ) : (
+              <MenuIcon style={{ fontSize: "2.8vh" }} />
+            )}
+          </MobileToggleButton>
+      )}
       </ContentWrapper>
 
-      <SidebarArea>
-        <AssignmentBrowseSidebar
-          students={students}
-          selectedId={selectedStudentId}
-          onSelect={setSelectedStudentId}
-        />
-      </SidebarArea>
+      {/* 모바일/데스크탑 분기 */}
+      {!isMobile ? (
+        <SidebarArea>
+          <AssignmentBrowseSidebar
+            students={students}
+            selectedId={selectedStudentId}
+            onSelect={setSelectedStudentId}
+          />
+        </SidebarArea>
+      ) : (
+        <>
+          <SidebarSlideWrapper show={showSidebar}>
+            <SidebarArea>
+              <AssignmentBrowseSidebar
+                students={students}
+                selectedId={selectedStudentId}
+                onSelect={setSelectedStudentId}
+              />
+            </SidebarArea>
+          </SidebarSlideWrapper>
+        </>
+      )}
     </Container>
   );
 };
@@ -468,6 +511,10 @@ const ContentWrapper = styled.div`
 
   @media screen and (max-width: 768px) {
     width: 55vw;
+  }
+
+  @media screen and (max-width: 480px) {
+    padding-right: 5px;
   }
 `;
 
@@ -685,6 +732,39 @@ const AssignmentDivider = styled.div`
   height: 1px;
   background: #e5e5e5;
   margin: 24px 0 0 0;
+`;
+
+const MobileToggleButton = styled.button`
+  display: none;
+
+  @media (max-width: 376px) {
+    display: block;
+    position: fixed;
+    bottom: 4.6%;
+    left: 5%;
+    z-index: 1300;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    padding: 0.8vh;
+    font-size: 0.5vh;
+    cursor: pointer;
+    color: var(--main-color);
+  }
+`;
+
+const SidebarSlideWrapper = styled.div`
+  @media (max-width: 376px) {
+    position: fixed;
+    top: 0;
+    left: ${(props) => (props.show ? "0" : "-100%")};
+    width: 55%;
+    padding: 1rem 0;
+    height: 100%;
+    background-color: white;
+    z-index: 1100;
+    transition: left 0.3s ease-in-out;
+    box-shadow: 2px 0px 10px rgba(0, 0, 0, 0.1);
 `;
 
 export default AssignmentBrowse;

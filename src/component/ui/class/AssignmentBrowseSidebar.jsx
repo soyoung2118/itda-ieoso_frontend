@@ -68,6 +68,10 @@ const SidebarWrapper = styled.div`
   height: 70vh;
   border-radius: 20px;
   padding: 25px 20px;
+
+  @media (max-width: 376px) {
+    width: 80%;
+  }
 `;
 
 const MenuContainer = styled.div`
@@ -88,7 +92,6 @@ const MenuContainer = styled.div`
     width: 100%;
   }
 `;
-
 
 const MenuItem = styled.div`
   position: relative;
@@ -130,24 +133,6 @@ const MenuItem = styled.div`
     font-size: 16px;
     margin: 0 10px;
   }
-`;
-
-const MenuHeader = styled.div`
-  display: flex;
-  align-items: center;
-  font-size: 18px;
-  font-weight: 500;
-  padding: 0 20px 10px 20px;
-  border-bottom: 1px solid #E5E5E5;
-  margin-bottom: 18px;
-  justify-content: space-between;
-  @media (max-width: 1023px) {
-    font-size: 16px;
-  }
-`;
-
-const DropdownIcon = styled.span`
-  font-size: 10px;
 `;
 
 const StudentList = styled.ul`
