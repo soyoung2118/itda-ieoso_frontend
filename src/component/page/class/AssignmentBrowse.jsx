@@ -6,6 +6,8 @@ import { getCurriculumWithAssignments, getAllAssignmentSubmissions } from "../..
 import { UsersContext } from "../../contexts/usersContext";
 import AssignmentBrowseSidebar from "../../ui/class/AssignmentBrowseSidebar";
 import api from "../../api/api";
+import rightButtonImg from "../../img/icon/rightbutton.svg";
+import leftButtonImg from "../../img/icon/leftbutton.svg";
 
 const formatSubmissionDate = (dateString) => {
   if (!dateString) return '';
@@ -30,6 +32,7 @@ const AssignmentBrowse = () => {
   const [openWeek, setOpenWeek] = useState(null);
   const [galleryIndexes, setGalleryIndexes] = useState({}); // {assignmentId: idx}
   const [imageErrors, setImageErrors] = useState({});
+  const [imageUrls, setImageUrls] = useState({});
 
   // 커리큘럼, 제출 데이터 fetch
   useEffect(() => {
@@ -50,7 +53,7 @@ const AssignmentBrowse = () => {
               studentMap.set(result.userId, {
                 id: result.userId,
                 name: result.studentName,
-                disabled: result.userId === user?.userId
+                disabled: false  // 모든 학생의 과제를 볼 수 있도록 disabled 속성 제거
               });
             }
           });
@@ -110,17 +113,28 @@ const AssignmentBrowse = () => {
     return /\.pdf$/i.test(fileName);
   };
 
-  // 갤러리 넘기기 핸들러
+  // 갤러리 넘기기 핸들러 수정
   const handlePrev = (assignmentId, imageCount) => {
+    if (imageCount <= 0) return;
     setGalleryIndexes(prev => ({
       ...prev,
       [assignmentId]: prev[assignmentId] === 0 ? imageCount - 1 : (prev[assignmentId] || 0) - 1
     }));
   };
+
   const handleNext = (assignmentId, imageCount) => {
+    if (imageCount <= 0) return;
     setGalleryIndexes(prev => ({
       ...prev,
       [assignmentId]: prev[assignmentId] === imageCount - 1 ? 0 : (prev[assignmentId] || 0) + 1
+    }));
+  };
+
+  // dot 클릭 시 해당 인덱스로 이동
+  const handleDotClick = (assignmentId, idx) => {
+    setGalleryIndexes(prev => ({
+      ...prev,
+      [assignmentId]: idx
     }));
   };
 
@@ -139,13 +153,116 @@ const AssignmentBrowse = () => {
     navigate(`/class/${courseId}/curriculum/${curriculum[0].lectureId}`);
   };
 
-  // 이미지 로드 에러 핸들러
+  // 한글 포함 여부 확인 함수 추가
+  const containsKorean = (str) => {
+    return /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(str);
+  };
+
+  // 이미지 URL 처리 함수 수정
+  const processImageUrl = async (fileUrl, fileName) => {
+    try {
+      // 파일명에 한글이 포함된 경우에만 URL 인코딩
+      const finalUrl = containsKorean(fileName) ? encodeURIComponent(fileUrl) : fileUrl;
+      
+      console.log('Processing image URL:', { 
+        original: fileUrl, 
+        final: finalUrl, 
+        fileName,
+        containsKorean: containsKorean(fileName)
+      });
+      
+      const response = await api.get("/files/download", {
+        params: { fileUrl: finalUrl }
+      });
+      
+      const presignedUrl = response.data.data;
+      console.log('Received presigned URL for:', fileName);
+      return presignedUrl;
+    } catch (e) {
+      console.error('URL 처리 실패:', { 
+        originalUrl: fileUrl, 
+        fileName, 
+        error: e.message 
+      });
+      return fileUrl;
+    }
+  };
+
+  // 이미지 URL 가져오기
+  useEffect(() => {
+    const fetchImageUrls = async () => {
+      const newUrls = {};
+      for (const lecture of curriculum) {
+        for (const assignment of lecture.assignments) {
+          const submission = findStudentSubmission(assignment.assignmentId);
+          if (submission?.files) {
+            for (const file of submission.files) {
+              if (isImageFile(file.fileName)) {
+                try {
+                  const presignedUrl = await processImageUrl(file.fileUrl, file.fileName);
+                  if (presignedUrl) {
+                    newUrls[file.fileUrl] = presignedUrl;
+                  }
+                } catch (e) {
+                  console.error('이미지 URL 가져오기 실패:', {
+                    fileName: file.fileName,
+                    fileUrl: file.fileUrl
+                  });
+                }
+              }
+            }
+          }
+        }
+      }
+      setImageUrls(newUrls);
+    };
+
+    if (curriculum.length > 0) {
+      fetchImageUrls();
+    }
+  }, [curriculum, selectedStudentId]);
+
+  // 이미지 로드 에러 핸들러 개선
   const handleImageError = (fileUrl, fileName) => {
-    console.error('Image load failed:', { fileUrl, fileName });
+    console.error('Image load failed:', { 
+      originalUrl: fileUrl,
+      fileName,
+      encodedUrl: encodeURIComponent(fileUrl),
+      decodedUrl: decodeURIComponent(fileUrl),
+      extension: fileName.split('.').pop().toLowerCase(),
+      cachedUrl: imageUrls[fileUrl]
+    });
     setImageErrors(prev => ({
       ...prev,
       [fileUrl]: true
     }));
+  };
+
+  // 파일명 처리 함수 추가
+  const truncateFileName = (fileName) => {
+    const maxNameLength = 18;
+    const dotIdx = fileName.lastIndexOf(".");
+    let name = fileName;
+    if (name.length > maxNameLength) {
+      if (dotIdx > 0 && dotIdx < name.length - 1) {
+        const ext = name.slice(dotIdx);
+        const base = name.slice(0, 10);
+        name = `${base}...${ext}`;
+      } else {
+        name = name.slice(0, 15) + "...";
+      }
+    }
+    return name;
+  };
+
+  // URL 디코딩 함수 추가
+  const decodeFileUrl = (url) => {
+    try {
+      return decodeURIComponent(url);
+    } catch (e) {
+      console.error('URL 디코딩 실패:', e);
+      return url;
+    }
   };
 
   return (
@@ -177,7 +294,7 @@ const AssignmentBrowse = () => {
                 {openWeek === lecture.lectureId && (
                   <AccordionContent>
                     {lecture.assignments.length === 0 && <NoAssignment>과제가 없습니다.</NoAssignment>}
-                    {lecture.assignments.map((assignment) => {
+                    {lecture.assignments.map((assignment, aIdx) => {
                       const submission = findStudentSubmission(assignment.assignmentId);
                       const imageFiles = (submission?.files || []).filter(f => isImageFile(f.fileName));
                       const pdfFiles = (submission?.files || []).filter(f => isPdfFile(f.fileName));
@@ -185,70 +302,102 @@ const AssignmentBrowse = () => {
                       const galleryIdx = galleryIndexes[assignment.assignmentId] || 0;
 
                       return (
-                        <SubmissionBox key={assignment.assignmentId}>
-                          <SubmissionHeader>
-                            <AssignmentInfo>
-                              <h4>{assignment.assignmentTitle}</h4>
-                              {submission?.submittedAt && (
-                                <span className="submission-date">{formatSubmissionDate(submission.submittedAt)}</span>
+                        <>
+                          <SubmissionBox key={assignment.assignmentId}>
+                            <SubmissionHeader>
+                              <AssignmentInfo>
+                                <h4>{assignment.assignmentTitle}</h4>
+                                {submission?.submittedAt && (
+                                  <span className="submission-date">{formatSubmissionDate(submission.submittedAt)}</span>
+                                )}
+                              </AssignmentInfo>
+                              <FileList>
+                                {/* 이미지 갤러리 */}
+                                {imageFiles.length > 0 && (
+                                  <GalleryWrapper>
+                                    <GalleryArrow 
+                                      onClick={() => handlePrev(assignment.assignmentId, imageFiles.length)} 
+                                      disabled={imageFiles.length <= 1}
+                                      left
+                                    >
+                                      <img src={leftButtonImg} alt="이전" style={{ width: 24, height: 24 }} />
+                                    </GalleryArrow>
+                                    {imageFiles[galleryIdx] && (
+                                      <GalleryImage 
+                                        src={imageUrls[imageFiles[galleryIdx].fileUrl] || imageFiles[galleryIdx].fileUrl} 
+                                        alt={imageFiles[galleryIdx].fileName}
+                                        onError={() => handleImageError(imageFiles[galleryIdx].fileUrl, imageFiles[galleryIdx].fileName)}
+                                        style={{ display: imageErrors[imageFiles[galleryIdx].fileUrl] ? 'none' : 'block' }}
+                                      />
+                                    )}
+                                    {(!imageFiles[galleryIdx] || imageErrors[imageFiles[galleryIdx]?.fileUrl]) && (
+                                      <div style={{ 
+                                        width: '100%', 
+                                        height: '100%', 
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        justifyContent: 'center',
+                                        background: '#f8f8f8',
+                                        borderRadius: '16px',
+                                        color: '#666',
+                                        fontSize: '14px',
+                                        padding: '20px',
+                                        textAlign: 'center',
+                                        boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
+                                      }}>
+                                        이미지를 불러올 수 없습니다<br/>
+                                        {imageFiles[galleryIdx] && `(파일명: ${imageFiles[galleryIdx].fileName})`}
+                                      </div>
+                                    )}
+                                    <GalleryArrow 
+                                      onClick={() => handleNext(assignment.assignmentId, imageFiles.length)} 
+                                      disabled={imageFiles.length <= 1}
+                                      right
+                                    >
+                                      <img src={rightButtonImg} alt="다음" style={{ width: 24, height: 24 }} />
+                                    </GalleryArrow>
+                                    {/* 하단 dot 네비게이션 */}
+                                    <GalleryDots>
+                                      {imageFiles.map((_, idx) => (
+                                        <Dot
+                                          key={idx}
+                                          active={galleryIdx === idx}
+                                          onClick={() => handleDotClick(assignment.assignmentId, idx)}
+                                        />
+                                      ))}
+                                    </GalleryDots>
+                                  </GalleryWrapper>
+                                )}
+                              </FileList>
+                              {/* PDF 파일 빨간 글씨로 목록화 */}
+                              {pdfFiles.length > 0 && (
+                                <PdfList>
+                                  {pdfFiles.map((file, fileIdx) => (
+                                    <PdfLinkButton key={fileIdx} type="button" onClick={() => handlePdfPreview(file.fileUrl)}>
+                                      {file.fileName}
+                                    </PdfLinkButton>
+                                  ))}
+                                </PdfList>
                               )}
-                            </AssignmentInfo>
-                            <FileList>
-                              {/* 이미지 갤러리 */}
-                              {imageFiles.length > 0 && (
-                                <GalleryWrapper>
-                                  <GalleryArrow onClick={() => handlePrev(assignment.assignmentId, imageFiles.length)} disabled={imageFiles.length <= 1}>&lt;</GalleryArrow>
-                                  <GalleryImage 
-                                    src={imageFiles[galleryIdx].fileUrl} 
-                                    alt={imageFiles[galleryIdx].fileName}
-                                    onError={() => handleImageError(imageFiles[galleryIdx].fileUrl, imageFiles[galleryIdx].fileName)}
-                                    style={{ display: imageErrors[imageFiles[galleryIdx].fileUrl] ? 'none' : 'block' }}
-                                  />
-                                  {imageErrors[imageFiles[galleryIdx].fileUrl] && (
-                                    <div style={{ 
-                                      width: '100%', 
-                                      height: '100%', 
-                                      display: 'flex', 
-                                      alignItems: 'center', 
-                                      justifyContent: 'center',
-                                      background: '#f8f8f8',
-                                      borderRadius: '8px',
-                                      color: '#666'
-                                    }}>
-                                      이미지를 불러올 수 없습니다
-                                    </div>
-                                  )}
-                                  <GalleryArrow onClick={() => handleNext(assignment.assignmentId, imageFiles.length)} disabled={imageFiles.length <= 1}>&gt;</GalleryArrow>
-                                </GalleryWrapper>
-                              )}
-                            </FileList>
-                            {/* PDF 파일 빨간 글씨로 목록화 */}
-                            {pdfFiles.length > 0 && (
-                              <PdfList>
-                                {pdfFiles.map((file, fileIdx) => (
-                                  <PdfLinkButton key={fileIdx} type="button" onClick={() => handlePdfPreview(file.fileUrl)}>
-                                    {file.fileName}
-                                  </PdfLinkButton>
+                              {/* 이미지/ PDF 외 파일 다운로드 */}
+                              <FileList>
+                                {otherFiles.length > 0 && otherFiles.map((file, fileIdx) => (
+                                  <DownloadLink key={fileIdx} href={decodeFileUrl(file.fileUrl)} download>
+                                    {truncateFileName(file.fileName)}
+                                  </DownloadLink>
                                 ))}
-                              </PdfList>
+                                {/* 미제출 안내 */}
+                                {(!submission || ((submission.files?.length ?? 0) === 0 && (!submission.textContent || submission.textContent === "null"))) && (
+                                  <NotSubmittedText>미제출</NotSubmittedText>
+                                )}
+                              </FileList>
+                            </SubmissionHeader>
+                            {submission && submission.textContent && submission.textContent !== "null" && (
+                              <TextContent>{submission.textContent}</TextContent>
                             )}
-                            {/* 이미지/ PDF 외 파일 다운로드 */}
-                            <FileList>
-                              {otherFiles.length > 0 && otherFiles.map((file, fileIdx) => (
-                                <DownloadLink key={fileIdx} href={file.fileUrl} download>
-                                  {file.fileName}
-                                </DownloadLink>
-                              ))}
-                              {/* 미제출 안내 */}
-                              {(!submission || ((submission.files?.length ?? 0) === 0 && (!submission.textContent || submission.textContent === "null"))) && (
-                                <span>미제출</span>
-                              )}
-                            </FileList>
-                          </SubmissionHeader>
-                          {submission && submission.textContent && submission.textContent !== "null" && (
-                            <TextContent>{submission.textContent}</TextContent>
-                          )}
-                        </SubmissionBox>
+                          </SubmissionBox>
+                          {aIdx !== lecture.assignments.length - 1 && <AssignmentDivider />}
+                        </>
                       );
                     })}
                   </AccordionContent>
@@ -375,12 +524,20 @@ const SubmissionBox = styled.div`
   border-radius: 12px;
   margin-top: 14px;
 `;
+
 const SubmissionHeader = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   margin-bottom: 12px;
 `;
+
+const NotSubmittedText = styled.div`
+  font-size: 14px;
+  font-weight: 600;
+  color: #474747;
+`;
+
 const AssignmentInfo = styled.div`
   display: flex;
   flex-direction: column;
@@ -396,11 +553,13 @@ const AssignmentInfo = styled.div`
     color: #474747;
   }
 `;
+
 const FileList = styled.div`
   display: flex;
   gap: 16px;
   justify-content: center;
 `;
+
 const DownloadLink = styled.a`
   color: var(--main-color);
   text-decoration: none;
@@ -409,6 +568,7 @@ const DownloadLink = styled.a`
     text-decoration: underline;
   }
 `;
+
 const TextContent = styled.div`
   font-size: 14px;
   line-height: 1.6;
@@ -423,56 +583,80 @@ const TextContent = styled.div`
 const GalleryWrapper = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   position: relative;
-  width: 480px;
+  width: 580px;
   height: 320px;
-
+  background: #F6F7F9;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  margin: 0 auto 16px auto;
+  flex-direction: column;
   @media screen and (max-width: 1440px) {
-    width: 400px;
-    height: 280px;
+    width: 500px;
+    height: 380px;
   }
-
   @media screen and (max-width: 1024px) {
-    width: 320px;
-    height: 240px;
+    width: 420px;
+    height: 340px;
   }
-
   @media screen and (max-width: 768px) {
-    width: 280px;
-    height: 200px;
+    width: 380px;
+    height: 300px;
   }
 `;
+
 const GalleryImage = styled.img`
   width: 100%;
   height: 100%;
-  border-radius: 8px;
+  border-radius: 12px;
   object-fit: contain;
-  // background: #f8f8f8;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.04);
 `;
+
 const GalleryArrow = styled.button`
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: none;
+  background: transparent;
   border: none;
-  color: #bbb;
-  font-size: 24px;
+  color: #888;
+  font-size: 28px;
   cursor: pointer;
-  padding: 0 8px;
-  z-index: 1;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  transition: background 0.2s, color 0.2s;
+  ${({ left }) => left && 'left: 12px;'}
+  ${({ right }) => right && 'right: 12px;'}
   &:disabled {
     color: #eee;
     cursor: default;
   }
+`;
 
-  &:first-child {
-    left: -32px;
-  }
-
-  &:last-child {
-    right: -32px;
-  }
+// dot 네비게이션 스타일
+const GalleryDots = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+`;
+const Dot = styled.button`
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: ${({ active }) => (active ? '#FFADAD' : '#e0e0e0')};
+  transition: background 0.2s;
+  cursor: pointer;
+  padding: 0;
 `;
 
 const PdfList = styled.div`
@@ -481,6 +665,7 @@ const PdfList = styled.div`
   flex-direction: column;
   gap: 4px;
 `;
+
 const PdfLinkButton = styled.button`
   background: none;
   border: none;
@@ -496,6 +681,14 @@ const PdfLinkButton = styled.button`
     text-decoration: none;
     opacity: 0.8;
   }
+`;
+
+// 과제 구분선 스타일
+const AssignmentDivider = styled.div`
+  width: 100%;
+  height: 1px;
+  background: #e5e5e5;
+  margin: 24px 0 0 0;
 `;
 
 export default AssignmentBrowse;
