@@ -661,7 +661,6 @@ const GalleryWrapper = styled.div`
   height: 360px;
   background: #F6F7F9;
   border-radius: 16px;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
   margin: 0 auto 8px auto;
   overflow: hidden;
 
@@ -675,7 +674,6 @@ const GalleryImage = styled.img`
   height: 100%;
   border-radius: 12px;
   object-fit: contain;
-  box-shadow: 0 1px 6px rgba(0,0,0,0.04);
   display: block;
   margin: auto;
 `;
