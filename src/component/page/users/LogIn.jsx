@@ -26,26 +26,46 @@ export default function LogIn() {
   const handleGoogleLogin = () => {
     if (isInAppBrowser()) {
       if (isAndroid()) {
-        setAlertMessage(
-          "구글 정책으로 인해 해당 앱 내에서는\n" +
-            "구글 로그인이 지원되지 않습니다.\n" +
-            "우측 하단 ⋮버튼을 눌러 외부 브라우저로 열어주세요.",
-        );
+        const currentUrl = window.location.href;
+
+        const openInBrowser = () => {
+          try {
+            const intentUrl = `intent://${currentUrl.replace(/^https?:\/\//, "")}#Intent;scheme=https;end`;
+            window.location.href = intentUrl;
+          } catch (error) {
+            console.error("Intent redirect failed:", error);
+            try {
+              window.open(currentUrl, "_system");
+            } catch (e) {
+              console.error("Open in browser failed:", e);
+              setAlertMessage(
+                "브라우저 전환에 실패했습니다.\n" +
+                  "외부 브라우저에서 다시 접속해주세요.",
+              );
+              setShowAlertModal(true);
+            }
+          }
+        };
+
+        setTimeout(openInBrowser, 100);
+        return;
       } else if (isIOS()) {
         setAlertMessage(
           "구글 정책으로 인해 해당 앱 내에서는\n" +
             "구글 로그인이 지원되지 않습니다.\n" +
             "외부 브라우저(Safari)에서 다시 접속해주세요.",
         );
+        setShowAlertModal(true);
+        return;
       } else {
         setAlertMessage(
           "구글 정책으로 인해 해당 앱 내에서는\n" +
             "구글 로그인이 지원되지 않습니다.\n" +
             "외부 브라우저에서 다시 접속해주세요.",
         );
+        setShowAlertModal(true);
+        return;
       }
-      setShowAlertModal(true);
-      return;
     }
     setIsLoading(true);
     const redirectUri = encodeURIComponent(
@@ -99,8 +119,7 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   background-color: #ffffff;
-  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
-  border-radius: 15px;
+  border-radius: 20px;
   width: 100%;
   padding: 3.5rem 2rem;
   box-sizing: border-box;
@@ -115,15 +134,15 @@ const LogoImage = styled.img`
 const LogoText = styled.div`
   font-size: 1.75rem;
   font-weight: 600;
-  margin-bottom: 3vh;
+  margin-bottom: 8vh;
 `;
 
 const GoogleButton = styled.button`
   width: 100%;
   max-width: 500px;
   height: 48px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
   font-size: 1rem;
   cursor: pointer;
   background-color: #ffffff;
@@ -132,8 +151,6 @@ const GoogleButton = styled.button`
   align-items: center;
   justify-content: center;
   color: #000000;
-  font-weight: 500;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease-in-out;
 
   &:hover {

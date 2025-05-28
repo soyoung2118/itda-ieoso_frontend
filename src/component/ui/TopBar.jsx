@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import LogoImage from "../img/logo/itda_logo.svg";
@@ -12,14 +12,32 @@ export default function TopBar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { isUser } = useContext(UsersContext);
-
-  // 드롭다운 상태 추가
   const [showUsersInfoContainer, setShowUsersInfoContainer] = useState(false);
   const { targetLang, setTargetLang } = useLanguage();
+  const userIconRef = useRef(null);
+  const containerRef = useRef(null);
 
   const handleUserIconClick = () => {
-    setShowUsersInfoContainer((prev) => !prev); // 드롭다운 토글
+    setShowUsersInfoContainer((prev) => !prev);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target) &&
+        userIconRef.current &&
+        !userIconRef.current.contains(event.target)
+      ) {
+        setShowUsersInfoContainer(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <Wrapper>
@@ -29,34 +47,30 @@ export default function TopBar() {
         onClick={isUser ? () => navigate("/class/list") : () => navigate("/")}
       />
       <Header>
+        <div className="language-switcher">
+          <TranslateIcon src={Translate} />
+          <span
+            className={targetLang === "ko" ? "lang-active" : "lang-inactive"}
+            onClick={() => {
+              if (targetLang !== "ko") setTargetLang("ko");
+            }}
+          >
+            KR
+          </span>
+          <div className="divider">|</div>
+          <span
+            className={targetLang === "en" ? "lang-active" : "lang-inactive"}
+            onClick={() => {
+              if (targetLang !== "en") setTargetLang("en");
+            }}
+          >
+            EN
+          </span>
+        </div>
         {location.pathname !== "/login" && (
           <div className="header-right">
-            <div className="language-switcher">
-              <TranslateIcon src={Translate} />
-              <span
-                className={
-                  targetLang === "ko" ? "lang-active" : "lang-inactive"
-                }
-                onClick={() => {
-                  if (targetLang !== "ko") setTargetLang("ko");
-                }}
-              >
-                KR
-              </span>
-              <div className="divider">|</div>
-              <span
-                className={
-                  targetLang === "en" ? "lang-active" : "lang-inactive"
-                }
-                onClick={() => {
-                  if (targetLang !== "en") setTargetLang("en");
-                }}
-              >
-                EN
-              </span>
-            </div>
             {isUser ? (
-              <UserContainer>
+              <UserContainer ref={containerRef}>
                 {location.pathname === "/dashboard" ? (
                   <button
                     className="navigate-button"
@@ -77,6 +91,7 @@ export default function TopBar() {
                   </>
                 )}
                 <UserIcon
+                  ref={userIconRef}
                   src={userIcon}
                   alt="user icon"
                   onClick={handleUserIconClick}
@@ -205,7 +220,7 @@ const Header = styled.header`
 
     /* 모바일 세로 (해상도 ~ 479px)*/
     @media all and (max-width: 479px) {
-      margin-right: 0px;
+      margin-right: 10px;
     }
   }
 

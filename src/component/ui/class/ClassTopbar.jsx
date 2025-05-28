@@ -298,7 +298,8 @@ const ClassTopbar = ({ onCourseChange, isCreator, myCourses }) => {
     if (
       location.pathname.includes("/curriculum") ||
       location.pathname.includes("/playing") ||
-      location.pathname.includes("/submit")
+      location.pathname.includes("/submit") ||
+      location.pathname.includes("/assignment/browse")
     )
       return "curriculum";
     if (location.pathname.includes("/admin")) return "admin";

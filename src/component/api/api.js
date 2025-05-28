@@ -1,5 +1,5 @@
 import axios from "axios";
-import { handleTokenRefresh } from "./tokenManager";
+import { handleTokenRefresh, dispatchTokenError } from "./tokenManager";
 
 // Axios 인스턴스 생성
 const api = axios.create({
@@ -66,14 +66,20 @@ api.interceptors.response.use(
       !originalRequest._retry
     ) {
       originalRequest._retry = true;
-
       try {
         const newToken = await handleTokenRefresh();
         originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
         return api(originalRequest);
       } catch (refreshError) {
+        // 토큰 갱신 실패 시 예상치 못한 에러로 처리
+        dispatchTokenError("예상치 못한 에러로 로그아웃 합니다");
         return Promise.reject(refreshError);
       }
+    }
+
+    // 405 등 기타 예상치 못한 에러
+    if ([401, 405].includes(error.response?.status)) {
+      dispatchTokenError("예상치 못한 에러로 로그아웃 합니다");
     }
 
     return Promise.reject(error);

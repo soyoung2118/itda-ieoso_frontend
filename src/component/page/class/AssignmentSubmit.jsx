@@ -4,7 +4,7 @@ import styled from "styled-components";
 import MenuIcon from "@mui/icons-material/Menu";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import api from "../../api/api";
-import PlayingCurriculumSidebar from "../../ui/class/PlayingCurriculumSidebar";
+import AssignmentSubmitSidebar from "../../ui/class/AssignmentSubmitSidebar";
 import { UsersContext } from "../../contexts/usersContext";
 import AssignmentSubmitBox from "../../ui/class/AssignmentSubmitBox";
 import AssignmentShowBox from "../../ui/class/AssignmentShowBox";
@@ -13,8 +13,8 @@ import CloseIcon from "@mui/icons-material/Close";
 
 const ClassAssignmentSubmit = () => {
   const navigate = useNavigate();
-  const isMobile = window.screen.width <= 480;
-  const [isVisible, setIsVisible] = useState(!isMobile);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 376);
+  const [showSidebar, setShowSidebar] = useState(true);
 
   const [previousFiles, setPreviousFiles] = useState([]);
   const [deletedFiles, setDeletedFiles] = useState([]);
@@ -37,11 +37,13 @@ const ClassAssignmentSubmit = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [canEdit, setCanEdit] = useState(false);
 
-  const toggleSidebar = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsVisible((prev) => !prev);
-  };
+  useEffect(() => {
+    const isMobileView = window.matchMedia("(max-width: 376px)").matches;
+    setIsMobile(isMobileView);
+    setShowSidebar(!isMobileView);
+  }, []);
+
+  const handleToggle = () => setShowSidebar((prev) => !prev);
 
   const handleNavigationCurriculum = () => {
     navigate(`/class/${courseId}/curriculum/${lectureId}`);
@@ -185,7 +187,6 @@ const ClassAssignmentSubmit = () => {
             );
             if (assignment) {
               foundType = assignment.submissionType;
-              console.log(foundType);
               break;
             }
           }
@@ -239,17 +240,6 @@ const ClassAssignmentSubmit = () => {
               />
             </ClickContainer>
           </TitleContainer>
-          {isMobile && (
-            <MobileToggleButtonWrapper>
-              <MobileToggleButton type="button" onClick={toggleSidebar}>
-                {isVisible ? (
-                  <CloseIcon style={{ fontSize: "3.7vh" }} />
-                ) : (
-                  <MenuIcon style={{ fontSize: "3.7vh" }} />
-                )}
-              </MobileToggleButton>
-            </MobileToggleButtonWrapper>
-          )}
         </TopContainer>
 
         <WhiteBoxComponent>
@@ -257,6 +247,16 @@ const ClassAssignmentSubmit = () => {
             {currentAssignmentInfo?.assignmentDescription || ""}
           </NoticeContentContainer>
         </WhiteBoxComponent>
+
+        {isMobile && (
+          <MobileToggleButton type="button" onClick={handleToggle}>
+            {showSidebar ? (
+              <CloseIcon style={{ fontSize: "2.8vh" }} />
+            ) : (
+              <MenuIcon style={{ fontSize: "2.8vh" }} />
+            )}
+          </MobileToggleButton>
+        )}
 
         {submissionStatus === "NOT_SUBMITTED" || canEdit ? (
           <AssignmentSubmitBox
@@ -289,7 +289,7 @@ const ClassAssignmentSubmit = () => {
 
       {!isMobile ? (
         <RightSide>
-          <PlayingCurriculumSidebar
+          <AssignmentSubmitSidebar
             curriculumData={curriculumData}
             setCurriculumData={setCurriculumData}
             currentLectureInfo={currentLectureInfo}
@@ -297,9 +297,9 @@ const ClassAssignmentSubmit = () => {
           />
         </RightSide>
       ) : (
-        <SidebarSlideWrapper show={isVisible}>
+        <SidebarSlideWrapper show={showSidebar}>
           <RightSide>
-            <PlayingCurriculumSidebar
+            <AssignmentSubmitSidebar
               curriculumData={curriculumData}
               setCurriculumData={setCurriculumData}
               currentLectureInfo={currentLectureInfo}
@@ -413,52 +413,38 @@ const TitleContainer = styled.div`
   align-items: flex-end;
 `;
 
-const MenuContainer = styled.div`
-  margin-top: 3px;
-`;
-
-const MobileToggleButtonWrapper = styled.div`
-  display: none;
-
-  @media (max-width: 480px) {
-    display: block;
-    position: fixed;
-    bottom: 20px;
-    right: 12%;
-    z-index: 1500;
-  }
-`;
-
 const MobileToggleButton = styled.button`
   display: none;
 
-  @media (max-width: 480px) {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    margin-top: 2vh;
-    margin-left: auto;
+  @media (max-width: 376px) {
+    display: block;
+    position: fixed;
+    bottom: 4.6%;
+    left: 5%;
+    z-index: 1300;
     background: white;
     border: 1px solid #ccc;
     border-radius: 50%;
+    padding: 0.8vh;
+    font-size: 0.5vh;
     cursor: pointer;
     color: var(--main-color);
-    padding: 0.5vh;
   }
 `;
 
 const SidebarSlideWrapper = styled.div`
-  @media (max-width: 480px) {
+  @media (max-width: 376px) {
     position: fixed;
-    z-index: 999;
     top: 0;
-    right: ${(props) => (props.show ? "0" : "-100%")};
-    width: 75%;
+    left: ${(props) => (props.show ? "0" : "-100%")};
+    width: 55%;
+    padding: 1rem 0;
     height: 100%;
     background-color: white;
-    transition: right 0.3s ease-in-out;
-    box-shadow: -2px 0px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1100;
+    transition: left 0.3s ease-in-out;
+    box-shadow: 2px 0px 10px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
   }
 `;
 
@@ -493,22 +479,9 @@ const ClickContainer = styled.div`
 `;
 
 const RightSide = styled.div`
-  width: 20vw;
-  height: 70vh;
-  overflow-y: auto;
-  padding: 25px 20px;
-  background-color: #ffffff;
-  border-radius: 20px;
-
-  @media (max-width: 768px) {
-    width: 25vw;
-  }
-
-  @media (max-width: 480px) {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
+  background: transparent;
+  display: flex;
+  flex-direction: column;
 `;
 
 const ModalContainer = styled.div`

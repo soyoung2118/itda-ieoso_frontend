@@ -30,6 +30,7 @@ import GoogleAuthCallback from "./component/page/users/GoogleAuthCallback.jsx";
 import GoogleAccountLink from "./component/page/users/GoogleAccountLink.jsx";
 import { LanguageProvider } from "./component/contexts/LanguageContext.jsx";
 import ChannelTalk from "./component/ui/ChannelTalk.jsx";
+import AssignmentBrowse from "./component/page/class/AssignmentBrowse.jsx";
 
 // 페이지 이동 시 스크롤을 맨 위로 이동시키는 컴포넌트
 function ScrollToTop() {
@@ -47,12 +48,11 @@ function LogoutHandler() {
   const [logoutMessage, setLogoutMessage] = useState("");
 
   useEffect(() => {
+    // 세션 만료 체크
     const checkSessionExpiration = () => {
       const sessionExpiration = localStorage.getItem("sessionExpiration");
       const currentTime = new Date().getTime();
-
       if (!sessionExpiration) return;
-
       if (currentTime > parseInt(sessionExpiration)) {
         setLogoutMessage("로그인 시간이 만료되어 로그아웃합니다.");
         setModalIsOpen(true);
@@ -61,19 +61,18 @@ function LogoutHandler() {
 
     // 페이지 로드 시 한 번 체크
     checkSessionExpiration();
-
     // 1분마다 체크
     const interval = setInterval(checkSessionExpiration, 60000);
 
-    // 토큰 관련 에러 발생 시 로그아웃
+    // 예상치 못한 에러(토큰 에러) 이벤트 리스너
     const handleTokenError = (event) => {
       if (event.detail?.type === "token_error") {
-        setLogoutMessage("인증에 문제가 발생하여 자동 로그아웃됩니다.");
+        setLogoutMessage(
+          event.detail.message || "예상치 못한 에러로 로그아웃 합니다",
+        );
         setModalIsOpen(true);
       }
     };
-
-    // 토큰 에러 이벤트 리스너 등록
     window.addEventListener("tokenError", handleTokenError);
 
     return () => {
@@ -86,10 +85,7 @@ function LogoutHandler() {
     <>
       {modalIsOpen && (
         <ModalOverlay>
-          <AlertModalContainer
-            isOpen={modalIsOpen}
-            onRequestClose={() => setModalIsOpen(false)}
-          >
+          <AlertModalContainer>
             <div className="text">{logoutMessage}</div>
             <div
               className="close-button"
@@ -110,9 +106,9 @@ function LogoutHandler() {
 function App() {
   return (
     <BrowserRouter>
+      <LogoutHandler />
       <UsersProvider>
         <LanguageProvider>
-          <LogoutHandler />
           <ScrollToTop />
           <ChannelTalk />
           <Routes>
@@ -153,6 +149,10 @@ function App() {
               <Route
                 path="assignment/submit/:lectureId/:assignmentId"
                 element={<ClassAssignmentSubmit />}
+              />
+              <Route
+                path="assignment/browse/:lectureId"
+                element={<AssignmentBrowse />}
               />
             </Route>
 
