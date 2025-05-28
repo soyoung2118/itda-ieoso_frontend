@@ -111,7 +111,19 @@ const AssignmentBrowse = () => {
 
   // 아코디언 토글
   const handleWeekToggle = (lectureId) => {
-    setOpenWeek(prev => (prev === lectureId ? null : lectureId));
+    const currentLecture = curriculum.find(l => l.lectureId === lectureId);
+    // 과제가 있는 경우에만 토글 가능
+    if (currentLecture && currentLecture.assignments.some(assignment => {
+      const hasValidTitle = assignment.assignmentTitle !== "과제 제목을 입력하세요.";
+      const hasSubmissions = assignment.studentResults && assignment.studentResults.some(result => 
+        result.status !== 'NOT_SUBMITTED' || 
+        (result.files && result.files.length > 0) ||
+        (result.textContent && result.textContent !== "null")
+      );
+      return hasValidTitle || (hasSubmissions || false);
+    })) {
+      setOpenWeek(prev => (prev === lectureId ? null : lectureId));
+    }
   };
 
   // 특정 assignmentId에 대한 해당 학생 제출 내역 찾기
@@ -305,6 +317,15 @@ const AssignmentBrowse = () => {
                 <AccordionHeader 
                   onClick={() => handleWeekToggle(lecture.lectureId)}
                   isOpen={openWeek === lecture.lectureId}
+                  hasAssignments={lecture.assignments.some(assignment => {
+                    const hasValidTitle = assignment.assignmentTitle !== "과제 제목을 입력하세요.";
+                    const hasSubmissions = assignment.studentResults && assignment.studentResults.some(result => 
+                      result.status !== 'NOT_SUBMITTED' || 
+                      (result.files && result.files.length > 0) ||
+                      (result.textContent && result.textContent !== "null")
+                    );
+                    return hasValidTitle || (hasSubmissions || false);
+                  })}
                 >
                   <AccordionTitle>{lecture.lectureTitle}</AccordionTitle>
                   <AccordionIcon>{openWeek === lecture.lectureId ? '▲' : '▼'}</AccordionIcon>
@@ -312,106 +333,117 @@ const AssignmentBrowse = () => {
                 {openWeek === lecture.lectureId && (
                   <AccordionContent>
                     {lecture.assignments.length === 0 && <NoAssignment>과제가 없습니다.</NoAssignment>}
-                    {lecture.assignments.map((assignment, aIdx) => {
-                      const submission = findStudentSubmission(assignment.assignmentId);
-                      const imageFiles = (submission?.files || []).filter(f => isImageFile(f.fileName));
-                      const pdfFiles = (submission?.files || []).filter(f => isPdfFile(f.fileName));
-                      const otherFiles = (submission?.files || []).filter(f => !isImageFile(f.fileName) && !isPdfFile(f.fileName));
-                      const galleryIdx = galleryIndexes[assignment.assignmentId] || 0;
+                    {lecture.assignments
+                      .filter(assignment => {
+                        // 기본 제목이 아니거나, 모든 학생이 미제출 상태가 아닌 경우만 표시
+                        const hasValidTitle = assignment.assignmentTitle !== "과제 제목을 입력하세요.";
+                        const hasSubmissions = assignment.studentResults && assignment.studentResults.some(result => 
+                          result.status !== 'NOT_SUBMITTED' || 
+                          (result.files && result.files.length > 0) ||
+                          (result.textContent && result.textContent !== "null")
+                        );
+                        return hasValidTitle || (hasSubmissions || false);
+                      })
+                      .map((assignment, aIdx) => {
+                        const submission = findStudentSubmission(assignment.assignmentId);
+                        const imageFiles = (submission?.files || []).filter(f => isImageFile(f.fileName));
+                        const pdfFiles = (submission?.files || []).filter(f => isPdfFile(f.fileName));
+                        const otherFiles = (submission?.files || []).filter(f => !isImageFile(f.fileName) && !isPdfFile(f.fileName));
+                        const galleryIdx = galleryIndexes[assignment.assignmentId] || 0;
 
-                      return (
-                        <>
-                          <SubmissionBox key={assignment.assignmentId}>
-                            <SubmissionHeader>
-                              <AssignmentInfo>
-                                <h4>{assignment.assignmentTitle}</h4>
-                                {submission?.submittedAt && (
-                                  <SubmissionDate className="submission-date">{formatSubmissionDate(submission.submittedAt)}</SubmissionDate>
-                                )}
-                              </AssignmentInfo>
-                              <FileList style={{display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                                {/* 이미지 갤러리 */}
-                                {imageFiles.length > 0 && (
-                                  <GalleryWrapper>
-                                    <GalleryArrow 
-                                      onClick={() => handlePrev(assignment.assignmentId, imageFiles.length)} 
-                                      disabled={imageFiles.length <= 1}
-                                      left
-                                    >
-                                      <img src={leftButtonImg} alt="이전" style={{ width: 24, height: 24 }} />
-                                    </GalleryArrow>
-                                    {imageFiles[galleryIdx] && (
-                                      <GalleryImage 
-                                        src={imageUrls[imageFiles[galleryIdx].fileUrl] || imageFiles[galleryIdx].fileUrl} 
-                                        alt={imageFiles[galleryIdx].fileName}
-                                        onError={() => handleImageError(imageFiles[galleryIdx].fileUrl, imageFiles[galleryIdx].fileName)}
-                                        style={{ display: imageErrors[imageFiles[galleryIdx].fileUrl] ? 'none' : 'block' }}
+                        return (
+                          <>
+                            <SubmissionBox key={assignment.assignmentId}>
+                              <SubmissionHeader>
+                                <AssignmentInfo>
+                                  <h4>{assignment.assignmentTitle}</h4>
+                                  {submission?.submittedAt && (
+                                    <SubmissionDate className="submission-date">{formatSubmissionDate(submission.submittedAt)}</SubmissionDate>
+                                  )}
+                                </AssignmentInfo>
+                                <FileList style={{display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                                  {/* 이미지 갤러리 */}
+                                  {imageFiles.length > 0 && (
+                                    <GalleryWrapper>
+                                      <GalleryArrow 
+                                        onClick={() => handlePrev(assignment.assignmentId, imageFiles.length)} 
+                                        disabled={imageFiles.length <= 1}
+                                        left
+                                      >
+                                        <img src={leftButtonImg} alt="이전" style={{ width: 24, height: 24 }} />
+                                      </GalleryArrow>
+                                      {imageFiles[galleryIdx] && (
+                                        <GalleryImage 
+                                          src={imageUrls[imageFiles[galleryIdx].fileUrl] || imageFiles[galleryIdx].fileUrl} 
+                                          alt={imageFiles[galleryIdx].fileName}
+                                          onError={() => handleImageError(imageFiles[galleryIdx].fileUrl, imageFiles[galleryIdx].fileName)}
+                                          style={{ display: imageErrors[imageFiles[galleryIdx].fileUrl] ? 'none' : 'block' }}
+                                        />
+                                      )}
+                                      {(!imageFiles[galleryIdx] || imageErrors[imageFiles[galleryIdx]?.fileUrl]) && (
+                                        <div style={{ 
+                                          width: '100%', 
+                                          height: '100%', 
+                                          display: 'flex', 
+                                          alignItems: 'center', 
+                                          justifyContent: 'center',
+                                          background: '#f8f8f8',
+                                          borderRadius: '16px',
+                                          color: '#666',
+                                          fontSize: '14px',
+                                          padding: '20px',
+                                          textAlign: 'center',
+                                          boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
+                                        }}>
+                                          이미지를 불러올 수 없습니다<br/>
+                                          {imageFiles[galleryIdx] && `(파일명: ${imageFiles[galleryIdx].fileName})`}
+                                        </div>
+                                      )}
+                                      <GalleryArrow 
+                                        onClick={() => handleNext(assignment.assignmentId, imageFiles.length)} 
+                                        disabled={imageFiles.length <= 1}
+                                        right
+                                      >
+                                        <img src={rightButtonImg} alt="다음" style={{ width: 24, height: 24 }} />
+                                      </GalleryArrow>
+                                    </GalleryWrapper>
+                                  )}
+                                  {/* 하단 dot 네비게이션 */}
+                                  <GalleryDots>
+                                    {imageFiles.map((_, idx) => (
+                                      <Dot
+                                        key={idx}
+                                        active={galleryIdx === idx}
+                                        onClick={() => handleDotClick(assignment.assignmentId, idx)}
                                       />
-                                    )}
-                                    {(!imageFiles[galleryIdx] || imageErrors[imageFiles[galleryIdx]?.fileUrl]) && (
-                                      <div style={{ 
-                                        width: '100%', 
-                                        height: '100%', 
-                                        display: 'flex', 
-                                        alignItems: 'center', 
-                                        justifyContent: 'center',
-                                        background: '#f8f8f8',
-                                        borderRadius: '16px',
-                                        color: '#666',
-                                        fontSize: '14px',
-                                        padding: '20px',
-                                        textAlign: 'center',
-                                        boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
-                                      }}>
-                                        이미지를 불러올 수 없습니다<br/>
-                                        {imageFiles[galleryIdx] && `(파일명: ${imageFiles[galleryIdx].fileName})`}
-                                      </div>
-                                    )}
-                                    <GalleryArrow 
-                                      onClick={() => handleNext(assignment.assignmentId, imageFiles.length)} 
-                                      disabled={imageFiles.length <= 1}
-                                      right
-                                    >
-                                      <img src={rightButtonImg} alt="다음" style={{ width: 24, height: 24 }} />
-                                    </GalleryArrow>
-                                  </GalleryWrapper>
+                                    ))}
+                                  </GalleryDots>
+                                </FileList>
+                                {submission && submission.textContent && submission.textContent !== "null" && (
+                                  <TextContent>{submission.textContent}</TextContent>
                                 )}
-                                {/* 하단 dot 네비게이션 */}
-                                <GalleryDots>
-                                  {imageFiles.map((_, idx) => (
-                                    <Dot
-                                      key={idx}
-                                      active={galleryIdx === idx}
-                                      onClick={() => handleDotClick(assignment.assignmentId, idx)}
-                                    />
-                                  ))}
-                                </GalleryDots>
-                              </FileList>
-                              {submission && submission.textContent && submission.textContent !== "null" && (
-                                <TextContent>{submission.textContent}</TextContent>
-                              )}
-                              {/* PDF 파일 빨간 글씨로 목록화 */}
-                              {pdfFiles.length > 0 && (
-                                <PdfList>
-                                  <PdfListTitle>첨부 파일</PdfListTitle>
-                                  {pdfFiles.map((file, fileIdx) => (
-                                    <PdfLinkButton key={fileIdx} type="button" onClick={() => handlePdfPreview(file.fileUrl)}>
-                                      <PdfListName>{file.fileName}</PdfListName>
-                                      <PdfListSize>{file.fileSize}</PdfListSize>
-                                    </PdfLinkButton>
-                                  ))}
-                                </PdfList>
-                              )}
-                              {/* 미제출 안내 */}
-                              {(!submission || ((submission.files?.length ?? 0) === 0 && (!submission.textContent || submission.textContent === "null"))) && (
-                                <ReadThinText>미제출</ReadThinText>
-                              )}
-                            </SubmissionHeader>
-                          </SubmissionBox>
-                          {aIdx !== lecture.assignments.length - 1 && <AssignmentDivider />}
-                        </>
-                      );
-                    })}
+                                {/* PDF 파일 빨간 글씨로 목록화 */}
+                                {pdfFiles.length > 0 && (
+                                  <PdfList>
+                                    <PdfListTitle>첨부 파일</PdfListTitle>
+                                    {pdfFiles.map((file, fileIdx) => (
+                                      <PdfLinkButton key={fileIdx} type="button" onClick={() => handlePdfPreview(file.fileUrl)}>
+                                        <PdfListName>{file.fileName}</PdfListName>
+                                        <PdfListSize>{file.fileSize}</PdfListSize>
+                                      </PdfLinkButton>
+                                    ))}
+                                  </PdfList>
+                                )}
+                                {/* 미제출 안내 */}
+                                {(!submission || ((submission.files?.length ?? 0) === 0 && (!submission.textContent || submission.textContent === "null"))) && (
+                                  <ReadThinText>미제출</ReadThinText>
+                                )}
+                              </SubmissionHeader>
+                            </SubmissionBox>
+                            {aIdx !== lecture.assignments.length - 1 && <AssignmentDivider />}
+                          </>
+                        );
+                      })}
                   </AccordionContent>
                 )}
               </AccordionBox>
@@ -544,8 +576,9 @@ const AccordionHeader = styled.div`
   font-size: 17px;
   font-weight: 700;
   background: #fff;
-  cursor: pointer;
+  cursor: ${props => props.hasAssignments ? 'pointer' : 'default'};
   border-bottom: ${props => props.isOpen ? '1px solid #E5E5E5' : 'none'};
+  opacity: ${props => props.hasAssignments ? '1' : '0.6'};
 `;
 
 const AccordionTitle = styled.div``;
@@ -643,6 +676,10 @@ const GalleryWrapper = styled.div`
   box-shadow: 0 2px 16px rgba(0,0,0,0.08);
   margin: 0 auto 8px auto;
   overflow: hidden;
+
+  @media screen and (max-width: 376px) {
+    height: 300px;
+  }
 `;
 
 const GalleryImage = styled.img`
