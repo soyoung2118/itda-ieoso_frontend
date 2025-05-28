@@ -224,7 +224,7 @@ const Header = styled.header`
 
     /* 모바일 세로 (해상도 ~ 479px)*/
     @media all and (max-width: 479px) {
-      margin-right: 0px;
+      margin-right: 10px;
     }
   }
 
