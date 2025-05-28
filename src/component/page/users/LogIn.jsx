@@ -27,20 +27,20 @@ export default function LogIn() {
     if (isInAppBrowser()) {
       if (isAndroid()) {
         const currentUrl = window.location.href;
-        
+
         const openInBrowser = () => {
           try {
-            const intentUrl = `intent://${currentUrl.replace(/^https?:\/\//, '')}#Intent;scheme=https;end`;
+            const intentUrl = `intent://${currentUrl.replace(/^https?:\/\//, "")}#Intent;scheme=https;end`;
             window.location.href = intentUrl;
           } catch (error) {
-            console.error('Intent redirect failed:', error);
+            console.error("Intent redirect failed:", error);
             try {
-              window.open(currentUrl, '_system');
+              window.open(currentUrl, "_system");
             } catch (e) {
-              console.error('Open in browser failed:', e);
+              console.error("Open in browser failed:", e);
               setAlertMessage(
                 "브라우저 전환에 실패했습니다.\n" +
-                "외부 브라우저에서 다시 접속해주세요."
+                  "외부 브라우저에서 다시 접속해주세요.",
               );
               setShowAlertModal(true);
             }

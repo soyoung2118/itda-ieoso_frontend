@@ -50,25 +50,21 @@ export default function TopBar() {
         <div className="language-switcher">
           <TranslateIcon src={Translate} />
           <span
-            className={
-              targetLang === "ko" ? "lang-active" : "lang-inactive"
-            }
+            className={targetLang === "ko" ? "lang-active" : "lang-inactive"}
             onClick={() => {
               if (targetLang !== "ko") setTargetLang("ko");
             }}
           >
-          KR
+            KR
           </span>
           <div className="divider">|</div>
           <span
-            className={
-              targetLang === "en" ? "lang-active" : "lang-inactive"
-            }
+            className={targetLang === "en" ? "lang-active" : "lang-inactive"}
             onClick={() => {
               if (targetLang !== "en") setTargetLang("en");
             }}
           >
-          EN
+            EN
           </span>
         </div>
         {location.pathname !== "/login" && (

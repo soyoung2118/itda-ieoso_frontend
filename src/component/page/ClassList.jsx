@@ -441,8 +441,7 @@ const AddButton = styled.button`
   font-size: 44px;
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  
-    
+
   @media all and (max-width: 479px) {
     width: 2.6rem;
     height: 2.6rem;

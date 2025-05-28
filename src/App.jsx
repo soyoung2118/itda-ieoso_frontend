@@ -66,7 +66,9 @@ function LogoutHandler() {
     // 예상치 못한 에러(토큰 에러) 이벤트 리스너
     const handleTokenError = (event) => {
       if (event.detail?.type === "token_error") {
-        setLogoutMessage(event.detail.message || "예상치 못한 에러로 로그아웃 합니다");
+        setLogoutMessage(
+          event.detail.message || "예상치 못한 에러로 로그아웃 합니다",
+        );
         setModalIsOpen(true);
       }
     };
