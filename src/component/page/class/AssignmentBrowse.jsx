@@ -58,10 +58,8 @@ const AssignmentBrowse = () => {
       if (!courseId || !user) return;
       try {
         const lectures = await getCurriculumWithAssignments(courseId, user.userId);
-        console.log('Curriculum Data:', lectures);
         setCurriculum(lectures);
         const submissions = await getAllAssignmentSubmissions(courseId);
-        console.log('All Submissions:', submissions);
         setAllSubmissions(submissions);
         // 학생 목록 추출 (중복 없이)
         const studentMap = new Map();
@@ -77,7 +75,6 @@ const AssignmentBrowse = () => {
           });
         });
         const studentList = [...studentMap.values()];
-        console.log('Student List:', studentList);
         setStudents(studentList);
       } catch (e) {
         console.error('Error fetching data:', e);
@@ -94,18 +91,14 @@ const AssignmentBrowse = () => {
   // 현재 선택된 학생의 제출 정보도 확인
   useEffect(() => {
     if (selectedStudentId) {
-      console.log('Selected Student ID:', selectedStudentId);
       const selectedStudent = students.find(s => s.id === selectedStudentId);
-      console.log('Selected Student Info:', selectedStudent);
     }
   }, [selectedStudentId, students]);
 
   // 현재 열린 주차 정보도 확인
   useEffect(() => {
     if (openWeek) {
-      console.log('Open Week ID:', openWeek);
       const currentLecture = curriculum.find(l => l.lectureId === openWeek);
-      console.log('Current Lecture Info:', currentLecture);
     }
   }, [openWeek, curriculum]);
 
@@ -193,20 +186,11 @@ const AssignmentBrowse = () => {
     try {
       // 파일명에 한글이 포함된 경우에만 URL 인코딩
       const finalUrl = containsKorean(fileName) ? encodeURIComponent(fileUrl) : fileUrl;
-      
-      console.log('Processing image URL:', { 
-        original: fileUrl, 
-        final: finalUrl, 
-        fileName,
-        containsKorean: containsKorean(fileName)
-      });
-      
       const response = await api.get("/files/download", {
         params: { fileUrl: finalUrl }
       });
       
       const presignedUrl = response.data.data;
-      console.log('Received presigned URL for:', fileName);
       return presignedUrl;
     } catch (e) {
       console.error('URL 처리 실패:', { 
@@ -583,7 +567,11 @@ const AccordionHeader = styled.div`
 
 const AccordionTitle = styled.div``;
 const AccordionIcon = styled.div`
-  font-size: 18px;
+  font-size: 16px;
+
+  @media screen and (max-width: 376px) {
+    font-size: 14px;
+  }
 `;
 const AccordionContent = styled.div`
   padding: 24px 28px;
