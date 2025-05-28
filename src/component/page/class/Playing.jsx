@@ -12,19 +12,21 @@ import CloseIcon from "@mui/icons-material/Close";
 const ClassPlaying = () => {
   const navigate = useNavigate();
   const { courseId, lectureId, videoId } = useParams();
-  const isMobile = window.screen.width <= 480;
-  const [isVisible, setIsVisible] = useState(!isMobile);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 376);
+  const [showSidebar, setShowSidebar] = useState(true);
   const { user } = useContext(UsersContext);
 
   const [curriculumData, setCurriculumData] = useState([]);
   const [currentLectureInfo, setCurrentLectureInfo] = useState([]);
   const [currentVideoInfo, setCurrentVideoInfo] = useState([]);
 
-  const toggleSidebar = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsVisible((prev) => !prev);
-  };
+  useEffect(() => {
+    const isMobileView = window.matchMedia("(max-width: 376px)").matches;
+    setIsMobile(isMobileView);
+    setShowSidebar(!isMobileView);
+  }, []);
+
+  const handleToggle = () => setShowSidebar((prev) => !prev);
 
   useEffect(() => {
     const fetchCurriculumAndVideoData = async () => {
@@ -110,16 +112,15 @@ const ClassPlaying = () => {
           </TopContainer>
 
           <VideoPlaying videoUrl={currentVideoInfo.videoUrl} />
+
           {isMobile && (
-            <MobileToggleButtonWrapper>
-              <MobileToggleButton type="button" onClick={toggleSidebar}>
-                {isVisible ? (
-                  <CloseIcon style={{ fontSize: "3.7vh" }} />
+              <MobileToggleButton type="button" onClick={handleToggle}>
+                  {showSidebar ? (
+                  <CloseIcon style={{ fontSize: "2.8vh" }} />
                 ) : (
-                  <MenuIcon style={{ fontSize: "3.7vh" }} />
+                  <MenuIcon style={{ fontSize: "2.8vh" }} />
                 )}
               </MobileToggleButton>
-            </MobileToggleButtonWrapper>
           )}
         </LeftSide>
 
@@ -133,7 +134,7 @@ const ClassPlaying = () => {
             />
           </RightSide>
         ) : (
-          <SidebarSlideWrapper show={isVisible}>
+          <SidebarSlideWrapper show={showSidebar}>
             <RightSide>
               <PlayingCurriculumSidebar
                 curriculumData={curriculumData}
@@ -174,22 +175,9 @@ const LeftSide = styled.div`
 `;
 
 const RightSide = styled.div`
-  width: 20vw;
-  height: 70vh;
-  overflow-y: auto;
-  padding: 25px 20px;
-  background-color: #ffffff;
-  border-radius: 20px;
-
-  @media (max-width: 768px) {
-    width: 25vw;
-  }
-
-  @media (max-width: 480px) {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
+  background: transparent;
+  display: flex;
+  flex-direction: column;
 `;
 
 const TitleContainer = styled.div`
@@ -211,52 +199,38 @@ const ClickContainer = styled.div`
   cursor: pointer;
 `;
 
-const SubTitle = styled.div`
-  font-size: 16px;
-  font-weight: 400;
-`;
-const MobileToggleButtonWrapper = styled.div`
-  display: none;
-
-  @media (max-width: 480px) {
-    display: block;
-    position: fixed;
-    bottom: 20px;
-    right: 12%;
-    z-index: 1500;
-  }
-`;
-
 const MobileToggleButton = styled.button`
   display: none;
 
-  @media (max-width: 480px) {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    margin-top: 2vh;
-    margin-left: auto;
+  @media (max-width: 376px) {
+    display: block;
+    position: fixed;
+    bottom: 4.6%;
+    left: 5%;
+    z-index: 1300;
     background: white;
     border: 1px solid #ccc;
     border-radius: 50%;
+    padding: 0.8vh;
+    font-size: 0.5vh;
     cursor: pointer;
     color: var(--main-color);
-    padding: 0.5vh;
   }
 `;
 
 const SidebarSlideWrapper = styled.div`
-  @media (max-width: 480px) {
+  @media (max-width: 376px) {
     position: fixed;
-    z-index: 999;
     top: 0;
-    right: ${(props) => (props.show ? "0" : "-100%")};
-    width: 75%;
+    left: ${(props) => (props.show ? "0" : "-100%")};
+    width: 55%;
+    padding: 1rem 0;
     height: 100%;
     background-color: white;
-    transition: right 0.3s ease-in-out;
-    box-shadow: -2px 0px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1100;
+    transition: left 0.3s ease-in-out;
+    box-shadow: 2px 0px 10px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
   }
 `;
 export default ClassPlaying;
