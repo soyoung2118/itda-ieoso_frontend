@@ -26,26 +26,46 @@ export default function LogIn() {
   const handleGoogleLogin = () => {
     if (isInAppBrowser()) {
       if (isAndroid()) {
-        setAlertMessage(
-          "구글 정책으로 인해 해당 앱 내에서는\n" +
-            "구글 로그인이 지원되지 않습니다.\n" +
-            "우측 하단 ⋮버튼을 눌러 외부 브라우저로 열어주세요.",
-        );
+        const currentUrl = window.location.href;
+        
+        const openInBrowser = () => {
+          try {
+            const intentUrl = `intent://${currentUrl.replace(/^https?:\/\//, '')}#Intent;scheme=https;end`;
+            window.location.href = intentUrl;
+          } catch (error) {
+            console.error('Intent redirect failed:', error);
+            try {
+              window.open(currentUrl, '_system');
+            } catch (e) {
+              console.error('Open in browser failed:', e);
+              setAlertMessage(
+                "브라우저 전환에 실패했습니다.\n" +
+                "외부 브라우저에서 다시 접속해주세요."
+              );
+              setShowAlertModal(true);
+            }
+          }
+        };
+
+        setTimeout(openInBrowser, 100);
+        return;
       } else if (isIOS()) {
         setAlertMessage(
           "구글 정책으로 인해 해당 앱 내에서는\n" +
             "구글 로그인이 지원되지 않습니다.\n" +
             "외부 브라우저(Safari)에서 다시 접속해주세요.",
         );
+        setShowAlertModal(true);
+        return;
       } else {
         setAlertMessage(
           "구글 정책으로 인해 해당 앱 내에서는\n" +
             "구글 로그인이 지원되지 않습니다.\n" +
             "외부 브라우저에서 다시 접속해주세요.",
         );
+        setShowAlertModal(true);
+        return;
       }
-      setShowAlertModal(true);
-      return;
     }
     setIsLoading(true);
     const redirectUri = encodeURIComponent(
