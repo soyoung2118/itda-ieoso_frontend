@@ -252,21 +252,19 @@ const AssignmentBrowse = () => {
     }));
   };
 
-  // 파일명 처리 함수 추가
+  // 파일명 처리 함수 수정
   const truncateFileName = (fileName) => {
-    const maxNameLength = 18;
-    const dotIdx = fileName.lastIndexOf(".");
-    let name = fileName;
-    if (name.length > maxNameLength) {
-      if (dotIdx > 0 && dotIdx < name.length - 1) {
-        const ext = name.slice(dotIdx);
-        const base = name.slice(0, 10);
-        name = `${base}...${ext}`;
-      } else {
-        name = name.slice(0, 15) + "...";
-      }
+    const maxLength = 15; // 확장자를 제외한 최대 길이
+    const dotIndex = fileName.lastIndexOf('.');
+    if (dotIndex === -1) return fileName; // 확장자가 없는 경우
+
+    const name = fileName.slice(0, dotIndex);
+    const ext = fileName.slice(dotIndex); // .pdf 포함
+
+    if (name.length > maxLength) {
+      return `${name.slice(0, maxLength)}...${ext}`;
     }
-    return name;
+    return fileName;
   };
 
   // URL 디코딩 함수 추가
@@ -410,12 +408,14 @@ const AssignmentBrowse = () => {
                                 {pdfFiles.length > 0 && (
                                   <PdfList>
                                     <PdfListTitle>첨부 파일</PdfListTitle>
+                                    <PdfListContent>
                                     {pdfFiles.map((file, fileIdx) => (
                                       <PdfLinkButton key={fileIdx} type="button" onClick={() => handlePdfPreview(file.fileUrl)}>
-                                        <PdfListName>{file.fileName}</PdfListName>
+                                        <PdfListName>{truncateFileName(file.fileName)}</PdfListName>
                                         <PdfListSize>{file.fileSize}</PdfListSize>
                                       </PdfLinkButton>
                                     ))}
+                                    </PdfListContent>
                                   </PdfList>
                                 )}
                                 {/* 미제출 안내 */}
@@ -738,11 +738,22 @@ const PdfListTitle = styled.div`
   margin-bottom: 8px;
 `;
 
+const PdfListContent = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+`;
+
 const PdfListName = styled.div`
   color: #FF4747;
   text-decoration: underline;
   font-size: 13px;
   font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
 `; 
 
 const PdfListSize = styled.div`
@@ -754,12 +765,17 @@ const PdfListSize = styled.div`
 const PdfLinkButton = styled.button`
   width: 180px;
   padding: 12px 14px;
-  margin-left: 5px;
+  margin: 0;
   border-radius: 5px;
   background-color: #F6F7F9;
-  border : 0;
+  border: 0;
   cursor: pointer; 
   text-align: left;
+
+  @media screen and (max-width: 376px) {
+    width: 120px;
+    padding: 10px 12px;
+  }
 `;
 
 // 과제 구분선 스타일
