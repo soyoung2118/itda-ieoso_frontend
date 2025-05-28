@@ -9,6 +9,8 @@ export function collectVisibleTexts() {
           return NodeFilter.FILTER_REJECT;
         if (node.parentElement.tagName === "STYLE")
           return NodeFilter.FILTER_REJECT;
+        if (node.parentElement.tagName === "NOSCRIPT")
+          return NodeFilter.FILTER_REJECT;
         if (!node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
         return NodeFilter.FILTER_ACCEPT;
       },

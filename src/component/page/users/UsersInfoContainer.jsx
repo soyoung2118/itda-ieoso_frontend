@@ -1,4 +1,4 @@
-import { useEffect, useContext } from "react";
+import { useContext } from "react";
 import styled from "styled-components";
 import userIcon from "../../img/icon/usericon.svg";
 import { logout } from "../../api/usersApi";
@@ -8,31 +8,20 @@ import PropTypes from "prop-types";
 export function UsersInfoContainer({ setShowUsersInfoContainer }) {
   const { user, setUser, setIsUser } = useContext(UsersContext);
 
-  // 드롭다운 외부 클릭 시 닫기
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (!event.target.closest(".dropdown-container")) {
-        setShowUsersInfoContainer(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [setShowUsersInfoContainer]);
-
   const handleLogout = async (e) => {
     e.preventDefault();
     try {
       await logout();
       setIsUser(false);
       setUser(null);
+      setShowUsersInfoContainer(false);
     } catch (error) {
       console.error("로그아웃 중 오류 발생:", error);
     }
   };
 
   return (
-    <Dropdown className="dropdown-container">
+    <Dropdown>
       <DropdownContainer>
         <UserInfo>
           <img src={userIcon} alt="user icon" className="user-info-profile" />

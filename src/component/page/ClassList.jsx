@@ -182,19 +182,21 @@ export default function Class() {
                       </IconRow>
                     </LectureDetail>
                   </LectureInfo>
-                  <DeleteIconWrapper
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedCourseId(lecture.courseId);
-                      setShowDeleteModal(true);
-                    }}
-                  >
-                    <img
-                      src={DeleteIcon}
-                      alt="Delete Icon"
-                      style={{ width: "30px", height: "30px" }}
-                    />
-                  </DeleteIconWrapper>
+                  {lecture.user.userId !== user.userId && (
+                    <DeleteIconWrapper
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedCourseId(lecture.courseId);
+                        setShowDeleteModal(true);
+                      }}
+                    >
+                      <img
+                        src={DeleteIcon}
+                        alt="Delete Icon"
+                        style={{ width: "30px", height: "30px" }}
+                      />
+                    </DeleteIconWrapper>
+                  )}
                 </LectureCard>
               ))
             )}
@@ -439,8 +441,7 @@ const AddButton = styled.button`
   font-size: 44px;
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  
-    
+
   @media all and (max-width: 479px) {
     width: 2.6rem;
     height: 2.6rem;
