@@ -2,7 +2,11 @@ import React from "react";
 import { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 
-export default function AssignmentBrowseSidebar({ students, selectedId, onSelect }) {
+export default function AssignmentBrowseSidebar({
+  students,
+  selectedId,
+  onSelect,
+}) {
   const [activeMenu, setActiveMenu] = useState("browse");
   const location = useLocation();
   const navigate = useNavigate();
@@ -30,8 +34,8 @@ export default function AssignmentBrowseSidebar({ students, selectedId, onSelect
   return (
     <SidebarWrapper>
       <MenuContainer>
-        <MenuItem 
-          //active={activeMenu === "curriculum"} 
+        <MenuItem
+          //active={activeMenu === "curriculum"}
           //onClick={() => handleMenuClick("curriculum")}
           style={{
             cursor: "auto",
@@ -39,8 +43,8 @@ export default function AssignmentBrowseSidebar({ students, selectedId, onSelect
         >
           커리큘럼
         </MenuItem>
-        <MenuItem 
-          active={activeMenu === "browse"} 
+        <MenuItem
+          active={activeMenu === "browse"}
           onClick={() => handleMenuClick("browse")}
         >
           수강생 과제 보기
@@ -55,7 +59,9 @@ export default function AssignmentBrowseSidebar({ students, selectedId, onSelect
             onClick={() => !student.disabled && onSelect(student.id)}
           >
             {student.name}
-            {student.disabled && <span style={{ color: '#bbb', marginLeft: 4 }}>(나)</span>}
+            {student.disabled && (
+              <span style={{ color: "#bbb", marginLeft: 4 }}>(나)</span>
+            )}
           </StudentItem>
         ))}
       </StudentList>
@@ -86,7 +92,7 @@ const MenuContainer = styled.div`
   width: 90%;
   margin: 0 auto;
   margin-bottom: 10px;
-  border-bottom: 1px solid #E5E5E5;
+  border-bottom: 1px solid #e5e5e5;
   background: #fff;
 
   @media (max-width: 1024px) {
@@ -102,8 +108,8 @@ const MenuItem = styled.div`
   position: relative;
   font-size: 18px;
   width: 80%;
-  font-weight: ${props => props.active ? '600' : '400'};
-  color: ${props => props.active ? '#222' : '#C3C3C3'};
+  font-weight: ${(props) => (props.active ? "600" : "400")};
+  color: ${(props) => (props.active ? "#222" : "#C3C3C3")};
   padding: 13px 0px;
   cursor: pointer;
   white-space: nowrap;
@@ -111,19 +117,19 @@ const MenuItem = styled.div`
   transition: color 0.2s;
 
   &::after {
-    content: '';
-    display: ${props => props.active ? 'block' : 'none'};
+    content: "";
+    display: ${(props) => (props.active ? "block" : "none")};
     position: absolute;
     left: 0;
     right: 0;
     bottom: -1px;
     height: 2px;
-    background: var(--main-color, #FF4747);
+    background: var(--main-color, #ff4747);
     border-radius: 2px;
   }
 
   @media (max-width: 1024px) {
-    border-bottom: 1px solid #E5E5E5;
+    border-bottom: 1px solid #e5e5e5;
     border-right: none;
     &::after {
       left: 0;

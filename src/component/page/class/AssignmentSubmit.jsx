@@ -249,14 +249,14 @@ const ClassAssignmentSubmit = () => {
         </WhiteBoxComponent>
 
         {isMobile && (
-            <MobileToggleButton type="button" onClick={handleToggle}>
-              {showSidebar ? (
-                <CloseIcon style={{ fontSize: "2.8vh" }} />
-              ) : (
-                <MenuIcon style={{ fontSize: "2.8vh" }} />
-              )}
-            </MobileToggleButton>
-          )}
+          <MobileToggleButton type="button" onClick={handleToggle}>
+            {showSidebar ? (
+              <CloseIcon style={{ fontSize: "2.8vh" }} />
+            ) : (
+              <MenuIcon style={{ fontSize: "2.8vh" }} />
+            )}
+          </MobileToggleButton>
+        )}
 
         {submissionStatus === "NOT_SUBMITTED" || canEdit ? (
           <AssignmentSubmitBox

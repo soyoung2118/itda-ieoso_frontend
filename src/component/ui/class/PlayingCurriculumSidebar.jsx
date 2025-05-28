@@ -5,7 +5,10 @@ import styled from "styled-components";
 import Assignment from "../../img/icon/docs.svg";
 import Material from "../../img/icon/pdf.svg";
 import Video from "../../img/icon/videored.svg";
-import { getCurriculumWithAssignments, getAllAssignmentSubmissions } from "../../api/classCurriculumApi";
+import {
+  getCurriculumWithAssignments,
+  getAllAssignmentSubmissions,
+} from "../../api/classCurriculumApi";
 import { UsersContext } from "../../contexts/usersContext";
 import { ModalOverlay, AlertModalContainer } from "../modal/ModalStyles";
 import api from "../../api/api";
@@ -33,7 +36,10 @@ const PlayingCurriculumSidebar = ({
       try {
         if (!courseId || !user) return;
         // 커리큘럼(주차별+과제)
-        const lectures = await getCurriculumWithAssignments(courseId, user.userId);
+        const lectures = await getCurriculumWithAssignments(
+          courseId,
+          user.userId,
+        );
         setCurriculumData(lectures);
         // 제출 데이터(과제별 학생 제출)
         const allSubmissions = await getAllAssignmentSubmissions(courseId);
@@ -431,7 +437,7 @@ const MenuTitle = styled.div`
   font-weight: 600;
   background: none;
   border: none;
-  border-bottom: 1px solid #E5E5E5;
+  border-bottom: 1px solid #e5e5e5;
 
   @media (max-width: 480px) {
     width: 100%;

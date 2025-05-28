@@ -8,13 +8,14 @@ import api from "./api";
  */
 export async function getCurriculumWithAssignments(courseId, userId) {
   const res = await api.get(`/lectures/curriculum/${courseId}/${userId}`);
-  if (!res.data.success) throw new Error(res.data.message || "커리큘럼 불러오기 실패");
+  if (!res.data.success)
+    throw new Error(res.data.message || "커리큘럼 불러오기 실패");
   // 주차별로 assignments, videos, materials 모두 추출
-  return res.data.data.curriculumResponses.map(lecture => ({
+  return res.data.data.curriculumResponses.map((lecture) => ({
     lectureId: lecture.lectureId,
     lectureTitle: lecture.lectureTitle,
     lectureDescription: lecture.lectureDescription,
-    assignments: (lecture.assignments || []).filter(a => a && a.assignmentId),
+    assignments: (lecture.assignments || []).filter((a) => a && a.assignmentId),
     videos: lecture.videos || [],
     materials: lecture.materials || [],
   }));
@@ -26,8 +27,11 @@ export async function getCurriculumWithAssignments(courseId, userId) {
  * @returns {Promise<Array>} assignments [{ assignmentId, assignmentTitle, studentResults: [...] }]
  */
 export async function getAllAssignmentSubmissions(courseId) {
-  const res = await api.get(`/statistics/courses/${courseId}/assignments/submissions`);
-  if (!res.data.success) throw new Error(res.data.message || "과제 제출 불러오기 실패");
+  const res = await api.get(
+    `/statistics/courses/${courseId}/assignments/submissions`,
+  );
+  if (!res.data.success)
+    throw new Error(res.data.message || "과제 제출 불러오기 실패");
   return res.data.data;
 }
 
@@ -38,6 +42,6 @@ export async function getAllAssignmentSubmissions(courseId) {
  * @returns {Array} studentResults
  */
 export function findStudentResultsByAssignmentId(allSubmissions, assignmentId) {
-  const found = allSubmissions.find(a => a.assignmentId === assignmentId);
+  const found = allSubmissions.find((a) => a.assignmentId === assignmentId);
   return found ? found.studentResults : [];
-} 
+}

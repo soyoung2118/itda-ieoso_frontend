@@ -5,7 +5,10 @@ import styled from "styled-components";
 import Assignment from "../../img/icon/docs.svg";
 import Material from "../../img/icon/pdf.svg";
 import Video from "../../img/icon/videored.svg";
-import { getCurriculumWithAssignments, getAllAssignmentSubmissions } from "../../api/classCurriculumApi";
+import {
+  getCurriculumWithAssignments,
+  getAllAssignmentSubmissions,
+} from "../../api/classCurriculumApi";
 import { UsersContext } from "../../contexts/usersContext";
 import { ModalOverlay, AlertModalContainer } from "../modal/ModalStyles";
 
@@ -117,7 +120,10 @@ const AssignmentSubmitSidebar = ({
       try {
         if (!courseId || !user) return;
         // 커리큘럼(주차별+과제)
-        const lectures = await getCurriculumWithAssignments(courseId, user.userId);
+        const lectures = await getCurriculumWithAssignments(
+          courseId,
+          user.userId,
+        );
         setCurriculumData(lectures);
         // 제출 데이터(과제별 학생 제출)
         const allSubmissions = await getAllAssignmentSubmissions(courseId);
@@ -350,14 +356,14 @@ const AssignmentSubmitSidebar = ({
   return (
     <SidebarWrapper>
       <MenuContainer>
-        <MenuItem 
-          active={activeMenu === "curriculum"} 
+        <MenuItem
+          active={activeMenu === "curriculum"}
           onClick={() => handleMenuClick("curriculum")}
         >
           커리큘럼
         </MenuItem>
-        <MenuItem 
-          active={activeMenu === "browse"} 
+        <MenuItem
+          active={activeMenu === "browse"}
           onClick={() => handleMenuClick("browse")}
         >
           수강생 과제 보기
@@ -483,7 +489,9 @@ const AssignmentSubmitSidebar = ({
                                     }}
                                   />
                                   <TextContainer>
-                                    <BlackText>{content.assignmentTitle}</BlackText>
+                                    <BlackText>
+                                      {content.assignmentTitle}
+                                    </BlackText>
                                     <RedText>
                                       {dateText(content.startDate)} -{" "}
                                       {dateText(content.endDate)}
@@ -551,7 +559,7 @@ const MenuContainer = styled.div`
   width: 90%;
   margin: 0 auto;
   margin-bottom: 10px;
-  border-bottom: 1px solid #E5E5E5;
+  border-bottom: 1px solid #e5e5e5;
   background: #fff;
 
   @media (max-width: 1024px) {
@@ -567,8 +575,8 @@ const MenuItem = styled.div`
   position: relative;
   font-size: 18px;
   width: 80%;
-  font-weight: ${props => props.active ? '600' : '400'};
-  color: ${props => props.active ? '#222' : '#C3C3C3'};
+  font-weight: ${(props) => (props.active ? "600" : "400")};
+  color: ${(props) => (props.active ? "#222" : "#C3C3C3")};
   padding: 13px 0px;
   cursor: pointer;
   white-space: nowrap;
@@ -576,19 +584,19 @@ const MenuItem = styled.div`
   transition: color 0.2s;
 
   &::after {
-    content: '';
-    display: ${props => props.active ? 'block' : 'none'};
+    content: "";
+    display: ${(props) => (props.active ? "block" : "none")};
     position: absolute;
     left: 0;
     right: 0;
     bottom: -1px;
     height: 2px;
-    background: var(--main-color, #FF4747);
+    background: var(--main-color, #ff4747);
     border-radius: 2px;
   }
 
   @media (max-width: 1024px) {
-    border-bottom: 1px solid #E5E5E5;
+    border-bottom: 1px solid #e5e5e5;
     border-right: none;
     &::after {
       left: 0;
