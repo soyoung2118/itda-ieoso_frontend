@@ -31,8 +31,11 @@ export default function AssignmentBrowseSidebar({ students, selectedId, onSelect
     <SidebarWrapper>
       <MenuContainer>
         <MenuItem 
-          active={activeMenu === "curriculum"} 
+          //active={activeMenu === "curriculum"} 
           //onClick={() => handleMenuClick("curriculum")}
+          style={{
+            cursor: "auto",
+          }}
         >
           커리큘럼
         </MenuItem>
@@ -68,9 +71,11 @@ const SidebarWrapper = styled.div`
   height: 70vh;
   border-radius: 20px;
   padding: 25px 20px;
+  overflow-y: scroll;
 
   @media (max-width: 376px) {
     width: 80%;
+    height: 100%;
   }
 `;
 

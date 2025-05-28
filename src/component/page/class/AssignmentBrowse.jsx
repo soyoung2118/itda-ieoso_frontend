@@ -326,7 +326,7 @@ const AssignmentBrowse = () => {
                               <AssignmentInfo>
                                 <h4>{assignment.assignmentTitle}</h4>
                                 {submission?.submittedAt && (
-                                  <span className="submission-date">{formatSubmissionDate(submission.submittedAt)}</span>
+                                  <SubmissionDate className="submission-date">{formatSubmissionDate(submission.submittedAt)}</SubmissionDate>
                                 )}
                               </AssignmentInfo>
                               <FileList style={{display: 'flex', flexDirection: 'column', gap: '5px' }}>
@@ -387,32 +387,26 @@ const AssignmentBrowse = () => {
                                   ))}
                                 </GalleryDots>
                               </FileList>
+                              {submission && submission.textContent && submission.textContent !== "null" && (
+                                <TextContent>{submission.textContent}</TextContent>
+                              )}
                               {/* PDF 파일 빨간 글씨로 목록화 */}
                               {pdfFiles.length > 0 && (
                                 <PdfList>
+                                  <PdfListTitle>첨부 파일</PdfListTitle>
                                   {pdfFiles.map((file, fileIdx) => (
                                     <PdfLinkButton key={fileIdx} type="button" onClick={() => handlePdfPreview(file.fileUrl)}>
-                                      {file.fileName}
+                                      <PdfListName>{file.fileName}</PdfListName>
+                                      <PdfListSize>{file.fileSize}</PdfListSize>
                                     </PdfLinkButton>
                                   ))}
                                 </PdfList>
                               )}
-                              {/* 이미지/ PDF 외 파일 다운로드 */}
-                              <FileList>
-                                {otherFiles.length > 0 && otherFiles.map((file, fileIdx) => (
-                                  <DownloadLink key={fileIdx} href={decodeFileUrl(file.fileUrl)} download>
-                                    {truncateFileName(file.fileName)}
-                                  </DownloadLink>
-                                ))}
-                                {/* 미제출 안내 */}
-                                {(!submission || ((submission.files?.length ?? 0) === 0 && (!submission.textContent || submission.textContent === "null"))) && (
-                                  <ReadThinText>미제출</ReadThinText>
-                                )}
-                              </FileList>
+                              {/* 미제출 안내 */}
+                              {(!submission || ((submission.files?.length ?? 0) === 0 && (!submission.textContent || submission.textContent === "null"))) && (
+                                <ReadThinText>미제출</ReadThinText>
+                              )}
                             </SubmissionHeader>
-                            {submission && submission.textContent && submission.textContent !== "null" && (
-                              <TextContent>{submission.textContent}</TextContent>
-                            )}
                           </SubmissionBox>
                           {aIdx !== lecture.assignments.length - 1 && <AssignmentDivider />}
                         </>
@@ -516,6 +510,10 @@ const ContentWrapper = styled.div`
   @media screen and (max-width: 480px) {
     padding-right: 5px;
   }
+
+  @media screen and (max-width: 376px) {
+    width: 100%;
+  }
 `;
 
 const MainContent = styled.div`
@@ -570,13 +568,15 @@ const SubmissionBox = styled.div`
   background: #fff;
   border-radius: 12px;
   margin-top: 14px;
+  &:not(:first-child) {
+    margin-top: 38px;
+  }
 `;
 
 const SubmissionHeader = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  margin-bottom: 12px;
 `;
 
 const AssignmentInfo = styled.div`
@@ -584,21 +584,24 @@ const AssignmentInfo = styled.div`
   flex-direction: column;
   gap: 12px;
   h4 {
-    font-size: 17px;
+    font-size: 16px;
     font-weight: 600;
-    margin: 0 0 4px 0;
+    margin: 0 0 2px 0;
   }
-  .submission-date {
-    font-size: 14px;
-    font-weight: 600;
-    color: #474747;
-  }
+`;
+
+const SubmissionDate = styled.span`
+  font-size: 13px;
+  font-weight: 400;
+  color: #474747;
+  margin-bottom: 12px;
+  margin-left: 3px;
 `;
 
 const FileList = styled.div`
   display: flex;
-  gap: 16px;
-  justify-content: center;
+  gap: 6px;
+  justify-content: flex-end;
 `;
 
 const DownloadLink = styled.a`
@@ -621,10 +624,10 @@ const TextContent = styled.div`
   line-height: 1.6;
   color: #333;
   white-space: pre-wrap;
-  background: #f8f8f8;
-  padding: 16px;
+  padding: 6px;
   border-radius: 8px;
   margin-top: 8px;
+  margin-bottom: 12px;
 `;
 
 const GalleryWrapper = styled.div`
@@ -703,21 +706,35 @@ const PdfList = styled.div`
   gap: 4px;
 `;
 
-const PdfLinkButton = styled.button`
-  background: none;
-  border: none;
-  color: #ff4747;
-  font-weight: 600;
-  font-size: 15px;
+const PdfListTitle = styled.div`
+  font-size: 13px;
+  font-weight: 500;
+  color: #474747;
+  margin-bottom: 8px;
+`;
+
+const PdfListName = styled.div`
+  color: #FF4747;
   text-decoration: underline;
-  cursor: pointer;
-  padding: 0;
-  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+`; 
+
+const PdfListSize = styled.div`
+  font-size: 13px;
+  font-weight: 400;
+  color: #D1D1D1;
+`;
+
+const PdfLinkButton = styled.button`
+  width: 180px;
+  padding: 12px 14px;
+  margin-left: 5px;
+  border-radius: 5px;
+  background-color: #F6F7F9;
+  border : 0;
+  cursor: pointer; 
   text-align: left;
-  &:hover {
-    text-decoration: none;
-    opacity: 0.8;
-  }
 `;
 
 // 과제 구분선 스타일
