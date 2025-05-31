@@ -60,10 +60,17 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // 401, 403 에러 시 토큰 갱신 시도
+    // 토큰 재발급 API 실패 시 바로 로그아웃
+    if (error.config.url?.includes("/oauth/reissuetoken")) {
+      dispatchTokenError("예상치 못한 에러로 로그아웃 합니다");
+      return Promise.reject(error);
+    }
+
+    // 다른 API 요청에서 401, 403 에러 발생 시 토큰 재발급 시도
     if (
       (error.response?.status === 401 || error.response?.status === 403) &&
-      !originalRequest._retry
+      !originalRequest._retry &&
+      !error.config.url?.includes("/oauth/reissuetoken") // 토큰 재발급 API는 제외
     ) {
       originalRequest._retry = true;
       try {
@@ -71,15 +78,9 @@ api.interceptors.response.use(
         originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
         return api(originalRequest);
       } catch (refreshError) {
-        // 토큰 갱신 실패 시 예상치 못한 에러로 처리
         dispatchTokenError("예상치 못한 에러로 로그아웃 합니다");
         return Promise.reject(refreshError);
       }
-    }
-
-    // 405 등 기타 예상치 못한 에러
-    if ([401, 405].includes(error.response?.status)) {
-      dispatchTokenError("예상치 못한 에러로 로그아웃 합니다");
     }
 
     return Promise.reject(error);
