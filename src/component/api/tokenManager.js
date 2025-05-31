@@ -6,7 +6,7 @@ let isRefreshing = false;
 let refreshSubscribers = [];
 
 // 상수 정의
-const TOKEN_EXPIRATION_TIME = 3600000; // 1시간
+const TOKEN_EXPIRATION_TIME = 3000000; // 50분 (1시간 - 10분)
 const SESSION_EXPIRATION_TIME = 1209600000; // 2주 (14일)
 //const SESSION_EXPIRATION_TIME = 60000; // 테스트 시간 1분
 
