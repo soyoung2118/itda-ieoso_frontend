@@ -5,15 +5,15 @@ import LogoImage from "../img/logo/itda_logo.svg";
 import userIcon from "../img/icon/usericon.svg";
 import { UsersContext } from "../contexts/usersContext";
 import { UsersInfoContainer } from "../page/users/UsersInfoContainer";
-import { useLanguage } from "../contexts/LanguageContext";
-import Translate from "../img/landing/translate.svg";
+// import { useLanguage } from "../contexts/LanguageContext";
+// import Translate from "../img/landing/translate.svg";
 
 export default function TopBar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { isUser } = useContext(UsersContext);
   const [showUsersInfoContainer, setShowUsersInfoContainer] = useState(false);
-  const { targetLang, setTargetLang } = useLanguage();
+  // const { targetLang, setTargetLang } = useLanguage();
   const userIconRef = useRef(null);
   const containerRef = useRef(null);
 
@@ -46,8 +46,8 @@ export default function TopBar() {
         alt="itda logo"
         onClick={isUser ? () => navigate("/class/list") : () => navigate("/")}
       />
-      <Header>
-        <div className="language-switcher">
+      <Header>  
+        {/* <div className="language-switcher">
           <TranslateIcon src={Translate} />
           <span
             className={targetLang === "ko" ? "lang-active" : "lang-inactive"}
@@ -66,7 +66,7 @@ export default function TopBar() {
           >
             EN
           </span>
-        </div>
+        </div> */}
         {location.pathname !== "/login" && (
           <div className="header-right">
             {isUser ? (
