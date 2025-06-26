@@ -1,8 +1,9 @@
-# React + Vite
+## 담당 업무
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 강의실 커리큘럼 화면 구현
+- 강의실 커리큘럼 편집 화면 구현
+- 강의실 관리 내 요약 화면 구현
+- 강의실 관리 내 학생별 과제 보기 화면 구현
+- 강의실 공지 및 공지 작성 화면 초기 구현
+- 웹사이트 한/영 다국어 번역 작업 지원
+- 채널톡 연동 및 적용
